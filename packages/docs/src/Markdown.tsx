@@ -19,8 +19,8 @@ import { Mermaid } from './Mermaid';
  */
 function inline(text: string, keyPrefix: string): ReactNode[] {
   const nodes: ReactNode[] = [];
-  // `코드` · **굵게** · ![그림](주소) · [링크](주소) 네 가지만 본다.
-  const pattern = /(`[^`]+`)|(\*\*[^*]+\*\*)|(!\[[^\]]*\]\([^)]+\))|(\[[^\]]+\]\([^)]+\))/g;
+  // `코드` · **굵게** · _흐리게_ · ![그림](주소) · [링크](주소) 다섯 가지만 본다.
+  const pattern = /(`[^`]+`)|(\*\*[^*]+\*\*)|(_[^_\n]+_)|(!\[[^\]]*\]\([^)]+\))|(\[[^\]]+\]\([^)]+\))/g;
   let last = 0;
   let match: RegExpExecArray | null;
   let index = 0;
@@ -41,6 +41,16 @@ function inline(text: string, keyPrefix: string): ReactNode[] {
         <strong key={key} className="font-semibold">
           {token.slice(2, -2)}
         </strong>,
+      );
+    } else if (token.startsWith('_')) {
+      /*
+        `_해당 없음_` 같은 자리. 밑줄 표기를 다루지 않아 밑줄이 글자 그대로 찍히고 있었다 —
+        "해당 없음" 을 알리려던 자리가 오히려 오타처럼 보인다.
+      */
+      nodes.push(
+        <em key={key} className="not-italic text-ink-faint">
+          {token.slice(1, -1)}
+        </em>,
       );
     } else if (token.startsWith('![')) {
       // 캡처 그림. `public/` 아래에 있으므로 최적화 대상이 아니라 그대로 건다.
@@ -66,6 +76,50 @@ function inline(text: string, keyPrefix: string): ReactNode[] {
   return nodes;
 }
 
+/**
+ * 본문 여백 **한 벌**.
+ *
+ * 덩이마다 다른 값을 적으면 문단과 목록 사이, 목록과 표 사이가 제각각이 되어 글이 층으로 읽히지
+ * 않는다. 여백은 세 자리뿐이다: 이어지는 글(`FLOW`) · 덩이가 큰 것(`WIDE`) · 새 마디를 여는 제목.
+ *
+ * 바깥을 `flex` 로 두지 않는 이유: flex 안에서는 위아래 여백이 겹치지 않고 **더해진다.** 문단
+ * 아래 12px 와 다음 문단 위 12px 가 24px 이 되어, 값을 아무리 맞춰도 실제 간격은 두 배로 벌어진다.
+ * 보통 블록으로 두면 큰 쪽 하나만 남아 여기 적은 값이 곧 화면의 값이 된다.
+ */
+const FLOW = 'my-3';
+const WIDE = 'my-5';
+const HEADING = 'mb-3 mt-8 first:mt-0';
+
+/**
+ * 숫자만 든 열을 찾는다.
+ *
+ * 숫자를 왼쪽에 붙여 두면 자릿수가 어긋나 크기를 눈으로 견줄 수 없다 — 표를 쓰는 이유의 절반이
+ * 견주기인데 그 절반이 없어진다. 마크다운의 `---:` 로 일일이 적게 하지 않는 이유는, 문서가
+ * 생성물이라 생성기마다 그 표시를 기억해야 하기 때문이다.
+ */
+function numericColumns(head: string[], body: string[][]): boolean[] {
+  return head.map((_, index) => {
+    const cells = body.map((row) => row[index] ?? '').filter((cell) => cell.length > 0 && cell !== '—');
+    if (cells.length === 0) return false;
+    return cells.every((cell) => /^[+-]?[\d,. ]+ ?(개|장|건|원|명|회|자|초|%|px|ms)?$/.test(cell));
+  });
+}
+
+/** 문서가 직접 정한 정렬(`---:` · `:---:`)이 있으면 그것이 이긴다. */
+function declaredAlign(row: string | undefined): Array<'left' | 'center' | 'right' | ''> {
+  if (!row) return [];
+  return row
+    .replace(/^\||\|$/g, '')
+    .split('|')
+    .map((cell) => cell.trim())
+    .map((cell) => {
+      if (cell.startsWith(':') && cell.endsWith(':')) return 'center';
+      if (cell.endsWith(':')) return 'right';
+      if (cell.startsWith(':')) return 'left';
+      return '';
+    });
+}
+
 export function Markdown({ source }: { source: string }) {
   const lines = source.split('\n');
   const blocks: ReactNode[] = [];
@@ -82,7 +136,7 @@ export function Markdown({ source }: { source: string }) {
   const flushList = (key: string) => {
     if (listBuffer.length === 0) return;
     blocks.push(
-      <ul key={key} className="my-3 flex list-disc flex-col gap-1 pl-5">
+      <ul key={key} className={`${FLOW} flex list-disc flex-col gap-1 pl-5`}>
         {listBuffer.map((item, index) => (
           <li key={`${key}-${index}`} className="text-sm leading-relaxed">
             {inline(item, `${key}-${index}`)}
@@ -95,6 +149,8 @@ export function Markdown({ source }: { source: string }) {
 
   const flushTable = (key: string) => {
     if (tableBuffer.length === 0) return;
+
+    const align = declaredAlign(tableBuffer.find((row) => /^\s*\|[\s:|-]+\|\s*$/.test(row)));
     const rows = tableBuffer
       .filter((row) => !/^\s*\|[\s:|-]+\|\s*$/.test(row))
       .map((row) =>
@@ -103,15 +159,31 @@ export function Markdown({ source }: { source: string }) {
           .split('|')
           .map((cell) => cell.trim()),
       );
-    const [head, ...body] = rows;
+    const [head = [], ...body] = rows;
+    const numeric = numericColumns(head, body);
+
+    /*
+      셀 정렬은 열 단위로 한 번만 정하고 머리와 몸에 같이 건다. 머리는 왼쪽, 몸은 오른쪽이 되면
+      어느 칸이 어느 이름의 값인지 눈으로 잇지 못한다.
+    */
+    const cellClass = (index: number): string => {
+      const right = align[index] === 'right' || (!align[index] && numeric[index]);
+      if (right) return 'text-right tabular-nums';
+      if (align[index] === 'center') return 'text-center';
+      return 'text-left';
+    };
 
     blocks.push(
-      <div key={key} className="my-4 overflow-x-auto">
+      // 표는 **자기 상자 안에서만** 가로로 스크롤한다. 페이지가 통째로 밀리면 본문을 읽던 자리를 잃는다.
+      <div key={key} className={`${WIDE} min-w-0 overflow-x-auto`}>
         <table className="w-full min-w-160 border-collapse text-sm">
           <thead>
             <tr className="border-b border-border">
-              {(head ?? []).map((cell, index) => (
-                <th key={index} className="px-3 py-2 text-left text-xs font-medium text-ink-faint">
+              {head.map((cell, index) => (
+                <th
+                  key={index}
+                  className={`px-3 py-2 align-top text-xs font-medium text-ink-faint ${cellClass(index)}`}
+                >
                   {inline(cell, `${key}-h-${index}`)}
                 </th>
               ))}
@@ -121,7 +193,10 @@ export function Markdown({ source }: { source: string }) {
             {body.map((row, rowIndex) => (
               <tr key={rowIndex} className="border-b border-border last:border-b-0">
                 {row.map((cell, cellIndex) => (
-                  <td key={cellIndex} className="px-3 py-2 align-top leading-relaxed">
+                  <td
+                    key={cellIndex}
+                    className={`px-3 py-2 align-top leading-relaxed ${cellClass(cellIndex)}`}
+                  >
                     {inline(cell, `${key}-${rowIndex}-${cellIndex}`)}
                   </td>
                 ))}
@@ -180,7 +255,7 @@ export function Markdown({ source }: { source: string }) {
       lastHeading = text;
       const size = level === 1 ? 'text-2xl' : level === 2 ? 'text-xl' : level === 3 ? 'text-base' : 'text-sm';
       blocks.push(
-        <p key={key} className={`mb-2 mt-6 font-bold tracking-tight first:mt-0 ${size}`}>
+        <p key={key} className={`${HEADING} font-bold tracking-tight ${size}`}>
           {inline(text, key)}
         </p>,
       );
@@ -189,7 +264,7 @@ export function Markdown({ source }: { source: string }) {
 
     if (line.startsWith('> ')) {
       blocks.push(
-        <blockquote key={key} className="my-3 border-l-2 border-border-strong pl-3 text-sm text-ink-muted">
+        <blockquote key={key} className={`${FLOW} border-l-2 border-border-strong pl-3 text-sm text-ink-muted`}>
           {inline(line.slice(2), key)}
         </blockquote>,
       );
@@ -199,7 +274,7 @@ export function Markdown({ source }: { source: string }) {
     if (line.trim() === '') return;
 
     blocks.push(
-      <p key={key} className="my-2 text-sm leading-relaxed">
+      <p key={key} className={`${FLOW} text-sm leading-relaxed`}>
         {inline(line, key)}
       </p>,
     );
@@ -208,5 +283,5 @@ export function Markdown({ source }: { source: string }) {
   flushList('tail-l');
   flushTable('tail-t');
 
-  return <div className="flex flex-col">{blocks}</div>;
+  return <div className="min-w-0">{blocks}</div>;
 }

@@ -23,7 +23,7 @@ export function docsNav(counts: { fsd: number; nfs: number; pageView: number }):
       items: [
         { href: '/docs', label: 'Overview' },
         { href: '/docs/ia', label: 'IA' },
-
+        { href: '/docs/flow-chart', label: 'Flow Chart' },
       ],
     },
     {
@@ -37,6 +37,9 @@ export function docsNav(counts: { fsd: number; nfs: number; pageView: number }):
     {
       title: '시스템',
       items: [
+        { href: '/docs/path', label: 'Path' },
+        { href: '/docs/coding-conventions', label: 'Coding Conventions' },
+        { href: '/docs/admin-mapping', label: 'Admin Mapping' },
         { href: '/docs/prompt', label: '생성 프롬프트' },
       ],
     },

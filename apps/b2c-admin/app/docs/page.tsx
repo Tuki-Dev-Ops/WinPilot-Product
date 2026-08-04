@@ -16,7 +16,12 @@ import { pages } from '@/pages.manifest';
 export const metadata: Metadata = { title: 'Overview' };
 
 const CARDS = [
-  { href: '/docs/ia', label: 'IA', text: '사이드바가 곧 구조다. 최상위와 섹션별 도면.' },
+  { href: '/docs/ia', label: 'IA', text: '사이드바가 곧 구조다. 전체 도면과 화면별로 드나드는 길.' },
+  {
+    href: '/docs/flow-chart',
+    label: 'Flow Chart',
+    text: '운영자 여정과 화면별 흐름. 실선은 정상, 점선은 예외, 마름모는 갈림길.',
+  },
   {
     href: '/docs/fsd',
     label: '기능 명세서 (FSD)',

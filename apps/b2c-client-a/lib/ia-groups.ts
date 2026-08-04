@@ -5,10 +5,10 @@ import { pages } from '../pages.manifest';
  * IA 묶음 — **화면 나무를 갈래별로 나눈 것**이 원본이다.
  *
  * 26개 화면을 한 장에 그리면 도면이 화면보다 커져서, 정작 "구매가 어떻게 흐르는가" 를 보려는
- * 사람이 도면 전체를 훑어야 한다. 갈래를 탭으로 나누면 볼 것만 본다.
+ * 사람이 도면 전체를 훑어야 한다. 갈래로 나누면 볼 것만 본다.
  *
- * 여기서 정한 것이 곧 `/ia` 의 탭이고 `docs/ia/*.md` 다 — 탭 목록을 화면에서 따로 적지 않는다.
- * 적으면 갈래를 하나 늘렸을 때 탭과 문서가 갈라진다.
+ * 여기서 정한 것이 곧 `/docs/ia` 의 도면이고 `/docs/ia/{화면}` 의 목록이다 — 화면에서 따로
+ * 적지 않는다. 적으면 화면을 하나 늘렸을 때 도면과 목록이 갈라진다.
  *
  * ## 화면 이름을 한글로 다시 적는 이유
  * 매니페스트의 `name` 은 Figma 페이지 이름이라 영문이다(`Product List`). 도면은 사람이 읽는
@@ -191,8 +191,71 @@ export const IA_GROUPS: IaGroup[] = [
   },
 ];
 
+/**
+ * 갈래를 넘는 이동.
+ *
+ * 전체 사이트맵에는 **긋지 않는다** — 일곱 갈래에 이 선을 다 그으면 도면이 그물이 되어
+ * 아무것도 읽히지 않는다. 대신 화면 하나를 볼 때(`/docs/ia/{화면}`)만 그 화면에 닿는 선을
+ * 꺼내 그린다. 한 화면에 붙는 선은 많아야 서넛이라 그때는 읽힌다.
+ *
+ * 헤더·푸터에서 모든 갈래로 가는 길은 여기 적지 않는다. 어느 화면에서나 같으므로 적어 두면
+ * 화면 수만큼 되풀이되고, 정작 그 화면에만 있는 길이 묻힌다.
+ */
+export type CrossEdge = {
+  from: string;
+  to: string;
+  /** 어떤 길로 넘어가는가 — 도면의 간선 라벨이 아니라 표에 적히는 말이다 */
+  how: string;
+};
+
+export const CROSS_EDGES: CrossEdge[] = [
+  { from: 'index', to: 'products', how: '바로가기 타일·카테고리 탐색' },
+  { from: 'index', to: 'products-detail', how: '신상품·베스트 줄에서 바로' },
+  { from: 'index', to: 'mypage-coupons', how: '홈 쿠폰 띠' },
+  { from: 'products-detail', to: 'cart', how: '장바구니 담기' },
+  { from: 'products-detail', to: 'orders-new', how: '바로 구매 — 담기를 건너뛴다' },
+  { from: 'cart', to: 'login', how: '비회원이면 결제 앞에서 로그인을 묻는다' },
+  { from: 'mypage-coupons', to: 'orders-new', how: '받은 쿠폰을 결제에서 한 장 쓴다' },
+  { from: 'orders-new', to: 'terms', how: '동의 문구의 약관 링크' },
+  { from: 'orders-new', to: 'privacy', how: '동의 문구의 처리방침 링크' },
+  { from: 'result', to: 'orders', how: '주문이 끝나면 주문 내역으로' },
+  { from: 'login', to: 'mypage', how: '로그인한 뒤 돌아오는 곳' },
+  { from: 'signup', to: 'result', how: '가입이 끝나면 처리 결과로' },
+  { from: 'signup', to: 'terms', how: '동의 문구의 약관 링크' },
+  { from: 'signup', to: 'privacy', how: '동의 문구의 처리방침 링크' },
+  { from: 'contact', to: 'result', how: '문의를 접수하면 처리 결과로' },
+  { from: 'contact', to: 'mypage-inquiries', how: '접수한 문의의 답변은 문의 내역에서 본다' },
+];
+
 export function findGroup(id: string): IaGroup | undefined {
   return IA_GROUPS.find((group) => group.id === id);
+}
+
+/** 화면이 속한 갈래. 홈은 어느 갈래에도 들지 않으므로 `undefined` 다. */
+export function groupOf(screen: string): IaGroup | undefined {
+  return IA_GROUPS.find((group) => group.screens.some((item) => item.screen === screen));
+}
+
+/**
+ * 화면의 한글 이름.
+ *
+ * 매니페스트의 `name` 은 Figma 페이지 이름이라 영문이다(`Product List`). 왼쪽 세움대와 도면은
+ * 사람이 읽는 것이므로 한글을 먼저 쓰고, 갈래에 적히지 않은 화면만 매니페스트 이름으로 돌아간다.
+ */
+export function koOf(screen: string): string {
+  if (screen === ROOT.screen) return ROOT.ko;
+  const found = IA_GROUPS.flatMap((group) => group.screens).find((item) => item.screen === screen);
+  return found?.ko ?? pages.find((page) => page.id === screen)?.name ?? screen;
+}
+
+/**
+ * 왼쪽 세움대에 세울 화면 목록 — **매니페스트 순서**를 따른다.
+ *
+ * 갈래 순서로 세우지 않는 이유: 세움대는 갈래를 보여 주는 곳이 아니라 화면으로 건너뛰는 곳이고,
+ * 매니페스트 순번은 Figma 페이지 순번과 같아서 디자인 파일과 나란히 놓고 보기 좋다.
+ */
+export function screenNavItems(): Array<{ slug: string; label: string }> {
+  return pages.map((page) => ({ slug: page.id, label: koOf(page.id) }));
 }
 
 /** 매니페스트에 있는데 어느 갈래에도 들지 않은 화면. 도면이 화면을 따라가지 못한 자리다. */
@@ -204,7 +267,11 @@ export function ungrouped(): string[] {
 /** 갈래에는 적혀 있는데 매니페스트에 없는 화면. 지운 화면이 도면에 남은 자리다. */
 export function unknownScreens(): string[] {
   const real = new Set(pages.map((page) => page.id));
-  return [ROOT, ...IA_GROUPS.flatMap((group) => group.screens)]
-    .map((s) => s.screen)
-    .filter((screen) => !real.has(screen));
+  // 갈래를 넘는 선도 함께 본다 — 한쪽 끝이 사라진 선은 도면에서 허공으로 뻗는다.
+  const named = [
+    ROOT.screen,
+    ...IA_GROUPS.flatMap((group) => group.screens.map((item) => item.screen)),
+    ...CROSS_EDGES.flatMap((edge) => [edge.from, edge.to]),
+  ];
+  return [...new Set(named)].filter((screen) => !real.has(screen));
 }

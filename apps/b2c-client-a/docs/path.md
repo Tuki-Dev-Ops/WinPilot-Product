@@ -94,15 +94,23 @@
 
 ## 6. 문서 주소
 
-`docs/` 아래의 파일 경로가 곧 주소다 — `docs/flow.md` → `/flow`, `docs/ia/purchase.md` → `/ia/purchase`.
-문서를 위키에 두지 않는 이유: 화면과 문서가 **같은 레포에서 같이 바뀌어야** 어긋나지 않는다.
+문서는 `/docs` 아래의 **진짜 라우트**다. 위키에 두지 않는 이유: 화면과 문서가 **같은 레포에서
+같이 바뀌어야** 어긋나지 않는다 — 문서를 고치지 않고 화면만 고치면 주소를 열었을 때 드러난다.
 
-폴더는 한 마디를 더한다. 폴더 이름을 한글로 두지 않는 이유는 §2 와 같다 — 주소는 소문자
-영문·숫자·하이픈만 쓴다. 화면에 보이는 탭 이름은 한글이다(`전체`·`구매`·`마이페이지`).
+`docs/` 폴더의 이름이 곧 한 마디다(`docs/FSD/products/` → `/docs/fsd/products`). 폴더 이름을
+한글로 두지 않는 이유는 §2 와 같다 — 주소는 소문자 영문·숫자·하이픈만 쓴다. 화면에 보이는
+이름은 한글이다(`전체`·`상품 목록`·`장바구니`).
 
 | 주소 | 문서 | 모양 |
 |---|---|---|
 | `/docs` | 문서·화면 목록 | 한 장 |
-| `/ia` · `/ia/{갈래}` | IA — 전체와 일곱 갈래 | 상단 탭 |
-| `/feature/{화면}` · `/non-functional/{화면}` · `/page-view/{화면}` | 화면별 명세·캡처 | 왼쪽 목록 |
-| `/flow` · `/path` · `/naming` · `/admin-sync` · `/non-functional-rules` · `/component` · `/design` | 각 정의서 | 한 장 |
+| `/docs/ia` · `/docs/ia/{화면}` | IA — 전체 도면과 화면별 자리 | 왼쪽 목록 |
+| `/docs/flow-chart` · `/docs/flow-chart/{화면}` | 흐름 — 여정·공통 상호작용과 화면별 흐름 | 왼쪽 목록 |
+| `/docs/fsd` · `/docs/fsd/{화면}` | 기능 명세서 | 왼쪽 목록 |
+| `/docs/nfs` · `/docs/nfs/{정책}` | 비기능 명세서 | 왼쪽 목록 |
+| `/docs/page-view` · `/docs/page-view/{화면}` | 화면 캡처 | 왼쪽 목록 |
+| `/docs/components` · `/docs/design-system` | 컴포넌트·디자인 시스템 | 한 장 |
+| `/docs/path` · `/docs/coding-conventions` · `/docs/admin-mapping` · `/docs/prompt` | 각 정의서 | 한 장 |
+
+`/docs` 아래는 검색 로봇에게 감춘다(`robots: noindex`). 사내 문서라 공개 검색 결과에 뜰 이유가
+없고, 뜨면 고객이 상품 대신 명세서를 먼저 보게 된다.

@@ -43,6 +43,25 @@ function naturalSize(svg: string): Natural {
 
 const ZOOM_STEPS = [0.5, 0.75, 1, 1.5, 2, 3];
 
+/**
+ * 선을 **완전히 직각**으로 만든다.
+ *
+ * `curve: 'step'` 은 꺾이는 자리를 직각으로 계산하지만, mermaid 가 선에 `stroke-linecap: round`
+ * 와 `stroke-linejoin: round` 를 걸어 두어 끝과 모서리가 둥글게 그려진다. 계산은 직각인데
+ * 그림만 휘어 있는 상태라, 갈래가 많아지면 어느 선이 어디서 꺾였는지 눈으로 못 따라간다.
+ *
+ * 화살촉도 같은 이유로 각지게 둔다 — 선은 각지고 촉만 둥글면 따로 노는 것처럼 보인다.
+ */
+const SQUARE_EDGES = [
+  '[&_.edgePath_path]:![stroke-linecap:butt]',
+  '[&_.edgePath_path]:![stroke-linejoin:miter]',
+  '[&_.flowchart-link]:![stroke-linecap:butt]',
+  '[&_.flowchart-link]:![stroke-linejoin:miter]',
+  '[&_path.path]:![stroke-linecap:butt]',
+  '[&_path.path]:![stroke-linejoin:miter]',
+  '[&_marker_path]:![stroke-linejoin:miter]',
+].join(' ');
+
 export function Mermaid({ code, title }: MermaidProps) {
   const reactId = useId();
   // mermaid 는 id 로 임시 DOM 을 만든다. 콜론이 들어가면 선택자로 쓰일 때 깨진다.
@@ -141,7 +160,7 @@ export function Mermaid({ code, title }: MermaidProps) {
             */
             <div
               style={{ width: natural.width, height: natural.height }}
-              className="[&_svg]:!h-full [&_svg]:!w-full [&_svg]:!max-w-none"
+              className={`[&_svg]:!h-full [&_svg]:!w-full [&_svg]:!max-w-none ${SQUARE_EDGES}`}
               dangerouslySetInnerHTML={{ __html: svg }}
             />
           ) : (
@@ -199,7 +218,7 @@ export function Mermaid({ code, title }: MermaidProps) {
             <div
               onClick={(event) => event.stopPropagation()}
               style={{ width: natural.width * zoom, height: natural.height * zoom }}
-              className="m-auto rounded-lg bg-white p-4 [&_svg]:!h-full [&_svg]:!w-full [&_svg]:!max-w-none"
+              className={`m-auto rounded-lg bg-white p-4 [&_svg]:!h-full [&_svg]:!w-full [&_svg]:!max-w-none ${SQUARE_EDGES}`}
               dangerouslySetInnerHTML={{ __html: svg }}
             />
           </div>

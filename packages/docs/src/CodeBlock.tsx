@@ -29,7 +29,8 @@ export function CodeBlock({ code, label }: { code: string; label?: string }) {
   };
 
   return (
-    <div className="my-4">
+    // 표·도면과 같은 여백을 쓴다 — 덩이가 큰 것끼리 간격이 다르면 본문이 층으로 읽히지 않는다.
+    <div className="my-5 min-w-0">
       <div className="flex items-center justify-between gap-3 rounded-t-lg border border-border bg-surface px-4 py-2">
         <span className="truncate font-mono text-xs text-ink-faint">{label ?? 'code'}</span>
         <button

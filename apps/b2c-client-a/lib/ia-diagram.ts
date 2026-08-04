@@ -1,6 +1,6 @@
 // `@/` 별칭 대신 상대 경로를 쓴다 — 이 모듈은 Next 밖(문서 생성 스크립트)에서도 읽힌다.
 import { pages } from '../pages.manifest';
-import { IA_GROUPS, ROOT, type IaGroup } from './ia-groups';
+import { CROSS_EDGES, IA_GROUPS, ROOT, groupOf, koOf, type IaGroup } from './ia-groups';
 
 /**
  * IA 도면을 **만들어 낸다** — mermaid 를 손으로 적지 않는다.
@@ -57,23 +57,74 @@ export function siteMap(): string {
   return lines.join('\n');
 }
 
-/** 갈래 하나 — 그 갈래의 화면과 값이 오는 곳까지 그린다. */
-export function groupMap(group: IaGroup): string {
+/** 지금 보고 있는 화면임을 칠한다. 색만으로 알리지 않도록 테두리도 함께 굵힌다. */
+function highlight(screen: string): string {
+  return `  style ${node(screen)} fill:#e0e7ff,stroke:#4338ca,stroke-width:3px`;
+}
+
+/**
+ * 화면 하나 — **그 화면이 속한 갈래 + 그 화면에 닿는 선만** 그린다.
+ *
+ * 갈래 도면을 그대로 두고 화면만 칠하지 않는 이유: 갈래 안의 이웃은 보이지만 갈래를 넘어
+ * 들어오고 나가는 길이 빠진다. 상품 상세에서 결제로 바로 가는 길은 어느 갈래 도면에도 없어서,
+ * 그 길을 모르는 사람은 장바구니를 반드시 거쳐야 하는 줄 안다.
+ *
+ * 반대로 그 선들을 전체 사이트맵에 다 그으면 도면이 그물이 된다. 한 화면씩 볼 때만 꺼내 그린다.
+ */
+export function screenMap(screen: string): string {
+  const group = groupOf(screen);
+
+  // 홈은 어느 갈래에도 들지 않는다 — 홈의 IA 는 곧 전체 도면이다.
+  if (!group) return [siteMap(), highlight(screen)].join('\n');
+
   const lines = [INIT, 'graph TB', `  ${box(ROOT.screen, ROOT.ko)}`, ''];
 
   lines.push(...subgraph(group));
   lines.push('');
   lines.push(`  ${node(ROOT.screen)} --> ${group.id}`);
   lines.push('');
-  lines.push(...dataNodes(group));
 
-  // 값은 그 갈래의 첫 화면이 대표로 받는다 — 화면마다 선을 그으면 원통에서 선이 부챗살로 퍼진다.
-  const head = group.screens[0];
-  if (head) {
-    group.data.forEach((_, index) => {
-      lines.push(`  ${group.id.toUpperCase()}_D${index} -.-> ${node(head.screen)}`);
-    });
+  /*
+    갈래 밖의 화면은 상자만 세운다. 그쪽 갈래를 통째로 그리면 도면이 두 배가 되고,
+    이 화면을 보러 온 사람이 옆 갈래의 구조를 다시 읽게 된다.
+  */
+  for (const edge of CROSS_EDGES) {
+    if (edge.from !== screen && edge.to !== screen) continue;
+
+    const other = edge.from === screen ? edge.to : edge.from;
+    if (groupOf(other)?.id === group.id) continue;
+    // 홈은 맨 위에 이미 서 있다. 다시 세우면 같은 상자가 두 번 그려진다.
+    if (other !== ROOT.screen) lines.push(`  ${box(other, koOf(other))}`);
+    lines.push(`  ${node(edge.from)} --> ${node(edge.to)}`);
   }
 
+  lines.push('');
+  lines.push(...dataNodes(group));
+  // 갈래 도면과 달리 값은 **보고 있는 화면**이 받는다. 이 화면이 무엇을 읽는지가 물음이므로.
+  group.data.forEach((_, index) => {
+    lines.push(`  ${group.id.toUpperCase()}_D${index} -.-> ${node(screen)}`);
+  });
+
+  lines.push(highlight(screen));
   return lines.join('\n');
 }
+
+/** 이 화면으로 들어오는 길과 나가는 길 — 갈래 안의 선과 갈래를 넘는 선을 함께 본다. */
+export function screenPaths(screen: string): { into: CrossLike[]; outOf: CrossLike[] } {
+  const group = groupOf(screen);
+  const inner = group?.edges ?? [];
+
+  const into: CrossLike[] = [
+    ...inner.filter(([, to]) => to === screen).map(([from]) => ({ screen: from, how: '같은 갈래 안에서' })),
+    ...CROSS_EDGES.filter((edge) => edge.to === screen).map((edge) => ({ screen: edge.from, how: edge.how })),
+  ];
+
+  const outOf: CrossLike[] = [
+    ...inner.filter(([from]) => from === screen).map(([, to]) => ({ screen: to, how: '같은 갈래 안에서' })),
+    ...CROSS_EDGES.filter((edge) => edge.from === screen).map((edge) => ({ screen: edge.to, how: edge.how })),
+  ];
+
+  return { into, outOf };
+}
+
+export type CrossLike = { screen: string; how: string };

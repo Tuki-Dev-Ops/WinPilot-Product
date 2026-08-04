@@ -39,9 +39,9 @@ export function docsNav(counts: { fsd: number; nfs: number; pageView: number }):
       items: [
         { href: '/docs/components', label: 'Components' },
         { href: '/docs/design-system', label: 'Design System' },
-        { href: '/docs/path', label: 'Path 정의서' },
-        { href: '/docs/naming', label: '명명규칙' },
-        { href: '/docs/admin-sync', label: '어드민 연동' },
+        { href: '/docs/path', label: 'Path' },
+        { href: '/docs/coding-conventions', label: 'Coding Conventions' },
+        { href: '/docs/admin-mapping', label: 'Admin Mapping' },
         { href: '/docs/prompt', label: '생성 프롬프트' },
       ],
     },
