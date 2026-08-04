@@ -13,11 +13,39 @@ import { pages } from '../pages.manifest';
  * ## 어드민 연동
  * - 각 항목의 `admin` 이 그 화면이 읽는 어드민 화면이다. 자세한 표는 `/admin-sync`.
  */
+/** 화면 구성 — 어떤 영역이 왜 있고 언제 보이는가 (FSD §3) */
+export type SpecArea = { area: string; purpose: string; when?: string };
+
+/** 입력·출력 항목 (FSD §4) */
+export type SpecField = {
+  name: string;
+  desc: string;
+  /** 입력 형태 — 읽기만 하는 값이면 `표시` */
+  type: string;
+  required?: boolean;
+  /** 형식·길이·범위 */
+  rule?: string;
+  example?: string;
+};
+
+/** 단추와 그 결과 (FSD §6) */
+export type SpecButton = {
+  label: string;
+  /** 눌렀을 때 */
+  onClick: string;
+  /** 성공했을 때 — 화면이 어떻게 바뀌는가 */
+  onSuccess?: string;
+  /** 실패했을 때 */
+  onFail?: string;
+};
+
 export type ScreenSpec = {
   /** `pages.manifest.ts` 의 id */
   screen: string;
   /** 이 화면이 있는 이유 — 한 문장 */
   purpose: string;
+  /** 이 화면을 두어서 얻는 것 — 없으면 목적에서 끌어 쓴다 */
+  effect?: string;
   /** 할 수 있는 일 */
   actions: string[];
   /** 막는 것과 그때 나오는 말 */
@@ -26,6 +54,20 @@ export type ScreenSpec = {
   admin: string[];
   /** 판정 가능한 비기능 조건 */
   nonFunctional: string[];
+
+  /*
+    아래는 기획 명세(FSD)를 채우는 항목이다. 적지 않으면 생성기가 그 절을 `N/A` 로 적는다 —
+    비워 두는 것과 "해당 없음" 은 다르고, 읽는 사람은 그 둘을 구분할 수 없기 때문이다.
+  */
+  areas?: SpecArea[];
+  fields?: SpecField[];
+  buttons?: SpecButton[];
+  /** 입력값을 거르는 규칙 (FSD §9) */
+  validations?: string[];
+  /** 기본 정렬·검색·페이징·조건 유지 (FSD §12) */
+  policy?: string[];
+  /** 앞으로 늘어날 방향 (FSD §14) */
+  future?: string[];
 };
 
 /** 모든 화면에 공통으로 걸리는 비기능 조건. 화면별 항목에 되풀이해 적지 않는다. */

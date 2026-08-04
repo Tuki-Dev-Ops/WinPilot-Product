@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { chromium } from 'playwright';
 import { pages, breakpoints } from '../apps/b2c-client-a/pages.manifest';
@@ -100,7 +100,11 @@ const shots: Shot[] = [
 ];
 
 async function main() {
+    // 지운 화면의 그림이 남아 있으면 없는 화면의 캡처를 문서가 가리킨다.
+  rmSync(IMAGES, { recursive: true, force: true });
+  rmSync(OUT, { recursive: true, force: true });
   mkdirSync(IMAGES, { recursive: true });
+  mkdirSync(OUT, { recursive: true });
 
   const browser = await chromium.launch();
   const results: Record<string, Array<{ file: string; width: number; label: string }>> = {};
@@ -123,11 +127,21 @@ async function main() {
         });
         await page.waitForTimeout(150);
 
-        const file = `${shot.id}-${breakpoint.id}.png`;
-        await page.screenshot({ path: join(IMAGES, file), fullPage: true });
+        /*
+          화면 하나가 폴더 하나다. 26개 화면 × 3 너비 × 예외까지 한 폴더에 쏟으면 100장이
+          이름으로만 갈려서, 한 화면의 그림만 보려 해도 목록 전체를 훑어야 한다.
+
+          JPG 로 찍는다. 캡처는 비교용이라 무손실일 이유가 없고, PNG 로 두면 저장소가
+          화면을 늘릴 때마다 눈에 띄게 무거워진다.
+        */
+        const folder = join(IMAGES, shot.screen);
+        mkdirSync(folder, { recursive: true });
+
+        const file = `${shot.id}-${breakpoint.id}.jpg`;
+        await page.screenshot({ path: join(folder, file), fullPage: true, type: 'jpeg', quality: 82 });
 
         results[shot.id] ??= [];
-        results[shot.id].push({ file, width: breakpoint.width, label: breakpoint.label });
+        results[shot.id].push({ file: `${shot.screen}/${file}`, width: breakpoint.width, label: breakpoint.label });
         console.log(`✓ ${shot.id} · ${breakpoint.label}`);
       } catch (error) {
         console.log(`✗ ${shot.id} · ${breakpoint.label} — ${(error as Error).message.split('\n')[0]}`);
@@ -167,7 +181,7 @@ async function main() {
       화면 캡처 문서에서 없는 문서로 보내는 것만큼 문서를 못 믿게 만드는 것이 없다.
     */
     const related = page
-      ? `\n## 관련 문서\n\n- [기능 명세](/feature/${screen})\n- [비기능 명세](/non-functional/${screen})\n`
+      ? `\n## 관련 문서\n\n- [기능 명세](/docs/fsd/${screen})\n- [비기능 명세](/docs/nfs)\n`
       : '';
 
     const doc = `# 화면 캡처 — ${title}
@@ -178,7 +192,9 @@ async function main() {
 
 ${body}
 ${related}`;
-    writeFileSync(join(OUT, `${screen}.md`), doc, 'utf8');
+    const folder = join(OUT, screen);
+    mkdirSync(folder, { recursive: true });
+    writeFileSync(join(folder, 'index.md'), doc, 'utf8');
   }
 
   console.log(`\n캡처 ${Object.keys(results).length}개 화면 · 문서 ${byScreen.size}장`);
