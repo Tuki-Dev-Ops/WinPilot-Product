@@ -20,6 +20,13 @@ export type StatusTone = 'neutral' | 'success' | 'danger';
 
 export type StatusAction = { href: string; label: string; primary?: boolean };
 
+/**
+ * `hero`   — 404·오류. 화면 전체를 채우고 오른쪽에 큰 도형을 둔다. 헤더 밖에서도 홀로 선다.
+ * `center` — 완료·실패. **헤더와 푸터 사이의 본문**이므로 도형 없이 아이콘·글·단추만
+ *            가운데로 모은다. 방금 무엇을 했는지 알리는 자리라 화면을 통째로 덮을 이유가 없다.
+ */
+export type StatusLayout = 'hero' | 'center';
+
 export type StatusScreenProps = {
   /** 큰 글씨로 앉는 코드 — `404 ERROR` 처럼. 완료·실패 화면에서는 비운다 */
   code?: string;
@@ -28,6 +35,7 @@ export type StatusScreenProps = {
   description: string[];
   actions: StatusAction[];
   tone?: StatusTone;
+  layout?: StatusLayout;
   /** 설명 아래에 붙는 요약(주문번호 등) */
   children?: ReactNode;
 };
@@ -68,14 +76,82 @@ function StatusArt({ tone }: { tone: StatusTone }) {
   );
 }
 
+/**
+ * 결과 아이콘 — 성공은 체크, 실패는 느낌표.
+ *
+ * **모양으로 구분한다.** 색만 다르면 색각 이상 사용자에게는 같은 동그라미 두 개일 뿐이다.
+ */
+function ResultMark({ tone }: { tone: StatusTone }) {
+  const ok = tone !== 'danger';
+
+  return (
+    <span
+      className={`grid size-20 place-items-center rounded-full ${
+        ok ? 'bg-signal-ok/12 text-signal-ok' : 'bg-signal-danger/12 text-signal-danger'
+      }`}
+    >
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="2.6">
+        <circle cx="20" cy="20" r="15" opacity="0.35" />
+        {ok ? (
+          <path d="M13 20.5 L18 25.5 L27.5 15" strokeLinecap="round" strokeLinejoin="round" />
+        ) : (
+          <>
+            <path d="M20 12.5 V21" strokeLinecap="round" />
+            <path d="M20 26.5 v.05" strokeLinecap="round" />
+          </>
+        )}
+      </svg>
+    </span>
+  );
+}
+
 export function StatusScreen({
   code,
   title,
   description,
   actions,
   tone = 'neutral',
+  layout = 'hero',
   children,
 }: StatusScreenProps) {
+  if (layout === 'center') {
+    return (
+      <section className="mx-auto flex w-full max-w-140 flex-col items-center gap-6 py-16 text-center">
+        <ResultMark tone={tone} />
+
+        <div className="flex flex-col items-center gap-3">
+          <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+          <div className="flex flex-col gap-1">
+            {description.map((line) => (
+              <p key={line} className="text-sm leading-relaxed text-ink-muted">
+                {line}
+              </p>
+            ))}
+          </div>
+        </div>
+
+        {children}
+
+        {/* 단추는 가운데에 나란히 — 왼쪽에 붙이면 가운데로 모아 둔 글과 축이 어긋난다. */}
+        <div className="mt-2 flex flex-wrap justify-center gap-2">
+          {actions.map((action) => (
+            <a
+              key={action.href + action.label}
+              href={action.href}
+              className={`flex h-12 shrink-0 items-center whitespace-nowrap rounded-lg px-8 text-sm font-medium ${
+                action.primary
+                  ? 'bg-ink text-white'
+                  : 'border border-border-strong bg-canvas text-ink-muted hover:text-ink'
+              }`}
+            >
+              {action.label}
+            </a>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="relative flex min-h-[70vh] w-full items-center overflow-hidden bg-surface">
       <StatusArt tone={tone} />
