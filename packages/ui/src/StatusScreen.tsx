@@ -49,6 +49,12 @@ const CIRCLE_TONE: Record<StatusTone, { front: [string, string]; back: [string, 
 /**
  * 겹친 두 원. 앞의 원은 결에 따라 색이 달라지고, 뒤의 원은 화면 밖으로 걸쳐 잘린다 —
  * 잘려 있어야 화면이 오른쪽으로 이어지는 느낌이 나고, 원 두 개를 나란히 둔 것처럼 보이지 않는다.
+ *
+ * 자리는 **오른쪽 칸 안**이다. 예전에는 화면 기준으로 띄워 두었는데, 너비가 1024~1280 으로
+ * 좁아지면 도형이 글 위를 덮었다 — 칸 안에 두면 글과 겹칠 자리가 애초에 없다.
+ *
+ * 대신 칸보다 **넓게**(130%) 그려 오른쪽으로 넘치게 둔다. 칸에 딱 맞추면 도형이 통째로 보여
+ * 원 두 개를 나란히 둔 그림이 되고, 화면이 오른쪽으로 이어지는 느낌이 사라진다.
  */
 function StatusArt({ tone }: { tone: StatusTone }) {
   const { front, back } = CIRCLE_TONE[tone];
@@ -57,7 +63,7 @@ function StatusArt({ tone }: { tone: StatusTone }) {
     <svg
       viewBox="0 0 520 520"
       aria-hidden="true"
-      className="pointer-events-none absolute -right-40 top-1/2 hidden h-[130%] -translate-y-1/2 lg:block"
+      className="pointer-events-none absolute left-0 top-1/2 w-[130%] max-w-none -translate-y-1/2"
     >
       <defs>
         <radialGradient id={`status-front-${tone}`} cx="35%" cy="30%" r="80%">
@@ -116,11 +122,11 @@ export function StatusScreen({
 }: StatusScreenProps) {
   if (layout === 'center') {
     return (
-      <section className="mx-auto flex w-full max-w-140 flex-col items-center gap-6 py-16 text-center">
+      <section className="mx-auto flex w-full max-w-140 flex-col items-center gap-6 py-12 text-center sm:py-16">
         <ResultMark tone={tone} />
 
         <div className="flex flex-col items-center gap-3">
-          <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+          <h1 className="text-xl font-bold tracking-tight sm:text-2xl">{title}</h1>
           <div className="flex flex-col gap-1">
             {description.map((line) => (
               <p key={line} className="text-sm leading-relaxed text-ink-muted">
@@ -133,12 +139,12 @@ export function StatusScreen({
         {children}
 
         {/* 단추는 가운데에 나란히 — 왼쪽에 붙이면 가운데로 모아 둔 글과 축이 어긋난다. */}
-        <div className="mt-2 flex flex-wrap justify-center gap-2">
+        <div className="mt-2 flex w-full flex-col justify-center gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
           {actions.map((action) => (
             <a
               key={action.href + action.label}
               href={action.href}
-              className={`flex h-12 shrink-0 items-center whitespace-nowrap rounded-lg px-8 text-sm font-medium ${
+              className={`flex h-12 shrink-0 items-center justify-center whitespace-nowrap rounded-lg px-8 text-sm font-medium ${
                 action.primary
                   ? 'bg-ink text-white'
                   : 'border border-border-strong bg-canvas text-ink-muted hover:text-ink'
@@ -152,14 +158,23 @@ export function StatusScreen({
     );
   }
 
-  return (
-    <section className="relative flex min-h-[70vh] w-full items-center overflow-hidden bg-surface">
-      <StatusArt tone={tone} />
+  /*
+    404·오류는 **화면을 통째로 쓴다**(`min-h-dvh`). 헤더도 푸터도 없이 홀로 서는 화면이라
+    높이를 덜 쓰면 아래가 비어 무엇을 더 기다려야 하는 것처럼 보인다.
 
-      <div className="relative mx-auto flex w-full max-w-350 flex-col gap-6 px-6 py-16 lg:px-16">
-        <div className="flex flex-col gap-4 lg:max-w-140">
-          {code && <p className="text-[40px] font-bold leading-none tracking-tight lg:text-[52px]">{code}</p>}
-          <h1 className={`font-bold tracking-tight ${code ? 'text-xl' : 'text-[32px] leading-tight'}`}>{title}</h1>
+    `vh` 가 아니라 `dvh` 인 이유: 모바일 브라우저는 주소창이 접혔다 펴지며 높이가 바뀌는데,
+    `vh` 는 펼쳐진 높이로 고정이라 첫 화면에서 단추가 주소창에 가려진다.
+  */
+  return (
+    <section className="relative flex min-h-dvh w-full items-center overflow-hidden bg-surface">
+      <div className="mx-auto grid w-full max-w-350 grid-cols-1 items-center gap-8 px-6 py-16 sm:px-8 md:grid-cols-2 lg:gap-10 lg:px-16">
+        <div className="flex min-w-0 flex-col gap-4">
+          {code && (
+            <p className="text-[32px] font-bold leading-none tracking-tight sm:text-[40px] lg:text-[52px]">{code}</p>
+          )}
+          <h1 className={`font-bold tracking-tight ${code ? 'text-lg sm:text-xl' : 'text-2xl leading-tight sm:text-[32px]'}`}>
+            {title}
+          </h1>
 
           <div className="flex flex-col gap-1">
             {description.map((line) => (
@@ -171,12 +186,13 @@ export function StatusScreen({
 
           {children}
 
-          <div className="mt-4 flex flex-wrap gap-2">
+          {/* 좁은 화면에서는 단추가 한 줄에 다 들어가지 않으므로 세로로 쌓고 너비를 채운다. */}
+          <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
             {actions.map((action) => (
               <a
                 key={action.href + action.label}
                 href={action.href}
-                className={`flex h-12 shrink-0 items-center whitespace-nowrap rounded-full px-8 text-sm font-medium ${
+                className={`flex h-12 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-8 text-sm font-medium sm:justify-start ${
                   action.primary
                     ? 'bg-ink text-white'
                     : 'border border-border-strong bg-canvas text-ink-muted hover:text-ink'
@@ -186,6 +202,14 @@ export function StatusScreen({
               </a>
             ))}
           </div>
+        </div>
+
+        {/*
+          도형은 뜻을 담지 않는 무게추라 한 칸으로 접히는 좁은 화면에서는 통째로 뺀다.
+          두 칸이 되는 순간(md)부터 세운다 — 칸을 비워 두면 화면 절반이 이유 없이 빈다.
+        */}
+        <div aria-hidden="true" className="relative hidden h-full min-h-100 md:block">
+          <StatusArt tone={tone} />
         </div>
       </div>
     </section>
