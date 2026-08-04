@@ -1,0 +1,12 @@
+{
+  "name": "WinPilot Design Sync",
+  "id": "winpilot-design-sync",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": "dist/ui.html",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["none"],
+    "reasoning": "번들 파일을 사용자가 직접 넣습니다. 네트워크 접근이 필요 없습니다."
+  }
+}

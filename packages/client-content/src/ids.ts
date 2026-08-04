@@ -1,0 +1,201 @@
+/**
+ * 표준 식별자 · 표준 워딩.
+ *
+ * 템플릿 A~F 는 **같은 화면에 같은 id 와 같은 문구**를 써야 한다.
+ * A 는 `#hero`, C 는 `#main-visual` 이라고 부르기 시작하면 두 템플릿을 기계적으로
+ * 짝지을 방법이 사라지고, 문서·스크린샷·Figma 프레임도 서로 다른 이름을 갖게 된다.
+ *
+ * 배치는 템플릿 마음대로여도 된다. **이름은 아니다.**
+ */
+
+/** 화면 안의 자리(슬롯) — 템플릿마다 위치는 달라도 이름은 같다. */
+export const SLOT = {
+  header: 'slot-header',
+  /** 첫 화면을 채우는 메인 비주얼 — 어드민의 배너가 여기로 들어온다 */
+  hero: 'slot-hero',
+  banner: 'slot-banner',
+  newArrivals: 'slot-new-arrivals',
+  bestSellers: 'slot-best-sellers',
+  categoryExplorer: 'slot-category-explorer',
+  productList: 'slot-product-list',
+  productDetail: 'slot-product-detail',
+  noticeList: 'slot-notice-list',
+  articleBody: 'slot-article-body',
+  companyIntro: 'slot-company-intro',
+  policyBody: 'slot-policy-body',
+  inquiryForm: 'slot-inquiry-form',
+  cartList: 'slot-cart-list',
+  alarmList: 'slot-alarm-list',
+  orderList: 'slot-order-list',
+  orderDetail: 'slot-order-detail',
+  authForm: 'slot-auth-form',
+  footer: 'slot-footer',
+} as const;
+
+export type SlotId = (typeof SLOT)[keyof typeof SLOT];
+
+/**
+ * 추출기가 읽는 컴포넌트 식별자.
+ * `{view}/{feature}#{component}` 꼴을 지킨다 — `@winpilot/spec` 의 cid() 와 같은 규칙이다.
+ */
+export function cid(feature: string, component: string): string {
+  return `b2c-client/${feature}#${component}`;
+}
+
+/** 화면 밖으로 나가는 모든 문구. 템플릿이 직접 한국어를 적지 않는다. */
+export const COPY = {
+  brandFallback: '브랜드',
+  nav: {
+    home: '홈',
+    company: '회사소개',
+    companyIntro: '회사소개',
+    milestones: '연혁',
+    portfolios: '포트폴리오',
+    newArrivals: '신상품',
+    best: '베스트',
+    products: '상품',
+    support: '고객지원',
+    notices: '공지사항',
+    faqs: 'FAQ',
+    news: '뉴스',
+    contact: '문의하기',
+  },
+  header: {
+    cart: '장바구니',
+    alarm: '알람',
+    login: '로그인',
+    signup: '회원가입',
+    myOrders: '주문 내역',
+    search: '검색',
+    searchHint: '상품 검색',
+    wishlist: '관심 상품',
+  },
+  cart: {
+    title: '장바구니',
+    empty: '장바구니가 비어 있습니다.',
+    quantity: '수량',
+    total: '결제 예정 금액',
+    checkout: '주문하기',
+    soldOutLine: '품절되어 주문할 수 없습니다.',
+    remove: '삭제',
+  },
+  alarm: {
+    title: '알람',
+    empty: '받은 알람이 없습니다.',
+    unread: '읽지 않음',
+    markAll: '모두 읽음',
+  },
+  order: {
+    title: '주문 내역',
+    empty: '주문 내역이 없습니다.',
+    orderNumber: '주문번호',
+    orderedAt: '주문일시',
+    payState: '결제',
+    shipState: '배송',
+    tracking: '운송장',
+    amount: '결제금액',
+    quantity: '수량',
+    detail: '주문 상세',
+  },
+  auth: {
+    loginTitle: '로그인',
+    signupTitle: '회원가입',
+    email: '이메일',
+    password: '비밀번호',
+    passwordConfirm: '비밀번호 재확인',
+    name: '이름',
+    nickname: '닉네임',
+    phone: '휴대폰번호',
+    marketing: '마케팅 정보 수신 동의 (선택)',
+    privacyAgree: '개인정보 수집·이용 동의 (필수)',
+    loginSubmit: '로그인',
+    signupSubmit: '가입하기',
+    toSignup: '아직 계정이 없으신가요?',
+    toLogin: '이미 계정이 있으신가요?',
+  },
+  home: {
+    newArrivalsTitle: '신상품',
+    newArrivalsDescription: '새로 들어온 상품입니다.',
+    bestTitle: '베스트',
+    bestDescription: '가장 많이 팔린 상품입니다.',
+    categoryTitle: '카테고리',
+    categoryDescription: '분류를 골라 상품을 살펴보세요.',
+    more: '더 보기',
+    quickNavLabel: '바로가기',
+    /**
+     * 쿠폰 띠는 **고정 문구**다 — 어드민이 관리하는 배너가 아니라 첫 구매 혜택 안내라서
+     * 기간마다 바뀌지 않는다. 바뀌는 것은 배너로 올린다.
+     */
+    couponTitle: '첫 구매 30% 쿠폰',
+    couponAction: '이번 달 혜택 자세히 보기',
+  },
+  product: {
+    listTitle: '상품',
+    empty: '등록된 상품이 없습니다.',
+    priceUnit: '원',
+    soldOut: '품절',
+    buy: '구매하기',
+    reward: '적립',
+    shipping: '배송',
+    option: '옵션',
+    optionPick: '옵션을 선택하세요',
+    detail: '상세 설명',
+    detailEmpty: '등록된 상세 설명이 없습니다.',
+    listPriceLabel: '정가',
+  },
+  notice: {
+    listTitle: '공지사항',
+    empty: '등록된 공지가 없습니다.',
+    pinned: '고정',
+  },
+  faq: { listTitle: '자주 묻는 질문', empty: '등록된 질문이 없습니다.' },
+  news: { listTitle: '뉴스', empty: '등록된 뉴스가 없습니다.', readOriginal: '원문 보기' },
+  portfolio: { listTitle: '포트폴리오', empty: '등록된 포트폴리오가 없습니다.' },
+  company: { title: '회사 소개', historyTitle: '연혁', ceoLabel: '대표', foundedLabel: '설립' },
+  policy: { versionLabel: '버전', effectiveLabel: '시행일' },
+  inquiry: { title: '문의하기', submit: '문의 보내기', categoryLabel: '문의 유형' },
+  footer: {
+    ceoLabel: '대표',
+    businessNumberLabel: '사업자등록번호',
+    mailOrderLabel: '통신판매업신고',
+    phoneLabel: '전화',
+    faxLabel: '팩스',
+    privacyOfficerLabel: '개인정보보호책임자',
+    hostingLabel: '호스팅',
+    terms: '이용약관',
+    privacy: '개인정보 처리방침',
+  },
+  docs: {
+    title: '설계 문서',
+    intro: '이 템플릿이 따르는 문서입니다. 주소로 바로 열 수 있습니다.',
+    notFound: '해당 문서가 없습니다.',
+  },
+} as const;
+
+/** 고객 화면 라우트 — 템플릿 6개가 **같은 경로**를 쓴다. 경로가 다르면 문서도 갈라진다. */
+export const ROUTES = {
+  home: '/',
+  products: '/products',
+  productDetail: (id: string) => `/products/${id}`,
+  /** 신상품·베스트는 새 자원이 아니라 상품 목록의 **필터된 모습**이다 — 경로를 늘리지 않는다. */
+  productsByTag: (tag: 'NEW' | 'BEST') => `/products?tag=${tag}`,
+  productsBySearch: (keyword: string) => '/products?q=' + encodeURIComponent(keyword),
+  productsByCategory: (categoryId: string) => `/products?category=${categoryId}`,
+  /** 연혁은 회사 소개와 별개 화면이다 — 읽는 목적이 다르다(무엇을 하는 회사 / 어떻게 커 왔는가). */
+  companyHistory: '/company/history',
+  cart: '/cart',
+  orders: '/orders',
+  orderDetail: (id: string) => `/orders/${id}`,
+  alarms: '/alarms',
+  login: '/login',
+  signup: '/signup',
+  notices: '/notices',
+  noticeDetail: (id: string) => `/notices/${id}`,
+  faqs: '/faqs',
+  news: '/news',
+  portfolios: '/portfolios',
+  company: '/company',
+  contact: '/contact',
+  terms: '/terms',
+  privacy: '/privacy',
+} as const;

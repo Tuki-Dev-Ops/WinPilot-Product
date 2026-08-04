@@ -1,0 +1,7 @@
+@import 'tailwindcss';
+
+/*
+ * 디자인 토큰은 앱이 소유하지 않는다 — `@winpilot/tokens` 하나를 모든 앱이 import 한다.
+ * 여기에 색이나 폰트를 직접 선언하면 그 순간 디자인 시스템이 두 벌이 된다.
+ */
+@import '@winpilot/tokens/theme.css';

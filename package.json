@@ -1,0 +1,26 @@
+{
+  "name": "winpilot-product",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "dev:client": "pnpm --filter @winpilot/b2c-client-a dev",
+    "dev:admin": "pnpm --filter @winpilot/b2c-admin dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "figma:build": "pnpm --filter @winpilot/figma-plugin build",
+    "figma:watch": "pnpm --filter @winpilot/figma-plugin watch",
+    "spec:check": "tsx packages/spec/src/cli.ts",
+    "spec:matrix": "tsx packages/spec/src/cli.ts --matrix",
+    "ssot:tokens": "tsx packages/tokens/src/cli.ts",
+    "ssot:extract": "tsx tools/extractor/src/cli.ts",
+    "ssot:verify": "tsx tools/verifier/src/cli.ts",
+    "ssot:selftest": "tsx tools/verifier/src/selftest.ts",
+    "dev:internal": "pnpm --filter @winpilot/internal-admin dev"
+  },
+  "devDependencies": {
+    "playwright": "^1.62.1",
+    "tsx": "^4.23.5",
+    "typescript": "^5.7.3"
+  }
+}

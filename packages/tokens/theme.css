@@ -1,0 +1,163 @@
+/*
+ * L0 — 디자인 토큰 (SSOT)
+ *
+ * **모든 앱이 이 파일 하나를 import 한다.** 앱마다 복제하면 그 순간 디자인 시스템이
+ * 두 벌이 되고, 이 프로젝트가 막으려는 바로 그 표류가 시작된다.
+ * 레포를 분리한 뒤에도 이 파일은 `@winpilot/tokens` 패키지로 함께 배포된다.
+ *
+ * Tailwind v4 의 @theme 는 CSS 커스텀 프로퍼티로 컴파일되므로, 추출기는
+ * getComputedStyle(document.documentElement) 에서 --* 를 읽는 것만으로 토큰 전체를 얻는다.
+ * 별도 설정 파서가 필요 없고 "브라우저가 계산한 값이 진실" 이라는 원칙과 정확히 일치한다.
+ */
+
+/*
+ * 폰트는 전부 셀프호스팅한다. 제네릭 패밀리(ui-monospace, system-ui …)에 의존하면
+ * 실행 환경마다 다른 폰트가 렌더되고, 그 이름은 Figma 에 존재하지도 않아 플러그인이 멈춘다.
+ */
+@import 'pretendard/dist/web/variable/pretendardvariable.css';
+
+/*
+ * JetBrains Mono 는 @font-face 로 직접 선언한다.
+ * @fontsource 패키지의 exports 서브패스를 Tailwind 의 CSS 리졸버가 처리하지 못하는데,
+ * 어차피 폰트 파일은 리포지토리가 소유해야 하는 자산이다 (Figma 에 같은 파일을 설치해야 하므로).
+ * 파일은 각 앱의 public/fonts/ 에 둔다 — 앱마다 정적 자산 루트가 다르기 때문이다.
+ * 원본: @fontsource-variable/jetbrains-mono (SIL Open Font License 1.1)
+ */
+@font-face {
+  font-family: 'JetBrains Mono Variable';
+  font-style: normal;
+  font-display: block;
+  font-weight: 100 800;
+  src: url('/fonts/jetbrains-mono-variable-latin.woff2') format('woff2');
+}
+
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+/* 토스트는 화면 아래 중앙에서 올라온다 */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+}
+
+/* 접근성 — 모션 감소를 켠 사용자에게는 동작을 없앤다 (docs/spec/08-non-functional.md §8.2) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+:root {
+  --canvas: #ffffff;
+  --surface: #f6f7f9;
+  --surface-raised: #ffffff;
+  --border: #e3e5eb;
+  --border-strong: #cbcfd9;
+  --ink: #333d4b;
+  --ink-muted: #8b95a1;
+  /* 서브 폰트보다 한 단계 더 옅어야 위계가 유지된다 */
+  --ink-faint: #b0b8c1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --canvas: #090a0d;
+    --surface: #0f1117;
+    --surface-raised: #151822;
+    --border: #21252f;
+    --border-strong: #333846;
+    --ink: #f1f3f7;
+    --ink-muted: #98a0af;
+    --ink-faint: #6b7684;
+  }
+}
+
+/*
+ * `static` — 사용 여부와 무관하게 이 블록의 변수를 전부 :root 에 방출한다.
+ * Tailwind v4 는 기본적으로 사용된 토큰만 남기는데(트리셰이킹), 그러면 아직 어떤 페이지도
+ * 쓰지 않은 브랜드 색이 토큰 파일과 Figma Variables 에서 통째로 빠져 디자인 시스템이
+ * 페이지 구축 순서에 따라 흔들린다. 우리 네임스페이스만 static 으로 고정한다.
+ */
+@theme static {
+  --font-sans: 'Pretendard Variable', Pretendard, ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+
+  /*
+   * 500 = 버튼 기본, 600 = 버튼 호버. 이 두 값이 지정값이고 나머지는 그 위아래로 채운 것이다.
+   * 링크·아이콘 텍스트에는 700 을 쓴다 — 600(#2272eb)은 흰 배경 대비가 4.49:1 로
+   * 본문 기준(4.5:1)에 아슬아슬하게 못 미친다.
+   */
+  --color-brand-50: #eef5ff;
+  --color-brand-100: #d9e8ff;
+  --color-brand-200: #b8d5ff;
+  --color-brand-300: #8abaff;
+  --color-brand-400: #5c9bfb;
+  --color-brand-500: #3182f6;
+  --color-brand-600: #2272eb;
+  --color-brand-700: #1b5fc4;
+  --color-brand-800: #1a4f9c;
+  --color-brand-900: #1a437c;
+
+  --color-signal-ok: #17915c;
+  --color-signal-wait: #9a7b12;
+  /* 검증 오류. 흰 배경 대비 4.83:1 로 본문 기준(4.5:1)을 넘긴다. */
+  --color-signal-danger: #d92d20;
+
+  /*
+   * 모서리는 **4px 하나로 통일**한다.
+   *
+   * Tailwind 기본 스케일(2/4/6/8/12/16px)을 그대로 두면 컴포넌트마다 다른 곡률이 섞인다.
+   * 스케일 전체를 같은 값으로 고정해 두면 어떤 유틸리티를 쓰든 결과가 같아, 컴포넌트를
+   * 하나씩 고칠 필요도 없고 나중에 곡률을 바꿀 때도 이 파일만 만지면 된다.
+   * `rounded-full`(알약형 배지·원형 마크)만 예외로 남는다.
+   */
+  /*
+   * 열림 동작. 값이 토큰이므로 앱마다 제각각인 지속시간이 생기지 않는다.
+   * 추출기는 캡처 직전 모든 애니메이션을 끄므로 Figma 결과에는 영향이 없다.
+   */
+  --animate-overlay-in: overlay-in 150ms ease-out;
+  --animate-panel-in: panel-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-dropdown-in: dropdown-in 140ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-toast-in: toast-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  --radius-xs: 4px;
+  --radius-sm: 4px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-xl: 4px;
+  --radius-2xl: 4px;
+  --radius-3xl: 4px;
+  --radius-4xl: 4px;
+}

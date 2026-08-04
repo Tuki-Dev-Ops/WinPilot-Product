@@ -1,0 +1,198 @@
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 16px;
+    font: 12px/1.5 'Inter', -apple-system, system-ui, sans-serif;
+    color: var(--figma-color-text); background: var(--figma-color-bg);
+  }
+  h1 { margin: 0 0 4px; font-size: 13px; font-weight: 600; }
+  p.sub { margin: 0 0 14px; color: var(--figma-color-text-secondary); }
+  #drop {
+    border: 1px dashed var(--figma-color-border); border-radius: 8px;
+    padding: 22px 14px; text-align: center; cursor: pointer;
+    background: var(--figma-color-bg-secondary);
+  }
+  #drop.over { border-color: var(--figma-color-border-brand-strong); background: var(--figma-color-bg-brand-tertiary); }
+  #drop strong { display: block; margin-bottom: 4px; }
+  #drop span { color: var(--figma-color-text-secondary); }
+  input[type=file] { display: none; }
+  .row { display: flex; gap: 8px; margin-top: 12px; }
+  button {
+    flex: 1; padding: 8px 12px; border: none; border-radius: 6px;
+    font: inherit; font-weight: 500; cursor: pointer;
+  }
+  button.primary { background: var(--figma-color-bg-brand); color: var(--figma-color-text-onbrand); }
+  button.secondary { background: var(--figma-color-bg-secondary); color: var(--figma-color-text); }
+  button:disabled { opacity: .5; cursor: default; }
+  #log {
+    margin-top: 14px; padding: 10px; border-radius: 6px; min-height: 40px; max-height: 300px;
+    overflow: auto; white-space: pre-wrap; word-break: break-word;
+    font-family: ui-monospace, monospace; font-size: 11px;
+    background: var(--figma-color-bg-secondary);
+  }
+  .ok { color: var(--figma-color-text-success); }
+  .bad { color: var(--figma-color-text-danger); }
+  .warn { color: var(--figma-color-text-warning); }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 11px; }
+  td { padding: 2px 4px; border-top: 1px solid var(--figma-color-border); vertical-align: top; }
+  td:first-child { color: var(--figma-color-text-secondary); white-space: nowrap; }
+</style>
+
+<h1>WinPilot Design Sync</h1>
+<p class="sub">추출기가 만든 <code>artifacts/figma/bundle.json</code> 을 넣으세요.</p>
+
+<div id="drop">
+  <strong>번들 파일을 여기에 드롭</strong>
+  <span>또는 클릭해서 선택</span>
+</div>
+<input type="file" id="file" accept="application/json,.json" />
+
+<div class="row">
+  <button class="primary" id="run" disabled>Figma 에 생성</button>
+  <button class="secondary" id="export" disabled>PNG 내보내기</button>
+  <button class="secondary" id="close">닫기</button>
+</div>
+<p class="sub" style="margin:8px 0 0">내보낸 PNG 를 <code>artifacts/actual/</code> 에 넣고 <code>pnpm ssot:verify</code> 를 실행하세요.</p>
+
+<div id="log">번들을 기다리는 중…</div>
+
+<script>
+  const drop = document.getElementById('drop');
+  const fileInput = document.getElementById('file');
+  const runButton = document.getElementById('run');
+  const log = document.getElementById('log');
+  let bundleText = null;
+
+  const write = (html) => { log.innerHTML = html; };
+
+  function accept(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      bundleText = String(reader.result);
+      try {
+        const parsed = JSON.parse(bundleText);
+        const pages = (parsed.pages || []).length;
+        const documents = (parsed.documents || []).length;
+        const assets = Object.keys(parsed.assets || {}).length;
+        write(
+          `${file.name}  (${(bundleText.length / 1024 / 1024).toFixed(2)} MB)\n` +
+          `페이지 ${pages} · 문서 ${documents} · 자산 ${assets}\n` +
+          `commit ${String(parsed.commit || '').slice(0, 8)}  ${parsed.generatedAt || ''}`
+        );
+        runButton.disabled = documents === 0;
+      } catch (error) {
+        write('<span class="bad">JSON 파싱 실패: ' + error.message + '</span>');
+        bundleText = null;
+        runButton.disabled = true;
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  drop.onclick = () => fileInput.click();
+  fileInput.onchange = (event) => accept(event.target.files[0]);
+  drop.ondragover = (event) => { event.preventDefault(); drop.classList.add('over'); };
+  drop.ondragleave = () => drop.classList.remove('over');
+  drop.ondrop = (event) => {
+    event.preventDefault();
+    drop.classList.remove('over');
+    accept(event.dataTransfer.files[0]);
+  };
+
+  runButton.onclick = () => {
+    if (!bundleText) return;
+    runButton.disabled = true;
+    write('생성 시작…');
+    parent.postMessage({ pluginMessage: { type: 'run', bundle: bundleText } }, '*');
+  };
+
+  const exportButton = document.getElementById('export');
+  exportButton.onclick = () => {
+    exportButton.disabled = true;
+    parent.postMessage({ pluginMessage: { type: 'export' } }, '*');
+  };
+
+  document.getElementById('close').onclick = () => {
+    parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*');
+  };
+
+  function download(name, bytes) {
+    const blob = new Blob([new Uint8Array(bytes)], { type: 'image/png' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = name;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }
+
+  const escapeHtml = (value) =>
+    String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  window.onmessage = (event) => {
+    const message = event.data.pluginMessage;
+    if (!message) return;
+
+    if (message.type === 'progress') {
+      write(escapeHtml(message.payload));
+      return;
+    }
+
+    if (message.type === 'error') {
+      write('<span class="bad">' + escapeHtml(message.payload) + '</span>');
+      runButton.disabled = !bundleText;
+      exportButton.disabled = false;
+      return;
+    }
+
+    if (message.type === 'exported') {
+      const files = message.payload;
+      files.forEach((file, index) => setTimeout(() => download(file.name, file.bytes), index * 250));
+      write(
+        '<span class="ok">PNG ' + files.length + '개 내보냄</span>\n' +
+        files.map((f) => '  ' + f.name).join('\n') +
+        '\n\n다운로드 폴더의 파일을 artifacts/actual/ 로 옮기고\n  pnpm ssot:verify\n를 실행하세요.'
+      );
+      exportButton.disabled = false;
+      return;
+    }
+
+    if (message.type === 'done') {
+      const r = message.payload;
+      const verdict = r.mismatches.length === 0
+        ? '<span class="ok">A. 수치 검증 통과 — 불일치 0건</span>'
+        : '<span class="bad">A. 수치 검증 실패 — 불일치 ' + r.mismatches.length + '건</span>';
+
+      let html = verdict + '\n\n<table>' +
+        '<tr><td>새 페이지</td><td>' + r.pagesCreated + '</td></tr>' +
+        '<tr><td>프레임</td><td>' + r.framesCreated + '</td></tr>' +
+        '<tr><td>노드</td><td>' + r.nodesCreated + '</td></tr>' +
+        '<tr><td>텍스트</td><td>' + r.textNodes + '</td></tr>' +
+        '<tr><td>폴백 래스터</td><td>' + r.fallbackNodes + '</td></tr>' +
+        '<tr><td>줄 수 불일치</td><td>' + r.lineCountMismatches + '</td></tr>' +
+        '<tr><td>컴포넌트</td><td>' + r.components + ' (세트 ' + r.componentSets + ')</td></tr>' +
+        '<tr><td>컴포넌트 속성</td><td>' + r.componentProperties + '</td></tr>' +
+        '</table>';
+
+      if (r.mismatches.length > 0) {
+        html += '\n<strong>불일치 (앞 20건)</strong>\n';
+        html += r.mismatches.slice(0, 20).map((m) =>
+          escapeHtml(`${m.nodeId}${m.cid ? ' [' + m.cid + ']' : ''}  ${m.attribute}\n    기대 ${m.expected}  실제 ${m.actual}`)
+        ).join('\n');
+      }
+
+      if (r.warnings.length > 0) {
+        html += '\n\n<span class="warn"><strong>경고 ' + r.warnings.length + '건 (앞 10건)</strong>\n';
+        html += escapeHtml(r.warnings.slice(0, 10).join('\n')) + '</span>';
+      }
+
+      write(html);
+      runButton.disabled = false;
+      exportButton.disabled = false;
+    }
+  };
+</script>

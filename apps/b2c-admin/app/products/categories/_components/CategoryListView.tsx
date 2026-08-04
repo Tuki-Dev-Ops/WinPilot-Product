@@ -1,0 +1,463 @@
+'use client';
+
+import { useEffect, useMemo, useState, type MouseEvent } from 'react';
+import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
+import { AdminListToolbar, ALL_VALUE, type AdminFilterField } from '@/app/_components/AdminListToolbar';
+import { useToast } from '@winpilot/ui';
+import type { CategoryFormInput, CategoryFormMode } from '@/lib/validation/category-record';
+import { CategoryFormModal, type CategoryRecord } from './CategoryFormModal';
+
+/** 프론트엔드 전용 — 서버 없이 이 배열이 목록의 원본이다. */
+const INITIAL_CATEGORIES: CategoryRecord[] = [
+  { id: 'C-01', name: '리빙', parentId: '', visible: true, productCount: 128 },
+  { id: 'C-02', name: '주방', parentId: 'C-01', visible: true, productCount: 54 },
+  { id: 'C-03', name: '침구', parentId: 'C-01', visible: true, productCount: 31 },
+  { id: 'C-04', name: '수납', parentId: 'C-01', visible: false, productCount: 43 },
+  { id: 'C-05', name: '패션', parentId: '', visible: true, productCount: 214 },
+  { id: 'C-06', name: '아우터', parentId: 'C-05', visible: true, productCount: 88 },
+  { id: 'C-07', name: '상의', parentId: 'C-05', visible: true, productCount: 126 },
+  { id: 'C-08', name: '아웃도어', parentId: '', visible: false, productCount: 42 },
+];
+
+const TAB_VISIBLE: Record<string, boolean | null> = { all: null, shown: true, hidden: false };
+const TAB_LABEL: Record<string, string> = { all: '전체', shown: '노출', hidden: '숨김' };
+
+// shrink-0 · whitespace-nowrap — 좁은 폭에서 flex 가 버튼을 눌러 글자가 접히는 것을 막는다.
+const ACTION_BUTTON = 'h-8 shrink-0 whitespace-nowrap rounded-lg border px-3 text-sm transition-colors duration-150';
+const NEUTRAL_ACTION = `${ACTION_BUTTON} border-border-strong text-ink-muted hover:border-ink-faint`;
+const DANGER_ACTION = `${ACTION_BUTTON} border-border-strong text-signal-danger hover:border-signal-danger`;
+
+/** 행 클릭이 선택/상세를 담당하므로, 행 안의 버튼은 자기 동작만 하도록 전파를 끊는다. */
+const stopRowClick = (event: MouseEvent) => event.stopPropagation();
+
+function nextCategoryId(categories: CategoryRecord[]): string {
+  const max = categories.reduce((biggest, item) => Math.max(biggest, Number(item.id.replace('C-', ''))), 0);
+  return `C-${`${max + 1}`.padStart(2, '0')}`;
+}
+
+function VisibilityBadge({ visible }: { visible: boolean }) {
+  return (
+    <span
+      className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${
+        visible ? 'bg-signal-ok/12 text-signal-ok' : 'bg-surface text-ink-muted'
+      }`}
+    >
+      {visible ? '노출' : '숨김'}
+    </span>
+  );
+}
+
+type FormTarget = { mode: CategoryFormMode; depth: 1 | 2; record: CategoryRecord | null; parentId: string };
+
+export function CategoryListView() {
+  const toast = useToast();
+  const [categories, setCategories] = useState<CategoryRecord[]>(INITIAL_CATEGORIES);
+  const [activeTabId, setActiveTabId] = useState('all');
+  const [search, setSearch] = useState('');
+  const [selectedRootId, setSelectedRootId] = useState<string>('C-01');
+  const [filters, setFilters] = useState<Record<string, string>>({});
+  const [form, setForm] = useState<FormTarget | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<CategoryRecord | null>(null);
+  const [pendingSave, setPendingSave] = useState<
+    { mode: CategoryFormMode; depth: 1 | 2; name: string; visible: boolean } | null
+  >(null);
+
+  const roots = useMemo(() => categories.filter((item) => !item.parentId), [categories]);
+  const childrenOf = (rootId: string) => categories.filter((item) => item.parentId === rootId);
+
+  const filterFields = useMemo<AdminFilterField[]>(
+    () => [
+      {
+        id: 'children',
+        label: '하위 분류 (대분류만)',
+        options: [
+          { value: 'yes', label: '있음' },
+          { value: 'no', label: '없음' },
+        ],
+      },
+      {
+        id: 'products',
+        label: '상품 수',
+        options: [
+          { value: 'none', label: '없음 (0개)' },
+          { value: 'few', label: '1 ~ 99개' },
+          { value: 'many', label: '100개 이상' },
+        ],
+      },
+    ],
+    [],
+  );
+
+  const matchesFilters = (item: CategoryRecord) => {
+    // 하위 분류 조건은 대분류에만 뜻이 있다.
+    const children = filters.children ?? ALL_VALUE;
+    if (children !== ALL_VALUE && !item.parentId) {
+      if (childrenOf(item.id).length > 0 !== (children === 'yes')) return false;
+    }
+
+    const products = filters.products ?? ALL_VALUE;
+    if (products !== ALL_VALUE) {
+      if (products === 'none' && item.productCount !== 0) return false;
+      if (products === 'few' && (item.productCount === 0 || item.productCount >= 100)) return false;
+      if (products === 'many' && item.productCount < 100) return false;
+    }
+
+    return true;
+  };
+
+  const matches = (item: CategoryRecord) => {
+    const wanted = TAB_VISIBLE[activeTabId];
+    if (wanted !== null && wanted !== undefined && item.visible !== wanted) return false;
+    if (!matchesFilters(item)) return false;
+    const keyword = search.trim().toLowerCase();
+    if (!keyword) return true;
+    return item.name.toLowerCase().includes(keyword) || item.id.toLowerCase().includes(keyword);
+  };
+
+  // 대분류는 자기 자신이 걸리거나 하위 중 하나라도 걸리면 남긴다 — 하위를 찾을 때 상위가 사라지면 못 찾는다.
+  const visibleRoots = useMemo(
+    () => roots.filter((root) => matches(root) || childrenOf(root.id).some(matches)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [categories, activeTabId, search],
+  );
+
+  const selectedRoot = useMemo(
+    () => categories.find((item) => item.id === selectedRootId) ?? null,
+    [categories, selectedRootId],
+  );
+
+  const visibleChildren = useMemo(
+    () => (selectedRoot ? childrenOf(selectedRoot.id).filter((item) => matches(item) || matches(selectedRoot)) : []),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [categories, selectedRootId, activeTabId, search],
+  );
+
+  // 필터 때문에 선택한 대분류가 목록에서 사라지면 첫 번째로 옮긴다.
+  useEffect(() => {
+    if (visibleRoots.length === 0) return;
+    if (!visibleRoots.some((root) => root.id === selectedRootId)) {
+      setSelectedRootId(visibleRoots[0]?.id ?? '');
+    }
+  }, [visibleRoots, selectedRootId]);
+
+  const tabs = useMemo(
+    () =>
+      Object.keys(TAB_VISIBLE).map((id) => {
+        const wanted = TAB_VISIBLE[id];
+        return {
+          id,
+          label: TAB_LABEL[id] ?? id,
+          count: wanted === null || wanted === undefined ? categories.length : categories.filter((item) => item.visible === wanted).length,
+        };
+      }),
+    [categories],
+  );
+
+  const submit = (input: CategoryFormInput) => {
+    if (!form) return;
+    const next = { name: input.name.trim(), visible: input.visible };
+    const depthLabel = form.depth === 1 ? '대분류' : '세부 분류';
+
+    // 같은 상위 아래 이름이 겹치면 목록에서 구분이 안 된다.
+    const duplicate = categories.some(
+      (item) =>
+        item.parentId === form.parentId && item.name === next.name && item.id !== (form.record?.id ?? ''),
+    );
+    if (duplicate) {
+      toast.error({ message: `이미 있는 ${depthLabel} 이름입니다.`, detail: `'${next.name}' 은(는) 같은 위치에 이미 있습니다.` });
+      return;
+    }
+
+    // 카테고리는 고객 화면 메뉴를 바꾼다 — 반영 전에 한 번 더 확인한다.
+    setPendingSave({ mode: form.mode, depth: form.depth, ...next });
+  };
+
+  const applySave = () => {
+    const next = pendingSave;
+    if (!next || !form) return;
+    setPendingSave(null);
+
+    const depthLabel = next.depth === 1 ? '대분류' : '세부 분류';
+
+    if (next.mode === 'create') {
+      const id = nextCategoryId(categories);
+      setCategories((previous) => [
+        ...previous,
+        { id, parentId: form.parentId, productCount: 0, name: next.name, visible: next.visible },
+      ]);
+      if (next.depth === 1) setSelectedRootId(id);
+      toast.success({ message: `${depthLabel}를 추가했습니다.`, detail: `${next.name} · ${id}` });
+    } else if (form.record) {
+      const targetId = form.record.id;
+      setCategories((previous) =>
+        previous.map((item) => (item.id === targetId ? { ...item, name: next.name, visible: next.visible } : item)),
+      );
+      toast.success({ message: `${depthLabel}를 저장했습니다.`, detail: `${next.name} · ${targetId}` });
+    }
+    setForm(null);
+  };
+
+  const confirmDelete = () => {
+    if (!pendingDelete) return;
+    const target = pendingDelete.id;
+    const isRoot = !pendingDelete.parentId;
+    const childCount = childrenOf(target).length;
+
+    // 대분류를 지우면 그 하위도 함께 사라진다 — 상위 없는 하위가 남으면 목록이 깨진다.
+    setCategories((previous) => previous.filter((item) => item.id !== target && item.parentId !== target));
+    setPendingDelete(null);
+    toast.success({
+      message: `${isRoot ? '대분류' : '세부 분류'}를 삭제했습니다.`,
+      detail: isRoot && childCount > 0
+        ? `${pendingDelete.name} · 세부 분류 ${childCount}개도 함께 삭제되었습니다.`
+        : `${pendingDelete.name} · ${target}`,
+    });
+  };
+
+  const deleteIsRoot = pendingDelete ? !pendingDelete.parentId : false;
+
+  return (
+    <>
+      <AdminListToolbar
+        tabs={tabs}
+        activeTabId={activeTabId}
+        onTabChange={setActiveTabId}
+        searchId="category-search"
+        searchLabel="카테고리 검색"
+        searchHint="카테고리명, 카테고리 코드로 검색"
+        searchValue={search}
+        onSearchChange={setSearch}
+        actionLabel="대분류 추가"
+        onAction={() => setForm({ mode: 'create', depth: 1, record: null, parentId: '' })}
+        filters={filterFields}
+        filterValues={filters}
+        onFilterChange={(id, value) => setFilters((previous) => ({ ...previous, [id]: value }))}
+        onFilterReset={() => {
+          setFilters({});
+          toast.info('필터를 초기화했습니다.');
+        }}
+      />
+
+      <div className="flex flex-col gap-6 lg:flex-row">
+        {/*
+          1Depth — 클릭하면 오른쪽에 그 하위가 펼쳐진다.
+          순번·이름·코드·노출뱃지·조회/삭제가 한 줄에 들어가야 해서 320px 로는 좁다.
+        */}
+        <section
+          data-ssot-cid="b2c-admin/category.list#AdminCategoryRootPanel"
+          className="w-full shrink-0 overflow-hidden rounded-xl border border-border bg-canvas lg:w-112 xl:w-128"
+        >
+          <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
+            <h2 className="text-sm font-semibold">1Depth · 대분류</h2>
+            <button
+              type="button"
+              onClick={() => setForm({ mode: 'create', depth: 1, record: null, parentId: '' })}
+              className="h-8 rounded-lg bg-brand-500 px-3 text-sm font-medium text-white hover:bg-brand-600"
+            >
+              추가
+            </button>
+          </div>
+
+          {visibleRoots.length === 0 ? (
+            <p className="px-5 py-12 text-center text-sm text-ink-muted">조건에 맞는 대분류가 없습니다.</p>
+          ) : (
+            <>
+              {/* 열 구성은 2Depth 와 같아야 한다 — 같은 목록인데 열이 다르면 읽는 법을 두 번 배워야 한다. */}
+              <div className="hidden gap-4 border-b border-border px-5 py-3 text-xs text-ink-faint lg:grid lg:grid-cols-12 lg:items-center">
+                <span className="lg:col-span-1 lg:text-center">순번</span>
+                <span className="lg:col-span-4">카테고리명</span>
+                <span className="lg:col-span-2">상품</span>
+                <span className="lg:col-span-2 lg:text-center">노출</span>
+                <span className="lg:col-span-3 lg:text-right">관리</span>
+              </div>
+
+              <div className="flex flex-col">
+                {visibleRoots.map((root, index) => {
+                  const active = root.id === selectedRootId;
+                  return (
+                    <div
+                      key={root.id}
+                      onClick={() => setSelectedRootId(root.id)}
+                      className={`grid cursor-pointer grid-cols-1 gap-x-4 gap-y-2 border-b border-border px-5 py-4 transition-colors duration-100 last:border-b-0 lg:grid-cols-12 lg:items-center lg:gap-y-0 ${
+                        active ? 'bg-brand-50 dark:bg-brand-900' : 'hover:bg-surface'
+                      }`}
+                    >
+                      <span className="font-mono text-sm tabular-nums text-ink-faint lg:col-span-1 lg:text-center">
+                        {index + 1}
+                      </span>
+
+                      <div className="min-w-0 lg:col-span-4">
+                        <p
+                          className={`truncate text-sm font-medium ${active ? 'text-brand-700 dark:text-brand-200' : ''}`}
+                        >
+                          {root.name}
+                        </p>
+                        <p className="font-mono text-xs text-ink-faint">
+                          {root.id} · 하위 {childrenOf(root.id).length}
+                        </p>
+                      </div>
+
+                      <div className="flex items-baseline gap-2 lg:col-span-2">
+                        <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">상품</span>
+                        <span className="text-sm tabular-nums text-ink-muted">{root.productCount}</span>
+                      </div>
+
+                      <div className="flex items-center gap-2 lg:col-span-2 lg:justify-center">
+                        <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">노출</span>
+                        <VisibilityBadge visible={root.visible} />
+                      </div>
+
+                      <div className="flex items-center gap-2 lg:col-span-3 lg:justify-end" onClick={stopRowClick}>
+                        <button
+                          type="button"
+                          onClick={() => setForm({ mode: 'edit', depth: 1, record: root, parentId: '' })}
+                          className={NEUTRAL_ACTION}
+                        >
+                          조회
+                        </button>
+                        <button type="button" onClick={() => setPendingDelete(root)} className={DANGER_ACTION}>
+                          삭제
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </section>
+
+        {/* 2Depth — 왼쪽에서 고른 대분류의 세부 분류 */}
+        <section
+          data-ssot-cid="b2c-admin/category.list#AdminCategoryChildPanel"
+          className="min-w-0 flex-1 overflow-hidden rounded-xl border border-border bg-canvas"
+        >
+          <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
+            <h2 className="min-w-0 truncate text-sm font-semibold">
+              2Depth · 세부 분류
+              {selectedRoot && <span className="ml-2 font-normal text-ink-muted">{selectedRoot.name}</span>}
+            </h2>
+            <button
+              type="button"
+              disabled={!selectedRoot}
+              onClick={() =>
+                selectedRoot && setForm({ mode: 'create', depth: 2, record: null, parentId: selectedRoot.id })
+              }
+              className="h-8 shrink-0 rounded-lg bg-brand-500 px-3 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50"
+            >
+              추가
+            </button>
+          </div>
+
+          {!selectedRoot ? (
+            <p className="px-5 py-16 text-center text-sm text-ink-muted">왼쪽에서 대분류를 선택하세요.</p>
+          ) : visibleChildren.length === 0 ? (
+            <p className="px-5 py-16 text-center text-sm text-ink-muted">
+              {selectedRoot.name} 아래에 세부 분류가 없습니다. 오른쪽 위 추가를 눌러 만드세요.
+            </p>
+          ) : (
+            <>
+              <div className="hidden gap-4 border-b border-border px-5 py-3 text-xs text-ink-faint lg:grid lg:grid-cols-12 lg:items-center">
+                <span className="lg:col-span-1 lg:text-center">순번</span>
+                <span className="lg:col-span-4">카테고리명</span>
+                <span className="lg:col-span-2">상품</span>
+                <span className="lg:col-span-2 lg:text-center">노출</span>
+                <span className="lg:col-span-3 lg:text-right">관리</span>
+              </div>
+
+              <div className="flex flex-col">
+                {visibleChildren.map((child, index) => (
+                  <div
+                    key={child.id}
+                    onClick={() => setForm({ mode: 'edit', depth: 2, record: child, parentId: selectedRoot.id })}
+                    className="grid cursor-pointer grid-cols-1 gap-x-4 gap-y-2 border-b border-border px-5 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface lg:grid-cols-12 lg:items-center lg:gap-y-0"
+                  >
+                    <span className="font-mono text-sm tabular-nums text-ink-faint lg:col-span-1 lg:text-center">
+                      {index + 1}
+                    </span>
+
+                    <div className="lg:col-span-4">
+                      <p className="text-sm font-medium">{child.name}</p>
+                      <p className="font-mono text-xs text-ink-faint">{child.id}</p>
+                    </div>
+
+                    <div className="flex items-baseline gap-2 lg:col-span-2">
+                      <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">상품</span>
+                      <span className="text-sm tabular-nums text-ink-muted">{child.productCount}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 lg:col-span-2 lg:justify-center">
+                      <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">노출</span>
+                      <VisibilityBadge visible={child.visible} />
+                    </div>
+
+                    <div className="flex items-center gap-2 lg:col-span-3 lg:justify-end" onClick={stopRowClick}>
+                      <button
+                        type="button"
+                        onClick={() => setForm({ mode: 'edit', depth: 2, record: child, parentId: selectedRoot.id })}
+                        className={NEUTRAL_ACTION}
+                      >
+                        조회
+                      </button>
+                      <button type="button" onClick={() => setPendingDelete(child)} className={DANGER_ACTION}>
+                        삭제
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </section>
+      </div>
+
+      <CategoryFormModal
+        open={form !== null}
+        mode={form?.mode ?? 'create'}
+        depth={form?.depth ?? 1}
+        record={form?.record ?? null}
+        {...(form?.depth === 2 && selectedRoot ? { parentName: selectedRoot.name } : {})}
+        onClose={() => setForm(null)}
+        onSubmit={submit}
+      />
+
+      <AdminConfirmModal
+        open={pendingSave !== null}
+        elevated
+        tone="brand"
+        title={pendingSave?.mode === 'create' ? '카테고리 추가' : '카테고리 저장'}
+        description={
+          pendingSave?.depth === 1
+            ? '대분류를 저장합니다. 고객 화면의 카테고리 메뉴가 바로 바뀝니다.'
+            : '세부 분류를 저장합니다. 상품 등록 화면의 선택지가 바로 바뀝니다.'
+        }
+        confirmLabel={pendingSave?.mode === 'create' ? '추가' : '저장'}
+        summary={
+          pendingSave
+            ? [
+                { label: '구분', value: pendingSave.depth === 1 ? '1Depth · 대분류' : '2Depth · 세부 분류' },
+                ...(pendingSave.depth === 2 && selectedRoot ? [{ label: '상위', value: selectedRoot.name }] : []),
+                { label: '이름', value: pendingSave.name },
+                { label: '노출', value: pendingSave.visible ? '노출' : '숨김' },
+              ]
+            : []
+        }
+        onConfirm={applySave}
+        onClose={() => setPendingSave(null)}
+      />
+
+      <AdminConfirmModal
+        open={pendingDelete !== null}
+        title={deleteIsRoot ? '대분류 삭제' : '세부 분류 삭제'}
+        description={
+          deleteIsRoot
+            ? `'${pendingDelete?.name}' 을 삭제합니다. 아래 세부 분류도 함께 삭제됩니다.`
+            : `'${pendingDelete?.name}' 을 삭제합니다. 되돌릴 수 없습니다.`
+        }
+        confirmLabel="삭제"
+        onConfirm={confirmDelete}
+        onClose={() => setPendingDelete(null)}
+      />
+    </>
+  );
+}

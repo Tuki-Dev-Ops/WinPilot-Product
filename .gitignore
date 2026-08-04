@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+dist/
+*.tsbuildinfo
+
+# SSOT 생성물 — 소스가 아니므로 커밋하지 않는다 (CI 아티팩트로 보관)
+artifacts/
+
+.env*.local
+.DS_Store
+Thumbs.db
