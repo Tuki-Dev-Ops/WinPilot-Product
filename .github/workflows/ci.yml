@@ -1,0 +1,88 @@
+# 검증 파이프라인.
+#
+# 이 레포가 지키려는 것은 "이름이 하나로 붙어 있는가" 와 "문서가 화면을 따라왔는가" 다.
+# 둘 다 사람이 눈으로 보면 놓치는 종류라, 밀기 전에 기계가 먼저 본다.
+#
+# 배포는 아직 정하지 않았다 — 빌드 결과물만 아티팩트로 남겨 두고,
+# 내보낼 곳이 정해지면 그때 이 파일 아래에 deploy 잡을 붙인다.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# 같은 브랜치에 연달아 밀면 앞의 실행은 버린다 — 어차피 뒤엣것이 답이다.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: 검증 · 빌드
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 버전은 package.json 의 packageManager 를 따른다 — 여기에 또 적으면 두 곳이 갈라진다.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: 의존성 설치
+        run: pnpm install --frozen-lockfile
+        env:
+          # 캡처를 여기서 돌리지 않으므로 브라우저까지 내려받을 이유가 없다(≈180MB).
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+
+      - name: 타입
+        run: pnpm typecheck
+
+      # 레지스트리 안의 규칙 — 접두어·금지어·경로 꼬리, 그리고 뷰 사이의 이름 일치.
+      - name: 이름 규칙
+        run: pnpm spec:check
+
+      # 레지스트리에 적힌 컴포넌트 이름이 실제 파일에도 그 이름으로 있는지.
+      # spec:check 는 등록만 해 두고 파일은 다른 이름으로 만들어도 통과한다.
+      - name: 컴포넌트 이름 대조
+        run: pnpm sync:check
+
+      # 화면별 명세는 screen-specs.ts 에서 생성한다. 원본만 고치고 생성물을 커밋하지 않으면
+      # 저장소의 문서가 화면보다 뒤처진 채로 남는다 — 그 상태를 여기서 막는다.
+      - name: 화면별 명세 드리프트
+        run: |
+          pnpm docs:build
+          CHANGED=$(git status --porcelain -- apps/b2c-client-a/docs/feature apps/b2c-client-a/docs/non-functional)
+          if [ -n "$CHANGED" ]; then
+            echo "::error::screen-specs.ts 와 생성된 명세가 어긋난다. 'pnpm docs:build' 를 돌리고 결과를 함께 커밋한다."
+            echo "$CHANGED"
+            git --no-pager diff -- apps/b2c-client-a/docs/feature apps/b2c-client-a/docs/non-functional
+            exit 1
+          fi
+
+      - name: 빌드
+        run: pnpm build
+
+      # 캡처(pnpm docs:capture)는 여기서 돌리지 않는다. 서버를 띄우고 브라우저로 찍는 일이라
+      # 글꼴·AA 가 러너마다 달라 매번 다른 그림이 나온다 — 드리프트가 아닌 것을 드리프트로 잡는다.
+
+      - name: 빌드 결과물 보관
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-build
+          retention-days: 7
+          if-no-files-found: error
+          path: |
+            apps/b2c-client-a/.next
+            apps/b2c-admin/.next
+            apps/internal-admin/.next
+            !apps/*/.next/cache
