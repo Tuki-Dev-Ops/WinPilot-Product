@@ -1,3 +1,7 @@
+import type { ProductArtKind } from '@winpilot/store';
+
+export type { ProductArtKind };
+
 /**
  * 고객 화면 콘텐츠 계약 (SSOT).
  *
@@ -86,6 +90,10 @@ export type ProductItem = {
   shippingNote: string;
   options: ProductOptionItem[];
   visible: boolean;
+  /** 어드민이 올린 대표 이미지. 비어 있으면 아래 `art` 로 그린다 */
+  imageUrl: string;
+  /** 사진이 없을 때 그 자리에 그릴 벡터 그림 — store 가 카테고리로 정한다 */
+  art: { kind: ProductArtKind; from: string; to: string; ink: string };
 };
 
 export type ArticleItem = {
@@ -137,7 +145,10 @@ export type PolicyDoc = {
 
 export type InquiryFormConfig = {
   categories: string[];
+  /** 어드민에서 켠 항목만 온다 — 템플릿이 다시 거르지 않는다 */
   fields: Array<{ key: string; label: string; required: boolean }>;
+  /** 첨부 가능한 형식·크기. 안내 문구가 어드민과 같아야 한다 */
+  attachment: { accept: string; acceptText: string; maxMb: number; maxCount: number };
   guideText: string;
   doneText: string;
 };

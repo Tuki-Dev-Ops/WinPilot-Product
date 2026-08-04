@@ -11,6 +11,10 @@ export {
   SHIP_STATE_TONE,
   cartTotal,
   findOrder,
+  myCoupons,
+  myInquiries,
+  openCoupons,
+  TODAY,
   unreadAlarms,
   type Account,
   type AlarmItem,
@@ -26,6 +30,8 @@ export {
   categoryPath,
   discountRate,
   findNotice,
+  findNews,
+  findFaq,
   findProduct,
   formatMoney,
   productsInCategory,
@@ -34,3 +40,16 @@ export {
   type NavChild,
   type NavItem,
 } from './content';
+
+/* 쿠폰·문의 기록의 타입과 판정은 store 가 정의한다 — 고객 화면이 다시 세우지 않는다. */
+export {
+  couponAmountText,
+  couponState,
+  productArt,
+  type ProductArtKind,
+  pathLabel,
+  type CouponRecord,
+  type CouponState,
+  type InquiryRecord,
+  type InquiryState,
+} from '@winpilot/store';

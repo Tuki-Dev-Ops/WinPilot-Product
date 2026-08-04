@@ -7,6 +7,8 @@
  * 주문 번호는 어드민의 판매 시드(`apps/b2c-admin/lib/data/orders.ts`)와 **같은 값**을 쓴다 —
  * 어드민 메뉴에는 '판매', 고객 화면에는 '주문' 으로 적히지만 자원은 하나이고 엔티티는 `order` 다.
  */
+import { claimableCoupons, couponsOf, inquiriesOf, todayStamp } from '@winpilot/store';
+
 export type OrderState = '결제완료' | '결제취소' | '환불완료';
 export type ShipState = '배송준비' | '배송중' | '배송완료' | '교환요청' | '교환완료';
 
@@ -46,8 +48,20 @@ export type AlarmItem = {
 
 export type Account = {
   signedIn: boolean;
+  /** 가입할 때 발급되는 회원 번호 — 어드민 사용자 목록의 아이디와 같은 값이다 */
+  memberId: string;
   name: string;
   email: string;
+  /** 화면에 드러나는 이름. 비워 두면 가입 시 임의로 만들어 준다 */
+  nickname: string;
+  /** 내 정보 수정 화면이 쓰는 값 — 문의 기록의 연락처와 같은 사람이다 */
+  countryCode: string;
+  phone: string;
+  address: string;
+  addressDetail: string;
+  postalCode: string;
+  /** 광고성 정보 수신 동의 — 선택 항목이다 */
+  marketing: boolean;
   grade: string;
   reward: number;
   orders: OrderSummary[];
@@ -57,8 +71,16 @@ export type Account = {
 
 export const ACCOUNT: Account = {
   signedIn: true,
+  memberId: 'U-10241',
   name: '김서연',
   email: 'seoyeon.kim@example.com',
+  nickname: '푸른바람2417',
+  countryCode: '+82',
+  phone: '01043215678',
+  address: '서울 성동구 성수일로 10',
+  addressDetail: '3층',
+  postalCode: '04780',
+  marketing: true,
   grade: 'VIP',
   reward: 12_400,
 
@@ -183,3 +205,26 @@ export const SHIP_STATE_TONE: Record<ShipState, string> = {
   교환요청: 'bg-signal-danger/12 text-signal-danger',
   교환완료: 'bg-surface text-ink-muted',
 };
+
+/**
+ * 내가 보낸 문의 — **어드민이 보는 그 기록**이다.
+ *
+ * 고객 화면이 따로 문의 시드를 들면, 어드민에서 답변을 달아도 고객 화면에는 영영 '답변 대기'
+ * 로 남는다. store 의 기록을 이메일로 걸러 그대로 쓴다.
+ */
+export function myInquiries(email: string = ACCOUNT.email) {
+  return inquiriesOf(email);
+}
+
+/** 내 쿠폰함. 오늘 날짜 기준으로 쓸 수 있는 것이 위로 온다. */
+export function myCoupons(email: string = ACCOUNT.email) {
+  return couponsOf(email, todayStamp());
+}
+
+/** 아직 받지 않은 쿠폰 — 쿠폰함의 '쿠폰 받기' 탭이 쓴다. */
+export function openCoupons() {
+  return claimableCoupons(todayStamp());
+}
+
+/** 오늘 날짜 — 쿠폰 상태 판정에 쓴다. 화면마다 다른 '오늘' 을 쓰면 상태가 어긋난다. */
+export const TODAY = todayStamp();

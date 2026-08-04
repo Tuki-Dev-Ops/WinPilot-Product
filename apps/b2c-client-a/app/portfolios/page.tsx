@@ -2,7 +2,13 @@ import type { Metadata } from 'next';
 import { CONTENT, COPY } from '@winpilot/client-content';
 import { PageTitle, RichBody, SiteShell } from '@/app/_components/SiteShell';
 
-/** Feature: `portfolio.list` · B2C Client (템플릿 A) · route `/portfolios` */
+/**
+ * Feature: `portfolio.list` · B2C Client (템플릿 A) · route `/portfolios`
+ *
+ * ## 어드민 연동
+ * - 목록 · 본문 ← `b2c-admin` 콘텐츠 > 포트폴리오 (`/contents/portfolios`)
+ * - 고객사 · 기간은 등록 폼의 같은 이름 항목이다
+ */
 export const metadata: Metadata = { title: `${COPY.portfolio.listTitle} — ${CONTENT.seo.title}` };
 
 export default function PortfolioListPage() {

@@ -4,6 +4,11 @@ import {
   COMPANY_PROFILE,
   FAQS,
   FAQ_CATEGORIES,
+  INQUIRY_ATTACHMENT,
+  INQUIRY_CATEGORIES,
+  INQUIRY_DONE_TEXT,
+  INQUIRY_FIELDS,
+  INQUIRY_GUIDE_TEXT,
   MILESTONES,
   NEWS,
   NOTICES,
@@ -11,6 +16,7 @@ import {
   PRIVACY,
   PRODUCTS,
   PRODUCT_OPTIONS,
+  productArt,
   TERMS,
   estimateReward,
   formatAmount,
@@ -84,6 +90,12 @@ function toProductItem(product: ProductRecord): ProductItem {
       stock: option.stock,
     })),
     visible: product.visible,
+    imageUrl: '',
+    art: productArt({
+      id: product.id,
+      name: product.name,
+      categoryName: CATEGORIES.find((category) => category.id === product.categoryChildId)?.name ?? '',
+    }),
   };
 }
 
@@ -192,16 +204,21 @@ export const CONTENT: SiteContent = {
     body: PRIVACY.body,
   },
 
+  /*
+    폼 항목은 템플릿이 정하지 않는다 — 어드민의 `문의 > 설정` 이 저장한 값을 그대로 그린다.
+    꺼 둔 항목(`enabled: false`)은 아예 오지 않는다: 고객 화면이 '보여 줄지' 를 다시 판단하면
+    운영자가 끈 항목이 템플릿마다 다르게 나타난다.
+  */
   inquiryForm: {
-    categories: ['상품 문의', '주문·배송', '교환·반품', '제휴 제안', '기타'],
-    fields: [
-      { key: 'name', label: '이름', required: true },
-      { key: 'email', label: '이메일', required: true },
-      { key: 'phone', label: '연락처', required: false },
-      { key: 'privacy', label: '개인정보 수집·이용 동의', required: true },
-    ],
-    guideText: '문의 주신 내용은 영업일 기준 1~2일 내에 답변드립니다.',
-    doneText: '문의가 접수되었습니다. 입력하신 이메일로 답변드리겠습니다.',
+    categories: INQUIRY_CATEGORIES,
+    fields: INQUIRY_FIELDS.filter((field) => field.enabled).map((field) => ({
+      key: field.key,
+      label: field.label,
+      required: field.required,
+    })),
+    attachment: INQUIRY_ATTACHMENT,
+    guideText: INQUIRY_GUIDE_TEXT,
+    doneText: INQUIRY_DONE_TEXT,
   },
 };
 
@@ -287,6 +304,14 @@ export function findProduct(id: string) {
 
 export function findNotice(id: string) {
   return CONTENT.notices.find((notice) => notice.id === id);
+}
+
+export function findNews(id: string) {
+  return CONTENT.news.find((item) => item.id === id);
+}
+
+export function findFaq(id: string) {
+  return CONTENT.faqs.find((faq) => faq.id === id);
 }
 
 export function categoryPath(product: { categoryRootId: string; categoryChildId: string }): string {

@@ -18,9 +18,13 @@ import {
  * 여기에도 바로 나타난다 — 손으로 적어 두면 어드민에서 늘린 분류가 홈에서 빠진다.
  *
  * 쿠폰 띠는 **고정 안내**다. 기간마다 바뀌는 것은 배너로 올리고, 첫 구매 혜택처럼 늘 있는 것은
- * 여기 둔다. 누르면 자세한 내용이 적힌 공지로 간다 — 혜택 조건은 공지가 원본이다.
+ * 여기 둔다. 누르면 **쿠폰함**으로 간다 — 안내를 읽는 것이 목적이 아니라 받는 것이 목적이라,
+ * 공지로 보내면 받으러 한 번 더 옮겨 가야 한다.
+ *
+ * ## 어드민 연동
+ * - 타일의 분류 ← `b2c-admin` 상품 > 카테고리 (`/products/categories`)
+ * - 회사명 ← 설정 > 공급자 정보 (`/settings/supplier`)
  */
-const COUPON_NOTICE_ID = 'N-1024';
 
 export function HomeShortcuts() {
   const roots = CONTENT.categories.filter((category) => !category.parentId);
@@ -54,7 +58,7 @@ export function HomeShortcuts() {
       </nav>
 
       <a
-        href={ROUTES.noticeDetail(COUPON_NOTICE_ID)}
+        href={ROUTES.mypageCoupons}
         className="flex items-center gap-4 rounded-lg bg-[#faf7ec] px-8 py-5 dark:bg-surface"
       >
         <span className="min-w-0 flex-1 text-center text-base">

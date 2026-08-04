@@ -12,12 +12,20 @@ import {
   formatMoney,
 } from '@winpilot/client-content';
 import { PageTitle, RichBody, SiteShell } from '@/app/_components/SiteShell';
+import { ProductArt } from '@/app/_components/ProductArt';
+import { ProductPurchase } from '@/app/products/_components/ProductPurchase';
 
 /**
  * Feature: `product.detail` · B2C Client (템플릿 A) · route `/products/{productId}`
  *
  * **템플릿 A 배치**: 왼쪽 이미지 · 오른쪽 구매 정보 2단, 아래에 상세 설명 전폭.
  * 값은 전부 계약에서 온다 — 적립금·배송 문구는 어드민이 계산해 넘긴 것을 그대로 쓴다.
+ *
+ * ## 어드민 연동
+ * - 상품명·가격·정가·상세 설명 ← `b2c-admin` 상품 > 상품 등록 (store `PRODUCTS`)
+ * - NEW · BEST 뱃지 ← 등록일과 판매량으로 자동 분류되는 태그 (store `productTags`)
+ * - 옵션·수량·구매 단추는 `ProductPurchase` 가 다룬다 (옵션은 상품 등록의 **옵션** 섹션)
+ * - 카테고리 경로 ← 상품 > 카테고리 (`/products/categories`)
  */
 export const metadata: Metadata = { title: `${COPY.product.listTitle} — ${CONTENT.seo.title}` };
 
@@ -31,9 +39,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   if (!product) notFound();
 
   const rate = discountRate(product.price, product.listPrice);
-  const soldOut = product.stock === 0;
-  const colors = [...new Set(product.options.map((option) => option.color))];
-  const hasSize = product.options.some((option) => option.size);
 
   return (
     <SiteShell>
@@ -42,8 +47,21 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         data-ssot-cid={cid('product.detail', 'SiteProductDetail')}
         className="grid grid-cols-1 gap-8 lg:grid-cols-2"
       >
-        <div className="flex aspect-square items-center justify-center rounded-xl bg-surface">
-          <span className="text-sm text-ink-faint">{product.name}</span>
+        {/* 사진이 없으면 목록 카드와 **같은 그림**을 크게 그린다 — 다른 그림이면 같은 상품으로 안 읽힌다. */}
+        <div className="aspect-square overflow-hidden rounded-xl bg-surface">
+          {product.imageUrl ? (
+            // 어드민이 올린 사진은 objectURL 일 수 있어 next/image 최적화 대상이 아니다.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={product.imageUrl} alt="" className="size-full object-cover" />
+          ) : (
+            <ProductArt
+              kind={product.art.kind}
+              from={product.art.from}
+              to={product.art.to}
+              ink={product.art.ink}
+              className="size-full"
+            />
+          )}
         </div>
 
         <div className="flex flex-col gap-5">
@@ -98,37 +116,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             </div>
           </dl>
 
-          {/* 옵션 — 색상별로 묶어 보여준다. 재고 0 인 사이즈는 고를 수 없다는 것이 보여야 한다. */}
-          <div className="flex flex-col gap-3">
-            <span className="text-sm font-medium">{COPY.product.option}</span>
-            {colors.map((color) => (
-              <div key={color} className="flex flex-wrap items-center gap-2">
-                <span className="w-16 shrink-0 text-sm text-ink-muted">{color}</span>
-                {product.options
-                  .filter((option) => option.color === color)
-                  .map((option) => (
-                    <span
-                      key={option.id}
-                      className={`flex h-10 shrink-0 items-center whitespace-nowrap rounded-lg border px-3 text-sm ${
-                        option.stock > 0
-                          ? 'border-border-strong text-ink'
-                          : 'border-border text-ink-faint line-through'
-                      }`}
-                    >
-                      {hasSize ? option.size : color}
-                    </span>
-                  ))}
-              </div>
-            ))}
-          </div>
-
-          <button
-            type="button"
-            disabled={soldOut || product.saleState !== '판매중'}
-            className="h-12 w-full shrink-0 whitespace-nowrap rounded-lg bg-brand-500 text-sm font-medium text-white hover:bg-brand-600 disabled:bg-surface disabled:text-ink-faint"
-          >
-            {soldOut ? COPY.product.soldOut : product.saleState === '판매중' ? COPY.product.buy : product.saleState}
-          </button>
+          <ProductPurchase product={product} />
         </div>
       </section>
 

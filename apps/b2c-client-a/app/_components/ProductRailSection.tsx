@@ -7,6 +7,11 @@ import { ProductTile } from './ProductTile';
 /**
  * 탭은 **값만** 넘긴다 — 함수는 서버에서 클라이언트로 건너가지 못한다.
  * 어느 상품이 걸리는지는 이 컴포넌트가 카테고리 목록을 보고 판정한다.
+ *
+ * ## 어드민 연동
+ * - 탭 ← `b2c-admin` 상품 > 카테고리의 1Depth
+ * - 줄에 놓이는 상품 ← 상품 > 상품 목록 (store `PRODUCTS`)
+ * - 순위 뱃지는 베스트 줄에서만 붙는다 — 판매량으로 매겨진 자동 분류다
  */
 export type RailTab = { id: string; label: string; categoryId?: string };
 
@@ -160,11 +165,8 @@ export function ProductRailSection({
       <div className="flex flex-col items-center gap-2">
         {eyebrow && <p className="text-sm font-bold text-signal-danger">{eyebrow}</p>}
         {titleHref ? (
-          <a href={titleHref} className="flex items-center gap-2 text-[26px] font-bold tracking-tight">
+          <a href={titleHref} className="text-[26px] font-bold tracking-tight">
             {title}
-            <span aria-hidden="true" className="text-xl">
-              ›
-            </span>
           </a>
         ) : (
           <h2 className="text-[26px] font-bold tracking-tight">{title}</h2>

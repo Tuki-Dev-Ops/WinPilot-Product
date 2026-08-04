@@ -10,6 +10,9 @@ import { COPY, SLOT, cid, type AlarmItem } from '@winpilot/client-content';
  * 이 화면에 들어오는 이유가 대개 그것이기 때문이다.
  *
  * 읽음 여부는 색만이 아니라 **점**으로도 구분한다. 색만 쓰면 색각 이상 사용자가 놓친다.
+ *
+ * ## 어드민 연동
+ * - 알람의 종류(주문·공지·혜택)는 어드민에서 그 자원을 바꿀 때 붙는다
  */
 const TABS = [
   { id: 'unread', label: COPY.alarm.unread },

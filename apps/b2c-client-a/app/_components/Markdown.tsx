@@ -8,6 +8,9 @@ import type { ReactNode } from 'react';
  *
  * **HTML 을 만들어 넣지 않고 React 요소로 만든다** — 문자열로 조립하면 문서 안의 `<` 가
  * 그대로 태그가 되고, 문서는 우리가 쓴 것이라도 그렇게 다룰 이유가 없다.
+ *
+ * ## 어드민 연동
+ * - **없다.** 이 화면은 저장소의 문서를 그대로 보여 주는 개발 도구라 어드민이 고치는 값이 없다.
  */
 function inline(text: string, keyPrefix: string): ReactNode[] {
   const nodes: ReactNode[] = [];

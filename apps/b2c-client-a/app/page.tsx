@@ -19,6 +19,12 @@ import { SiteShell } from './_components/SiteShell';
  *
  * 공지·회사 소개는 홈에서 뺐다. 헤더의 고객지원·회사소개로 들어가는 길이 이미 있는데
  * 홈에 또 두면 첫 화면이 '무엇을 파는가' 대신 '회사 이야기' 로 채워진다.
+ *
+ * ## 어드민 연동
+ * - 히어로 배너 ← `b2c-admin` 배너 > 메인 비주얼 (`/banners`) — 노출 기간이 지난 것은 오지 않는다
+ * - 신상품 · 베스트 줄 ← 상품 > 상품 목록의 자동 분류 태그 (store `productTags`)
+ * - 카테고리 탐색 ← 상품 > 카테고리 (`/products/categories`)
+ * - 회사명 · 로고 ← 설정 > 공급자 정보 (`/settings/supplier`)
  */
 export const metadata: Metadata = {
   title: CONTENT.seo.title,

@@ -9,6 +9,9 @@ import { pages } from '@/pages.manifest';
  *
  * 화면 목록은 `pages.manifest.ts` 에서 읽는다. 템플릿 A~F 가 같은 매니페스트를 쓰므로
  * 이 표가 곧 "6개 템플릿이 같아야 하는 화면 목록" 이다.
+ *
+ * ## 어드민 연동
+ * - **없다.** 이 화면은 저장소의 문서를 그대로 보여 주는 개발 도구라 어드민이 고치는 값이 없다.
  */
 export const metadata: Metadata = { title: COPY.docs.title };
 

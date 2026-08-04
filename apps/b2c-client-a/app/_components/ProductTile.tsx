@@ -1,22 +1,48 @@
 import { COPY, ROUTES, discountRate, formatMoney, type ProductItem } from '@winpilot/client-content';
+import { ProductArt } from './ProductArt';
 
 /**
- * 상품 타일 — 신상품·베스트 줄에서 쓰는 카드.
+ * 상품 타일 — **고객 화면의 유일한 상품 카드**다. 목록·신상품·베스트·카테고리 탐색이 같이 쓴다.
  *
- * `ProductCard` 와 나눈 이유: 저쪽은 목록 격자에서 쓰는 카드라 카테고리·태그를 보여주고,
- * 이 타일은 **한 줄로 흐르는 자리**라 순위·혜택가처럼 비교에 쓰이는 것만 남긴다.
- * 한 컴포넌트에 옵션을 잔뜩 달면 어느 화면에서 무엇이 보이는지 아무도 모르게 된다.
+ * 카드가 자리마다 다르면 같은 상품이 화면마다 다른 값을 보여 주게 된다. 그래서 하나로 두고,
+ * 자리에 따라 달라지는 것은 순위 뱃지 하나뿐이다.
+ *
+ * 사진이 없으면 **벡터 그림**을 그린다(`ProductArt`) — 회색 네모에 이름만 적어 두면 목록 전체가
+ * 한 덩어리로 보이고, 무엇이 있는지 훑어지지 않는다.
+ *
+ * 마우스를 올리면 그림만 살짝 커진다. 카드 전체를 움직이면 옆 카드와의 간격이 흔들려 줄이
+ * 출렁이는 것처럼 보인다.
+ *
+ * ## 어드민 연동
+ * - 이름 · 판매가 · 정가 · 재고 ← `b2c-admin` 상품 > 상품 목록 (store `PRODUCTS`)
+ * - 대표 이미지 ← 상품 등록의 이미지 업로드 (`imageUrl`, 없으면 벡터 그림)
+ * - 배송 문구 ← 상품 등록의 배송 정책 (무료 · 조건부 무료 · 유료)
+ * - NEW · BEST ← 등록일과 판매량으로 자동 분류되는 태그 (store `productTags`)
  */
 export function ProductTile({ product, rank }: { product: ProductItem; rank?: number }) {
   const rate = discountRate(product.price, product.listPrice);
   const soldOut = product.stock === 0;
 
   return (
-    <a href={ROUTES.productDetail(product.id)} className="flex w-full flex-col gap-3">
+    <a href={ROUTES.productDetail(product.id)} className="group flex w-full flex-col gap-3">
       <div className="relative aspect-square overflow-hidden rounded-lg bg-surface">
-        <span className="grid size-full place-items-center px-4 text-center text-xs text-ink-faint">
-          {product.name}
-        </span>
+        {product.imageUrl ? (
+          // 어드민이 올린 사진은 objectURL 일 수 있어 next/image 최적화 대상이 아니다.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={product.imageUrl}
+            alt=""
+            className="size-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+          />
+        ) : (
+          <ProductArt
+            kind={product.art.kind}
+            from={product.art.from}
+            to={product.art.to}
+            ink={product.art.ink}
+            className="size-full transition-transform duration-300 ease-out group-hover:scale-105"
+          />
+        )}
 
         {rank !== undefined && (
           <span className="absolute left-2.5 top-2.5 grid size-7 place-items-center rounded bg-ink text-xs font-bold text-white">
@@ -46,7 +72,7 @@ export function ProductTile({ product, rank }: { product: ProductItem; rank?: nu
 
       <div className="flex flex-col gap-1.5">
         {/* 두 줄까지만 — 이름 길이가 제각각이라 자르지 않으면 카드 높이가 들쭉날쭉해진다. */}
-        <p className="line-clamp-2 text-sm leading-snug text-ink">{product.name}</p>
+        <p className="line-clamp-2 text-sm leading-snug text-ink transition-colors duration-150 group-hover:text-brand-700 dark:group-hover:text-brand-300">{product.name}</p>
 
         <p className="flex items-baseline gap-1.5">
           {rate > 0 && <span className="text-base font-bold tabular-nums text-signal-danger">{rate}%</span>}

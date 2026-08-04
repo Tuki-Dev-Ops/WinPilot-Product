@@ -30,8 +30,10 @@ export const pages: PageSpec[] = [
     sampleUrl: '/notices/N-1024',
   },
   { order: 22, id: 'faqs', name: 'FAQ', route: '/faqs' },
-  { order: 23, id: 'news', name: 'News', route: '/news' },
-  { order: 24, id: 'portfolios', name: 'Portfolios', route: '/portfolios' },
+  { order: 23, id: 'faqs-detail', name: 'FAQ Detail', route: '/faqs/[faqId]', sampleUrl: '/faqs/FQ-101' },
+  { order: 24, id: 'news', name: 'News', route: '/news' },
+  { order: 25, id: 'news-detail', name: 'News Detail', route: '/news/[newsId]', sampleUrl: '/news/W-2041' },
+  { order: 26, id: 'portfolios', name: 'Portfolios', route: '/portfolios' },
 
   // 30번대 — 주문·장바구니·알람 (내 정보)
   { order: 30, id: 'cart', name: 'Cart', route: '/cart' },
@@ -44,6 +46,10 @@ export const pages: PageSpec[] = [
     route: '/orders/[orderId]',
     sampleUrl: '/orders/S-24081',
   },
+
+  { order: 34, id: 'mypage', name: 'My Page', route: '/mypage' },
+  { order: 36, id: 'mypage-inquiries', name: 'My Page Inquiries', route: '/mypage/inquiries' },
+  { order: 37, id: 'mypage-coupons', name: 'My Page Coupons', route: '/mypage/coupons' },
 
   // 40번대 — 로그인·회원가입
   { order: 40, id: 'login', name: 'Login', route: '/login' },

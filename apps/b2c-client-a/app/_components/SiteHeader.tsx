@@ -1,13 +1,16 @@
 import { ACCOUNT, CONTENT, COPY, ROUTES, SLOT, buildNav, cid, unreadAlarms } from '@winpilot/client-content';
 
 /**
- * 템플릿 A 헤더 — **두 줄**로 나눈다.
+ * 템플릿 A 헤더 — **한 줄**이다.
  *
- *   윗줄 : 로고 · 오른쪽 끝에 작은 유틸리티 링크(로그인 · 회원가입 / 주문 내역 · 이름)
- *   아랫줄: 브랜드명 · 주 메뉴 · 검색 · 아이콘
+ *   로고(회사명) · 주 메뉴 · 검색 · 아이콘(관심·알람·장바구니·마이페이지)
  *
- * 한 줄에 다 넣으면 메뉴가 늘어날수록 로고와 로그인이 서로 밀어낸다. 자주 쓰는 것(메뉴·검색·장바구니)을
- * 아래에 크게 두고, 가끔 쓰는 것(로그인·회원가입)을 위에 작게 두면 둘 다 자리를 지킨다.
+ * 로고만 있는 윗줄을 따로 두지 않는다 — 로그인한 사람에게는 그 줄에 아무것도 남지 않아
+ * 빈 띠가 되고, 로그인·회원가입은 아바타 자리에서 이어진다.
+ *
+ * ## 어드민 연동
+ * - 회사명 · 로고 ← `b2c-admin` 설정 > 공급자 정보 (`/settings/supplier`)
+ * - 메뉴 구성 · 상품 아래 카테고리 ← 상품 > 카테고리 (`buildNav()` 가 조립한다)
  *
  * 세부 메뉴는 **CSS 만으로** 펼친다(`group-hover` · `group-focus-within`).
  * 자바스크립트로 열면 추출 시점의 DOM 에는 닫힌 상태만 남아 Figma 에 세부 메뉴가 아예 없다.
@@ -43,6 +46,20 @@ function AlarmIcon() {
   );
 }
 
+/**
+ * 아바타 — 회색 원판 **안에 표정만** 둔다.
+ *
+ * 얼굴 윤곽선을 따로 그리면 원판 테두리와 두 겹이 되어 지저분해진다. 배경이 얼굴이다.
+ */
+function AvatarIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <path d="M7 8v.05M13 8v.05" strokeLinecap="round" />
+      <path d="M6.4 12a4.3 4.3 0 0 0 7.2 0" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function CartIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -62,44 +79,6 @@ export function SiteHeader() {
 
   return (
     <header id={SLOT.header} data-ssot-cid={cid('site.home', 'SiteHeader')} className="border-b border-border bg-canvas">
-      {/* 윗줄 — 로고와 유틸리티 */}
-      <div className="mx-auto flex w-full max-w-350 items-center gap-6 px-6 pt-4">
-        {/* 로고는 어드민 공급자 정보에서 온다 — 없으면 회사명을 글자로 쓴다. */}
-        <a href={ROUTES.home} className="flex shrink-0 items-center">
-          {supplier.logoUrl ? (
-            // 어드민이 올린 로고는 objectURL 일 수 있어 next/image 최적화 대상이 아니다.
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={supplier.logoUrl} alt={supplier.companyName} className="h-7 w-auto" />
-          ) : (
-            <span className="whitespace-nowrap text-[17px] font-bold tracking-tight">
-              {supplier.companyName || COPY.brandFallback}
-            </span>
-          )}
-        </a>
-
-        <div className="ml-auto flex shrink-0 items-center gap-3 text-xs text-ink-muted">
-          {ACCOUNT.signedIn ? (
-            <>
-              <a href={ROUTES.orders} className="whitespace-nowrap hover:text-ink">
-                {COPY.header.myOrders}
-              </a>
-              <span className="text-border-strong">|</span>
-              <span className="whitespace-nowrap font-medium text-ink">{ACCOUNT.name}</span>
-            </>
-          ) : (
-            <>
-              <a href={ROUTES.login} className="whitespace-nowrap hover:text-ink">
-                {COPY.header.login}
-              </a>
-              <span className="text-border-strong">|</span>
-              <a href={ROUTES.signup} className="whitespace-nowrap hover:text-ink">
-                {COPY.header.signup}
-              </a>
-            </>
-          )}
-        </div>
-      </div>
-
       {/* 아랫줄 — 주 메뉴와 도구 */}
       <div className="mx-auto flex w-full max-w-350 items-center gap-6 px-6 py-3">
         <a href={ROUTES.home} className="shrink-0 whitespace-nowrap text-xl font-bold tracking-tight">
@@ -147,7 +126,7 @@ export function SiteHeader() {
               type="search"
               aria-label={COPY.header.searchHint}
               placeholder=" "
-              className="peer h-10 w-56 rounded-full bg-surface pl-4 pr-10 text-sm text-ink"
+              className="peer h-10 w-56 rounded bg-surface pl-4 pr-10 text-sm text-ink"
             />
             <span className="pointer-events-none absolute left-4 text-sm text-ink-faint peer-focus:hidden peer-[:not(:placeholder-shown)]:hidden">
               {COPY.header.searchHint}
@@ -155,7 +134,7 @@ export function SiteHeader() {
             <button
               type="submit"
               aria-label={COPY.header.search}
-              className="absolute right-1 grid size-8 place-items-center rounded-full text-ink-muted hover:text-ink"
+              className="absolute right-1 grid size-8 place-items-center rounded text-ink-muted hover:text-ink"
             >
               <SearchIcon />
             </button>
@@ -169,7 +148,7 @@ export function SiteHeader() {
             <AlarmIcon />
             {/* 읽지 않은 알람 수 — 숫자를 보여야 '몇 개나 밀렸는지' 가 전달된다. */}
             {unread > 0 && (
-              <span className="absolute right-1 top-1 grid min-w-4 place-items-center rounded-full bg-signal-danger px-1 text-[10px] font-medium tabular-nums text-white">
+              <span className="absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-signal-danger px-1 text-[10px] font-medium leading-none tabular-nums text-white">
                 {unread}
               </span>
             )}
@@ -177,6 +156,20 @@ export function SiteHeader() {
 
           <a href={ROUTES.cart} aria-label={COPY.header.cart} className={iconLink}>
             <CartIcon />
+          </a>
+
+          {/*
+            로그인 상태면 마이페이지로, 아니면 로그인으로 보낸다.
+            아바타 사진은 아직 없으므로 기본 얼굴을 그린다 — 빈 원을 두면 무엇을 누르는지 알 수 없다.
+          */}
+          <a
+            href={ACCOUNT.signedIn ? ROUTES.mypage : ROUTES.login}
+            aria-label={ACCOUNT.signedIn ? COPY.header.mypage : COPY.header.login}
+            className="grid size-10 place-items-center rounded-lg text-ink hover:bg-surface"
+          >
+            <span className="grid size-7 place-items-center rounded-full bg-border text-ink-muted">
+              <AvatarIcon />
+            </span>
           </a>
         </div>
       </div>

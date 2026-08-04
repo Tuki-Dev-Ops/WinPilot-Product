@@ -19,6 +19,11 @@ import { PageTitle, SiteShell } from '@/app/_components/SiteShell';
  *
  * 어드민의 판매 상세와 **같은 주문**을 다른 눈으로 본다 — 어드민은 처리를,
  * 여기서는 상태 확인을 한다. 그래서 운송장은 보여주되 바꾸는 버튼은 없다.
+ *
+ * ## 어드민 연동
+ * - 어드민 메뉴의 **'판매'** 상세(`/products/sales/[orderId]`)와 같은 자원이다 (엔티티 `order`)
+ * - 운송장·택배사 ← 운영자가 판매 상세에서 등록한 값
+ * - 결제 상태 · 배송 상태 이름은 어드민 화면과 글자까지 같다
  */
 export const metadata: Metadata = { title: `${COPY.order.detail} — ${CONTENT.seo.title}` };
 

@@ -7,6 +7,9 @@ import { PageTitle, SiteShell } from '@/app/_components/SiteShell';
  *
  * 회사 소개와 **별개 화면**이다 — 읽는 목적이 다르다.
  * 소개는 '무엇을 하는 회사인가', 연혁은 '어떻게 커 왔는가' 를 본다.
+ *
+ * ## 어드민 연동
+ * - 연혁 ← `b2c-admin` 회사 > 연혁 (`/company/milestones`) — 숨김으로 둔 항목은 오지 않는다
  */
 export const metadata: Metadata = { title: `${COPY.company.historyTitle} — ${CONTENT.seo.title}` };
 

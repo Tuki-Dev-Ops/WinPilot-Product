@@ -20,3 +20,7 @@ export * from './banners';
 export * from './contents';
 export * from './company';
 export * from './policies';
+export * from './inquiry-form';
+export * from './inquiries';
+export * from './coupons';
+export * from './product-art';

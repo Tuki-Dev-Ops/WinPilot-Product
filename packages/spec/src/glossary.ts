@@ -40,6 +40,12 @@ export const GLOSSARY: readonly GlossaryEntry[] = [
     note: "어드민 메뉴에는 '판매' 로 적히지만 자원은 같은 주문이다 — 엔티티는 order 하나로 쓴다.",
   },
   { canonical: 'cart', ko: '장바구니', banned: ['basket', 'bag'] },
+  {
+    canonical: 'coupon',
+    ko: '쿠폰',
+    banned: ['voucher', 'promo'],
+    note: '고객 화면에서는 쿠폰함으로 묶어 보여준다. 발급·회수하는 어드민 화면은 아직 없다.',
+  },
   { canonical: 'alarm', ko: '알람', banned: ['alert', 'push'] },
   {
     canonical: 'staff',

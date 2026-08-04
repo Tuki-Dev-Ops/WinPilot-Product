@@ -8,6 +8,10 @@ import { SiteHeader } from './SiteHeader';
  * 이 배치가 A 를 A 답게 만드는 부분이다. B~F 는 여기를 다르게 짠다(사이드 내비, 분할 화면 등).
  * 반면 **문구와 경로, 슬롯 이름은 손대지 않는다** — `@winpilot/client-content` 의 COPY·ROUTES·SLOT
  * 을 그대로 쓴다. 템플릿이 자기 문구를 갖기 시작하면 어드민에서 바꾼 값이 일부 템플릿에만 반영된다.
+ *
+ * ## 어드민 연동
+ * - 푸터의 사업자 정보 · 대표자 · 통신판매업신고 ← `b2c-admin` 설정 > 공급자 정보 (`/settings/supplier`)
+ * - 약관 · 개인정보 링크 ← 설정 > 약관 정보
  */
 
 export function SiteShell({ children }: { children: ReactNode }) {

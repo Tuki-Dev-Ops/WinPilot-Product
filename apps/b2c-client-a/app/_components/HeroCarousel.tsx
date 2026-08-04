@@ -18,6 +18,11 @@ import { SLOT, cid, type BannerItem } from '@winpilot/client-content';
  *
  * 자동 넘김은 **모션 감소를 켠 사용자에게는 돌지 않는다** — 5초마다 화면이 밀리는 것은
  * 움직임이 불편한 사람에게 그대로 장벽이다 (docs/spec/08-non-functional.md §8.2).
+ *
+ * ## 어드민 연동
+ * - 배너 이미지 · 제목 · 부제 · 뱃지 · 링크 ← `b2c-admin` 배너 > 메인 비주얼 (`/banners`)
+ * - 노출 순서는 어드민이 자동으로 매긴 값(`order`)을 그대로 따른다 — 템플릿이 다시 정렬하지 않는다
+ * - 노출 기간이 끝난 배너는 계약 단계에서 걸러져 여기까지 오지 않는다
  */
 const CARD = '23.6vw';
 const GAP = 8;

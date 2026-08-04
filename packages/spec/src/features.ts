@@ -74,6 +74,34 @@ export const FEATURES: readonly FeatureSpec[] = [
     singleViewByDesign: true,
   },
 
+  {
+    id: 'user.settings',
+    label: { ko: '내 정보 수정', en: 'Profile settings' },
+    entity: 'user',
+    action: 'settings',
+    views: {
+      'b2c-client': {
+        route: '/mypage',
+        component: 'UserSettingsPage',
+        status: 'implemented',
+        note: '어드민은 사용자 목록의 상세 모달에서 같은 항목을 고친다 — 수집 항목이 어긋나면 두 쪽이 달라진다',
+      },
+    },
+    // 운영자 쪽은 별도 라우트가 없다(목록 안 모달).
+    singleViewByDesign: true,
+  },
+  {
+    id: 'coupon.list',
+    label: { ko: '쿠폰함', en: 'Coupons' },
+    entity: 'coupon',
+    action: 'list',
+    views: {
+      'b2c-client': { route: '/mypage/coupons', component: 'CouponListPage', status: 'implemented' },
+    },
+    // 발급·회수 화면은 아직 없다. 생기면 여기에 b2c-admin 뷰가 붙는다.
+    singleViewByDesign: true,
+  },
+
   // ── 사용자 ──────────────────────────────────────────────────────────
   {
     id: 'user.list',
@@ -210,6 +238,17 @@ export const FEATURES: readonly FeatureSpec[] = [
     singleViewByDesign: true,
   },
   {
+    id: 'faq.detail',
+    label: { ko: 'FAQ 상세', en: 'FAQ detail' },
+    entity: 'faq',
+    action: 'detail',
+    views: {
+      'b2c-client': { route: '/faqs/[faqId]', component: 'FaqDetailPage', status: 'implemented' },
+    },
+    // 운영자는 목록 화면의 모달에서 문답을 고친다 — 한 문답만 놓고 볼 화면이 따로 필요하지 않다.
+    singleViewByDesign: true,
+  },
+  {
     id: 'news.list',
     label: { ko: '뉴스', en: 'News' },
     entity: 'news',
@@ -236,6 +275,7 @@ export const FEATURES: readonly FeatureSpec[] = [
     entity: 'news',
     action: 'detail',
     views: {
+      'b2c-client': { route: '/news/[newsId]', component: 'NewsDetailPage', status: 'implemented' },
       'b2c-admin': {
         route: '/contents/news/[newsId]',
         component: 'AdminNewsDetailPage',
@@ -243,7 +283,6 @@ export const FEATURES: readonly FeatureSpec[] = [
         note: '본문은 싣지 않고 원문 링크만 관리한다',
       },
     },
-    singleViewByDesign: true,
   },
   {
     id: 'portfolio.list',
@@ -405,8 +444,15 @@ export const FEATURES: readonly FeatureSpec[] = [
     label: { ko: '문의', en: 'Inquiries' },
     entity: 'inquiry',
     action: 'list',
-    views: { 'b2c-admin': { route: '/inquiries', component: 'AdminInquiryListPage', status: 'implemented' } },
-    singleViewByDesign: true,
+    views: {
+      'b2c-client': {
+        route: '/mypage/inquiries',
+        component: 'InquiryListPage',
+        status: 'implemented',
+        note: '어드민 목록과 같은 기록이다 — 운영자가 단 답변이 여기에 그대로 나타난다',
+      },
+      'b2c-admin': { route: '/inquiries', component: 'AdminInquiryListPage', status: 'implemented' },
+    },
   },
 
   // ── 설정 ────────────────────────────────────────────────────────────

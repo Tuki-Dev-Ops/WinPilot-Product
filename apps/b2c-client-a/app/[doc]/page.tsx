@@ -10,6 +10,9 @@ import { DOC_TITLES, docTitle, listDocs, readDoc } from '@/lib/docs';
  *
  * 이 라우트는 마지막에 놓인다: `/products` 같은 실제 화면이 먼저 매칭되고,
  * 남는 한 마디 주소만 여기로 온다. 등록된 문서가 아니면 404 다.
+ *
+ * ## 어드민 연동
+ * - **없다.** 이 화면은 저장소의 문서를 그대로 보여 주는 개발 도구라 어드민이 고치는 값이 없다.
  */
 export const metadata: Metadata = { title: COPY.docs.title };
 
