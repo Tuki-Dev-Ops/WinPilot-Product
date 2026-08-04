@@ -15,7 +15,7 @@ import { InquiryForm } from './_components/InquiryForm';
  */
 export const metadata: Metadata = { title: `${COPY.inquiry.title} — ${CONTENT.seo.title}` };
 
-export default function ContactPage() {
+export default function InquirySettingsPage() {
   return (
     <SiteShell>
       <div className="mx-auto flex w-full max-w-160 flex-col gap-8">

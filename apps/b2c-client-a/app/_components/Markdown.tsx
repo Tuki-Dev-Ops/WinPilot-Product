@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { CodeBlock } from './CodeBlock';
 
 /**
  * 마크다운 렌더러.
@@ -15,7 +16,7 @@ import type { ReactNode } from 'react';
 function inline(text: string, keyPrefix: string): ReactNode[] {
   const nodes: ReactNode[] = [];
   // `코드` · **굵게** · [링크](주소) 세 가지만 본다.
-  const pattern = /(`[^`]+`)|(\*\*[^*]+\*\*)|(\[[^\]]+\]\([^)]+\))/g;
+  const pattern = /(`[^`]+`)|(\*\*[^*]+\*\*)|(!\[[^\]]*\]\([^)]+\))|(\[[^\]]+\]\([^)]+\))/g;
   let last = 0;
   let match: RegExpExecArray | null;
   let index = 0;
@@ -36,6 +37,19 @@ function inline(text: string, keyPrefix: string): ReactNode[] {
         <strong key={key} className="font-semibold">
           {token.slice(2, -2)}
         </strong>,
+      );
+    } else if (token.startsWith('![')) {
+      // 캡처 그림. `public/` 아래에 있으므로 최적화 대상이 아니라 그대로 건다.
+      const alt = token.slice(2, token.indexOf(']'));
+      const src = token.slice(token.indexOf('(') + 1, -1);
+      nodes.push(
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={key}
+          src={src}
+          alt={alt}
+          className="my-3 w-full rounded-lg border border-border"
+        />,
       );
     } else {
       const label = token.slice(1, token.indexOf(']'));
@@ -61,6 +75,8 @@ export function Markdown({ source }: { source: string }) {
   let codeBuffer: string[] = [];
   let tableBuffer: string[] = [];
   let inCode = false;
+  /** ```mermaid 처럼 울타리 뒤에 붙은 말 — 복사 단추 옆에 그대로 적는다. */
+  let codeLang = '';
 
   const flushList = (key: string) => {
     if (listBuffer.length === 0) return;

@@ -11,7 +11,7 @@ import { PageTitle, RichBody, SiteShell } from '@/app/_components/SiteShell';
  */
 export const metadata: Metadata = { title: `${CONTENT.privacy.label} — ${CONTENT.seo.title}` };
 
-export default function PrivacyPage() {
+export default function PrivacySettingsPage() {
   const { privacy } = CONTENT;
 
   return (

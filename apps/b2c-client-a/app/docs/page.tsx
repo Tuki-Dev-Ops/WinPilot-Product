@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { COPY } from '@winpilot/client-content';
-import { PageTitle, SiteShell } from '@/app/_components/SiteShell';
-import { listDocs } from '@/lib/docs';
+import { DocShell } from '@/app/_components/DocShell';
+import { PageTitle } from '@/app/_components/SiteShell';
+import { DOC_GROUPS, listDocs, listGroupDocs } from '@/lib/docs';
 import { pages } from '@/pages.manifest';
 
 /**
@@ -19,7 +20,7 @@ export default function DocsIndexPage() {
   const docs = listDocs();
 
   return (
-    <SiteShell>
+    <DocShell active="/docs">
       <PageTitle title={COPY.docs.title} description={COPY.docs.intro} />
 
       <section className="flex flex-col gap-3">
@@ -33,6 +34,27 @@ export default function DocsIndexPage() {
             >
               <span className="text-sm font-medium">{entry.title}</span>
               <span className="font-mono text-xs text-ink-faint">/{entry.slug}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-3">
+        <h2 className="text-xl font-bold tracking-tight">화면별 문서</h2>
+        <p className="text-sm leading-relaxed text-ink-muted">
+          화면 하나가 문서 하나다. 기능·비기능 명세는 `pnpm docs:build`, 캡처는 `pnpm docs:capture` 로 만든다.
+        </p>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {Object.entries(DOC_GROUPS).map(([slug, title]) => (
+            <a
+              key={slug}
+              href={`/${slug}`}
+              className="flex flex-col gap-1 rounded-xl border border-border px-5 py-4 hover:border-border-strong"
+            >
+              <span className="text-sm font-medium">{title}</span>
+              <span className="font-mono text-xs text-ink-faint">
+                /{slug} · {listGroupDocs(slug).length}장
+              </span>
             </a>
           ))}
         </div>
@@ -64,6 +86,6 @@ export default function DocsIndexPage() {
           ))}
         </div>
       </section>
-    </SiteShell>
+    </DocShell>
   );
 }

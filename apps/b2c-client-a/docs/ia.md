@@ -1,103 +1,141 @@
-# 4. IA (Information Architecture)
+# IA — B2C Client 템플릿 A
 
-> 노드의 원천은 `packages/spec/src/features.ts`. 이 문서는 그 위의 **구조와 규칙**을 정의한다.
+> 노드의 원천은 `packages/spec/src/features.ts` 와 `apps/b2c-client-a/pages.manifest.ts`.
+> 이 문서는 **지금 이 템플릿에 실제로 있는 화면**의 구조를 적는다. 계획이 아니라 현황이다.
+> 검사: `pnpm spec:check` (등록·명명) · `pnpm sync:check` (레지스트리 이름과 파일 이름)
 
-## 4.1 최상위 구조
+## 1. 화면 나무
 
 ```mermaid
+%%{init: {"flowchart": {"curve": "step", "nodeSpacing": 55, "rankSpacing": 65, "useMaxWidth": true}} }%%
 flowchart TD
-  ROOT["/"]:::client
-  ROOT --> HOME["홈"]:::client
-  ROOT --> PRODUCTS["상품<br/>product.*"]:::client
-  ROOT --> ACCOUNT["계정"]:::client
-  ROOT --> AUTH["인증<br/>/login /signup"]:::client
+  HOME["홈 /"]
 
-  ADMIN["/admin"]:::admin
-  ADMIN --> DASH["대시보드<br/>admin.dashboard"]:::admin
-  ADMIN --> APRODUCTS["상품 관리<br/>product.*"]:::admin
-  ADMIN --> AUSERS["사용자 관리<br/>user.*"]:::admin
-  ADMIN --> ASETTINGS["설정<br/>settings"]:::admin
+  subgraph 회사["회사"]
+    direction TB
+    COMPANY["회사소개 /company"]
+    HISTORY["연혁 /company/history"]
+    PORTFOLIO["포트폴리오 /portfolios"]
+  end
 
-  classDef client fill:#eef3ff,stroke:#3b5bfd;
-  classDef admin fill:#f6f7f9,stroke:#5b6271;
+  subgraph 상품["상품"]
+    direction TB
+    PRODUCTS["상품 /products"]
+    PDETAIL["상품 상세 /products/[productId]"]
+    PRODUCTS --> PDETAIL
+  end
+
+  subgraph 지원["고객지원"]
+    direction TB
+    NOTICE["공지사항 /notices"] --> NOTICED["공지 상세 /notices/[noticeId]"]
+    FAQ["FAQ /faqs"] --> FAQD["FAQ 상세 /faqs/[faqId]"]
+    NEWS["뉴스 /news"] --> NEWSD["뉴스 상세 /news/[newsId]"]
+    CONTACT["문의하기 /contact"]
+  end
+
+  subgraph 구매["구매"]
+    direction TB
+    CART["장바구니 /cart"]
+    CHECKOUT["결제 /orders/new"]
+    RESULT["처리 결과 /result"]
+    CART --> CHECKOUT --> RESULT
+  end
+
+  subgraph 내정보["마이페이지"]
+    direction TB
+    MYPAGE["내 정보 수정 /mypage"]
+    ORDERS["주문 내역 /orders"] --> ODETAIL["주문 상세 /orders/[orderId]"]
+    MYINQ["문의 내역 /mypage/inquiries"]
+    COUPONS["쿠폰함 /mypage/coupons"]
+    ALARMS["알람 /alarms"]
+  end
+
+  subgraph 계정["계정"]
+    direction TB
+    LOGIN["로그인 /login"] --> SIGNUP["회원가입 /signup"]
+  end
+
+  subgraph 약관["약관"]
+    direction TB
+    TERMS["이용약관 /terms"]
+    PRIVACY["개인정보 처리방침 /privacy"]
+  end
+
+  HOME --> 회사
+  HOME --> 상품
+  HOME --> 지원
+  HOME --> 구매
+  HOME --> 내정보
+  HOME --> 계정
+  HOME --> 약관
+
+  COMPANY --> HISTORY
+  COMPANY --> PORTFOLIO
+  PDETAIL --> CHECKOUT
+  MYPAGE --> ORDERS
+  MYPAGE --> MYINQ
+  MYPAGE --> COUPONS
+  MYPAGE --> ALARMS
 ```
 
-*(시드 — 도메인 확정 시 교체)*
+선은 **직각(step)** 으로 그린다 — 곡선으로 두면 갈래가 많아질수록 어느 선이 어디로 가는지
+따라가기 어렵다. 같은 이유로 묶음(subgraph)을 먼저 나누고 홈에서 묶음으로만 잇는다.
+화면끼리의 선은 묶음 안에서만 그어 선이 서로 넘지 않게 한다.
 
-## 4.2 뷰별 성격
+신상품(`/products?tag=NEW`)·베스트(`?tag=BEST`)는 **화면이 아니라 상품 목록의 필터**라 도면에
+넣지 않는다. 경로를 따로 두지 않는 이유는 같은 자원이기 때문이다 — 화면을 나누면 정렬·페이징·
+빈 상태를 세 벌로 관리하게 된다.
 
-| | Client View | Admin View |
+## 2. 헤더 메뉴 (`buildNav()`)
+
+메뉴 구성은 템플릿이 정하지 않는다. `@winpilot/client-content` 의 `buildNav()` 하나를
+A~F 가 함께 쓰고, 템플릿은 **배치만** 정한다.
+
+| 1Depth | 2Depth | 비고 |
 |---|---|---|
-| 대상 | 최종 사용자 | 운영자 |
-| 진입 | 검색·공유 링크·직접 방문 | 로그인 후 대시보드 |
-| 탐색 축 | **과업 중심** (사고 싶다, 찾고 싶다) | **자원 중심** (상품, 사용자, 주문) |
-| 내비게이션 | 헤더 + 푸터, 얕게 | 사이드바 고정, 자원별 섹션 |
-| 목록 밀도 | 낮음 (카드, 이미지 중심) | 높음 (테이블, 대량 처리) |
-| SEO | 대상 | 제외 (`noindex`) |
-| 深さ 상한 | 3뎁스 | 4뎁스 |
+| 회사소개 | 회사 소개 · 연혁 · 포트폴리오 | |
+| 신상품 | — | 강조(굵게·브랜드색) |
+| 베스트 | — | 강조 |
+| 상품 | 어드민의 **1Depth 카테고리** | 카테고리를 늘리면 여기도 늘어난다 |
+| 고객지원 | 공지사항 · FAQ · 뉴스 · 문의하기 | 고객지원 화면의 aside 와 같은 네 갈래 |
 
-**같은 데이터라도 축이 다르다.** Client 의 "상품"은 탐색 대상이고 Admin 의 "상품"은 관리 자원이다.
-이 차이를 인정하되, **Feature ID 와 용어는 공유한다** — 구조가 달라도 이름은 같아야 짝지어진다.
+오른쪽 도구는 로그인 여부로 갈린다.
 
-## 4.3 뎁스 규칙
-
-```
-Client   /                     1뎁스   홈
-         /products             2뎁스   컬렉션
-         /products/[productId] 3뎁스   단건
-         /products/[productId]/edit  ← 4뎁스, 예외적으로 허용 (편집)
-
-Admin    /admin                        1뎁스  대시보드
-         /admin/products               2뎁스  컬렉션
-         /admin/products/[productId]   3뎁스  단건
-         /admin/products/[productId]/edit  4뎁스
-```
-
-- 4뎁스를 넘기지 않는다. 넘어야 한다면 자원 모델링이 잘못된 것이다.
-- 뎁스가 곧 브레드크럼 깊이다. 3뎁스 이상은 브레드크럼 필수.
-
-## 4.4 내비게이션 규칙
-
-### Client View
-- 헤더: 로고 · 주요 컬렉션 · 검색 · 계정
-- 푸터: 회사 정보 · 정책 · 고객지원
-- 브레드크럼: 3뎁스부터
-- 모바일(375): 헤더 축약 + 드로어
-
-### Admin View
-- 사이드바: 자원별 섹션 고정, 현재 위치 항상 표시
-- 상단바: 현재 자원명 · 전역 검색 · 계정
-- 브레드크럼: 2뎁스부터 (자원 계층이 깊어 필수)
-- 태블릿(768) 이하: 사이드바 접힘(아이콘만), 375 는 드로어
-
-## 4.5 Figma 페이지 순번과의 관계
-
-`pages.manifest.ts` 의 `order` 가 Figma 페이지 순서를 결정한다 (`1. Index`, `2. …`).
-**IA 순서와 `order` 를 일치시킨다** — Figma 페이지 목록이 곧 사이트맵이 되도록.
-
-권장 대역:
-
-| 대역 | 용도 |
+| 상태 | 오른쪽에 놓이는 것 |
 |---|---|
-| 1–49 | Client View |
-| 50–99 | Admin View |
-| 100+ | 공통/시스템 (에러, 준비중 등) |
+| 로그인 | 검색 · 관심 · 알람(읽지 않은 수) · 장바구니 · 아바타(마이페이지 · 로그아웃) |
+| 비회원 | 검색 · 장바구니 · **로그인** 단추 |
 
-대역을 띄워두면 중간에 페이지를 끼울 때 전체 번호를 다시 매기지 않아도 된다.
-페이지가 10개를 넘으면 `figmaPageName()` 이 자동으로 `01.` 형태로 패딩한다.
+비회원에게 관심·알람을 감추는 이유: 담을 곳도 받을 알람도 없어 눌러도 빈 화면이 나온다.
+장바구니는 비회원도 담을 수 있어 늘 둔다.
 
-## 4.6 검색·필터 위치
+## 3. 두 개의 aside
 
-| | Client View | Admin View |
+목록을 갈래로 나눠 보는 화면은 **왼쪽 aside + 오른쪽 main** 한 뼈대를 쓴다.
+상세로 들어가도 aside 는 그대로 두고 main 만 바뀐다.
+
+| 뼈대 | 갈래 | 파일 |
 |---|---|---|
-| 전역 검색 | 헤더 (상품 중심) | 상단바 (전 자원 대상) |
-| 컬렉션 필터 | 목록 상단, 접힘 기본 | 목록 상단, 펼침 기본 |
-| 정렬 | 드롭다운 | 테이블 헤더 클릭 |
+| 고객지원 | 공지사항 · FAQ · 뉴스 · 문의하기 | `app/_components/SupportShell.tsx` |
+| 마이페이지 | 내 정보 수정 · 주문 내역 · 문의 내역 · 쿠폰함 | `app/_components/MyPageShell.tsx` |
 
-필터 상태는 URL 쿼리에 반영한다 ([1.4](01-path.md#14-쿼리-파라미터)) — 공유·뒤로가기가 동작해야 한다.
+주문 내역이 `/mypage/orders` 가 아닌 `/orders` 인 이유: 주문은 마이페이지에 딸린 것이 아니라
+**독립된 자원**이다(어드민의 '판매' 와 같은 것). 화면만 마이페이지 안쪽에 놓인다.
 
-## 4.7 작성 규칙
+## 4. 깊이
 
-- IA 노드는 반드시 Feature ID 를 갖는다. ID 없는 화면은 명세도 검증도 불가능하다.
-- 한쪽 뷰에만 있는 노드는 그 이유를 표에 남긴다 (`VIEW_PARTIAL` 경고와 대응).
-- 구조를 바꾸면 `features.ts` → `pages.manifest.ts` → 이 문서 순으로 갱신한다.
+| 깊이 | 예 | 규칙 |
+|---|---|---|
+| 1 | `/products` · `/notices` · `/mypage` | 목록·단일 화면 |
+| 2 | `/products/[productId]` · `/mypage/coupons` | 상세·갈래 |
+| 3 | *(없음)* | 3뎁스를 만들지 않는다 — 돌아올 길이 길어진다 |
+
+## 5. 상태 화면
+
+404 · 오류 · 완료 · 실패는 **한 컴포넌트**(`packages/ui` 의 `StatusScreen`)를 세 앱이 같이 쓴다.
+
+| 화면 | 배치 | 자리 |
+|---|---|---|
+| 404 (`not-found.tsx`) | `hero` — 화면 전체, 오른쪽에 큰 도형 | 헤더 밖 |
+| 오류 (`error.tsx`) | `hero` | 헤더 밖 |
+| 완료·실패 (`/result`) | `center` — 결과 아이콘 · 안내 · 단추 | 헤더와 푸터 사이 |

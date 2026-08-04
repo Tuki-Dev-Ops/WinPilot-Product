@@ -10,7 +10,7 @@ import { PageTitle, RichBody, SiteShell } from '@/app/_components/SiteShell';
  */
 export const metadata: Metadata = { title: `${CONTENT.terms.label} — ${CONTENT.seo.title}` };
 
-export default function TermsPage() {
+export default function TermsSettingsPage() {
   const { terms } = CONTENT;
 
   return (

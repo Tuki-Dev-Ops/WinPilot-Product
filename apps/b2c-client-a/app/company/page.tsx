@@ -24,7 +24,7 @@ import { CompanyKeyVisual } from '@/app/_components/CompanyKeyVisual';
  */
 export const metadata: Metadata = { title: `${COPY.company.title} — ${CONTENT.seo.title}` };
 
-export default function CompanyPage() {
+export default function ProfileSettingsPage() {
   const { company, supplier, portfolios } = CONTENT;
   const founded = company.foundedAt.slice(0, 4);
 

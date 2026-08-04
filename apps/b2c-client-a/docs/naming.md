@@ -1,24 +1,89 @@
-# 2. 명명규칙 정의서
+# 명명규칙 정의서 — B2C 도메인
 
-> SSOT: `packages/spec/src/features.ts`, `packages/spec/src/glossary.ts` · 집행: `pnpm spec:check`
+> SSOT: `packages/spec/src/features.ts` · `packages/spec/src/glossary.ts`
+> 집행: `pnpm spec:check`(규칙) · `pnpm sync:check`(레지스트리 이름 = 파일 이름)
 
-## 2.1 해결하려는 문제
+## 1. 배경
 
-Client View 와 Admin View 는 서로 다른 도메인이지만 **같은 기능**을 구현한다.
-이때 각 뷰가 자기 편한 이름을 쓰기 시작하면 다음이 벌어진다.
+같은 것을 **도메인마다 다르게 부른다.**
+
+| 무엇 | 커머스 | 유통·물류 | SaaS | 사내 시스템 |
+|---|---|---|---|---|
+| 파는 것 | Product | Item · SKU | Plan | 자산 |
+| 파는 일 | Order | Sales · 출고 | Subscription | 신청 |
+| 사는 사람 | User · Customer | 거래처 | Account · Tenant | 신청인 |
+| 파는 곳 | Shop · Store | 센터 | Workspace | 부서 |
+
+한 회사 안에서도 기획서는 '판매', 화면은 '주문', 코드는 `Sales`, 테스트는 `order` 를 쓰는 일이
+흔하다. 그러면 **같은 기능을 이어 줄 공통 식별자가 하나도 없다.**
 
 ```
-Client:  /products/new        ProductCreatePage      t('product.new.title')     data-testid="product-new"
-Admin:   /admin/item/register AdminItemRegisterForm  t('admin.item.register')   data-testid="regBtn"
+고객 화면:  /products/new        ProductCreatePage      data-testid="product-new"
+어드민:     /item/register       AdminItemRegisterForm   data-testid="regBtn"
 ```
 
-같은 "상품 등록"인데 **두 구현을 이어 줄 공통 식별자가 하나도 없다.** 이 상태에서는
-디자인 싱크 리포트가 diff 를 찾아도 "이게 어느 기능의 어느 뷰인지"를 사람이 추측해야 하고,
-기능 하나를 바꿀 때 다른 뷰를 빠뜨렸는지 기계가 알 수 없다.
+디자인 싱크 리포트가 차이를 찾아도 "이게 어느 기능의 어느 화면인지" 를 사람이 추측해야 하고,
+기능 하나를 고칠 때 다른 화면을 빠뜨렸는지 기계가 알 수 없다.
 
-**해결: Feature ID 를 유일한 뿌리로 두고, 나머지 모든 이름을 거기서 파생시킨다.**
+## 2. 목적
 
-## 2.2 Feature ID
+**이름을 도메인마다 새로 정하지 않고 한 곳에서 관리한다.**
+
+- 이름의 뿌리는 **Feature ID** 하나다. 라우트·컴포넌트명·i18n 키·테스트 ID·Figma 프레임명이
+  전부 여기서 파생된다.
+- 새 도메인이 생기면 **용어 사전(`glossary.ts`)만 갈아 끼운다.** 규칙과 검사기는 그대로 쓴다.
+- 규칙은 문서로만 두지 않는다. `pnpm spec:check` 가 막지 못하는 규칙은 규칙이 아니다.
+
+## 3. 지금 도메인 — B2C
+
+**이 저장소의 현재 도메인은 B2C 커머스다.** 이 도메인의 표준 이름은 **어드민 화면이 부르는
+이름을 기준으로 삼는다.**
+
+왜 어드민 기준인가.
+
+1. 자원을 **만들고 고치는 쪽**이 어드민이다. 이름은 자원이 태어나는 자리에서 정해지는 편이 흔들리지 않는다.
+2. 고객 화면은 템플릿 A~F 로 여섯 벌이지만 어드민은 하나다. 여섯 쪽이 각자 이름을 정하면
+   같은 값이 여섯 이름을 갖는다.
+3. 운영자가 화면에서 쓰는 말과 개발자가 코드에서 쓰는 말이 같아야 장애 상황에서 서로 통한다.
+
+단, **화면에 적히는 말과 엔티티 이름은 다를 수 있다.** 엔티티는 자원의 이름이고, 화면 문구는
+그 화면의 사용자에게 맞춘 말이다. 둘이 다를 때는 아래 표에 적어 둔다 — 숨기지 않는다.
+
+### 3.1 B2C 표준 이름표
+
+| 엔티티 | 어드민 메뉴 | 고객 화면 | 비고 |
+|---|---|---|---|
+| `product` | 상품 | 상품 | |
+| `category` | 상품 > 카테고리 | 카테고리 | 1Depth·2Depth |
+| `order` | **판매** | **주문** | 같은 자원. 주문번호가 양쪽에서 같다 |
+| `cart` | *(없음)* | 장바구니 | 고객만 담는다 |
+| `coupon` | *(화면 예정)* | 쿠폰함 | 값은 이미 store 에 있다 |
+| `user` | 사용자 | 마이페이지 | 운영자는 남의 것을, 고객은 자기 것을 본다 |
+| `grade` | 사용자 > 등급 | 등급 | 누적 결제금액으로 자동 산정 |
+| `staff` | 관리자 | *(없음)* | 운영 전용 |
+| `inquiry` | 문의 | 문의하기 · 문의 내역 | 같은 기록 |
+| `notice` | 콘텐츠 > 공지사항 | 공지사항 | |
+| `faq` | 콘텐츠 > FAQ | FAQ | |
+| `news` | 콘텐츠 > 뉴스 | 뉴스 | 어드민은 요약·원문 링크만 관리 |
+| `portfolio` | 콘텐츠 > 포트폴리오 | 포트폴리오 | |
+| `banner` | 배너 > 메인 비주얼 | 히어로 | |
+| `profile` | 회사 > 회사 소개 | 회사소개 | 단일 자원 |
+| `milestone` | 회사 > 연혁 | 연혁 | |
+| `supplier` | 설정 > 공급자 정보 | 푸터·회사 소개의 사업자 정보 | |
+| `terms` · `privacy` | 설정 > 약관 정보 | 이용약관 · 개인정보 처리방침 | |
+| `analytics` · `pageview` · `revenue` | 통계 | *(없음)* | 운영 전용 |
+| `tenant` · `invoice` | *(사내 어드민)* | *(없음)* | 고객사·청구 |
+| `status` | 처리 결과 | 완료 · 실패 | 세 앱이 한 컴포넌트 |
+
+이 표가 곧 `packages/spec/src/glossary.ts` 다. 표를 고치면 사전을 고치고, 사전을 고치면
+`pnpm spec:check` 가 어긋난 이름을 찾아 준다.
+
+### 3.2 다른 도메인으로 갈 때
+
+B2B·물류처럼 도메인이 바뀌면 **이 문서의 3장과 `glossary.ts` 만 새로 쓴다.**
+Feature ID 문법(4장)·파생 규칙(5장)·검사 코드(8장)는 도메인과 무관하다.
+
+## 4. Feature ID
 
 ```
 <entity>.<action>              product.create
@@ -39,7 +104,7 @@ Admin:   /admin/item/register AdminItemRegisterForm  t('admin.item.register')   
 같은 뜻의 단어가 뷰마다 다르게 쓰이는 것이 싱크가 깨지는 첫 번째 원인이므로 어휘를 먼저 닫는다.
 새 동작이 정말 필요하면 `packages/spec/src/types.ts` 의 `ACTIONS` 에 추가한다.
 
-## 2.3 파생 규칙
+## 5. 파생 규칙
 
 Feature ID 하나에서 나오는 이름들. `pnpm spec:matrix` 가 이 표를 실제 값으로 출력한다.
 
@@ -61,24 +126,23 @@ Feature ID 하나에서 나오는 이름들. `pnpm spec:matrix` 가 이 표를 �
 > 뷰별로 문구가 달라야 한다면 `feature.product.create.admin.hint` 처럼 **하위 키**로 분기한다.
 > 최상위에서 갈라놓으면 번역 누락을 기계가 못 잡는다.
 
-## 2.4 용어 사전 (Ubiquitous Language)
+## 6. 용어 사전 (Ubiquitous Language)
 
 싱크가 깨지는 원인은 레이아웃이 아니라 **단어**다. 정규 용어만 엔티티·컴포넌트·라우트에 쓸 수 있다.
-
-*(아래는 시드 — 도메인 확정 시 `glossary.ts` 를 교체한다)*
+전체 목록은 3.1 의 표이고, 아래는 금지어가 특히 자주 끼어드는 셋이다.
 
 | 정규 용어 | 한글 | 금지어 | 비고 |
 |---|---|---|---|
-| `product` | 상품 | `item`, `goods`, `merchandise`, `article`, `sku` | Admin 에서도 동일하게 `product` |
-| `user` | 사용자 | `member`, `client`, `customer`, `account` | `client` 는 뷰 이름과 충돌하므로 엔티티명 불가 |
-| `order` | 주문 | `purchase`, `transaction`, `deal` | |
+| `product` | 상품 | `item`, `goods`, `merchandise`, `article`, `sku` | 어드민에서도 `product` |
+| `user` | 사용자 | `member`, `client`, `customer`, `account` | `client` 는 뷰 이름과 부딪혀 엔티티명으로 못 쓴다 |
+| `order` | 주문 | `sale`, `purchase`, `transaction`, `deal` | 어드민 메뉴는 '판매' 지만 엔티티는 `order` |
 
 - 금지어가 Feature ID·엔티티·컴포넌트명에 나타나면 오류 (`TERM_BANNED`).
   검사기는 PascalCase/camelCase/kebab-case 를 단어 단위로 분해해 찾는다 —
   `AdminItemRegisterPage` 안의 `Item` 도 잡힌다.
 - 사전에 없는 새 용어는 경고 (`TERM_UNREGISTERED`). 등록 후 사용한다.
 
-## 2.5 파일·폴더
+## 7. 파일·폴더
 
 | 대상 | 규칙 | 예 |
 |---|---|---|
@@ -91,7 +155,7 @@ Feature ID 하나에서 나오는 이름들. `pnpm spec:matrix` 가 이 표를 �
 | 뷰 공용 컴포넌트 | `components/` 아래, 접두어 없음 | `components/Button.tsx` |
 | 뷰 전용 컴포넌트 | 해당 라우트 트리 안 | `app/admin/products/_components/` |
 
-## 2.6 디자인 토큰
+## 7.1 디자인 토큰
 
 | 대상 | 규칙 | 예 |
 |---|---|---|
@@ -101,7 +165,7 @@ Feature ID 하나에서 나오는 이름들. `pnpm spec:matrix` 가 이 표를 �
 
 자세한 내용은 [6. 디자인 시스템](06-design-system.md).
 
-## 2.7 검사 코드 목록
+## 8. 검사 코드 목록
 
 `pnpm spec:check` 가 내는 코드다. 오류 1건이라도 있으면 종료 코드 1.
 
@@ -124,7 +188,7 @@ Feature ID 하나에서 나오는 이름들. `pnpm spec:matrix` 가 이 표를 �
 | `MANIFEST_MISSING` | error | 구현 완료인데 Figma 페이지 미등록 |
 | `MANIFEST_ORPHAN` | warn | 매니페스트에 있으나 레지스트리에 없음 |
 
-## 2.8 새 기능 추가 절차
+## 9. 새 기능 추가 절차
 
 ```
 1. packages/spec/src/features.ts 에 FeatureSpec 등록  (status: 'planned')

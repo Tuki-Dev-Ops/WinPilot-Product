@@ -1,81 +1,107 @@
-# 1. Path 정의서
+# Path 정의서 — B2C Client 템플릿 A
 
-> SSOT: `packages/spec/src/features.ts` · 집행: `pnpm spec:check`
+> SSOT: `packages/spec/src/features.ts` · 등록: `pages.manifest.ts`
+> 검사: `pnpm spec:check`(등록·명명) · `pnpm sync:check`(레지스트리 이름 = 파일 이름)
 
-## 1.1 뷰 네임스페이스
+## 1. 뷰와 접두어
 
-| 뷰 | 라우트 접두어 | 컴포넌트 접두어 | 비고 |
+| 뷰 | 라우트 접두어 | 컴포넌트 접두어 | 앱 |
 |---|---|---|---|
-| Client View | *(없음)* | *(없음)* | 최종 사용자 대상. SEO 대상. |
-| Admin View | `/admin` | `Admin` | 운영자 대상. `noindex`, 인증 필수. |
+| B2C Client | *(없음)* | *(없음)* | `apps/b2c-client-a` |
+| B2C Admin | *(없음)* | `Admin` | `apps/b2c-admin` |
+| Internal Admin | *(없음)* | `Internal` | `apps/internal-admin` |
 
-접두어는 `packages/spec/src/types.ts` 의 `VIEW_META` 한 곳에서만 정의된다.
-검사기는 각 뷰의 모든 라우트가 자기 접두어로 시작하는지 확인한다 (`ROUTE_PREFIX`).
+세 앱이 **각자의 도메인**에 올라가므로 라우트 접두어를 두지 않는다. 대신 컴포넌트 이름으로
+어느 뷰의 화면인지 구분한다 — 접두어가 없으면 `ProductListPage` 가 세 앱에 다 있게 된다.
 
-## 1.2 URL 문법
+## 2. URL 문법
 
 | 규칙 | 내용 | 위반 예 |
 |---|---|---|
-| 소문자 kebab-case | 정적 세그먼트는 `[a-z0-9]+(-[a-z0-9]+)*` | `/productDetail`, `/Product_List` |
-| 컬렉션은 복수형 | 자원 집합은 복수, 단건은 그 하위 | `/product/123` → `/products/123` |
-| 동사 금지 | 동작은 경로 꼬리 규칙(§1.3)으로만 표현 | `/products/register`, `/getProducts` |
-| 동적 세그먼트 | `[<entity>Id]` — **`Id` 접미 강제** | `[id]`, `[slug]`, `[product]` |
-| 후행 슬래시 없음 | `/products` (O) · `/products/` (X) | |
-| 확장자 없음 | | `/products.html` |
+| 소문자 kebab-case | 정적 세그먼트는 `[a-z0-9]+(-[a-z0-9]+)*` | `/productDetail` |
+| 컬렉션은 복수형 | 자원 집합은 복수, 단건은 그 하위 | `/product/123` |
+| 동사 금지 | 동작은 경로 꼬리 규칙으로만 | `/products/register` |
+| 동적 세그먼트 | `[<entity>Id]` — `Id` 접미 강제 | `[id]`, `[slug]` |
+| 후행 슬래시·확장자 없음 | | `/products/`, `/products.html` |
 
-동적 세그먼트에 `Id` 를 강제하는 이유: `[id]` 만 있으면 중첩 라우트에서
-`/orders/[id]/products/[id]` 처럼 무엇의 id 인지 코드에서 구분할 수 없다.
+## 3. 동작별 경로 꼬리
 
-## 1.3 동작별 경로 꼬리 규칙
+| action | 꼬리 | 이 템플릿의 예 |
+|---|---|---|
+| `list` | *(없음)* | `/products` · `/notices` |
+| `detail` | `/[xId]` | `/products/[productId]` |
+| `create` | `/new` | `/orders/new` (화면 이름은 '결제') |
+| `edit` | `/[xId]/edit` | *(고객 화면에는 없음)* |
+| `search` | `/search` | *(검색은 목록의 `?q=` 로 처리)* |
+| `settings` | *(자유)* | `/terms` · `/privacy` · `/company` |
+| `signup` | `/signup` | `/signup` |
+| `auth` | *(자유)* | `/login` |
+| `home` | *(자유)* | `/` |
+| `result` | *(자유)* | `/result` |
 
-Feature 의 `action` 이 경로 꼬리를 결정한다. 검사 코드: `ROUTE_TAIL`.
+`/orders/new` 를 `/checkout` 으로 두지 않은 이유: 그 화면이 만드는 것은 **주문**이고,
+자원을 만드는 화면의 경로 규칙이 `/{자원}/new` 다. 화면에 적히는 말은 '결제' 이되 주소와
+이름은 자원을 따른다.
 
-| action | 경로 꼬리 | Client 예 | Admin 예 |
+## 4. 실제 경로 목록
+
+| 순번 | 이름 | 경로 | 컴포넌트 |
 |---|---|---|---|
-| `list` | *(없음)* | `/products` | `/admin/products` |
-| `detail` | `/[xId]` | `/products/[productId]` | `/admin/products/[productId]` |
-| `create` | `/new` | `/products/new` | `/admin/products/new` |
-| `edit` | `/[xId]/edit` | `/products/[productId]/edit` | `/admin/products/[productId]/edit` |
-| `search` | `/search` | `/products/search` | `/admin/products/search` |
-| `settings` | `/settings` | `/settings` | `/admin/settings` |
-| `delete` | *(경로 없음)* | 목록/상세 내 액션으로 처리 | 동일 |
-| `dashboard` | *(자유)* | — | `/admin` |
-| `auth` | *(자유)* | `/login`, `/signup` | `/admin/login` |
+| 0 | Home | `/` | `SiteHomePage` |
+| 10 | Products | `/products` | `ProductListPage` |
+| 11 | Product Detail | `/products/[productId]` | `ProductDetailPage` |
+| 20 | Notices | `/notices` | `NoticeListPage` |
+| 21 | Notice Detail | `/notices/[noticeId]` | `NoticeDetailPage` |
+| 22 | FAQ | `/faqs` | `FaqListPage` |
+| 23 | FAQ Detail | `/faqs/[faqId]` | `FaqDetailPage` |
+| 24 | News | `/news` | `NewsListPage` |
+| 25 | News Detail | `/news/[newsId]` | `NewsDetailPage` |
+| 26 | Portfolios | `/portfolios` | `PortfolioListPage` |
+| 30 | Cart | `/cart` | `CartListPage` |
+| 31 | Alarms | `/alarms` | `AlarmListPage` |
+| 32 | Orders | `/orders` | `OrderListPage` |
+| 33 | Checkout | `/orders/new` | `OrderCreatePage` |
+| 34 | Order Detail | `/orders/[orderId]` | `OrderDetailPage` |
+| 35 | My Page | `/mypage` | `UserSettingsPage` |
+| 36 | My Page Inquiries | `/mypage/inquiries` | `InquiryListPage` |
+| 37 | My Page Coupons | `/mypage/coupons` | `CouponListPage` |
+| 40 | Login | `/login` | `UserAuthPage` |
+| 41 | Signup | `/signup` | `UserSignupPage` |
+| 50 | Company | `/company` | `ProfileSettingsPage` |
+| 52 | Company History | `/company/history` | `MilestoneListPage` |
+| 54 | Contact | `/contact` | `InquirySettingsPage` |
+| 60 | Terms | `/terms` | `TermsSettingsPage` |
+| 61 | Privacy | `/privacy` | `PrivacySettingsPage` |
+| 90 | Result | `/result` | `StatusResultPage` |
 
-> `delete` 에 전용 경로를 두지 않는 이유: 삭제는 확인 모달을 동반하는 액션이지 페이지가 아니다.
-> 별도 페이지를 만들면 뷰마다 `/delete`, `/remove`, `/confirm-delete` 로 갈라진다.
+주소가 없는 화면(추출 대상 아님): `not-found.tsx`(404) · `error.tsx`(오류).
+매니페스트는 **주소가 있는 화면**의 목록이고, 이 둘은 어떤 주소로도 나타날 수 있다.
 
-## 1.4 쿼리 파라미터
+## 5. 쿼리 파라미터
 
-| 용도 | 파라미터 | 형식 |
+| 화면 | 파라미터 | 뜻 |
 |---|---|---|
-| 페이지네이션 | `page`, `size` | 1-base 정수 |
-| 정렬 | `sort` | `<field>:<asc\|desc>` (예: `createdAt:desc`) |
-| 검색어 | `q` | 문자열 |
-| 필터 | `filter[<field>]` | 반복 가능 |
+| `/products` | `tag=NEW\|BEST` | 자동 분류 태그 |
+| | `category=<1Depth id>` · `sub=<2Depth id>` | 분류. `sub` 는 `category` 와 짝일 때만 유효 |
+| | `q=<검색어>` | 상품명 부분 일치 |
+| | `min` · `max` | 가격 범위(원) |
+| `/orders/new` | `productId` · `optionId` · `qty` | 상품 상세에서 바로 구매. 없으면 장바구니를 결제 |
+| `/result` | `state=done\|failed` | 완료·실패 |
+| | `kind=order\|inquiry\|signup\|save` | 무엇이 끝났는지 |
+| | `id` | 접수 번호 |
 
-- 쿼리는 **화면 상태**만 담는다. 권한·역할 등 신뢰가 필요한 값은 쿼리에 두지 않는다.
-- 쿼리 차이는 Figma 페이지를 분리하지 않는다 (같은 라우트 = 같은 페이지).
+목록의 상태를 전부 주소에 두는 이유: 새로고침·공유·뒤로가기에서 살아남아야 하기 때문이다.
 
-## 1.5 경로 ↔ Figma 페이지
+## 6. 문서 주소
 
-`pages.manifest.ts` 에 등록된 라우트만 Figma 페이지가 된다.
+`docs/*.md` 파일 이름이 곧 주소다 — `docs/ia.md` → `/ia`.
+문서를 위키에 두지 않는 이유: 화면과 문서가 **같은 레포에서 같이 바뀌어야** 어긋나지 않는다.
 
-```
-features.ts (route)  →  pages.manifest.ts (order, name)  →  Figma 페이지 '1. Index'
-```
-
-- 구현 완료(`status: 'implemented'`)인데 매니페스트에 없으면 검사 오류 (`MANIFEST_MISSING`).
-- 매니페스트에 있는데 레지스트리에 없으면 경고 (`MANIFEST_ORPHAN`).
-- 개발 전용 라우트는 `devOnlyRoutes` 로 예외 처리한다.
-
-## 1.6 현재 경로 표 *(시드 — 도메인 확정 시 교체)*
-
-| Feature ID | Client View | Admin View |
-|---|---|---|
-| `product.list` | `/products` | `/admin/products` |
-| `product.detail` | `/products/[productId]` | `/admin/products/[productId]` |
-| `product.create` | `/products/new` | `/admin/products/new` |
-| `product.edit` | `/products/[productId]/edit` | `/admin/products/[productId]/edit` |
-
-`pnpm spec:matrix` 로 현재 레지스트리의 전체 파생 이름을 출력할 수 있다.
+| 주소 | 문서 |
+|---|---|
+| `/docs` | 문서·화면 목록 |
+| `/ia` | IA |
+| `/flow` | Flow Chart |
+| `/path` | 이 문서 |
+| `/admin-sync` | 어드민 연동 명세 |
+| `/feature` · `/component` · `/design` · `/naming` · `/non-functional` | 각 정의서 |

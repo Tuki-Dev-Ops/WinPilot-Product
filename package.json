@@ -16,7 +16,10 @@
     "ssot:extract": "tsx tools/extractor/src/cli.ts",
     "ssot:verify": "tsx tools/verifier/src/cli.ts",
     "ssot:selftest": "tsx tools/verifier/src/selftest.ts",
-    "dev:internal": "pnpm --filter @winpilot/internal-admin dev"
+    "dev:internal": "pnpm --filter @winpilot/internal-admin dev",
+    "sync:check": "tsx tools/check-component-sync.ts",
+    "docs:build": "tsx tools/build-screen-docs.ts",
+    "docs:capture": "tsx tools/capture-page-views.ts"
   },
   "devDependencies": {
     "playwright": "^1.62.1",
