@@ -91,8 +91,9 @@ export function SiteHeader() {
             <div key={item.id} className="group relative">
               <a
                 href={item.href}
-                className={`flex h-10 shrink-0 items-center whitespace-nowrap text-[15px] font-medium ${
-                  item.emphasis ? 'text-brand-700 dark:text-brand-300' : 'text-ink'
+                /* 강조 메뉴(신상품·베스트)는 색과 **굵기**를 함께 올린다 — 색만으로는 색각 이상 사용자가 놓친다. */
+                className={`flex h-10 shrink-0 items-center whitespace-nowrap text-[15px] ${
+                  item.emphasis ? 'font-bold text-brand-700 dark:text-brand-300' : 'font-medium text-ink'
                 }`}
               >
                 {item.label}
@@ -140,37 +141,94 @@ export function SiteHeader() {
             </button>
           </form>
 
-          <a href={ROUTES.products} aria-label={COPY.header.wishlist} className={iconLink}>
-            <HeartIcon />
-          </a>
+          {/*
+            관심 상품과 알람은 **로그인한 사람에게만** 둔다. 비회원에게는 담을 곳도, 받을 알람도
+            없어서 눌러도 빈 화면이 나온다 — 아이콘이 있으면 없는 기능을 있는 것처럼 보인다.
+          */}
+          {ACCOUNT.signedIn && (
+            <>
+              <a href={ROUTES.products} aria-label={COPY.header.wishlist} className={iconLink}>
+                <HeartIcon />
+              </a>
 
-          <a href={ROUTES.alarms} aria-label={COPY.header.alarm} className={`relative ${iconLink}`}>
-            <AlarmIcon />
-            {/* 읽지 않은 알람 수 — 숫자를 보여야 '몇 개나 밀렸는지' 가 전달된다. */}
-            {unread > 0 && (
-              <span className="absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-signal-danger px-1 text-[10px] font-medium leading-none tabular-nums text-white">
-                {unread}
-              </span>
-            )}
-          </a>
+              <a href={ROUTES.alarms} aria-label={COPY.header.alarm} className={`relative ${iconLink}`}>
+                <AlarmIcon />
+                {/* 읽지 않은 알람 수 — 숫자를 보여야 '몇 개나 밀렸는지' 가 전달된다. */}
+                {unread > 0 && (
+                  <span className="absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-signal-danger px-1 text-[10px] font-medium leading-none tabular-nums text-white">
+                    {unread}
+                  </span>
+                )}
+              </a>
+            </>
+          )}
 
+          {/* 장바구니는 비회원도 담을 수 있어 늘 둔다. */}
           <a href={ROUTES.cart} aria-label={COPY.header.cart} className={iconLink}>
             <CartIcon />
           </a>
 
-          {/*
-            로그인 상태면 마이페이지로, 아니면 로그인으로 보낸다.
-            아바타 사진은 아직 없으므로 기본 얼굴을 그린다 — 빈 원을 두면 무엇을 누르는지 알 수 없다.
-          */}
-          <a
-            href={ACCOUNT.signedIn ? ROUTES.mypage : ROUTES.login}
-            aria-label={ACCOUNT.signedIn ? COPY.header.mypage : COPY.header.login}
-            className="grid size-10 place-items-center rounded-lg text-ink hover:bg-surface"
-          >
-            <span className="grid size-7 place-items-center rounded-full bg-border text-ink-muted">
-              <AvatarIcon />
-            </span>
-          </a>
+          {ACCOUNT.signedIn ? (
+            /*
+              아바타 — 누르면 **마이페이지 · 로그아웃** 이 걸린 작은 메뉴가 열린다.
+              로그아웃을 여기 두는 이유는, 나가는 길이 화면 어디에도 없으면 마이페이지까지
+              들어가야 찾을 수 있기 때문이다.
+
+              메뉴는 주 메뉴와 같이 **CSS 만으로** 편다(`group-hover` · `group-focus-within`).
+              자바스크립트로 열면 추출 시점의 DOM 에는 닫힌 상태만 남아 Figma 에 메뉴가 아예 없다.
+              아바타 사진은 아직 없으므로 기본 얼굴을 그린다 — 빈 원을 두면 무엇을 누르는지 알 수 없다.
+            */
+            <div className="group relative">
+              <button
+                type="button"
+                aria-label={COPY.header.mypage}
+                aria-haspopup="menu"
+                className="grid size-10 place-items-center rounded-lg text-ink hover:bg-surface"
+              >
+                <span className="grid size-7 place-items-center rounded-full bg-border text-ink-muted">
+                  <AvatarIcon />
+                </span>
+              </button>
+
+              <div
+                role="menu"
+                className="absolute right-0 top-full z-50 hidden min-w-36 rounded-lg border border-border bg-canvas py-2 shadow-lg group-focus-within:block group-hover:block"
+              >
+                {[
+                  { href: ROUTES.mypage, label: COPY.header.mypage },
+                  { href: ROUTES.home, label: COPY.mypage.logout },
+                ].map((item) => (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    role="menuitem"
+                    className="block whitespace-nowrap px-4 py-2 text-sm text-ink-muted hover:bg-surface hover:text-ink"
+                  >
+                    {item.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ) : (
+            /*
+              비회원에게는 아바타 대신 **로그인 · 회원가입** 을 글자 그대로 둔다. 얼굴 그림은
+              '내 계정' 을 뜻하는데 아직 계정이 없어, 무엇을 누르는 자리인지 전해지지 않는다.
+            */
+            <div className="ml-1 flex shrink-0 items-center gap-2">
+              <a
+                href={ROUTES.login}
+                className="flex h-9 shrink-0 items-center whitespace-nowrap rounded border border-border-strong px-3.5 text-sm text-ink"
+              >
+                {COPY.header.login}
+              </a>
+              <a
+                href={ROUTES.signup}
+                className="flex h-9 shrink-0 items-center whitespace-nowrap rounded bg-ink px-3.5 text-sm font-medium text-white"
+              >
+                {COPY.header.signup}
+              </a>
+            </div>
+          )}
         </div>
       </div>
 

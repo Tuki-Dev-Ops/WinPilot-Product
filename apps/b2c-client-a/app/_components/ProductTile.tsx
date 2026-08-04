@@ -1,5 +1,6 @@
 import { COPY, ROUTES, discountRate, formatMoney, type ProductItem } from '@winpilot/client-content';
 import { ProductArt } from './ProductArt';
+import { WishlistButton } from './WishlistButton';
 
 /**
  * 상품 타일 — **고객 화면의 유일한 상품 카드**다. 목록·신상품·베스트·카테고리 탐색이 같이 쓴다.
@@ -51,17 +52,7 @@ export function ProductTile({ product, rank }: { product: ProductItem; rank?: nu
         )}
 
         {/* 관심 상품 — 카드를 눌러 상세로 가는 것과 섞이지 않게 이미지 안쪽 끝에 둔다. */}
-        <span
-          aria-hidden="true"
-          className="absolute bottom-2.5 right-2.5 grid size-7 place-items-center rounded-full text-white/90"
-        >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4">
-            <path
-              d="M10 16.5 C10 16.5 3 12.4 3 7.9 A3.4 3.4 0 0 1 10 6.1 A3.4 3.4 0 0 1 17 7.9 C17 12.4 10 16.5 10 16.5 Z"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </span>
+        <WishlistButton productId={product.id} productName={product.name} />
 
         {soldOut && (
           <span className="absolute inset-0 grid place-items-center bg-ink/60 text-sm font-medium text-white">

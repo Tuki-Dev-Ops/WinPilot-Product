@@ -43,8 +43,11 @@ export {
 
 /* 쿠폰·문의 기록의 타입과 판정은 store 가 정의한다 — 고객 화면이 다시 세우지 않는다. */
 export {
+  averageRating,
   couponAmountText,
   couponState,
+  reviewsOf,
+  type ReviewRecord,
   productArt,
   type ProductArtKind,
   pathLabel,

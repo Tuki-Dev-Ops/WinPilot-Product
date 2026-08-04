@@ -43,6 +43,18 @@ import type { ProductItem, SiteContent } from './types';
  */
 const TODAY = todayStamp();
 
+/**
+ * HTML 본문에서 글자만 뽑는다 — 목록 카드는 서식 없이 두 줄만 보여 주기 때문이다.
+ * 태그를 그대로 넣으면 카드에 `<p>` 가 글자로 찍히고, 서식을 살리면 카드 높이가 제각각이 된다.
+ */
+function plainText(html: string): string {
+  return html
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 /** 배송 문구 — 어드민의 배송 정책을 고객이 읽을 한 줄로 바꾼다. */
 function shippingTextOf(product: ProductRecord): string {
   if (product.shippingPolicy === '무료') return '무료배송';
@@ -181,6 +193,8 @@ export const CONTENT: SiteContent = {
     client: item.client,
     period: item.period,
     body: item.body,
+    summary: plainText(item.body),
+    art: productArt({ id: item.id, name: item.title, categoryName: item.client }),
   })),
 
   company: {

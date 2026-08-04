@@ -24,3 +24,4 @@ export * from './inquiry-form';
 export * from './inquiries';
 export * from './coupons';
 export * from './product-art';
+export * from './reviews';

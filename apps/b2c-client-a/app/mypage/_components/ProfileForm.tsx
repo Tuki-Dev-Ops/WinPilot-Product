@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import { ACCOUNT, COPY } from '@winpilot/client-content';
-import { useToast } from '@winpilot/ui';
+import { Dropdown, useToast } from '@winpilot/ui';
 import { ConfirmDialog } from '@/app/_components/ConfirmDialog';
 
 /**
@@ -26,8 +26,19 @@ import { ConfirmDialog } from '@/app/_components/ConfirmDialog';
  */
 type Field = 'nickname' | 'phone' | 'address' | 'addressDetail';
 
-/** 국가 코드 — 전화번호 앞자리. 네이티브 select 는 option 글자가 추출되지 않아 쓰지 않는다. */
-const COUNTRY_CODES = ['+82', '+1', '+81', '+86', '+65'];
+/**
+ * 국가 코드 — 전화번호 앞자리.
+ *
+ * 숫자만 늘어놓으면 어느 나라인지 알 수 없어 나라 이름을 보조 설명으로 붙인다.
+ * 네이티브 select 는 쓰지 않는다 — option 글자가 추출되지 않는다.
+ */
+const COUNTRY_CODES = [
+  { value: '+82', label: '+82', hint: '대한민국' },
+  { value: '+1', label: '+1', hint: '미국 · 캐나다' },
+  { value: '+81', label: '+81', hint: '일본' },
+  { value: '+86', label: '+86', hint: '중국' },
+  { value: '+65', label: '+65', hint: '싱가포르' },
+];
 
 /** 닉네임 재료 — 서버가 없으므로 화면에서 만든다. 가입 시 자동 생성되는 것과 같은 규칙이다. */
 const NICK_HEAD = ['푸른', '고요한', '느긋한', '작은', '단단한', '맑은', '따뜻한'];
@@ -152,29 +163,30 @@ export function ProfileForm() {
     toast.info({ message: '수정을 취소했습니다', detail: '고치던 내용은 저장되지 않았습니다.' });
   };
 
+  /*
+    폭은 여기서 정하지 않는다 — 부르는 쪽에서 `w-full` 이든 `w-32` 든 붙인다.
+    기본값으로 `w-full` 을 넣어 두면 좁게 쓰려는 자리에서 두 폭이 겹쳐, 어느 쪽이 이길지가
+    CSS 생성 순서에 달리게 된다(우편번호 칸이 줄을 밀고 나가던 원인).
+  */
   const inputClass = (invalid = false) =>
-    `h-11 w-full min-w-0 rounded-lg border px-3 text-sm ${
+    `h-11 min-w-0 rounded-lg border px-3 text-sm ${
       invalid ? 'border-signal-danger' : 'border-border-strong'
     } ${editing ? 'bg-surface text-ink' : 'border-border bg-surface text-ink-muted'}`;
 
   return (
     <>
+      {/* 잠금 상태는 아래 `수정` 단추가 말해 준다 — 같은 말을 띠로 한 번 더 두지 않는다. */}
       <form onSubmit={submit} className="flex w-full flex-col gap-5">
-        {/* 잠금 상태를 글로도 알린다 — 입력란 색만으로는 '왜 안 써지는지' 가 전달되지 않는다. */}
-        {!editing && (
-          <p className="rounded-lg bg-surface px-4 py-3 text-xs text-ink-muted">{COPY.mypage.profileLocked}</p>
-        )}
-
         <Row label={COPY.mypage.memberIdLabel}>
-          <input readOnly value={ACCOUNT.memberId} className={`${inputClass()} font-mono`} />
+          <input readOnly value={ACCOUNT.memberId} className={`${inputClass()} w-full font-mono`} />
         </Row>
 
         <Row label={COPY.mypage.emailLabel} note="주문·문의 기록이 이메일로 묶여 있어 변경할 수 없습니다.">
-          <input readOnly value={ACCOUNT.email} className={inputClass()} />
+          <input readOnly value={ACCOUNT.email} className={`${inputClass()} w-full`} />
         </Row>
 
         <Row label={COPY.mypage.nameLabel} note="결제·배송에 쓰이는 실명이라 고객센터를 통해서만 바꿀 수 있습니다.">
-          <input readOnly value={ACCOUNT.name} className={inputClass()} />
+          <input readOnly value={ACCOUNT.name} className={`${inputClass()} w-full`} />
         </Row>
 
         <Row label={COPY.mypage.nicknameLabel} error={errors.nickname}>
@@ -184,7 +196,7 @@ export function ProfileForm() {
               readOnly={!editing}
               onChange={(event) => set('nickname', event.target.value)}
               aria-invalid={Boolean(errors.nickname)}
-              className={inputClass(Boolean(errors.nickname))}
+              className={`${inputClass(Boolean(errors.nickname))} w-full`}
             />
             <button
               type="button"
@@ -200,30 +212,30 @@ export function ProfileForm() {
         <Row label={COPY.mypage.phoneLabel} error={errors.phone}>
           <div className="flex w-full gap-2">
             {/*
-              국가 코드는 네이티브 select 를 쓰지 않는다 — option 글자는 DOM 텍스트가 아니라
-              추출되지 않고 Figma 에서 빈 상자가 된다 (docs/spec/05-component.md).
+              국가 코드는 드롭다운으로 고른다 — 나라가 늘어날수록 단추를 나열할 수 없고,
+              쓰는 사람은 거의 한 나라만 고르므로 자리를 넓게 차지할 이유도 없다.
+
+              네이티브 select 는 쓰지 않는다: option 글자는 DOM 텍스트가 아니라 추출되지 않고
+              Figma 에서 빈 상자가 된다 (docs/spec/05-component.md). 잠긴 상태에서는
+              드롭다운 대신 값을 그대로 보여 준다 — 열리지 않는 드롭다운은 눌러 보게 만든다.
             */}
-            <div className="flex shrink-0 gap-1">
-              {COUNTRY_CODES.map((code) => {
-                const active = code === values.countryCode;
-                return (
-                  <button
-                    key={code}
-                    type="button"
-                    disabled={!editing}
-                    aria-pressed={active}
-                    onClick={() => set('countryCode', code)}
-                    className={`h-11 shrink-0 whitespace-nowrap rounded-lg border px-3 text-sm tabular-nums transition-colors duration-150 disabled:opacity-60 ${
-                      active
-                        ? 'border-ink bg-ink font-medium text-white'
-                        : 'border-border-strong text-ink-muted'
-                    }`}
-                  >
-                    {code}
-                  </button>
-                );
-              })}
-            </div>
+            {editing ? (
+              <Dropdown
+                id="profile-country"
+                label={COPY.mypage.countryLabel}
+                options={COUNTRY_CODES}
+                value={values.countryCode}
+                onChange={(next) => set('countryCode', next)}
+                className="w-36 shrink-0"
+              />
+            ) : (
+              <input
+                readOnly
+                value={values.countryCode}
+                aria-label={COPY.mypage.countryLabel}
+                className={`${inputClass()} w-36 shrink-0 tabular-nums`}
+              />
+            )}
             <input
               value={values.phone}
               readOnly={!editing}
@@ -231,19 +243,23 @@ export function ProfileForm() {
               onChange={(event) => set('phone', event.target.value)}
               aria-invalid={Boolean(errors.phone)}
               aria-label={COPY.mypage.phoneLabel}
-              className={`${inputClass(Boolean(errors.phone))} tabular-nums`}
+              className={`${inputClass(Boolean(errors.phone))} w-full tabular-nums`}
             />
           </div>
         </Row>
 
         <Row label={COPY.mypage.addressLabel} error={errors.address}>
           <div className="flex w-full flex-col gap-2">
-            <div className="flex gap-2">
+            {/*
+              우편번호 칸은 **남는 만큼만** 차지한다(`flex-1`). 고정 폭을 주면 좁은 화면에서
+              단추와 합쳐 줄 폭을 넘어 밖으로 밀려난다.
+            */}
+            <div className="flex w-full gap-2">
               <input
                 readOnly
                 value={values.postalCode}
                 aria-label={COPY.mypage.postalLabel}
-                className={`${inputClass()} w-32 shrink-0 tabular-nums`}
+                className={`${inputClass()} min-w-0 flex-1 tabular-nums`}
               />
               <button
                 type="button"
@@ -260,7 +276,7 @@ export function ProfileForm() {
               onChange={(event) => set('address', event.target.value)}
               aria-invalid={Boolean(errors.address)}
               aria-label={COPY.mypage.addressLabel}
-              className={inputClass(Boolean(errors.address))}
+              className={`${inputClass(Boolean(errors.address))} w-full`}
             />
           </div>
         </Row>
@@ -270,7 +286,7 @@ export function ProfileForm() {
             value={values.addressDetail}
             readOnly={!editing}
             onChange={(event) => set('addressDetail', event.target.value)}
-            className={inputClass()}
+            className={`${inputClass()} w-full`}
           />
         </Row>
 

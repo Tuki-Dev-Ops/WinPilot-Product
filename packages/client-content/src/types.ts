@@ -124,6 +124,10 @@ export type PortfolioItem = {
   period: string;
   /** HTML */
   body: string;
+  /** 목록 카드에 두 줄로 줄여 싣는 평문 — 본문에서 태그를 걷어낸 것이다 */
+  summary: string;
+  /** 사진이 없을 때 그 자리에 그릴 벡터 그림 */
+  art: { kind: ProductArtKind; from: string; to: string; ink: string };
 };
 
 export type CompanyInfo = {

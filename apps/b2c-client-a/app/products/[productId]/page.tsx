@@ -5,14 +5,17 @@ import {
   COPY,
   ROUTES,
   SLOT,
+  averageRating,
   categoryPath,
   cid,
   discountRate,
   findProduct,
   formatMoney,
+  reviewsOf,
 } from '@winpilot/client-content';
-import { PageTitle, RichBody, SiteShell } from '@/app/_components/SiteShell';
+import { PageTitle, SiteShell } from '@/app/_components/SiteShell';
 import { ProductArt } from '@/app/_components/ProductArt';
+import { ProductDetailTabs } from '@/app/products/_components/ProductDetailTabs';
 import { ProductPurchase } from '@/app/products/_components/ProductPurchase';
 
 /**
@@ -26,6 +29,7 @@ import { ProductPurchase } from '@/app/products/_components/ProductPurchase';
  * - NEW · BEST 뱃지 ← 등록일과 판매량으로 자동 분류되는 태그 (store `productTags`)
  * - 옵션·수량·구매 단추는 `ProductPurchase` 가 다룬다 (옵션은 상품 등록의 **옵션** 섹션)
  * - 카테고리 경로 ← 상품 > 카테고리 (`/products/categories`)
+ * - 상세 설명 · 리뷰는 `ProductDetailTabs` 가 다룬다
  */
 export const metadata: Metadata = { title: `${COPY.product.listTitle} — ${CONTENT.seo.title}` };
 
@@ -120,16 +124,11 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         </div>
       </section>
 
-      <section className="flex flex-col gap-4">
-        <h2 className="text-xl font-bold tracking-tight">{COPY.product.detail}</h2>
-        {product.description ? (
-          <RichBody html={product.description} />
-        ) : (
-          <p className="rounded-xl bg-surface px-6 py-12 text-center text-sm text-ink-muted">
-            {COPY.product.detailEmpty}
-          </p>
-        )}
-      </section>
+      <ProductDetailTabs
+        description={product.description}
+        reviews={reviewsOf(product.id)}
+        average={averageRating(product.id)}
+      />
 
       <a href={ROUTES.products} className="w-fit text-sm text-brand-700 dark:text-brand-300">
         {COPY.product.listTitle}
