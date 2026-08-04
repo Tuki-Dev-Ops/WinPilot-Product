@@ -8,10 +8,10 @@ import { SiteShell } from '@/app/_components/SiteShell';
  * 회사 소개와 **별개 화면**이다 — 읽는 목적이 다르다.
  * 소개는 '무엇을 하는 회사인가', 연혁은 '어떻게 커 왔는가' 를 본다.
  *
- * **연도로 묶고 세로선으로 잇는다.** 날짜를 한 줄씩 늘어놓으면 2024 와 2026 사이가 몇 년인지
- * 세어야 알 수 있다. 연도를 크게 세워 두면 흐름이 눈으로 잡히고, 같은 해에 여러 일이 있었다는
- * 사실도 함께 보인다. 연도는 화면을 내리는 동안 왼쪽에 붙어 있는다(`sticky`) — 아래로 갈수록
- * 지금 몇 년도를 읽고 있는지 잃어버리기 때문이다.
+ * **연도로 묶는다.** 날짜를 한 줄씩 늘어놓으면 2024 와 2026 사이가 몇 년인지 세어야 알 수 있다.
+ * 연도를 크게 세워 두면 흐름이 눈으로 잡히고, 같은 해에 여러 일이 있었다는 사실도 함께 보인다.
+ * 연도는 화면을 내리는 동안 왼쪽에 붙어 있는다(`sticky`) — 아래로 갈수록 지금 몇 년도를 읽고
+ * 있는지 잃어버리기 때문이다.
  *
  * 최근이 위로 온다 — 지금 어디까지 왔는지가 먼저 궁금하기 때문이다.
  *
@@ -90,16 +90,16 @@ export default function MilestoneListPage() {
                   </p>
                 </div>
 
-                {/* 세로선은 한 줄로 흐르고, 항목마다 점이 얹힌다. */}
-                <ol className="relative min-w-0 flex-1 border-l border-border pl-8">
-                  {items.map((milestone) => (
-                    <li key={milestone.id} className="relative pb-8 last:pb-0">
-                      <span
-                        className={`absolute -left-[35px] top-2 size-3 rounded-full border-2 border-canvas ${
-                          latest ? 'bg-brand-500' : 'bg-border-strong'
-                        }`}
-                      />
+                {/*
+                  세로선과 점은 두지 않는다.
 
+                  선을 그리려면 점의 지름·테두리·여백을 손으로 맞춰야 하는데, 여백을 조금만
+                  바꿔도 점이 선에서 어긋난다. 연도가 왼쪽에 크게 서 있고 항목이 카드로 묶여
+                  있으면 흐름은 이미 읽힌다 — 어긋날 수 있는 장식을 두느니 없애는 편이 낫다.
+                */}
+                <ol className="flex min-w-0 flex-1 flex-col gap-3">
+                  {items.map((milestone) => (
+                    <li key={milestone.id}>
                       <article className="rounded-xl border border-border px-5 py-4 transition-colors duration-150 hover:bg-surface">
                         <p className="font-mono text-xs tabular-nums text-brand-700 dark:text-brand-300">
                           {milestone.date}
