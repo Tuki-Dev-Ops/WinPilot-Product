@@ -51,6 +51,12 @@ export const GLOSSARY: readonly GlossaryEntry[] = [
     note: '완료·실패·오류·404 를 한 화면(StatusScreen)으로 그린다. 세 앱이 같은 컴포넌트를 쓴다.',
   },
   {
+    canonical: 'review',
+    ko: '리뷰',
+    banned: ['comment', 'feedback', 'rating'],
+    note: '별점(rating)은 리뷰의 항목이지 자원이 아니다. 고객 화면에서는 상품 상세의 탭으로만 보인다.',
+  },
+  {
     canonical: 'coupon',
     ko: '쿠폰',
     banned: ['voucher', 'promo'],

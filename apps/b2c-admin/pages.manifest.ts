@@ -119,6 +119,9 @@ export const pages: PageSpec[] = [
   { order: 73, id: 'settings-privacy', name: 'Settings Privacy', route: '/settings/privacy' },
 
   // 100번대 — 시스템·디자인 시스템 면
+  { order: 23, id: 'products-reviews', name: 'Product Reviews', route: '/products/reviews' },
+  { order: 24, id: 'products-coupons', name: 'Product Coupons', route: '/products/coupons' },
+
   { order: 100, id: 'components', name: 'Components', route: '/ssot/components' },
   /*
     처리 결과(완료·실패). 404·오류 화면은 주소가 없는 Next 약속 파일이라 여기 올리지 않는다 —

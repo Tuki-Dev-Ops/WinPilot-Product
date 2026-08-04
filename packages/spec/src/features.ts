@@ -113,8 +113,28 @@ export const FEATURES: readonly FeatureSpec[] = [
     action: 'list',
     views: {
       'b2c-client': { route: '/mypage/coupons', component: 'CouponListPage', status: 'implemented' },
+      'b2c-admin': {
+        route: '/products/coupons',
+        component: 'AdminCouponListPage',
+        status: 'implemented',
+        note: '발급 대상이 비어 있으면 고객 화면의 `쿠폰 받기` 탭에 나온다',
+      },
     },
-    // 발급·회수 화면은 아직 없다. 생기면 여기에 b2c-admin 뷰가 붙는다.
+  },
+  {
+    id: 'review.list',
+    label: { ko: '리뷰', en: 'Reviews' },
+    entity: 'review',
+    action: 'list',
+    views: {
+      'b2c-admin': {
+        route: '/products/reviews',
+        component: 'AdminReviewListPage',
+        status: 'implemented',
+        note: '운영자는 숨기기만 한다 — 지우면 왜 사라졌는지 남지 않는다',
+      },
+    },
+    // 고객 화면에는 목록 라우트가 없다 — 리뷰는 상품 상세의 탭 안에서만 읽힌다.
     singleViewByDesign: true,
   },
 

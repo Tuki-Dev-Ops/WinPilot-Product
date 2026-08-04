@@ -42,6 +42,8 @@ export const ADMIN_MENU: readonly AdminMenuItem[] = [
       // 등록은 목록에서 들어간다 — 목록(/products) → 상세(/products/{code}) 구성이다.
       { id: 'product-create', label: '등록', href: '/products', ready: true },
       { id: 'product-sales', label: '판매', href: '/products/sales', ready: true },
+      { id: 'product-review', label: '리뷰', href: '/products/reviews', ready: true },
+      { id: 'product-coupon', label: '쿠폰', href: '/products/coupons', ready: true },
     ],
   },
   {
