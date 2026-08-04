@@ -27,7 +27,17 @@ import { hasErrors } from '@/lib/validation/content-record';
 export function CompanyProfileForm() {
   const toast = useToast();
   const [value, setValue] = useState<CompanyProfileInput>(COMPANY_PROFILE);
-  const [images, setImages] = useState<UploadedImage[]>([]);
+  /*
+    대표 이미지는 **한 장**이다. 고객 화면(`b2c-client` 의 `/company`)이 소개 글 위에 한 장만
+    놓기 때문에, 여기서 세 장을 받으면 나머지 두 장은 어디에도 나타나지 않는다.
+    저장된 값은 store 의 `COMPANY_PROFILE.heroImageUrl` 이고, 비어 있으면 고객 화면은
+    '등록된 이미지가 없습니다' 자리표시자를 그린다.
+  */
+  const [images, setImages] = useState<UploadedImage[]>(
+    COMPANY_PROFILE.heroImageUrl
+      ? [{ key: 'company-hero', name: '대표 이미지', url: COMPANY_PROFILE.heroImageUrl, size: 0 }]
+      : [],
+  );
   const [errors, setErrors] = useState<CompanyProfileErrors>({});
   const [submitted, setSubmitted] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -62,8 +72,11 @@ export function CompanyProfileForm() {
   return (
     <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-6 xl:flex-row xl:items-start">
       <div className="flex min-w-0 flex-1 flex-col gap-6">
-        <ContentSection title="대표 이미지" description="회사 소개 화면 상단에 쓰입니다.">
-          <ImageUploader images={images} onChange={setImages} rules={{ maxCount: 3 }} />
+        <ContentSection
+          title="대표 이미지"
+          description="고객 화면의 회사 소개 상단에 한 장으로 놓입니다. 등록하지 않으면 자리표시자가 보입니다."
+        >
+          <ImageUploader images={images} onChange={setImages} rules={{ maxCount: 1 }} />
         </ContentSection>
 
         <ContentSection title="기본 정보">

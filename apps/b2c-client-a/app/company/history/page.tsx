@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { CONTENT, COPY, ROUTES } from '@winpilot/client-content';
+import { CONTENT, COPY } from '@winpilot/client-content';
 import { SiteShell } from '@/app/_components/SiteShell';
 
 /**
@@ -117,13 +117,6 @@ export default function MilestoneListPage() {
           })}
         </div>
       )}
-
-      <a
-        href={ROUTES.company}
-        className="flex h-11 w-fit shrink-0 items-center whitespace-nowrap rounded-lg border border-border-strong px-5 text-sm text-ink-muted"
-      >
-        {COPY.company.title}
-      </a>
     </SiteShell>
   );
 }

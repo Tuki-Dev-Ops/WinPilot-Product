@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { CONTENT, COPY, SLOT, cid } from '@winpilot/client-content';
-import { PageTitle, RichBody, SiteShell } from '@/app/_components/SiteShell';
+import { RichBody, SiteShell } from '@/app/_components/SiteShell';
+import { CompanyKeyVisual } from '@/app/_components/CompanyKeyVisual';
 
 /**
  * Feature: `profile.settings` · B2C Client (템플릿 A) · route `/company`
@@ -8,14 +9,14 @@ import { PageTitle, RichBody, SiteShell } from '@/app/_components/SiteShell';
  * '무엇을 하는 회사인가' 를 읽는 화면이다. 연혁(`/company/history`)과 나눈 이유는 읽는 목적이
  * 다르기 때문이고, 그래서 본문에 연혁 링크를 또 두지 않는다 — 아래 두 갈래 안내에서 함께 잇는다.
  *
- * 표제 · 소개 본문 · 사업자 정보 순서로 둔다. 사업자 정보를 본문 앞에 두면 회사가 무엇을
+ * 표제 · 키비주얼 · 소개 본문 · 사업자 정보 순서로 둔다. 사업자 정보를 본문 앞에 두면 회사가 무엇을
  * 하는지 읽기 전에 등록번호부터 보게 된다 — 확인용 값은 필요할 때만 찾으면 된다.
  *
  * 아래에 '연혁 · 포트폴리오 · 문의하기' 로 가는 카드를 두지 않는다 — 헤더의 회사소개 메뉴가
  * 이미 그 갈래를 펼쳐 보여 주므로, 본문에 또 두면 같은 길이 두 군데가 된다.
  *
  * ## 어드민 연동
- * - 회사 소개 본문 · 대표자 · 설립일 ← `b2c-admin` 회사 > 회사 소개 (`/company`)
+ * - 회사 소개 본문 · 대표자 · 설립일 · 대표 이미지 ← `b2c-admin` 회사 > 회사 소개 (`/company`)
  * - 회사명 · 주소 · 전화 · 이메일 · 사업자등록번호 · 통신판매업신고 · 업태 · 업종
  *   ← 설정 > 공급자 정보 (`/settings/supplier`) — 푸터에 적히는 값과 같은 것을 쓴다
  * - 연혁 건수 ← 회사 > 연혁 (`/company/milestones`)
@@ -71,7 +72,10 @@ export default function CompanyPage() {
           data-ssot-cid={cid('profile.settings', 'SiteCompanyBody')}
           className="flex min-w-0 flex-1 flex-col gap-4"
         >
-          <h2 className="text-xl font-bold tracking-tight">소개</h2>
+          {/* 어드민에서 등록한 대표 이미지 자리 — 등록 전에는 자리표시자만 보인다. */}
+          <CompanyKeyVisual imageUrl={company.heroImageUrl} />
+
+          <h2 className="mt-2 text-xl font-bold tracking-tight">소개</h2>
           {/* 본문은 어드민 에디터가 만든 HTML 이다 — 템플릿이 문장을 덧붙이지 않는다. */}
           <RichBody html={company.intro} />
         </section>

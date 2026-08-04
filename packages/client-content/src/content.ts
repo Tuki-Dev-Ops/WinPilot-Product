@@ -202,6 +202,7 @@ export const CONTENT: SiteContent = {
     ceo: COMPANY_PROFILE.ceo,
     foundedAt: COMPANY_PROFILE.foundedAt,
     intro: COMPANY_PROFILE.intro,
+    heroImageUrl: COMPANY_PROFILE.heroImageUrl,
     milestones: sortMilestones(MILESTONES.filter((milestone) => milestone.visible)).map((milestone) => ({
       id: milestone.id,
       date: milestoneDate(milestone),

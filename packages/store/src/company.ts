@@ -14,6 +14,13 @@ export type CompanyProfile = {
   email: string;
   /** HTML — RichTextEditor 가 만든다 */
   intro: string;
+  /**
+   * 소개 위에 놓이는 대표 이미지.
+   *
+   * 비어 있으면 고객 화면이 **벡터 키비주얼**을 그린다 — 빈 자리를 두거나 남의 사진을 끌어다
+   * 쓰지 않기 위해서다. 운영자가 올리면 그 사진이 이긴다.
+   */
+  heroImageUrl: string;
 };
 
 export type MilestoneRecord = {
@@ -35,6 +42,7 @@ export const COMPANY_PROFILE: CompanyProfile = {
   address: '서울특별시 성동구 왕십리로 000, 000호',
   phone: '02-0000-0000',
   email: 'hello@example.com',
+  heroImageUrl: '',
   intro:
     '<h3>무엇을 하는 회사인가</h3><p>자원 중심으로 화면을 설계하고, 디자인과 코드가 어긋나지 않는 운영 도구를 만듭니다.</p><h3>일하는 방식</h3><p>실행 중인 화면을 원본으로 삼아 디자인을 맞춥니다.</p>',
 };

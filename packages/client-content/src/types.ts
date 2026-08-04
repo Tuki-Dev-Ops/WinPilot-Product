@@ -136,6 +136,8 @@ export type CompanyInfo = {
   foundedAt: string;
   /** HTML */
   intro: string;
+  /** 어드민이 올린 대표 이미지. 비어 있으면 템플릿이 벡터 키비주얼을 그린다 */
+  heroImageUrl: string;
   milestones: Array<{ id: string; date: string; title: string; description: string }>;
 };
 
