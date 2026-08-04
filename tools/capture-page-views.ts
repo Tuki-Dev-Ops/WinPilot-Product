@@ -1,7 +1,14 @@
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { chromium } from 'playwright';
-import { pages, breakpoints } from '../apps/b2c-client-a/pages.manifest';
+import { pages as clientPages, breakpoints as clientBreakpoints } from '../apps/b2c-client-a/pages.manifest';
+import { pages as adminPages, breakpoints as adminBreakpoints } from '../apps/b2c-admin/pages.manifest';
+
+/** 어느 앱을 찍을지 — `CAPTURE_APP=admin pnpm docs:capture` */
+const APP = process.env.CAPTURE_APP === 'admin' ? 'admin' : 'client';
+const DIR = APP === 'admin' ? 'b2c-admin' : 'b2c-client-a';
+const pages = APP === 'admin' ? adminPages : clientPages;
+const breakpoints = APP === 'admin' ? adminBreakpoints : clientBreakpoints;
 
 /**
  * 화면 캡처 — **정상 화면과 예외 화면을 같은 방식으로** 찍는다.
@@ -17,16 +24,19 @@ import { pages, breakpoints } from '../apps/b2c-client-a/pages.manifest';
  *
  * 실행: 개발 서버를 띄운 뒤 `pnpm docs:capture` (기본 http://localhost:3310)
  */
-const BASE = process.env.CAPTURE_BASE ?? 'http://localhost:3310';
-const OUT = join('apps', 'b2c-client-a', 'docs', 'page-view');
+const BASE = process.env.CAPTURE_BASE ?? (APP === 'admin' ? 'http://localhost:3301' : 'http://localhost:3310');
+const OUT = join('apps', DIR, 'docs', 'page-view');
 /*
   그림은 `public/` 아래에 둔다 — 문서(`docs/`)는 빌드 때 읽는 글이고, 그림은 브라우저가
   주소로 받아 가는 것이다. 같은 폴더에 두면 문서 폴더가 배포물에 섞인다.
 */
-const IMAGES = join('apps', 'b2c-client-a', 'public', 'page-view');
+const IMAGES = join('apps', DIR, 'public', 'page-view');
 
 /** 정상 화면 밖의 상태들. `screen` 은 매니페스트 id 이고, 없는 id 면 따로 문서를 만든다. */
-const EXCEPTIONS: Array<{ screen: string; id: string; label: string; url: string; note: string }> = [
+type Exception = { screen: string; id: string; label: string; url: string; note: string };
+
+/** 예외 화면은 고객 화면에만 정해 두었다. 어드민은 정상 화면만 찍는다. */
+const CLIENT_EXCEPTIONS: Exception[] = [
   {
     screen: 'products',
     id: 'products--empty',
@@ -85,6 +95,8 @@ const EXCEPTIONS: Array<{ screen: string; id: string; label: string; url: string
     note: '주소가 없는 화면이라 매니페스트에는 올리지 않는다.',
   },
 ];
+
+const EXCEPTIONS: Exception[] = APP === 'admin' ? [] : CLIENT_EXCEPTIONS;
 
 type Shot = { id: string; label: string; url: string; note: string; screen: string };
 

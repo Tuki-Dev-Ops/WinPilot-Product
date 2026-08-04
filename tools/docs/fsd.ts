@@ -52,6 +52,16 @@ export type FsdApp = {
   common: string[];
   /** 화면 id → 메뉴 위치 (`고객지원 > 공지사항`) */
   menuOf: (screen: string) => string;
+  /**
+   * §2 의 연동 절 이름과 한 줄 설명.
+   *
+   * 앱마다 방향이 반대다 — 고객 화면은 **값을 받아 오고**, 어드민은 **값을 내보낸다.**
+   * 같은 말로 적으면 어느 쪽이 원본인지 문서만 보고는 알 수 없다.
+   */
+  sourceLabel: string;
+  sourceNote: string;
+  /** 연동이 없을 때 적는 말 */
+  sourceEmpty: string;
 };
 
 const NA = '_N/A — 이 화면에는 해당되지 않습니다._';
@@ -101,9 +111,9 @@ export function fsdDoc(app: FsdApp, page: PageLike, spec: ScreenSpecLike): strin
 
 **기대 효과** — ${spec.effect ?? '이 화면이 없으면 위 목적을 다른 화면이 대신 떠안게 되고, 그 화면은 하는 일이 둘이 된다.'}
 
-**어드민 연동** — 이 화면이 읽는 값의 출처다. 값을 템플릿에 박아 두면 고칠 때마다 배포해야 한다.
+**${app.sourceLabel}** — ${app.sourceNote}
 
-${bullets(spec.admin, '_어드민이 정하는 값이 없다._')}
+${bullets(spec.admin, `_${app.sourceEmpty}_`)}
 ## 3. 화면 구성
 
 ${table(
