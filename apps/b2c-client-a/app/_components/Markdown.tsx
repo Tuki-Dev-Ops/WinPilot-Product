@@ -138,15 +138,12 @@ export function Markdown({ source }: { source: string }) {
 
     if (line.startsWith('```')) {
       if (inCode) {
-        blocks.push(
-          <pre
-            key={key}
-            className="my-4 overflow-x-auto rounded-lg bg-surface px-4 py-3 font-mono text-xs leading-relaxed"
-          >
-            {codeBuffer.join('\n')}
-          </pre>,
-        );
+        blocks.push(<CodeBlock key={key} code={codeBuffer.join('\n')} label={codeLang || undefined} />);
         codeBuffer = [];
+        codeLang = '';
+      } else {
+        // ```mermaid 의 `mermaid` — 무엇을 옮겨 붙이는지 복사 단추 옆에 적는다.
+        codeLang = line.slice(3).trim();
       }
       inCode = !inCode;
       return;

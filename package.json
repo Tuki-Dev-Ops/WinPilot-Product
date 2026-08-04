@@ -18,7 +18,7 @@
     "ssot:selftest": "tsx tools/verifier/src/selftest.ts",
     "dev:internal": "pnpm --filter @winpilot/internal-admin dev",
     "sync:check": "tsx tools/check-component-sync.ts",
-    "docs:build": "tsx tools/build-screen-docs.ts",
+    "docs:build": "tsx tools/build-screen-docs.ts && tsx tools/build-ia-docs.ts",
     "docs:capture": "tsx tools/capture-page-views.ts"
   },
   "devDependencies": {

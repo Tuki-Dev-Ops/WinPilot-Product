@@ -61,11 +61,11 @@ jobs:
       - name: 화면별 명세 드리프트
         run: |
           pnpm docs:build
-          CHANGED=$(git status --porcelain -- apps/b2c-client-a/docs/feature apps/b2c-client-a/docs/non-functional)
+          CHANGED=$(git status --porcelain -- apps/b2c-client-a/docs/feature apps/b2c-client-a/docs/non-functional apps/b2c-client-a/docs/ia)
           if [ -n "$CHANGED" ]; then
             echo "::error::screen-specs.ts 와 생성된 명세가 어긋난다. 'pnpm docs:build' 를 돌리고 결과를 함께 커밋한다."
             echo "$CHANGED"
-            git --no-pager diff -- apps/b2c-client-a/docs/feature apps/b2c-client-a/docs/non-functional
+            git --no-pager diff -- apps/b2c-client-a/docs/feature apps/b2c-client-a/docs/non-functional apps/b2c-client-a/docs/ia
             exit 1
           fi
 

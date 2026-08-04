@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { COPY } from '@winpilot/client-content';
 import { DocShell } from '@/app/_components/DocShell';
 import { PageTitle } from '@/app/_components/SiteShell';
-import { DOC_GROUPS, listDocs, listGroupDocs } from '@/lib/docs';
+import { DOC_GROUPS, TAB_GROUPS, listDocs, listGroupDocs } from '@/lib/docs';
 import { pages } from '@/pages.manifest';
 
 /**
@@ -25,15 +25,16 @@ export default function DocsIndexPage() {
 
       <section className="flex flex-col gap-3">
         <h2 className="text-xl font-bold tracking-tight">문서</h2>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {docs.map((entry) => (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {/* IA 는 갈래 묶음이라 한 장짜리 목록에 들지 않는다 — 맨 앞에 따로 세운다. */}
+          {[...Object.entries(TAB_GROUPS).map(([slug, title]) => ({ slug, title })), ...docs].map((entry) => (
             <a
               key={entry.slug}
               href={`/${entry.slug}`}
               className="flex flex-col gap-1 rounded-xl border border-border px-5 py-4 hover:border-border-strong"
             >
               <span className="text-sm font-medium">{entry.title}</span>
-              <span className="font-mono text-xs text-ink-faint">/{entry.slug}</span>
+              <span className="truncate font-mono text-xs text-ink-faint">/{entry.slug}</span>
             </a>
           ))}
         </div>

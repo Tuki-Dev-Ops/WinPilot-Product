@@ -94,14 +94,15 @@
 
 ## 6. 문서 주소
 
-`docs/*.md` 파일 이름이 곧 주소다 — `docs/ia.md` → `/ia`.
+`docs/` 아래의 파일 경로가 곧 주소다 — `docs/flow.md` → `/flow`, `docs/ia/purchase.md` → `/ia/purchase`.
 문서를 위키에 두지 않는 이유: 화면과 문서가 **같은 레포에서 같이 바뀌어야** 어긋나지 않는다.
 
-| 주소 | 문서 |
-|---|---|
-| `/docs` | 문서·화면 목록 |
-| `/ia` | IA |
-| `/flow` | Flow Chart |
-| `/path` | 이 문서 |
-| `/admin-sync` | 어드민 연동 명세 |
-| `/feature` · `/component` · `/design` · `/naming` · `/non-functional` | 각 정의서 |
+폴더는 한 마디를 더한다. 폴더 이름을 한글로 두지 않는 이유는 §2 와 같다 — 주소는 소문자
+영문·숫자·하이픈만 쓴다. 화면에 보이는 탭 이름은 한글이다(`전체`·`구매`·`마이페이지`).
+
+| 주소 | 문서 | 모양 |
+|---|---|---|
+| `/docs` | 문서·화면 목록 | 한 장 |
+| `/ia` · `/ia/{갈래}` | IA — 전체와 일곱 갈래 | 상단 탭 |
+| `/feature/{화면}` · `/non-functional/{화면}` · `/page-view/{화면}` | 화면별 명세·캡처 | 왼쪽 목록 |
+| `/flow` · `/path` · `/naming` · `/admin-sync` · `/non-functional-rules` · `/component` · `/design` | 각 정의서 | 한 장 |
