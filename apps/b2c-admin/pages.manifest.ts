@@ -120,6 +120,11 @@ export const pages: PageSpec[] = [
 
   // 100번대 — 시스템·디자인 시스템 면
   { order: 100, id: 'components', name: 'Components', route: '/ssot/components' },
+  /*
+    처리 결과(완료·실패). 404·오류 화면은 주소가 없는 Next 약속 파일이라 여기 올리지 않는다 —
+    매니페스트는 **주소가 있는 화면**의 목록이고, 세 화면 모두 같은 `StatusScreen` 을 쓴다.
+  */
+  { order: 90, id: 'result', name: 'Result', route: '/result', sampleUrl: '/result?state=done' },
 ];
 
 /** 확정 — 이 3개 너비로만 캡처한다. */

@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import { CONTENT, COPY, ROUTES, SLOT, cid } from '@winpilot/client-content';
-import { useToast } from '@winpilot/ui';
+import { Checkbox, useToast } from '@winpilot/ui';
 import { ConfirmDialog } from '@/app/_components/ConfirmDialog';
 
 /**
@@ -253,22 +253,15 @@ export function InquiryForm() {
             {/*
               동의는 **눌러서 켜는 것**이어야 한다. 안내 문장만 두면 무엇에 동의했는지 남지 않고,
               운영자가 필수로 켜 둔 뜻도 화면에 나타나지 않는다.
-              네이티브 체크박스 그림은 브라우저마다 달라 추출이 어긋나므로 직접 그린다.
+              체크 표시까지 그려진 공통 체크박스를 쓴다 — 네이티브 렌더는 OS 마다 달라 맞출 수 없다.
             */}
-            <label htmlFor="inquiry-privacy" className="flex cursor-pointer items-center gap-2.5">
-              <input
-                id="inquiry-privacy"
-                name="privacy"
-                type="checkbox"
-                checked={agreed}
-                onChange={(event) => setAgreed(event.target.checked)}
-                className="size-4 shrink-0 appearance-none rounded border border-border-strong bg-canvas checked:border-brand-500 checked:bg-brand-500"
-              />
+            <div className="flex items-center gap-2.5">
+              <Checkbox checked={agreed} onChange={setAgreed} label={privacyField.label} />
               <span className="text-sm">
                 {privacyField.label}
                 {privacyField.required && <span className="ml-1 text-signal-danger">*</span>}
               </span>
-            </label>
+            </div>
             <p className="text-xs leading-relaxed text-ink-muted">
               {COPY.inquiry.privacyGuide}{' '}
               <a href={ROUTES.privacy} className="text-brand-700 underline underline-offset-2 dark:text-brand-300">

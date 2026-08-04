@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import { ACCOUNT, COPY } from '@winpilot/client-content';
-import { Dropdown, useToast } from '@winpilot/ui';
+import { Checkbox, Dropdown, useToast } from '@winpilot/ui';
 import { ConfirmDialog } from '@/app/_components/ConfirmDialog';
 
 /**
@@ -291,17 +291,16 @@ export function ProfileForm() {
         </Row>
 
         <Row label={COPY.mypage.marketingLabel}>
-          <label className="flex w-full items-center gap-2.5 rounded-lg bg-surface px-4 py-3">
-            {/* 체크박스 그림은 브라우저마다 달라 추출이 어긋나므로 직접 그린다. */}
-            <input
-              type="checkbox"
+          {/* 체크 표시까지 그려진 공통 체크박스를 쓴다 — 손으로 그린 사각형은 켜져도 표시가 없다. */}
+          <div className="flex w-full items-center gap-2.5 rounded-lg bg-surface px-4 py-3">
+            <Checkbox
               checked={values.marketing}
               disabled={!editing}
-              onChange={(event) => set('marketing', event.target.checked)}
-              className="size-4 shrink-0 appearance-none rounded border border-border-strong bg-canvas checked:border-brand-500 checked:bg-brand-500 disabled:opacity-60"
+              onChange={(next) => set('marketing', next)}
+              label={COPY.mypage.marketingLabel}
             />
             <span className="text-sm text-ink-muted">혜택·기획전 소식을 이메일과 문자로 받습니다.</span>
-          </label>
+          </div>
         </Row>
 
         <div className="flex gap-2">

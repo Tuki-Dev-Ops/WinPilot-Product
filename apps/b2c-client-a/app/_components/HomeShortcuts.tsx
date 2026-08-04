@@ -1,4 +1,5 @@
 import { CONTENT, COPY, ROUTES } from '@winpilot/client-content';
+import { ShortcutRow } from './ShortcutRow';
 import {
   BestIcon,
   CompanyIcon,
@@ -48,14 +49,8 @@ export function HomeShortcuts() {
 
   return (
     <div className="flex flex-col gap-10">
-      <nav aria-label={COPY.home.quickNavLabel} className="flex flex-wrap items-start justify-center gap-x-6 gap-y-6">
-        {tiles.map((tile) => (
-          <a key={tile.id} href={tile.href} className="flex w-20 shrink-0 flex-col items-center gap-2">
-            <span className="grid size-16 place-items-center rounded-2xl bg-surface text-ink">{tile.icon}</span>
-            <span className="w-full truncate text-center text-xs text-ink">{tile.label}</span>
-          </a>
-        ))}
-      </nav>
+      {/* 좁은 화면에서도 한 줄로 둔다 — 줄바꿈으로 쌓이면 아래 구획이 화면 밖으로 밀린다. */}
+      <ShortcutRow tiles={tiles} label={COPY.home.quickNavLabel} />
 
       <a
         href={ROUTES.mypageCoupons}

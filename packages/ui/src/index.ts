@@ -14,6 +14,12 @@ export { HintInput, type HintInputProps } from './HintInput';
 export { HintTextarea, type HintTextareaProps } from './HintTextarea';
 export { ImageUploader, type ImageUploaderProps, type UploadedImage } from './ImageUploader';
 export { RichTextEditor, type RichTextEditorProps } from './RichTextEditor';
+export {
+  StatusScreen,
+  type StatusAction,
+  type StatusScreenProps,
+  type StatusTone,
+} from './StatusScreen';
 export { ToastProvider, useToast, type Toast, type ToastTone } from './Toast';
 
 export {

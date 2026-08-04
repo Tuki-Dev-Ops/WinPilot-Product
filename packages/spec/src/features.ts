@@ -43,6 +43,22 @@ export const FEATURES: readonly FeatureSpec[] = [
     singleViewByDesign: true,
   },
   {
+    id: 'status.result',
+    label: { ko: '처리 결과', en: 'Result' },
+    entity: 'status',
+    action: 'result',
+    views: {
+      'b2c-client': {
+        route: '/result',
+        component: 'StatusResultPage',
+        status: 'implemented',
+        note: '완료·실패가 한 화면이다 — `?state=` 로 갈린다',
+      },
+      'b2c-admin': { route: '/result', component: 'AdminStatusResultPage', status: 'implemented' },
+      'internal-admin': { route: '/result', component: 'InternalStatusResultPage', status: 'implemented' },
+    },
+  },
+  {
     id: 'user.auth',
     label: { ko: '로그인', en: 'Sign in' },
     entity: 'user',

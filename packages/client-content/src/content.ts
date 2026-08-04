@@ -287,6 +287,8 @@ export function buildNav(content: SiteContent = CONTENT): NavItem[] {
         { id: 'support-notice', label: COPY.nav.notices, href: ROUTES.notices },
         { id: 'support-faq', label: COPY.nav.faqs, href: ROUTES.faqs },
         { id: 'support-news', label: COPY.nav.news, href: ROUTES.news },
+        // 고객지원 화면의 왼쪽 aside 와 같은 네 갈래다 — 헤더에서 빠지면 두 곳의 목록이 갈린다.
+        { id: 'support-contact', label: COPY.nav.contact, href: ROUTES.contact },
       ],
     },
   ];

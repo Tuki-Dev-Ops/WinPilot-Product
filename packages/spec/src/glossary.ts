@@ -41,6 +41,16 @@ export const GLOSSARY: readonly GlossaryEntry[] = [
   },
   { canonical: 'cart', ko: '장바구니', banned: ['basket', 'bag'] },
   {
+    canonical: 'status',
+    ko: '상태',
+    banned: ['state'],
+    /*
+      `result` 는 금지어가 아니다 — 동작 어휘(`ACTIONS`)에 들어 있는 낱말이라
+      `StatusResultPage` 처럼 컴포넌트명에 그대로 쓰인다. 막으면 규칙끼리 부딪힌다.
+    */
+    note: '완료·실패·오류·404 를 한 화면(StatusScreen)으로 그린다. 세 앱이 같은 컴포넌트를 쓴다.',
+  },
+  {
     canonical: 'coupon',
     ko: '쿠폰',
     banned: ['voucher', 'promo'],

@@ -2,7 +2,8 @@
 
 import { useState, type FormEvent } from 'react';
 import { CONTENT, COPY, ROUTES, SLOT, cid } from '@winpilot/client-content';
-import { useToast } from '@winpilot/ui';
+import { Checkbox, useToast } from '@winpilot/ui';
+import { setSignedIn } from '@/app/_components/session-store';
 import { ConfirmDialog } from '@/app/_components/ConfirmDialog';
 
 /**
@@ -76,6 +77,8 @@ export function SignupForm() {
 
   const signup = () => {
     setConfirming(false);
+    // 가입하면 바로 로그인 상태가 된다 — 방금 만든 계정으로 다시 로그인하게 하지 않는다.
+    setSignedIn(true);
     toast.success({ message: '가입이 완료되었습니다', detail: `${values.name} · ${values.email}` });
   };
 
@@ -110,29 +113,15 @@ export function SignupForm() {
         ))}
 
         <div className="flex flex-col gap-3 rounded-lg bg-surface px-4 py-3">
-          {/* 체크박스 그림은 브라우저마다 달라 추출이 어긋나므로 직접 그린다. */}
-          <label htmlFor="signup-privacy" className="flex cursor-pointer items-center gap-2 text-sm">
-            <input
-              id="signup-privacy"
-              name="privacy"
-              type="checkbox"
-              checked={privacy}
-              onChange={(event) => setPrivacy(event.target.checked)}
-              className="size-4 shrink-0 appearance-none rounded border border-border-strong bg-canvas checked:border-brand-500 checked:bg-brand-500"
-            />
+          {/* 체크 표시까지 그려진 공통 체크박스를 쓴다 — 네이티브 렌더는 OS 마다 달라 맞출 수 없다. */}
+          <div className="flex items-center gap-2 text-sm">
+            <Checkbox checked={privacy} onChange={setPrivacy} label={COPY.auth.privacyAgree} />
             {COPY.auth.privacyAgree}
-          </label>
-          <label htmlFor="signup-marketing" className="flex cursor-pointer items-center gap-2 text-sm text-ink-muted">
-            <input
-              id="signup-marketing"
-              name="marketing"
-              type="checkbox"
-              checked={marketing}
-              onChange={(event) => setMarketing(event.target.checked)}
-              className="size-4 shrink-0 appearance-none rounded border border-border-strong bg-canvas checked:border-brand-500 checked:bg-brand-500"
-            />
+          </div>
+          <div className="flex items-center gap-2 text-sm text-ink-muted">
+            <Checkbox checked={marketing} onChange={setMarketing} label={COPY.auth.marketing} />
             {COPY.auth.marketing}
-          </label>
+          </div>
           <p className="text-xs leading-relaxed text-ink-faint">
             자세한 내용은{' '}
             <a href={ROUTES.privacy} className="text-brand-700 underline underline-offset-2 dark:text-brand-300">

@@ -1,4 +1,5 @@
-import { ACCOUNT, CONTENT, COPY, ROUTES, SLOT, buildNav, cid, unreadAlarms } from '@winpilot/client-content';
+import { CONTENT, COPY, ROUTES, SLOT, buildNav, cid } from '@winpilot/client-content';
+import { HeaderAccount } from './HeaderAccount';
 
 /**
  * 템플릿 A 헤더 — **한 줄**이다.
@@ -6,7 +7,10 @@ import { ACCOUNT, CONTENT, COPY, ROUTES, SLOT, buildNav, cid, unreadAlarms } fro
  *   로고(회사명) · 주 메뉴 · 검색 · 아이콘(관심·알람·장바구니·마이페이지)
  *
  * 로고만 있는 윗줄을 따로 두지 않는다 — 로그인한 사람에게는 그 줄에 아무것도 남지 않아
- * 빈 띠가 되고, 로그인·회원가입은 아바타 자리에서 이어진다.
+ * 빈 띠가 되고, 로그인·회원가입은 오른쪽 끝에서 이어진다.
+ *
+ * 오른쪽 아이콘 묶음은 로그인 여부에 따라 달라져 `HeaderAccount` 로 떼어 놓았다 —
+ * 그 부분만 클라이언트라, 로고·메뉴·검색은 서버가 그린 그대로 남는다.
  *
  * ## 어드민 연동
  * - 회사명 · 로고 ← `b2c-admin` 설정 > 공급자 정보 (`/settings/supplier`)
@@ -26,56 +30,9 @@ function SearchIcon() {
   );
 }
 
-function HeartIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path
-        d="M10 16.5 C10 16.5 3 12.4 3 7.9 A3.4 3.4 0 0 1 10 6.1 A3.4 3.4 0 0 1 17 7.9 C17 12.4 10 16.5 10 16.5 Z"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function AlarmIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M5.5 8 a4.5 4.5 0 0 1 9 0 v3.5 l1.5 2 h-12 l1.5 -2 z" strokeLinejoin="round" />
-      <path d="M8.25 16 a1.9 1.9 0 0 0 3.5 0" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-/**
- * 아바타 — 회색 원판 **안에 표정만** 둔다.
- *
- * 얼굴 윤곽선을 따로 그리면 원판 테두리와 두 겹이 되어 지저분해진다. 배경이 얼굴이다.
- */
-function AvatarIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <path d="M7 8v.05M13 8v.05" strokeLinecap="round" />
-      <path d="M6.4 12a4.3 4.3 0 0 0 7.2 0" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function CartIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M2.5 3.5 h2 l2 8.5 h8 l2 -6.5 h-11" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="7.5" cy="16" r="1.2" />
-      <circle cx="14" cy="16" r="1.2" />
-    </svg>
-  );
-}
-
 export function SiteHeader() {
   const { supplier } = CONTENT;
   const nav = buildNav();
-  const unread = unreadAlarms();
-
-  const iconLink = 'grid size-10 place-items-center rounded-lg text-ink hover:bg-surface';
 
   return (
     <header id={SLOT.header} data-ssot-cid={cid('site.home', 'SiteHeader')} className="border-b border-border bg-canvas">
@@ -141,94 +98,7 @@ export function SiteHeader() {
             </button>
           </form>
 
-          {/*
-            관심 상품과 알람은 **로그인한 사람에게만** 둔다. 비회원에게는 담을 곳도, 받을 알람도
-            없어서 눌러도 빈 화면이 나온다 — 아이콘이 있으면 없는 기능을 있는 것처럼 보인다.
-          */}
-          {ACCOUNT.signedIn && (
-            <>
-              <a href={ROUTES.products} aria-label={COPY.header.wishlist} className={iconLink}>
-                <HeartIcon />
-              </a>
-
-              <a href={ROUTES.alarms} aria-label={COPY.header.alarm} className={`relative ${iconLink}`}>
-                <AlarmIcon />
-                {/* 읽지 않은 알람 수 — 숫자를 보여야 '몇 개나 밀렸는지' 가 전달된다. */}
-                {unread > 0 && (
-                  <span className="absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-signal-danger px-1 text-[10px] font-medium leading-none tabular-nums text-white">
-                    {unread}
-                  </span>
-                )}
-              </a>
-            </>
-          )}
-
-          {/* 장바구니는 비회원도 담을 수 있어 늘 둔다. */}
-          <a href={ROUTES.cart} aria-label={COPY.header.cart} className={iconLink}>
-            <CartIcon />
-          </a>
-
-          {ACCOUNT.signedIn ? (
-            /*
-              아바타 — 누르면 **마이페이지 · 로그아웃** 이 걸린 작은 메뉴가 열린다.
-              로그아웃을 여기 두는 이유는, 나가는 길이 화면 어디에도 없으면 마이페이지까지
-              들어가야 찾을 수 있기 때문이다.
-
-              메뉴는 주 메뉴와 같이 **CSS 만으로** 편다(`group-hover` · `group-focus-within`).
-              자바스크립트로 열면 추출 시점의 DOM 에는 닫힌 상태만 남아 Figma 에 메뉴가 아예 없다.
-              아바타 사진은 아직 없으므로 기본 얼굴을 그린다 — 빈 원을 두면 무엇을 누르는지 알 수 없다.
-            */
-            <div className="group relative">
-              <button
-                type="button"
-                aria-label={COPY.header.mypage}
-                aria-haspopup="menu"
-                className="grid size-10 place-items-center rounded-lg text-ink hover:bg-surface"
-              >
-                <span className="grid size-7 place-items-center rounded-full bg-border text-ink-muted">
-                  <AvatarIcon />
-                </span>
-              </button>
-
-              <div
-                role="menu"
-                className="absolute right-0 top-full z-50 hidden min-w-36 rounded-lg border border-border bg-canvas py-2 shadow-lg group-focus-within:block group-hover:block"
-              >
-                {[
-                  { href: ROUTES.mypage, label: COPY.header.mypage },
-                  { href: ROUTES.home, label: COPY.mypage.logout },
-                ].map((item) => (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    role="menuitem"
-                    className="block whitespace-nowrap px-4 py-2 text-sm text-ink-muted hover:bg-surface hover:text-ink"
-                  >
-                    {item.label}
-                  </a>
-                ))}
-              </div>
-            </div>
-          ) : (
-            /*
-              비회원에게는 아바타 대신 **로그인 · 회원가입** 을 글자 그대로 둔다. 얼굴 그림은
-              '내 계정' 을 뜻하는데 아직 계정이 없어, 무엇을 누르는 자리인지 전해지지 않는다.
-            */
-            <div className="ml-1 flex shrink-0 items-center gap-2">
-              <a
-                href={ROUTES.login}
-                className="flex h-9 shrink-0 items-center whitespace-nowrap rounded border border-border-strong px-3.5 text-sm text-ink"
-              >
-                {COPY.header.login}
-              </a>
-              <a
-                href={ROUTES.signup}
-                className="flex h-9 shrink-0 items-center whitespace-nowrap rounded bg-ink px-3.5 text-sm font-medium text-white"
-              >
-                {COPY.header.signup}
-              </a>
-            </div>
-          )}
+          <HeaderAccount />
         </div>
       </div>
 

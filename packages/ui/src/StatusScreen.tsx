@@ -1,0 +1,117 @@
+import type { ReactNode } from 'react';
+
+/**
+ * 상태 화면 — **404 · 오류 · 완료 · 실패**가 한 컴포넌트를 쓴다.
+ *
+ * 네 화면은 하는 말이 다를 뿐 구조가 같다: 무슨 일이 있었는지(코드), 무엇인지(제목),
+ * 왜 그런지(설명 몇 줄), 그래서 어디로 갈지(단추 한둘). 화면마다 따로 만들면 앱이 세 개라
+ * 열두 벌이 되고, 그중 하나만 문구가 어긋나도 아무도 알아채지 못한다.
+ *
+ * **왼쪽에 글, 오른쪽에 큰 도형.** 도형은 뜻을 담지 않는다 — 빈 화면이 고장 난 것처럼 보이지
+ * 않게 무게를 잡아 주는 역할이다. 그래서 `aria-hidden` 이고, 좁은 화면에서는 사라진다.
+ *
+ * 도형은 **SVG 로 그린다.** 이미지 파일이면 추출에서 한 덩어리 비트맵이 되어 Figma 에서
+ * 벡터로 복원되지 않고, 바깥 CDN 을 물면 픽셀 비교가 네트워크에 좌우된다
+ * (docs/spec/05-component.md).
+ *
+ * 세 앱이 같이 쓰므로 라우트를 알지 못한다 — 어디로 보낼지는 부르는 쪽이 `actions` 로 준다.
+ */
+export type StatusTone = 'neutral' | 'success' | 'danger';
+
+export type StatusAction = { href: string; label: string; primary?: boolean };
+
+export type StatusScreenProps = {
+  /** 큰 글씨로 앉는 코드 — `404 ERROR` 처럼. 완료·실패 화면에서는 비운다 */
+  code?: string;
+  title: string;
+  /** 한 줄씩 끊어 넘긴다 — 한 문단으로 두면 어디서 줄이 바뀔지 화면 폭이 정한다 */
+  description: string[];
+  actions: StatusAction[];
+  tone?: StatusTone;
+  /** 설명 아래에 붙는 요약(주문번호 등) */
+  children?: ReactNode;
+};
+
+const CIRCLE_TONE: Record<StatusTone, { front: [string, string]; back: [string, string] }> = {
+  neutral: { front: ['#ffd400', '#f5c400'], back: ['#cfe0ff', '#2f6fe0'] },
+  success: { front: ['#8fe3b0', '#3fb972'], back: ['#cfe0ff', '#2f6fe0'] },
+  danger: { front: ['#ffb3a8', '#e2503a'], back: ['#ffd9a8', '#e08a2f'] },
+};
+
+/**
+ * 겹친 두 원. 앞의 원은 결에 따라 색이 달라지고, 뒤의 원은 화면 밖으로 걸쳐 잘린다 —
+ * 잘려 있어야 화면이 오른쪽으로 이어지는 느낌이 나고, 원 두 개를 나란히 둔 것처럼 보이지 않는다.
+ */
+function StatusArt({ tone }: { tone: StatusTone }) {
+  const { front, back } = CIRCLE_TONE[tone];
+
+  return (
+    <svg
+      viewBox="0 0 520 520"
+      aria-hidden="true"
+      className="pointer-events-none absolute -right-40 top-1/2 hidden h-[130%] -translate-y-1/2 lg:block"
+    >
+      <defs>
+        <radialGradient id={`status-front-${tone}`} cx="35%" cy="30%" r="80%">
+          <stop offset="0%" stopColor={front[0]} />
+          <stop offset="100%" stopColor={front[1]} />
+        </radialGradient>
+        <radialGradient id={`status-back-${tone}`} cx="30%" cy="25%" r="85%">
+          <stop offset="0%" stopColor={back[0]} />
+          <stop offset="100%" stopColor={back[1]} />
+        </radialGradient>
+      </defs>
+
+      <circle cx="360" cy="250" r="220" fill={`url(#status-back-${tone})`} opacity="0.9" />
+      <circle cx="185" cy="270" r="185" fill={`url(#status-front-${tone})`} />
+    </svg>
+  );
+}
+
+export function StatusScreen({
+  code,
+  title,
+  description,
+  actions,
+  tone = 'neutral',
+  children,
+}: StatusScreenProps) {
+  return (
+    <section className="relative flex min-h-[70vh] w-full items-center overflow-hidden bg-surface">
+      <StatusArt tone={tone} />
+
+      <div className="relative mx-auto flex w-full max-w-350 flex-col gap-6 px-6 py-16 lg:px-16">
+        <div className="flex flex-col gap-4 lg:max-w-140">
+          {code && <p className="text-[40px] font-bold leading-none tracking-tight lg:text-[52px]">{code}</p>}
+          <h1 className={`font-bold tracking-tight ${code ? 'text-xl' : 'text-[32px] leading-tight'}`}>{title}</h1>
+
+          <div className="flex flex-col gap-1">
+            {description.map((line) => (
+              <p key={line} className="text-sm leading-relaxed text-ink-muted">
+                {line}
+              </p>
+            ))}
+          </div>
+
+          {children}
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            {actions.map((action) => (
+              <a
+                key={action.href + action.label}
+                href={action.href}
+                className={`flex h-12 shrink-0 items-center whitespace-nowrap rounded-full px-8 text-sm font-medium ${
+                  action.primary
+                    ? 'bg-ink text-white'
+                    : 'border border-border-strong bg-canvas text-ink-muted hover:text-ink'
+                }`}
+              >
+                {action.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

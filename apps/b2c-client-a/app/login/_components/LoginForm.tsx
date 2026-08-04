@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from 'react';
 import { COPY, SLOT, cid } from '@winpilot/client-content';
 import { useToast } from '@winpilot/ui';
+import { setSignedIn } from '@/app/_components/session-store';
 
 /**
  * 로그인 폼 — **검사하고, 결과를 말한다.**
@@ -41,6 +42,8 @@ export function LoginForm() {
     }
 
     setInvalid(false);
+    // 헤더가 이 값을 보고 아이콘 묶음을 바꾼다 — 로그인했는데 로그인 단추가 남아 있으면 안 된다.
+    setSignedIn(true);
     toast.success({ message: '로그인했습니다', detail: email.trim() });
   };
 
