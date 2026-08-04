@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { COPY, formatMoney, type ProductItem } from '@winpilot/client-content';
+import { useRouter } from 'next/navigation';
+import { COPY, ROUTES, formatMoney, type ProductItem } from '@winpilot/client-content';
 import { useToast } from '@winpilot/ui';
 import { ConfirmDialog } from '@/app/_components/ConfirmDialog';
 import { addToCart as putInCart } from '@/app/_components/cart-store';
@@ -22,6 +23,7 @@ import { addToCart as putInCart } from '@/app/_components/cart-store';
  */
 export function ProductPurchase({ product }: { product: ProductItem }) {
   const toast = useToast();
+  const router = useRouter();
   const colors = [...new Set(product.options.map((option) => option.color))];
   const hasSize = product.options.some((option) => option.size);
 
@@ -97,12 +99,14 @@ export function ProductPurchase({ product }: { product: ProductItem }) {
     setBuying(true);
   };
 
+  /*
+    확인 창에서 '구매하기' 를 누르면 **결제 화면으로 옮긴다.**
+    여기서 바로 주문을 만들면 배송지·결제수단·쿠폰을 고를 자리가 없어, 확인 창 하나로
+    결제가 끝나 버린다 — 되돌릴 수 없는 일을 확인 창 안에서 마치면 안 된다.
+  */
   const confirmBuy = () => {
     setBuying(false);
-    toast.success({
-      message: '주문이 접수되었습니다',
-      detail: `${product.name} · ${formatMoney(product.price * quantity)}${COPY.product.priceUnit}`,
-    });
+    router.push(ROUTES.checkout({ productId: product.id, optionId: selected?.id, quantity }));
   };
 
   return (

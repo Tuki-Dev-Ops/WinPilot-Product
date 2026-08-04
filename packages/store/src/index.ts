@@ -25,3 +25,4 @@ export * from './inquiries';
 export * from './coupons';
 export * from './product-art';
 export * from './reviews';
+export * from './nickname';

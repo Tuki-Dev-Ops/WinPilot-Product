@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { COPY, ROUTES, SLOT, cartTotal, cid, findProduct, formatMoney, type CartLine } from '@winpilot/client-content';
 import { useToast } from '@winpilot/ui';
@@ -30,6 +31,7 @@ function art(productId: string) {
 
 export function CartView({ initialLines }: { initialLines: CartLine[] }) {
   const toast = useToast();
+  const router = useRouter();
   /*
     서버에서 그릴 때는 시드로 시작하고, 브라우저에 올라온 뒤 실제로 담긴 것으로 맞춘다.
     처음부터 저장분을 읽으면 서버가 그린 것과 달라 하이드레이션이 어긋난다.
@@ -85,14 +87,10 @@ export function CartView({ initialLines }: { initialLines: CartLine[] }) {
     setRemoving(null);
   };
 
+  /* 결제 화면으로 옮긴다 — 장바구니를 비우는 것은 결제를 마친 뒤에 할 일이다. */
   const checkout = () => {
     setOrdering(false);
-    // 주문한 줄은 장바구니에서 빠진다 — 남겨 두면 같은 것을 두 번 주문하게 된다.
-    commit(lines.filter((line) => line.stock === 0));
-    toast.success({
-      message: '주문이 접수되었습니다',
-      detail: `${orderable}건 · ${formatMoney(total)}${COPY.product.priceUnit}`,
-    });
+    router.push(ROUTES.checkout({}));
   };
 
   if (lines.length === 0) {
@@ -221,8 +219,8 @@ export function CartView({ initialLines }: { initialLines: CartLine[] }) {
 
       <ConfirmDialog
         open={ordering}
-        title="주문할까요?"
-        description="품절된 줄은 제외하고 주문합니다."
+        title="결제 화면으로 갈까요?"
+        description="품절된 줄은 제외하고 결제 화면으로 넘어갑니다."
         confirmLabel={COPY.cart.checkout}
         tone="brand"
         onConfirm={checkout}

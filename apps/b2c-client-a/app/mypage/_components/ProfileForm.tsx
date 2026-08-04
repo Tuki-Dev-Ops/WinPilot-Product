@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { ACCOUNT, COPY } from '@winpilot/client-content';
+import { ACCOUNT, COPY, randomNickname } from '@winpilot/client-content';
 import { Checkbox, Dropdown, useToast } from '@winpilot/ui';
 import { ConfirmDialog } from '@/app/_components/ConfirmDialog';
 
@@ -39,10 +39,6 @@ const COUNTRY_CODES = [
   { value: '+86', label: '+86', hint: '중국' },
   { value: '+65', label: '+65', hint: '싱가포르' },
 ];
-
-/** 닉네임 재료 — 서버가 없으므로 화면에서 만든다. 가입 시 자동 생성되는 것과 같은 규칙이다. */
-const NICK_HEAD = ['푸른', '고요한', '느긋한', '작은', '단단한', '맑은', '따뜻한'];
-const NICK_TAIL = ['바람', '숲길', '오후', '항해', '언덕', '물결', '겨울'];
 
 const RULES: Record<Field, (value: string) => string> = {
   nickname: (value) => (value.trim() ? '' : '닉네임을 입력해 주세요.'),
@@ -105,12 +101,8 @@ export function ProfileForm() {
     setErrors((previous) => ({ ...previous, [key]: '' }));
   };
 
-  const shuffleNickname = () => {
-    const head = NICK_HEAD[Math.floor(Math.random() * NICK_HEAD.length)];
-    const tail = NICK_TAIL[Math.floor(Math.random() * NICK_TAIL.length)];
-    const number = 1000 + Math.floor(Math.random() * 9000);
-    set('nickname', `${head}${tail}${number}`);
-  };
+  // 가입 화면과 **같은 규칙**을 쓴다 — 재료를 두 벌 두면 두 화면이 다른 모양의 이름을 만든다.
+  const shuffleNickname = () => set('nickname', randomNickname());
 
   const findAddress = async () => {
     try {
@@ -204,7 +196,7 @@ export function ProfileForm() {
               disabled={!editing}
               className="h-11 shrink-0 whitespace-nowrap rounded-lg border border-border-strong px-4 text-sm text-ink-muted disabled:opacity-40"
             >
-              {COPY.mypage.nicknameShuffle}
+              {COPY.auth.nicknameShuffle}
             </button>
           </div>
         </Row>

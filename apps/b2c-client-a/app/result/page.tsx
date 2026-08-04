@@ -21,6 +21,11 @@ type Search = { state?: string; kind?: string; id?: string };
 
 /** 무엇이 끝났는지에 따라 달라지는 것 — 제목과 돌아갈 곳. */
 const KIND = {
+  signup: {
+    done: '가입이 완료되었습니다.',
+    failed: '가입하지 못했습니다.',
+    back: { href: ROUTES.mypage, label: '마이페이지' },
+  },
   order: {
     done: '주문이 접수되었습니다.',
     failed: '주문을 완료하지 못했습니다.',
@@ -50,7 +55,9 @@ export default async function StatusResultPage({ searchParams }: { searchParams:
       description={
         failed
           ? ['처리 중 문제가 발생해 완료되지 않았습니다.', '잠시 후 다시 시도하거나 고객지원으로 문의해 주세요.']
-          : ['처리가 정상적으로 끝났습니다.', '진행 상황은 아래 화면에서 확인할 수 있습니다.']
+          : kind === 'signup'
+            ? ['이제 주문 내역과 쿠폰함을 쓸 수 있습니다.', '첫 구매 쿠폰은 쿠폰함에서 받아 주세요.']
+            : ['처리가 정상적으로 끝났습니다.', '진행 상황은 아래 화면에서 확인할 수 있습니다.']
       }
       tone={failed ? 'danger' : 'success'}
       actions={[

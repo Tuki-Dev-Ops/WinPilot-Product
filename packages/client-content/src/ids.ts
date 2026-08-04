@@ -109,7 +109,6 @@ export const COPY = {
     profileSave: '저장',
     memberIdLabel: '회원 ID',
     nicknameLabel: '닉네임',
-    nicknameShuffle: '새로 만들기',
     countryLabel: '국가',
     postalLabel: '우편번호',
     addressFind: '주소 찾기',
@@ -156,6 +155,16 @@ export const COPY = {
     phone: '휴대폰번호',
     marketing: '마케팅 정보 수신 동의 (선택)',
     privacyAgree: '개인정보 수집·이용 동의 (필수)',
+    loginLead: '주문 내역과 쿠폰함은 로그인 후에 볼 수 있습니다.',
+    signupLead: '가입하면 첫 구매 쿠폰과 적립 혜택이 바로 들어옵니다.',
+    socialLabel: '간편 로그인',
+    nicknameShuffle: '자동 생성',
+    verifySend: '인증',
+    resend: '재발송',
+    verifyCode: '인증번호 6자리',
+    verifyConfirm: '확인',
+    verified: '인증 완료',
+    verifyGuide: '메일이 오지 않으면 스팸함을 확인해 주세요. 유효 시간이 지나면 다시 받을 수 있습니다.',
     loginSubmit: '로그인',
     signupSubmit: '가입하기',
     toSignup: '아직 계정이 없으신가요?',
@@ -263,6 +272,19 @@ export const ROUTES = {
   mypageInquiries: '/mypage/inquiries',
   mypageCoupons: '/mypage/coupons',
   orders: '/orders',
+  /**
+   * 결제 화면. 인자가 없으면 장바구니에 담긴 것을 결제한다.
+   * 경로가 `/checkout` 이 아닌 이유는 여기서 만드는 자원이 **주문**이고, 자원 생성 화면의
+   * 경로 규칙이 `/{자원}/new` 이기 때문이다 (`packages/spec`).
+   */
+  checkout: (input: { productId?: string; optionId?: string; quantity?: number }) => {
+    const query = new URLSearchParams();
+    if (input.productId) query.set('productId', input.productId);
+    if (input.optionId) query.set('optionId', input.optionId);
+    if (input.quantity) query.set('qty', String(input.quantity));
+    const search = query.toString();
+    return search ? `/orders/new?${search}` : '/orders/new';
+  },
   orderDetail: (id: string) => `/orders/${id}`,
   alarms: '/alarms',
   login: '/login',
@@ -278,4 +300,7 @@ export const ROUTES = {
   contact: '/contact',
   terms: '/terms',
   privacy: '/privacy',
+  /** 처리 결과 — 완료·실패가 한 화면이다. `kind` 로 무엇이 끝났는지 알린다. */
+  resultDone: (kind: string) => `/result?state=done&kind=${kind}`,
+  resultFailed: (kind: string) => `/result?state=failed&kind=${kind}`,
 } as const;

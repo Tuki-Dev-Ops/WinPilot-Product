@@ -56,7 +56,7 @@ export function LoginForm() {
       id={SLOT.authForm}
       data-ssot-cid={cid('user.auth', 'SiteAuthForm')}
       onSubmit={submit}
-      className="flex max-w-100 flex-col gap-5"
+      className="flex w-full flex-col gap-5"
     >
       <div className="flex flex-col gap-2">
         <label htmlFor="auth-email" className="text-sm font-medium">

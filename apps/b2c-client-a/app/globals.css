@@ -5,3 +5,12 @@
  * 여기에 색이나 폰트를 직접 선언하면 그 순간 디자인 시스템이 두 벌이 된다.
  */
 @import '@winpilot/tokens/theme.css';
+/*
+ * 공유 컴포넌트(`@winpilot/ui`)의 클래스도 훑게 한다.
+ *
+ * Tailwind v4 는 프로젝트를 자동으로 훑지만 `node_modules` 는 뺀다. 워크스페이스 패키지는
+ * 심링크로 `node_modules` 안에 들어가 있어 그대로 두면 **거기서만 쓰이는 클래스가 CSS 에
+ * 만들어지지 않는다** — 체크박스의 체크 표시(`peer-checked:block`)가 보이지 않던 원인이다.
+ */
+@source '../../../packages/ui/src';
+

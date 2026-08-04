@@ -149,23 +149,16 @@ export function HeaderAccount() {
         </div>
       ) : (
         /*
-          비회원에게는 아바타 대신 **로그인 · 회원가입** 을 글자 그대로 둔다. 얼굴 그림은
-          '내 계정' 을 뜻하는데 아직 계정이 없어 무엇을 누르는 자리인지 전해지지 않는다.
+          비회원에게는 **로그인 하나만** 둔다. 회원가입은 로그인 화면의 탭에 있어서, 헤더에
+          둘을 나란히 두면 같은 곳으로 가는 길이 두 개가 되고 헤더 오른쪽만 붐빈다.
+          아바타(얼굴)를 쓰지 않는 이유는 그것이 '내 계정' 을 뜻하는데 아직 계정이 없기 때문이다.
         */
-        <div className="ml-1 flex shrink-0 items-center gap-2">
-          <a
-            href={ROUTES.login}
-            className="flex h-9 shrink-0 items-center whitespace-nowrap rounded border border-border-strong px-3.5 text-sm text-ink"
-          >
-            {COPY.header.login}
-          </a>
-          <a
-            href={ROUTES.signup}
-            className="flex h-9 shrink-0 items-center whitespace-nowrap rounded bg-ink px-3.5 text-sm font-medium text-white"
-          >
-            {COPY.header.signup}
-          </a>
-        </div>
+        <a
+          href={ROUTES.login}
+          className="ml-1 flex h-9 shrink-0 items-center whitespace-nowrap rounded bg-ink px-4 text-sm font-medium text-white"
+        >
+          {COPY.header.login}
+        </a>
       )}
     </>
   );

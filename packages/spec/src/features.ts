@@ -171,6 +171,22 @@ export const FEATURES: readonly FeatureSpec[] = [
     },
   },
   {
+    id: 'order.create',
+    label: { ko: '결제', en: 'Checkout' },
+    entity: 'order',
+    action: 'create',
+    views: {
+      'b2c-client': {
+        route: '/orders/new',
+        component: 'OrderCreatePage',
+        status: 'implemented',
+        note: "화면에 적히는 말은 '결제' 지만 만드는 자원은 주문이다 — 경로는 자원 규칙을 따른다",
+      },
+    },
+    // 운영자는 주문을 만들지 않는다 — 고객이 만든 것을 처리할 뿐이다.
+    singleViewByDesign: true,
+  },
+  {
     id: 'order.detail',
     label: { ko: '주문 상세', en: 'Order detail' },
     entity: 'order',

@@ -46,6 +46,7 @@ export {
   averageRating,
   couponAmountText,
   couponState,
+  randomNickname,
   reviewsOf,
   type ReviewRecord,
   productArt,

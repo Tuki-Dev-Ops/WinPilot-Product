@@ -39,15 +39,16 @@ export const pages: PageSpec[] = [
   { order: 30, id: 'cart', name: 'Cart', route: '/cart' },
   { order: 31, id: 'alarms', name: 'Alarms', route: '/alarms' },
   { order: 32, id: 'orders', name: 'Orders', route: '/orders' },
+  { order: 33, id: 'orders-new', name: 'Checkout', route: '/orders/new', sampleUrl: '/orders/new?productId=P-1042' },
   {
-    order: 33,
+    order: 34,
     id: 'orders-detail',
     name: 'Order Detail',
     route: '/orders/[orderId]',
     sampleUrl: '/orders/S-24081',
   },
 
-  { order: 34, id: 'mypage', name: 'My Page', route: '/mypage' },
+  { order: 35, id: 'mypage', name: 'My Page', route: '/mypage' },
   { order: 36, id: 'mypage-inquiries', name: 'My Page Inquiries', route: '/mypage/inquiries' },
   { order: 37, id: 'mypage-coupons', name: 'My Page Coupons', route: '/mypage/coupons' },
 

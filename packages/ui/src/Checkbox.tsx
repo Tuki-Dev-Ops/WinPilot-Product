@@ -29,7 +29,7 @@ export function Checkbox({ checked, indeterminate = false, onChange, label, disa
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => onChange(event.target.checked);
 
   return (
-    <span className="relative inline-flex size-4 shrink-0 items-center justify-center">
+    <span className="relative inline-flex size-[18px] shrink-0 items-center justify-center">
       <input
         ref={ref}
         type="checkbox"
@@ -37,31 +37,36 @@ export function Checkbox({ checked, indeterminate = false, onChange, label, disa
         onChange={handleChange}
         disabled={disabled}
         aria-label={label}
-        className="peer size-4 appearance-none rounded-xs border border-border-strong bg-canvas transition-colors duration-100 checked:border-brand-500 checked:bg-brand-500 indeterminate:border-brand-500 indeterminate:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-50"
+        /*
+          테두리는 켜지지 않았을 때도 또렷해야 한다 — 옅게 두면 배경이 회색인 자리에서
+          네모가 있는지조차 보이지 않는다. 켜면 브랜드색으로 채우고 체크 표시를 얹는다.
+        */
+        className="peer size-[18px] cursor-pointer appearance-none rounded border-[1.5px] border-border-strong bg-canvas transition-colors duration-100 hover:border-ink-faint checked:border-brand-500 checked:bg-brand-500 indeterminate:border-brand-500 indeterminate:bg-brand-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 disabled:cursor-not-allowed disabled:opacity-50"
       />
+      {/* 체크 표시는 실제 SVG 라 추출된다 — 글꼴 글리프(✓)로 두면 Figma 에서 모양이 달라진다. */}
       <svg
         aria-hidden="true"
-        width="10"
-        height="10"
-        viewBox="0 0 10 10"
+        width="12"
+        height="12"
+        viewBox="0 0 12 12"
         fill="none"
         stroke="#ffffff"
-        strokeWidth="1.6"
+        strokeWidth="2"
         className="pointer-events-none absolute hidden peer-checked:block"
       >
-        <path d="M2 5.2 L4.2 7.4 L8 3" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M2.5 6.3 L5 8.8 L9.5 3.6" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
       <svg
         aria-hidden="true"
-        width="10"
-        height="10"
-        viewBox="0 0 10 10"
+        width="12"
+        height="12"
+        viewBox="0 0 12 12"
         fill="none"
         stroke="#ffffff"
-        strokeWidth="1.6"
+        strokeWidth="2"
         className="pointer-events-none absolute hidden peer-indeterminate:block"
       >
-        <path d="M2.5 5 L7.5 5" strokeLinecap="round" />
+        <path d="M3 6 L9 6" strokeLinecap="round" />
       </svg>
     </span>
   );
