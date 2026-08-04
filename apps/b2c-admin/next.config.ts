@@ -2,7 +2,7 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   /** @winpilot/uir 은 빌드된 산출물이 아니라 TS 소스를 그대로 공유한다. */
-  transpilePackages: ['@winpilot/uir', '@winpilot/ui', '@winpilot/store'],
+  transpilePackages: ['@winpilot/uir', '@winpilot/ui', '@winpilot/store', '@winpilot/docs'],
   reactStrictMode: true,
 
   /**

@@ -35,6 +35,14 @@ export type IaGroup = {
   screens: IaScreen[];
   /** 갈래 안의 이동 — `[출발 screen, 도착 screen]` */
   edges: Array<[string, string]>;
+  /**
+   * 이 갈래의 화면이 값을 읽어 오는 곳 — 도면에서 원통으로 그린다.
+   *
+   * 이 프로젝트에는 서버가 없다. 화면이 읽는 것은 공유 패키지의 시드(`@winpilot/store`),
+   * 템플릿 A~F 가 함께 쓰는 문구(`@winpilot/client-content`), 그리고 **주소의 질의문자열**뿐이다.
+   * 있지도 않은 API 를 도면에 그리면 그 도면을 보고 만드는 사람이 서버를 찾는다.
+   */
+  data: string[];
   /** 이 갈래에서만 지켜야 하는 것 */
   notes: string[];
 };
@@ -56,6 +64,7 @@ export const IA_GROUPS: IaGroup[] = [
       ['company', 'company-history'],
       ['company', 'portfolios'],
     ],
+    data: ['@winpilot/store · company', '@winpilot/store · contents (포트폴리오)'],
     notes: [
       '헤더의 `회사소개` 2Depth 와 같은 세 갈래다 — 메뉴에만 있고 화면이 없는 항목을 만들지 않는다.',
       '연혁·포트폴리오는 회사소개 아래에 놓이지만 주소는 각자 1뎁스다. 3뎁스를 만들면 돌아올 길이 길어진다.',
@@ -71,6 +80,7 @@ export const IA_GROUPS: IaGroup[] = [
       { screen: 'products-detail', ko: '상품 상세' },
     ],
     edges: [['products', 'products-detail']],
+    data: ['@winpilot/store · products', '@winpilot/store · categories', '@winpilot/store · product-options', '주소 질의문자열 (분류·검색·가격)'],
     notes: [
       '신상품(`/products?tag=NEW`)·베스트(`?tag=BEST`)는 **화면이 아니라 목록의 필터**다. 화면을 나누면 정렬·페이징·빈 상태를 세 벌로 관리하게 된다.',
       '분류·검색·가격은 주소에 남는다 — 새로고침과 공유에서 살아남아야 조건을 말로 설명하지 않는다.',
@@ -95,6 +105,7 @@ export const IA_GROUPS: IaGroup[] = [
       ['faqs', 'faqs-detail'],
       ['news', 'news-detail'],
     ],
+    data: ['@winpilot/store · contents (공지·FAQ·뉴스)', '@winpilot/store · inquiry-form'],
     notes: [
       '네 갈래가 왼쪽 aside 하나를 함께 쓴다(`app/_components/SupportShell.tsx`). 상세로 들어가도 aside 는 그대로 두고 main 만 바뀐다.',
       '헤더의 `고객지원` 2Depth 와 aside 의 갈래가 같다 — 같은 것을 두 가지로 나누어 부르지 않는다.',
@@ -114,6 +125,7 @@ export const IA_GROUPS: IaGroup[] = [
       ['cart', 'orders-new'],
       ['orders-new', 'result'],
     ],
+    data: ['@winpilot/store · products', '@winpilot/store · coupons', '주소 질의문자열 (productId·state·kind)'],
     notes: [
       '상품 상세에서 장바구니를 거치지 않고 바로 결제로 들어올 수 있다(`/orders/new?productId=…`). 한 개만 사는 사람에게 담기를 시키지 않는다.',
       '장바구니는 비회원도 쓴다 — 담을 때가 아니라 결제할 때 로그인을 묻는다.',
@@ -140,6 +152,7 @@ export const IA_GROUPS: IaGroup[] = [
       ['mypage', 'mypage-coupons'],
       ['mypage', 'alarms'],
     ],
+    data: ['@winpilot/store · orders', '@winpilot/store · coupons', '@winpilot/store · inquiries'],
     notes: [
       '주문 내역이 `/mypage/orders` 가 아니라 `/orders` 인 이유: 주문은 마이페이지에 딸린 것이 아니라 **독립된 자원**이다(어드민의 `판매` 와 같은 것). 화면만 마이페이지 안쪽에 놓인다.',
       '네 갈래가 왼쪽 aside 하나를 함께 쓴다(`app/_components/MyPageShell.tsx`).',
@@ -155,6 +168,7 @@ export const IA_GROUPS: IaGroup[] = [
       { screen: 'signup', ko: '회원가입' },
     ],
     edges: [['login', 'signup']],
+    data: ['@winpilot/client-content · account', '@winpilot/store · nickname'],
     notes: [
       '가입은 로그인 화면의 탭에서 들어간다 — 두 화면을 멀리 두면 계정이 없는 사람이 로그인 화면에서 막힌다.',
       '가입이 끝나면 처리 결과 화면으로 보낸다(`/result?state=done&kind=signup`). 무엇이 끝났는지에 따라 돌아갈 곳이 달라진다.',
@@ -169,6 +183,7 @@ export const IA_GROUPS: IaGroup[] = [
       { screen: 'privacy', ko: '개인정보 처리방침' },
     ],
     edges: [],
+    data: ['@winpilot/store · policies'],
     notes: [
       '가입·결제에서 링크로 열리므로 로그인 없이 읽힌다.',
       '본문은 어드민이 넣는다(`설정 > 서비스 이용약관 정보`·`개인정보 처리방침 정보`). 템플릿에 글을 박아 두면 고칠 때 배포를 해야 한다.',
