@@ -242,10 +242,16 @@ export function buildFsd(app: FsdApp): { written: number; missing: string[] } {
       missing.push(page.id);
       continue;
     }
-    writeFileSync(join(dir, `${page.id}.md`), fsdDoc(app, page, spec), 'utf8');
+    /*
+      화면 하나가 폴더 하나다. 명세 한 장으로 끝나지 않는 화면이 생기면(흐름도·조사 기록)
+      그때 옆에 넣으면 되고, 파일로 늘어놓으면 그 순간 이름 규칙을 새로 만들어야 한다.
+    */
+    mkdirSync(join(dir, page.id), { recursive: true });
+    writeFileSync(join(dir, page.id, `${page.id}.fsd.md`), fsdDoc(app, page, spec), 'utf8');
     written += 1;
   }
 
-  writeFileSync(join(dir, '00-overview.md'), overviewDoc(app, missing), 'utf8');
+  mkdirSync(join(dir, '00-overview'), { recursive: true });
+  writeFileSync(join(dir, '00-overview', '00-overview.fsd.md'), overviewDoc(app, missing), 'utf8');
   return { written, missing };
 }

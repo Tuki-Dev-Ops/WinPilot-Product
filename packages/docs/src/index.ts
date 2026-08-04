@@ -1,12 +1,12 @@
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 /**
  * 문서 읽기 — **파일 경로가 곧 주소**다.
  *
- *   docs/FSD/products.md            → /docs/fsd/products
- *   docs/NFS/Responsive.md          → /docs/nfs/responsive
- *   docs/page-view/products/index.md → /docs/page-view/products
+ *   docs/FSD/products/products.fsd.md     → /docs/fsd/products
+ *   docs/NFS/responsive/responsive.nfs.md → /docs/nfs/responsive
+ *   docs/page-view/products/index.md      → /docs/page-view/products
  *
  * 세 앱이 같은 규칙을 쓴다. 앱마다 읽는 코드를 두면 한쪽만 고쳐져 문서 주소가 갈라진다.
  *
@@ -62,10 +62,28 @@ function read(path: string): string | null {
 /**
  * 한 갈래의 문서 목록.
  *
- * `page-view` 는 화면 하나가 폴더 하나이고 본문은 그 안의 `index.md` 다 — 그림이 화면마다
- * 여러 장이라 한 폴더에 모아 두지 않으면 파일 이름으로 화면을 가려내야 한다.
- * `FSD`·`NFS` 는 문서 하나가 파일 하나다.
+ * **문서 하나가 폴더 하나다.** 폴더 이름이 곧 주소이고, 본문은 그 안의 마크다운 한 장이다.
+ *
+ *   FSD/products/products.fsd.md   → /docs/fsd/products
+ *   NFS/responsive/responsive.nfs.md → /docs/nfs/responsive
+ *   page-view/products/index.md    → /docs/page-view/products
+ *
+ * 파일로 늘어놓지 않는 이유: 화면 하나에 딸리는 것이 명세 한 장으로 끝나지 않는다. 캡처는
+ * 이미 여러 장이고, 흐름도·조사 기록처럼 나중에 붙는 것도 그 화면의 것이다. 폴더가 있으면
+ * 그때 옆에 넣으면 되고, 파일로 두면 그 순간 이름 규칙을 새로 만들어야 한다.
+ *
+ * 안의 파일 이름은 가리지 않는다 — `index.md` 든 `products.fsd.md` 든 폴더에 한 장만 있으면
+ * 그것이 본문이다. 이름을 강제하면 갈래마다 규칙이 늘어난다.
  */
+function bodyIn(dir: string, folder: string): string | null {
+  const inside = readdirSync(join(dir, folder)).filter((name) => name.endsWith('.md'));
+  if (inside.length === 0) return null;
+
+  // 여러 장이면 `index.md` 를 먼저 보고, 없으면 이름순 첫 장을 본다.
+  const pick = inside.includes('index.md') ? 'index.md' : inside.sort()[0];
+  return pick ? join(dir, folder, pick) : null;
+}
+
 export function listSection(section: DocSection): DocEntry[] {
   const dir = join(docsRoot(), DOC_DIRS[section]);
   if (!existsSync(dir)) return [];
@@ -73,22 +91,19 @@ export function listSection(section: DocSection): DocEntry[] {
   const entries: DocEntry[] = [];
 
   for (const name of readdirSync(dir)) {
-    const isFolder = existsSync(join(dir, name, 'index.md'));
-    const isFile = name.endsWith('.md');
-    if (!isFolder && !isFile) continue;
-
-    const file = isFolder ? name : name.replace(/\.md$/, '');
-    const slug = file.toLowerCase();
+    const slug = name.toLowerCase();
     if (!safe(slug)) continue;
 
-    const source = read(isFolder ? join(dir, name, 'index.md') : join(dir, name)) ?? '';
-    entries.push({ slug, file, title: titleOf(source, file) });
+    const path = statSync(join(dir, name)).isDirectory() ? bodyIn(dir, name) : null;
+    if (!path) continue;
+
+    entries.push({ slug, file: name, title: titleOf(read(path) ?? '', name) });
   }
 
   return entries.sort((a, b) => a.slug.localeCompare(b.slug));
 }
 
-/** 갈래 안의 문서 한 장. 주소는 소문자이므로 실제 파일 이름은 목록에서 찾아 맞춘다. */
+/** 갈래 안의 문서 한 장. 주소는 소문자이므로 실제 폴더 이름은 목록에서 찾아 맞춘다. */
 export function readSectionDoc(section: DocSection, slug: string): string | null {
   if (!safe(slug)) return null;
 
@@ -96,7 +111,8 @@ export function readSectionDoc(section: DocSection, slug: string): string | null
   if (!entry) return null;
 
   const dir = join(docsRoot(), DOC_DIRS[section]);
-  return read(join(dir, entry.file, 'index.md')) ?? read(join(dir, `${entry.file}.md`));
+  const path = bodyIn(dir, entry.file);
+  return path ? read(path) : null;
 }
 
 /** `docs/` 바로 아래의 한 장짜리 문서 — `/docs/ia` 처럼 갈래가 없는 것. */

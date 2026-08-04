@@ -492,7 +492,12 @@ export function buildNfs(app: NfsApp): number {
   mkdirSync(dir, { recursive: true });
 
   const all = policies(app);
-  for (const policy of all) writeFileSync(join(dir, `${policy.file}.md`), policyDoc(app, policy), 'utf8');
+  for (const policy of all) {
+    // 폴더 이름이 곧 주소라 소문자로 둔다 — 리눅스는 대소문자를 가리고 윈도는 가리지 않는다.
+    const folder = policy.file.toLowerCase();
+    mkdirSync(join(dir, folder), { recursive: true });
+    writeFileSync(join(dir, folder, `${folder}.nfs.md`), policyDoc(app, policy), 'utf8');
+  }
 
   return all.length;
 }
