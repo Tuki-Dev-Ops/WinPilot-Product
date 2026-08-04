@@ -28,12 +28,12 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # 버전은 package.json 의 packageManager 를 따른다 — 여기에 또 적으면 두 곳이 갈라진다.
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: pnpm
@@ -76,11 +76,13 @@ jobs:
       # 글꼴·AA 가 러너마다 달라 매번 다른 그림이 나온다 — 드리프트가 아닌 것을 드리프트로 잡는다.
 
       - name: 빌드 결과물 보관
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: next-build
           retention-days: 7
           if-no-files-found: error
+          # `.next` 는 점으로 시작한다 — 켜 두지 않으면 숨김으로 보고 한 장도 담기지 않는다.
+          include-hidden-files: true
           path: |
             apps/b2c-client-a/.next
             apps/b2c-admin/.next
