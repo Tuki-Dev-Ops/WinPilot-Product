@@ -188,6 +188,8 @@
 | `/docs/fsd` · `/docs/fsd/{화면}` | 기능 명세서 |
 | `/docs/nfs` · `/docs/nfs/{정책}` | 비기능 명세서 |
 | `/docs/page-view` · `/docs/page-view/{화면}` | 화면 캡처 |
+| `/docs/components` | 컴포넌트 정의서 (`docs/component.md`) |
+| `/docs/design-system` | 디자인 시스템 (`docs/design.md`) |
 | `/docs/path` | 이 문서 |
 | `/docs/coding-conventions` | 명명규칙 정의서 |
 | `/docs/admin-mapping` | Admin Mapping |
@@ -196,3 +198,8 @@
 `/docs/path` · `/docs/coding-conventions` · `/docs/admin-mapping` 세 장은 한 라우트
 (`app/docs/[page]/page.tsx`)가 함께 받는다. **등록되지 않은 이름은 404 다** — 저장소의 아무 파일이나
 주소로 열리게 두지 않는다.
+
+`/docs/components` · `/docs/design-system` 두 장만 자기 라우트를 갖는다. `[page]` 라우트는
+주소 한 마디를 그대로 파일 이름으로 읽는데(`readDoc(page)`), 이 둘은 파일 이름(`component.md` ·
+`design.md`)과 주소가 다르기 때문이다. 주소는 고객 화면과 같은 말을 써야 두 앱의 문서를
+나란히 열어 볼 수 있고, 파일 이름은 이미 그 이름으로 자리를 잡았다.

@@ -1,7 +1,7 @@
 # 5. 컴포넌트 정의서
 
 > 생성물: `artifacts/components.json` (L1 컴포넌트 레지스트리)
-> 관련: [design-sync-ssot.md §L1](../architecture/design-sync-ssot.md)
+> 관련: `docs/architecture/design-sync-ssot.md` §L1
 
 ## 5.1 계층
 
@@ -36,7 +36,7 @@
 
 ## 5.3 명명
 
-[2. 명명규칙 §2.5](02-naming-convention.md#25-파일폴더) 를 따른다.
+`docs/coding-conventions.md` §7 을 따른다.
 
 | 종류 | 규칙 | 예 |
 |---|---|---|
@@ -110,7 +110,7 @@ UIR 노드가 "어느 컴포넌트의 것인지" 알려면 DOM 에 표식이 필
 | `props` | ✅ | 타입 문자열 그대로 |
 | `variants` | | Figma ComponentSet 으로 매핑됨 |
 | `states` | ✅ | **상태별 캡처 대상**이 된다 |
-| `a11y` | ✅ | [8. 비기능](08-non-functional.md) 참조 |
+| `a11y` | ✅ | `docs/NFS/accessibility/` 참조 |
 | `tokens` | | 사용 토큰 — 하드코딩 감시용 |
 
 ## 5.7 상태(states)와 디자인 싱크

@@ -99,7 +99,7 @@ export function fsdDoc(app: FsdApp, page: PageLike, spec: ScreenSpecLike): strin
   const view = hasShot
     ? `![${page.name} 데스크톱](/page-view/${spec.screen}/${spec.screen}-desktop.jpg)
 
-세 너비(데스크톱·태블릿·모바일)와 예외 화면은 [화면 캡처](/docs/page-view/${spec.screen})에서 본다.`
+세 너비(데스크톱·태블릿·모바일)와 예외 화면은 \`${app.dir}/docs/page-view/${spec.screen}/\` 에서 본다.`
     : `_캡처가 아직 없습니다 — \`pnpm docs:capture\` 로 뜹니다._`;
 
   return `# ${page.name}
@@ -184,7 +184,7 @@ ${bullets(
     spec.actions.map(
       (action) => `**Given** 이 화면을 열었을 때 **When** ${action} **Then** 그 결과가 화면에 반영된다.`,
     ),
-    '_읽기 전용 화면이라 동작 기준 대신 표시 기준을 본다 — [비기능 명세](/docs/nfs)를 따른다._',
+    `_읽기 전용 화면이라 동작 기준 대신 표시 기준을 본다 — \`${app.dir}/docs/NFS/\` 를 따른다._`,
   )}
 ## 6. 예외처리
 

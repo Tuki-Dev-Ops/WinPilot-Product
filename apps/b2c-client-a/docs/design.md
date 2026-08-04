@@ -2,7 +2,7 @@
 
 > SSOT: `apps/web/app/globals.css` 의 `@theme static` 블록
 > 생성물: `artifacts/tokens/tokens.json` (DTCG) — `pnpm ssot:tokens`
-> 관련: [design-sync-ssot.md §L0](../architecture/design-sync-ssot.md)
+> 관련: `docs/architecture/design-sync-ssot.md` §L0
 
 ## 6.1 원칙
 

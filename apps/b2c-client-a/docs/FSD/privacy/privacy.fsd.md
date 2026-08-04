@@ -22,7 +22,7 @@
 
 ![Privacy 데스크톱](/page-view/privacy/privacy-desktop.jpg)
 
-세 너비(데스크톱·태블릿·모바일)와 예외 화면은 [화면 캡처](/docs/page-view/privacy)에서 본다.
+세 너비(데스크톱·태블릿·모바일)와 예외 화면은 `apps/b2c-client-a/docs/page-view/privacy/` 에서 본다.
 
 ### 화면 구성
 
@@ -51,7 +51,7 @@ _화면을 열어 읽는다._
 
 ### 인수 조건
 
-_읽기 전용 화면이라 동작 기준 대신 표시 기준을 본다 — [비기능 명세](/docs/nfs)를 따른다._
+_읽기 전용 화면이라 동작 기준 대신 표시 기준을 본다 — `apps/b2c-client-a/docs/NFS/` 를 따른다._
 
 ## 6. 예외처리
 

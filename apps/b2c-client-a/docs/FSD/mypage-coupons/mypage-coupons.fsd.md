@@ -22,7 +22,7 @@
 
 ![My Page Coupons 데스크톱](/page-view/mypage-coupons/mypage-coupons-desktop.jpg)
 
-세 너비(데스크톱·태블릿·모바일)와 예외 화면은 [화면 캡처](/docs/page-view/mypage-coupons)에서 본다.
+세 너비(데스크톱·태블릿·모바일)와 예외 화면은 `apps/b2c-client-a/docs/page-view/mypage-coupons/` 에서 본다.
 
 ### 화면 구성
 

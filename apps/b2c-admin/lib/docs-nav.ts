@@ -37,6 +37,8 @@ export function docsNav(counts: { fsd: number; nfs: number; pageView: number }):
     {
       title: '시스템',
       items: [
+        { href: '/docs/components', label: 'Components' },
+        { href: '/docs/design-system', label: 'Design System' },
         { href: '/docs/path', label: 'Path' },
         { href: '/docs/coding-conventions', label: 'Coding Conventions' },
         { href: '/docs/admin-mapping', label: 'Admin Mapping' },

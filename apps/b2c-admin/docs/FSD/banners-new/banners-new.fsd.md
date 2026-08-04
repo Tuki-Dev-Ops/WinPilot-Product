@@ -22,7 +22,7 @@
 
 ![Banner Create 데스크톱](/page-view/banners-new/banners-new-desktop.jpg)
 
-세 너비(데스크톱·태블릿·모바일)와 예외 화면은 [화면 캡처](/docs/page-view/banners-new)에서 본다.
+세 너비(데스크톱·태블릿·모바일)와 예외 화면은 `apps/b2c-admin/docs/page-view/banners-new/` 에서 본다.
 
 ### 화면 구성
 

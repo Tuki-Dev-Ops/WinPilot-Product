@@ -33,6 +33,16 @@ const CARDS = [
     text: '화면을 가리지 않고 걸리는 정책. 접근성·반응형·검증·오류 문구·정렬·페이징 등.',
   },
   { href: '/docs/page-view', label: 'Page View', text: '화면마다 세 너비의 캡처.' },
+  {
+    href: '/docs/components',
+    label: 'Components',
+    text: '다시 쓰는 조각 — 이름·층·어느 화면에 쓰이는지. 쓰이는 곳이 없으면 없다고 적었다.',
+  },
+  {
+    href: '/docs/design-system',
+    label: 'Design System',
+    text: '값의 원본은 @winpilot/tokens 한 곳이다. 표·폼 화면의 여백과 크기, 상태 뱃지 규칙.',
+  },
   { href: '/docs/prompt', label: '생성 프롬프트', text: '이 문서 묶음을 다시 만들 때 쓰는 프롬프트.' },
 ];
 

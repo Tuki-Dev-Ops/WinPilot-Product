@@ -163,7 +163,7 @@ Feature ID 하나에서 나오는 이름들. `pnpm spec:matrix` 가 이 표를 �
 | 팔레트 토큰 | `<이름>-<단계>` | `--color-brand-500` |
 | 컴포넌트 하드코딩 | **금지** — raw hex 사용 불가 | `#3b5bfd` (X) → `bg-brand-500` (O) |
 
-자세한 내용은 [6. 디자인 시스템](06-design-system.md).
+자세한 내용은 `docs/design.md`.
 
 ## 8. 검사 코드 목록
 
