@@ -4,6 +4,12 @@ import { IA_GROUPS } from '../apps/b2c-client-a/lib/ia-groups';
 import { pages as adminPages, breakpoints as adminBreakpoints } from '../apps/b2c-admin/pages.manifest';
 import { SCREEN_SPECS as ADMIN_SPECS, COMMON_NON_FUNCTIONAL as ADMIN_COMMON } from '../apps/b2c-admin/lib/screen-specs';
 import { ADMIN_MENU } from '../apps/b2c-admin/lib/navigation/admin-menu';
+import { pages as internalPages, breakpoints as internalBreakpoints } from '../apps/internal-admin/pages.manifest';
+import {
+  SCREEN_SPECS as INTERNAL_SPECS,
+  COMMON_NON_FUNCTIONAL as INTERNAL_COMMON,
+} from '../apps/internal-admin/lib/screen-specs';
+import { INTERNAL_MENU } from '../apps/internal-admin/lib/navigation/internal-menu';
 import { buildFsd, type FsdApp } from './docs/fsd';
 import { buildNfs, type NfsApp } from './docs/nfs';
 
@@ -74,7 +80,56 @@ const admin: App = {
   menuOf: adminMenuOf,
 };
 
-for (const app of [client, admin]) {
+/**
+ * 사내 어드민의 메뉴 위치도 사이드바에서 읽는다 — 어드민과 같은 방법이다.
+ *
+ * 두 함수를 하나로 합치지 않는 이유: 메뉴 타입이 앱마다 다르고(`AdminMenuItem` ·
+ * `InternalMenuItem`), 합치려면 그 타입을 공유 패키지로 올려야 한다. 지금 아낄 것보다
+ * 앱 사이에 타입을 하나 더 묶는 값이 크다.
+ */
+const internalRouteOf = new Map(internalPages.map((page) => [page.id, page.route]));
+
+function internalMenuOf(screen: string): string {
+  const route = internalRouteOf.get(screen);
+  if (!route) return '메뉴 밖';
+
+  for (const section of INTERNAL_MENU) {
+    const child = section.children?.find((item) => item.href === route);
+    if (child) return `${section.label} > ${child.label}`;
+    if (section.href === route) return section.label;
+  }
+
+  // 목록에서만 들어가는 화면(상세)은 메뉴에 항목이 없다 — 어느 섹션 아래인지만 적는다.
+  const owner = INTERNAL_MENU.find(
+    (section) =>
+      section.children?.some((item) => route.startsWith(`${item.href}/`)) ||
+      (section.href !== '/' && route.startsWith(`${section.href}/`)),
+  );
+  return owner ? `${owner.label} > (목록에서 진입)` : '메뉴 밖';
+}
+
+/**
+ * 사내 어드민.
+ *
+ * 방향이 앞의 둘과 또 다르다 — 고객 화면은 값을 **받아 오고**, B2C Admin 은 고객 화면으로
+ * **내보내며**, 이 콘솔이 정한 값은 **고객사의 배포**를 만든다. 같은 말로 적으면 어느 층의
+ * 이야기인지 문서만 보고는 알 수 없다.
+ */
+const internal: App = {
+  dir: 'apps/internal-admin',
+  label: 'Internal Admin',
+  pages: internalPages,
+  specs: INTERNAL_SPECS,
+  common: INTERNAL_COMMON,
+  breakpoints: internalBreakpoints,
+  sourceLabel: '고객사 배포 연동',
+  sourceNote:
+    '여기서 정한 값이 반영되는 고객사의 배포다. 틀리면 고객사 사이트가 통째로 멈추고, 원인을 찾는 것도 우리 몫이 된다.',
+  sourceEmpty: '고객사의 배포에 나타나지 않는다 — 사내에서만 쓰는 값이다.',
+  menuOf: internalMenuOf,
+};
+
+for (const app of [client, admin, internal]) {
   const fsd = buildFsd(app);
   const nfs = buildNfs(app);
 

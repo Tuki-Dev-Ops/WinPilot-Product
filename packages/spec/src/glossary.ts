@@ -95,11 +95,71 @@ export const GLOSSARY: readonly GlossaryEntry[] = [
     banned: ['org', 'workspace'],
     note: "우리 제품을 쓰는 회사. 'customer'/'client' 는 각각 user 와 뷰 이름에 이미 묶여 있어 쓰지 않는다.",
   },
+  {
+    canonical: 'churn',
+    ko: '이탈',
+    banned: ['leave', 'quit', 'lost'],
+    note: '해지·미갱신으로 떠난 고객사. 목록에서 지우지 않는다 — 왜 떠났는지가 다음 계약에서 쓰인다.',
+  },
+  {
+    canonical: 'plan',
+    ko: '플랜',
+    banned: ['pricing', 'package', 'edition'],
+    note: "고객사가 고르는 구독 등급. 회원 등급(grade)과 다른 자원이라 이름을 나눈다.",
+  },
+  {
+    canonical: 'role',
+    ko: '권한',
+    banned: ['permission', 'authority', 'scope'],
+    note: '고객사가 자기 콘솔에서 쓰는 권한 묶음. 사내 계정(staff)이 이 콘솔에서 갖는 권한과 다르다.',
+  },
+  { canonical: 'plugin', ko: '플러그인', banned: ['addon', 'extension', 'module'] },
+  {
+    canonical: 'dns',
+    ko: 'DNS',
+    banned: ['nameserver', 'cname'],
+    note: '고객사 도메인이 우리 배포를 가리키게 하는 레코드. 값 하나가 틀리면 사이트 전체가 열리지 않는다.',
+  },
+  {
+    canonical: 'overdue',
+    ko: '연체',
+    banned: ['arrears', 'delinquent', 'unpaid'],
+    note: '기한이 지난 청구. invoice(요금)의 한 상태가 아니라 따로 보는 목록이라 이름을 갖는다.',
+  },
+  {
+    canonical: 'code',
+    ko: '기준 값',
+    banned: ['constant', 'enum', 'lookup'],
+    note: '플랜 이름·문의 분류처럼 여러 화면이 함께 쓰는 목록. 화면마다 박아 두면 두 벌이 된다.',
+  },
   { canonical: 'analytics', ko: '통계', banned: ['stat', 'stats', 'metric', 'report'] },
   { canonical: 'pageview', ko: '페이지 조회', banned: ['pv', 'hit', 'impression'] },
   { canonical: 'revenue', ko: '매출', banned: ['income', 'turnover', 'profit'] },
   { canonical: 'invoice', ko: '요금', banned: ['bill', 'charge', 'fee'] },
-  { canonical: 'inquiry', ko: '문의', banned: ['contact', 'question', 'ticket'] },
+  /*
+    `contact` 를 문의의 금지어에서 뺐다. 사내 어드민에 **고객사 쪽 사람**이라는 자원이 생겨
+    그 이름을 쓰기 때문이다 — 금지어로 두면 자원 하나가 이름을 갖지 못한다.
+    문의를 `contact` 로 부르는 것은 여전히 안 되며, 그것은 `inquiry` 가 정규 용어라는 사실로 막힌다.
+  */
+  { canonical: 'inquiry', ko: '문의', banned: ['question', 'ticket'] },
+  {
+    canonical: 'contact',
+    ko: '담당자',
+    banned: ['person', 'poc', 'counterpart'],
+    note: '고객사 쪽 사람. 결제 담당과 기술 담당이 달라 고객사 레코드의 한 칸에 눌러 담지 않는다.',
+  },
+  {
+    canonical: 'activity',
+    ko: '활동',
+    banned: ['log', 'event', 'touchpoint'],
+    note: '언제 누구와 무엇을 했는지. 사람 머리에만 있으면 담당자가 바뀌는 순간 사라진다.',
+  },
+  {
+    canonical: 'pipeline',
+    ko: '파이프라인',
+    banned: ['funnel', 'stage', 'kanban'],
+    note: '아직 고객사가 아닌 곳까지 한 줄에 세운다. 운영 단계에 들어간 것이 곧 고객사 목록이다.',
+  },
   { canonical: 'supplier', ko: '공급자', banned: ['vendor', 'provider'] },
   { canonical: 'seo', ko: 'SEO', banned: [] },
   { canonical: 'terms', ko: '이용약관', banned: ['tos', 'agreement'] },

@@ -541,6 +541,8 @@ export const FEATURES: readonly FeatureSpec[] = [
     },
     singleViewByDesign: true,
   },
+  // 라우트는 /integrations/pg 지만 엔티티는 payment 다 — 'pg' 는 용어 사전이 막는다.
+  // 사이드바에 적히는 말(PG)을 주소에 쓰고, 코드 이름은 정규 용어를 쓴다(/statistics ↔ analytics 와 같은 결).
   {
     id: 'payment.settings',
     label: { ko: 'PG 정보', en: 'Payment settings' },
@@ -548,10 +550,40 @@ export const FEATURES: readonly FeatureSpec[] = [
     action: 'settings',
     views: {
       'internal-admin': {
-        route: '/integrations/payment',
+        route: '/integrations/pg',
         component: 'InternalPaymentSettingsPage',
         status: 'implemented',
         note: '실결제 전환은 되돌리기 어렵다 — 사내 어드민으로 옮겼다',
+      },
+    },
+    singleViewByDesign: true,
+  },
+  {
+    id: 'plugin.settings',
+    label: { ko: '플러그인', en: 'Plugin settings' },
+    entity: 'plugin',
+    action: 'settings',
+    views: {
+      'internal-admin': {
+        route: '/integrations/plugin',
+        component: 'InternalPluginSettingsPage',
+        status: 'implemented',
+        note: '고객사 배포에 무엇을 얹었는지 — 켠 것은 고객사 화면에서 바로 돈다',
+      },
+    },
+    singleViewByDesign: true,
+  },
+  {
+    id: 'dns.settings',
+    label: { ko: 'DNS', en: 'DNS settings' },
+    entity: 'dns',
+    action: 'settings',
+    views: {
+      'internal-admin': {
+        route: '/integrations/dns',
+        component: 'InternalDnsSettingsPage',
+        status: 'implemented',
+        note: '레코드 한 줄이 틀리면 고객사 사이트 전체가 열리지 않는다 — 값을 만들어 주고 확인만 받는다',
       },
     },
     singleViewByDesign: true,
@@ -711,12 +743,232 @@ export const FEATURES: readonly FeatureSpec[] = [
     },
     singleViewByDesign: true,
   },
+  /*
+    고객사 갈래를 조금 CRM 처럼 잡는다.
+
+    고객사 목록은 **지금 상태**만 보여 주고 **어떻게 여기까지 왔는지**가 없었다. 그래서 계약이
+    끊길 때가 되어서야 이탈 목록에서 처음 알게 되는데, 그때는 되돌릴 수 없다. 아래 셋이
+    그 사이의 관계를 남긴다.
+  */
+  {
+    id: 'pipeline.list',
+    label: { ko: '도입 파이프라인', en: 'Pipeline' },
+    entity: 'pipeline',
+    action: 'list',
+    views: {
+      'internal-admin': {
+        route: '/tenants/pipeline',
+        component: 'InternalPipelineListPage',
+        status: 'implemented',
+        note: '아직 고객사가 아닌 곳까지 한 줄에 세운다 — 운영 단계가 곧 /tenants 의 목록이다',
+      },
+    },
+    singleViewByDesign: true,
+  },
+  {
+    id: 'activity.list',
+    label: { ko: '활동', en: 'Activities' },
+    entity: 'activity',
+    action: 'list',
+    views: {
+      'internal-admin': {
+        route: '/tenants/activities',
+        component: 'InternalActivityListPage',
+        status: 'implemented',
+        note: '사람 머리에만 있으면 담당자가 바뀌는 순간 사라진다',
+      },
+    },
+    singleViewByDesign: true,
+  },
+  {
+    id: 'contact.list',
+    label: { ko: '고객사 담당자', en: 'Contacts' },
+    entity: 'contact',
+    action: 'list',
+    views: {
+      'internal-admin': {
+        route: '/tenants/contacts',
+        component: 'InternalContactListPage',
+        status: 'implemented',
+        note: '결제 담당과 기술 담당이 다르다 — 고객사 레코드의 한 칸에 눌러 담지 않는다',
+      },
+    },
+    singleViewByDesign: true,
+  },
+  {
+    id: 'churn.list',
+    label: { ko: '이탈 고객사', en: 'Churned tenants' },
+    entity: 'churn',
+    action: 'list',
+    views: {
+      'internal-admin': {
+        route: '/tenants/churned',
+        component: 'InternalChurnListPage',
+        status: 'implemented',
+        note: '떠난 고객사를 지우지 않는다 — 왜 떠났는지가 다음 계약에서 쓰인다',
+      },
+    },
+    singleViewByDesign: true,
+  },
+  {
+    id: 'plan.list',
+    label: { ko: '플랜', en: 'Plans' },
+    entity: 'plan',
+    action: 'list',
+    views: {
+      'internal-admin': {
+        route: '/subscriptions/plans',
+        component: 'InternalPlanListPage',
+        status: 'implemented',
+        note: '고객사가 고르는 구독 등급. 회원 등급(grade)과 다른 자원이다',
+      },
+    },
+    singleViewByDesign: true,
+  },
+  {
+    id: 'role.list',
+    label: { ko: '권한', en: 'Roles' },
+    entity: 'role',
+    action: 'list',
+    views: {
+      'internal-admin': {
+        route: '/subscriptions/roles',
+        component: 'InternalRoleListPage',
+        status: 'implemented',
+        note: '고객사가 자기 콘솔에서 쓰는 권한이다 — 이 콘솔에 들어오는 직원은 /settings/staff 에 있다',
+      },
+    },
+    singleViewByDesign: true,
+  },
+  /*
+    고객사가 **우리에게** 보낸 문의다. `inquiry.list` 는 고객이 고객사에게 보낸 문의라
+    받는 쪽도 답하는 쪽도 다르다 — 같은 id 에 묶으면 두 자원이 한 이름을 갖는다.
+    그래서 도메인 한 마디(`tenant.`)를 앞에 붙여 누가 보낸 문의인지를 id 에 남긴다.
+  */
+  {
+    id: 'tenant.inquiry.list',
+    label: { ko: '고객사 문의', en: 'Tenant inquiries' },
+    entity: 'inquiry',
+    action: 'list',
+    views: {
+      'internal-admin': {
+        route: '/inquiries',
+        component: 'InternalInquiryListPage',
+        status: 'implemented',
+        note: '상태 이름(접수·처리중·답변완료·보류)은 B2C Admin 의 문의와 글자까지 같다',
+      },
+    },
+    singleViewByDesign: true,
+  },
+  // 라우트는 /statistics 지만 엔티티는 revenue·user 다 — 'stat' 계열은 용어 사전이 막는다.
+  {
+    id: 'tenant.revenue.list',
+    label: { ko: '고객사 매출', en: 'Tenant revenue' },
+    entity: 'revenue',
+    action: 'list',
+    views: {
+      'internal-admin': {
+        route: '/statistics/revenue',
+        component: 'InternalRevenueListPage',
+        status: 'implemented',
+        note: '우리가 고객사에게 받는 매출이다 — B2C Admin 의 매출(고객사가 파는 것)과 방향이 반대다',
+      },
+    },
+    singleViewByDesign: true,
+  },
+  {
+    id: 'tenant.user.list',
+    label: { ko: '고객사 회원', en: 'Tenant members' },
+    entity: 'user',
+    action: 'list',
+    views: {
+      'internal-admin': {
+        route: '/statistics/members',
+        component: 'InternalUserListPage',
+        status: 'implemented',
+        note: '고객사 사이트에 가입한 사람 수. 우리가 개인을 들여다보는 화면이 아니라 규모만 읽는 화면이다',
+      },
+    },
+    singleViewByDesign: true,
+  },
   {
     id: 'invoice.list',
-    label: { ko: '구매 · 유지보수', en: 'Invoices' },
+    label: { ko: '청구 예정', en: 'Invoices due' },
     entity: 'invoice',
     action: 'list',
-    views: { 'internal-admin': { route: '/invoices', component: 'InternalInvoiceListPage', status: 'implemented' } },
+    views: {
+      'internal-admin': {
+        route: '/billing/due',
+        component: 'InternalInvoiceListPage',
+        status: 'implemented',
+        note: '앞으로 받을 것. 기한이 지난 것은 /billing/overdue 로 갈라 놓는다',
+      },
+    },
+    singleViewByDesign: true,
+  },
+  {
+    id: 'overdue.list',
+    label: { ko: '연체', en: 'Overdue' },
+    entity: 'overdue',
+    action: 'list',
+    views: {
+      'internal-admin': {
+        route: '/billing/overdue',
+        component: 'InternalOverdueListPage',
+        status: 'implemented',
+        note: '예정 목록과 섞으면 급한 것이 묻힌다 — 목록을 나눈 이유가 그것뿐이다',
+      },
+    },
+    singleViewByDesign: true,
+  },
+  /*
+    이 콘솔에 들어오는 **우리 직원**이다. `staff.list`(B2C Admin) 는 고객사의 운영자라
+    보는 사람도 권한도 다르다 — 도메인 한 마디로 어느 쪽 직원인지를 id 에 남긴다.
+  */
+  {
+    id: 'internal.staff.list',
+    label: { ko: '사내 계정', en: 'Internal staff' },
+    entity: 'staff',
+    action: 'list',
+    views: {
+      'internal-admin': {
+        route: '/settings/staff',
+        component: 'InternalStaffListPage',
+        status: 'implemented',
+        note: '고객사 권한(/subscriptions/roles)과 갈래를 나눈 이유가 여기 있다',
+      },
+    },
+    singleViewByDesign: true,
+  },
+  // 라우트는 /settings/notifications 지만 엔티티는 alarm 이다 — 'notification' 은 공지(notice)의 대체어라 막힌다.
+  {
+    id: 'alarm.settings',
+    label: { ko: '알림', en: 'Notification settings' },
+    entity: 'alarm',
+    action: 'settings',
+    views: {
+      'internal-admin': {
+        route: '/settings/notifications',
+        component: 'InternalAlarmSettingsPage',
+        status: 'implemented',
+        note: '통계·결제가 만들어 내는 신호(만료 임박·연체)를 받을 곳이다',
+      },
+    },
+    singleViewByDesign: true,
+  },
+  {
+    id: 'code.list',
+    label: { ko: '기준 값', en: 'Codes' },
+    entity: 'code',
+    action: 'list',
+    views: {
+      'internal-admin': {
+        route: '/settings/codes',
+        component: 'InternalCodeListPage',
+        status: 'implemented',
+        note: '여러 화면이 함께 쓰는 목록. 화면마다 박아 두면 두 벌이 된다',
+      },
+    },
     singleViewByDesign: true,
   },
 ];

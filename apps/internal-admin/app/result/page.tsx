@@ -21,7 +21,7 @@ const KIND = {
   invoice: {
     done: "청구서를 발행했습니다.",
     failed: "청구서를 발행하지 못했습니다.",
-    back: { href: "/invoices", label: "청구 목록" },
+    back: { href: "/billing/due", label: "청구 예정" },
   },
 } as const;
 
@@ -35,8 +35,9 @@ export default async function InternalStatusResultPage({
   const failed = state === "failed";
   const shape = KIND[(kind as keyof typeof KIND) ?? "save"] ?? KIND.save;
 
+  // 메뉴에 없는 화면이라 사이드바에서 켜지는 항목이 없다 — 없는 자리를 켜 두면 어디서 왔는지를 잘못 읽는다.
   return (
-    <InternalShell sectionId="tenants" trail={['처리 결과']}>
+    <InternalShell sectionId="result" trail={['처리 결과']}>
       <StatusScreen
         title={failed ? shape.failed : shape.done}
         description={

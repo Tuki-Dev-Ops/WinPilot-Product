@@ -127,6 +127,9 @@ importers:
 
   apps/internal-admin:
     dependencies:
+      '@winpilot/docs':
+        specifier: workspace:^
+        version: link:../../packages/docs
       '@winpilot/tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
@@ -136,6 +139,9 @@ importers:
       '@winpilot/uir':
         specifier: workspace:*
         version: link:../../packages/uir
+      mermaid:
+        specifier: ^11.16.0
+        version: 11.16.0
       next:
         specifier: ^16.2.12
         version: 16.2.12(react-dom@19.2.8(react@19.2.8))(react@19.2.8)

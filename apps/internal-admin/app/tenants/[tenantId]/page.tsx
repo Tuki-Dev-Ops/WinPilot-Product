@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { InternalShell } from '@/app/_components/InternalShell';
+import { ACTIVITY_TONE, activitiesOf } from '@/lib/data/activities';
+import { ROLE_TONE, contactsOf } from '@/lib/data/contacts';
 import { formatAmount, invoicesOf, outstanding, INVOICE_TONE } from '@/lib/data/invoices';
 import {
   DEPLOYMENT_TONE,
@@ -17,7 +19,7 @@ import {
  * 이름은 `@winpilot/spec` 의 features.ts 가 강제한다 (pnpm spec:check).
  */
 export const metadata: Metadata = {
-  title: '고객사 | 상세 — WinPilot Internal',
+  title: '고객사 | 고객 | 상세 — WinPilot Internal',
   robots: { index: false, follow: false },
 };
 
@@ -43,9 +45,15 @@ export default async function InternalTenantDetailPage({ params }: { params: Pro
   const today = todayStamp();
   const state = supportState(tenant.supportUntil, today);
   const invoices = invoicesOf(tenant.id);
+  /*
+    담당자와 활동을 여기에도 붙인다. 목록에서만 볼 수 있으면 상세를 열어 둔 채로 다시 목록으로
+    나가야 하고, 돌아왔을 때 어디까지 읽었는지를 다시 찾게 된다.
+  */
+  const contacts = contactsOf(tenant.id);
+  const activities = activitiesOf(tenant.id);
 
   return (
-    <InternalShell sectionId="tenant" trail={['고객사', '목록', tenant.name]} activeChildId="tenant-list">
+    <InternalShell sectionId="tenant" trail={['고객사', '고객', tenant.name]} activeChildId="tenant-list">
       <div className="flex flex-col gap-6 xl:flex-row xl:items-start">
         <div className="flex min-w-0 flex-1 flex-col gap-6">
           <section className="rounded-xl border border-border bg-canvas">
@@ -142,6 +150,104 @@ export default async function InternalTenantDetailPage({ params }: { params: Pro
               </div>
             )}
           </section>
+
+          <section className="overflow-hidden rounded-xl border border-border bg-canvas">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-6 py-4">
+              <div className="min-w-0">
+                <h2 className="text-base font-semibold tracking-tight">담당자</h2>
+                <p className="mt-1 text-sm leading-relaxed text-ink-muted">
+                  결제 담당과 기술 담당이 다릅니다. 대표로 표시한 사람이 급할 때 먼저 거는 사람입니다.
+                </p>
+              </div>
+              <a
+                href="/tenants/contacts"
+                className="shrink-0 whitespace-nowrap text-sm text-brand-700 underline underline-offset-2 dark:text-brand-300"
+              >
+                전체 담당자
+              </a>
+            </div>
+
+            {contacts.length === 0 ? (
+              <p className="px-6 py-12 text-center text-sm text-ink-muted">등록된 담당자가 없습니다.</p>
+            ) : (
+              <div className="flex flex-col">
+                {contacts.map((contact) => (
+                  <div
+                    key={contact.id}
+                    className="flex flex-col gap-2 border-b border-border px-6 py-4 last:border-b-0 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">
+                        {contact.name}
+                        {contact.primary && (
+                          <span className="ml-1.5 shrink-0 whitespace-nowrap rounded-full bg-surface px-2 py-0.5 text-[10px] text-ink-muted">
+                            대표
+                          </span>
+                        )}
+                      </p>
+                      <p className="truncate text-xs text-ink-faint">{contact.title}</p>
+                      {/* 상세는 사내 전용이라 연락처를 가리지 않는다 — 여기서 바로 걸어야 한다. */}
+                      <p className="truncate font-mono text-xs text-ink-muted">
+                        {contact.email} · {contact.phone}
+                      </p>
+                    </div>
+                    <span
+                      className={`w-fit shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${ROLE_TONE[contact.role]}`}
+                    >
+                      {contact.role}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          <section className="overflow-hidden rounded-xl border border-border bg-canvas">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-6 py-4">
+              <div className="min-w-0">
+                <h2 className="text-base font-semibold tracking-tight">활동</h2>
+                <p className="mt-1 text-sm leading-relaxed text-ink-muted">
+                  언제 누구와 무엇을 했는지. 담당자가 바뀌어도 남습니다.
+                </p>
+              </div>
+              <a
+                href="/tenants/activities"
+                className="shrink-0 whitespace-nowrap text-sm text-brand-700 underline underline-offset-2 dark:text-brand-300"
+              >
+                전체 활동
+              </a>
+            </div>
+
+            {activities.length === 0 ? (
+              <p className="px-6 py-12 text-center text-sm text-ink-muted">아직 남은 활동이 없습니다.</p>
+            ) : (
+              <ol className="flex flex-col">
+                {activities.map((activity) => (
+                  <li key={activity.id} className="flex flex-col gap-2 border-b border-border px-6 py-4 last:border-b-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span
+                        className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${ACTIVITY_TONE[activity.kind]}`}
+                      >
+                        {activity.kind}
+                      </span>
+                      <span className="font-mono text-xs text-ink-faint">
+                        {activity.staff} → {activity.counterpart}
+                      </span>
+                      <span className="ml-auto shrink-0 font-mono text-xs tabular-nums text-ink-faint">
+                        {activity.at}
+                      </span>
+                    </div>
+                    <p className="text-sm leading-relaxed">{activity.summary}</p>
+                    {activity.nextStep && (
+                      <p className="rounded-lg bg-surface px-4 py-2 text-sm leading-relaxed text-ink-muted">
+                        다음: {activity.nextStep}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            )}
+          </section>
         </div>
 
         <aside className="flex w-full shrink-0 flex-col gap-6 xl:w-80">
@@ -165,13 +271,13 @@ export default async function InternalTenantDetailPage({ params }: { params: Pro
               href={`/integrations/oauth?tenant=${tenant.id}`}
               className="flex h-11 w-full shrink-0 items-center justify-center whitespace-nowrap rounded-lg border border-border-strong text-sm text-ink-muted transition-colors duration-150 hover:border-ink-faint"
             >
-              OAuth 정보
+              OAuth
             </a>
             <a
-              href={`/integrations/payment?tenant=${tenant.id}`}
+              href={`/integrations/pg?tenant=${tenant.id}`}
               className="flex h-11 w-full shrink-0 items-center justify-center whitespace-nowrap rounded-lg border border-border-strong text-sm text-ink-muted transition-colors duration-150 hover:border-ink-faint"
             >
-              PG 정보
+              PG
             </a>
             <a
               href="/tenants"

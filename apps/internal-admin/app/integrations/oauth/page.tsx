@@ -10,7 +10,7 @@ import { OauthSettingsView } from './_components/OauthSettingsView';
  * 사내에서만 다루는 편이 안전해 이쪽으로 옮겼다.
  */
 export const metadata: Metadata = {
-  title: '연동 | OAuth 정보 — WinPilot Internal',
+  title: '연동 | OAuth — WinPilot Internal',
   robots: { index: false, follow: false },
 };
 
@@ -22,7 +22,7 @@ export default async function InternalOauthSettingsPage({
   const { tenant } = await searchParams;
 
   return (
-    <InternalShell sectionId="integration" trail={['연동', 'OAuth 정보']} activeChildId="integration-oauth">
+    <InternalShell sectionId="integration" trail={['연동', 'OAuth']} activeChildId="integration-oauth">
       <OauthSettingsView {...(tenant ? { initialTenantId: tenant } : {})} />
     </InternalShell>
   );

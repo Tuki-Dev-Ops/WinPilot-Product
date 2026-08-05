@@ -23,7 +23,7 @@ export default function NotFound() {
       ]}
       actions={[
         { href: '/', label: '홈으로', primary: true },
-        { href: '/tenants', label: '고객사 목록' },
+        { href: '/tenants', label: '고객사' },
       ]}
     />
   );
