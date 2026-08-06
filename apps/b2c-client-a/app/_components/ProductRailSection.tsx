@@ -1,5 +1,6 @@
 'use client';
 
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useMemo, useState, type ReactNode } from 'react';
 import { CONTENT, type ProductItem } from '@winpilot/client-content';
 import { ProductTile } from './ProductTile';
@@ -32,22 +33,6 @@ export type ProductRailSectionProps = {
 
 /** 한 줄에 놓는 카드 수. 이보다 많으면 다음 장으로 넘긴다. */
 const PER_PAGE = 6;
-
-function ChevronLeft() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <path d="M12.5 4 L6.5 10 L12.5 16" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function ChevronRight() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <path d="M7.5 4 L13.5 10 L7.5 16" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 /**
  * 한 줄로 흐르는 상품 줄과 아래 인디케이터.
@@ -102,7 +87,7 @@ export function PagedProductRow({
             aria-label="이전"
             className="grid size-9 place-items-center rounded-full border border-border-strong text-ink-muted disabled:opacity-40"
           >
-            <ChevronLeft />
+            <ChevronLeft aria-hidden className="size-5" strokeWidth={1.6} />
           </button>
 
           <p className="text-sm tabular-nums">
@@ -118,7 +103,7 @@ export function PagedProductRow({
             aria-label="다음"
             className="grid size-9 place-items-center rounded-full border border-border-strong text-ink-muted disabled:opacity-40"
           >
-            <ChevronRight />
+            <ChevronRight aria-hidden className="size-5" strokeWidth={1.6} />
           </button>
         </div>
       )}

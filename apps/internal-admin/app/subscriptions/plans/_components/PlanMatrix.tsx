@@ -1,5 +1,6 @@
 'use client';
 
+import { Check } from 'lucide-react';
 import { Badge } from '@winpilot/ui';
 import {
   includedIn,
@@ -21,18 +22,7 @@ function Cell({ on }: { on: boolean }) {
   return (
     <span className="flex items-center justify-center">
       {on ? (
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          aria-hidden
-          className="text-signal-ok"
-        >
-          <path d="M3 8.5 L6.5 12 L13 4.5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        <Check aria-hidden className="size-4 text-signal-ok" strokeWidth={2} />
       ) : (
         <span aria-hidden className="text-ink-faint">
           —

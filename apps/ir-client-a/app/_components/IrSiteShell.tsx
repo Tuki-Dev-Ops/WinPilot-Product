@@ -99,7 +99,7 @@ export function IrSiteShell({
         보이지 않고, 마지막 칸도 밝은 칸이라 더 그렇다. 첫 화면과 같은 색을 써서 위아래가 같은
         색으로 닫히게 한다.
       */}
-      <footer className="bg-[#05060d] text-white">
+      <footer className="bg-night text-white">
         <div className="mx-auto flex w-full max-w-320 flex-col gap-8 px-6 pb-12 pt-8">
           {/*
             약관과 처리방침은 **맨 윗줄에 가로로** 둔다. 사이트 메뉴 옆에 세로로 세웠더니

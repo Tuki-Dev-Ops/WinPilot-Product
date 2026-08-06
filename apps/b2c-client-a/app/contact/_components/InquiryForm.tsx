@@ -1,5 +1,6 @@
 'use client';
 
+import { Paperclip } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { CONTENT, COPY, ROUTES, SLOT, cid } from '@winpilot/client-content';
 import { Checkbox, useToast } from '@winpilot/ui';
@@ -301,12 +302,6 @@ export function InquiryForm() {
 /** 첨부 안내 아이콘 — 클립. 파일이라는 뜻을 글자 없이 전한다. */
 function ClipIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path
-        d="M13.5 6.5 L7.8 12.2 a2.4 2.4 0 0 0 3.4 3.4 l6.1 -6.1 a4 4 0 0 0 -5.7 -5.7 l-6.1 6.1 a5.6 5.6 0 0 0 7.9 7.9 L17 15"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <Paperclip aria-hidden className="size-5" strokeWidth={1.5} />
   );
 }

@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { SITE_SERVICES, type SiteService } from '@winpilot/store';
 import { ConsultingScene, CrmScene, DxpScene, ErpScene, InfraScene, MesScene } from './IsoEquipment';
-import { IsoPlatform, IsoWalls, type IsoTone } from './IsoMap';
+import { IsoPlatform, IsoWalls } from './IsoMap';
+import { DIM, LIT, NIGHT, SPARK, STAGE, type IsoTone } from '@/lib/palette';
 
 /**
  * 첫 화면 → 회사 소개 다음 — **무엇을 파는가** 한 판.
@@ -75,29 +76,6 @@ const STAGE_R = 430;
  */
 const SURGE_MS = 420;
 
-const DIM: IsoTone = {
-  top: '#0e1621',
-  right: '#0a111a',
-  left: '#070c13',
-  line: 'rgba(148,163,184,0.24)',
-};
-
-/*
-  살아 있는 칸은 브랜드 파랑이다. 참고한 화면은 청록이지만 그 색은 이 저장소에 없다 —
-  여기 한 곳에만 새 색을 들이면 그 값이 토큰 밖에서 자라기 시작한다.
-
-  ## 반투명으로 두지 않는다
-  전에는 `rgba(49,130,246,0.22)` 처럼 알파를 준 색이었다. 그러니 켜진 방의 벽과 기계 **너머로
-  무대 바닥의 선과 뒤쪽 방이 그대로 비쳤다** — 유리로 지은 공장처럼 보였다. 배경(`#05060d`)에
-  그 파랑을 미리 섞은 **불투명한 색**으로 바꾼다. 눈에 보이는 색은 같고, 뒤엣것만 가려진다.
-*/
-const LIT: IsoTone = {
-  top: '#14294d',
-  right: '#0e1c36',
-  left: '#0a1324',
-  line: 'rgba(138,186,255,0.9)',
-};
-
 export function HomeService() {
   /**
    * 불빛이 **향하는** 곳. 마우스를 올리는 순간 여기가 바뀌고, 전원선의 불빛이 그리로 출발한다.
@@ -138,7 +116,7 @@ export function HomeService() {
   if (!FIRST) return null;
 
   return (
-    <section className="overflow-hidden bg-[#05060d] pb-20 pt-4 text-white lg:pb-28">
+    <section className="overflow-hidden bg-night pb-20 pt-4 text-white lg:pb-28">
       <div className="flex flex-col gap-10">
         <div className="mx-auto flex w-full max-w-320 flex-wrap items-center justify-between gap-x-8 gap-y-4 px-6">
           <p className="text-2xl font-bold tracking-tight lg:text-3xl">SOLUTION</p>
@@ -198,7 +176,7 @@ export function HomeService() {
             {/* 바로가기 — 읽던 자리 바로 아래(`HomeSolutions` 와 같은 자리·같은 모양). */}
             <a
               href={active.href}
-              className="group mt-1 flex w-fit items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#05060d] transition-opacity duration-150 hover:opacity-85"
+              className="group mt-1 flex w-fit items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-night transition-opacity duration-150 hover:opacity-85"
             >
               {active.name} 자세히 보기
               <ArrowUpRight
@@ -292,8 +270,8 @@ function IsoScene({
 
       <g transform="scale(1, 0.5)">
         {/* 무대 바닥 — 테두리 · 방들이 도는 길. */}
-        <circle r={STAGE_R + 130} fill="rgba(148,163,184,0.03)" stroke="rgba(148,163,184,0.16)" strokeWidth={1.5} />
-        <circle r={STAGE_R} fill="none" stroke="rgba(148,163,184,0.18)" strokeWidth={1.2} strokeDasharray="10 12" />
+        <circle r={STAGE_R + 130} fill={STAGE.fill} stroke={STAGE.rim} strokeWidth={1.5} />
+        <circle r={STAGE_R} fill="none" stroke={STAGE.path} strokeWidth={1.2} strokeDasharray="10 12" />
 
         {/* 방과 방 사이의 결. 전원선과 겹치지 않게 **두 방의 한가운데**(30° 씩 비킨 자리)에 둔다. */}
         {[-30, 30, 90, 150, 210, 270].map((angle) => (
@@ -302,7 +280,7 @@ function IsoScene({
             x1={0}
             y1={0}
             {...endOf(angle, STAGE_R + 130)}
-            stroke="rgba(148,163,184,0.09)"
+            stroke={STAGE.spoke}
             strokeWidth={1}
           />
         ))}
@@ -314,7 +292,7 @@ function IsoScene({
             x1={0}
             y1={0}
             {...endOf(angleOf(node), STAGE_R)}
-            stroke={node.id === active.id ? 'rgba(138,186,255,0.5)' : 'rgba(148,163,184,0.16)'}
+            stroke={node.id === active.id ? STAGE.wireOn : STAGE.wireOff}
             strokeWidth={node.id === active.id ? 1.6 : 1}
             style={{ transition: 'stroke 300ms ease-out, stroke-width 300ms ease-out' }}
           />
@@ -334,15 +312,15 @@ function IsoScene({
           {...endOf(angleOf(target), STAGE_R)}
           pathLength={100}
           strokeDasharray="20 100"
-          stroke="#cfe4ff"
+          stroke={SPARK}
           strokeWidth={2.6}
           strokeLinecap="round"
           className="animate-iso-surge"
         />
 
         {/* 가운데 축 — 선 넷이 한 점에서 나온다는 것을 보이게 한다. */}
-        <circle r={16} fill="#05060d" stroke="rgba(148,186,255,0.4)" strokeWidth={1.2} />
-        <circle r={5} fill="rgba(138,186,255,0.75)" />
+        <circle r={16} fill={NIGHT} stroke={STAGE.hub} strokeWidth={1.2} />
+        <circle r={5} fill={STAGE.hubCore} />
 
         {drawn.map((node) => {
           const lit = node.id === active.id;

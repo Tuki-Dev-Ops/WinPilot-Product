@@ -272,6 +272,17 @@
   --font-sans: Pretendard, 'Pretendard Variable', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
 
+  /*
+    회사 홈페이지의 **어두운 칸** 바탕. 첫 화면·서비스 그림·푸터가 이 색으로 이어진다.
+
+    `canvas`/`surface` 와 달리 **밝기 모드를 따라가지 않는다.** 이 칸들은 배경 영상과 이어지는
+    자리라, 라이트 모드에서 밝아지면 영상 위 흰 글씨가 사라진다 — 늘 어두워야 하는 색이다.
+
+    토큰으로 두는 이유: 전에는 `bg-[#05060d]` 로 일곱 파일에 흩어져 있었다. 색을 한 번
+    바꾸려면 일곱 곳을 찾아야 하고, 그중 하나를 빠뜨리면 칸과 칸 사이에 **보일락 말락 한
+    경계선**이 생긴다.
+  */
+  --color-night: #05060d;
   --color-canvas: var(--canvas);
   --color-surface: var(--surface);
   --color-surface-raised: var(--surface-raised);

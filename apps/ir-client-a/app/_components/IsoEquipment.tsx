@@ -1,4 +1,5 @@
-import { IsoBox, IsoCylinder, IsoDisc, IsoPane, IsoPolyline, isoPoint, type IsoTone } from './IsoMap';
+import { IsoBox, IsoCylinder, IsoDisc, IsoPane, IsoPolyline, isoPoint } from './IsoMap';
+import { BUBBLE, EYE, GUIDE, HALO, SPARK, glowOf, lineOf, type IsoTone } from '@/lib/palette';
 
 /**
  * 판 위에 서는 **실제 장비들**.
@@ -27,21 +28,6 @@ import { IsoBox, IsoCylinder, IsoDisc, IsoPane, IsoPolyline, isoPoint, type IsoT
  * | 서버실 | 나란한 랙 셋 · 앞의 스위치 · 랙으로 올라가는 배선 · 항온항습기 |
  * | 빌더 작업대 | 넓은 상판에 깔린 블록들 · 비어 있는 점선 자리 · 그 위에 뜬 블록 |
  */
-
-/**
- * 켜진 면의 색 — 창 · 화면 · 표시등처럼 스스로 빛나는 자리.
- *
- * 알파를 쓰지 않는다. 화면이 반투명이면 그 **뒤의 기계와 무대 선이 비쳐** 유리판이 되고,
- * 켜진 화면으로 읽히지 않는다. 배경에 미리 섞은 불투명한 색을 쓴다.
- */
-function glowOf(lit: boolean): string {
-  return lit ? '#7ba7e8' : '#1d2531';
-}
-
-/** 선으로만 그리는 것의 색 — 팔의 마디, 난간. */
-function lineOf(lit: boolean): string {
-  return lit ? 'rgba(215,232,255,0.9)' : 'rgba(148,163,184,0.5)';
-}
 
 type Part = { cx: number; cy: number; tone: IsoTone; lit: boolean };
 
@@ -109,13 +95,13 @@ export function ConsultingScene({ cx, cy, tone, lit }: Part) {
           width={46}
           height={27}
           rx={8}
-          fill={lit ? '#1d3a68' : '#0e1621'}
+          fill={lit ? BUBBLE.on : BUBBLE.off}
           stroke={tone.line}
           strokeWidth={1}
         />
         <path
           d={`M ${bubbleX - 5} ${bubbleY + 10} L ${bubbleX + 1} ${bubbleY + 19} L ${bubbleX + 7} ${bubbleY + 10} Z`}
-          fill={lit ? '#1d3a68' : '#0e1621'}
+          fill={lit ? BUBBLE.on : BUBBLE.off}
           stroke={tone.line}
           strokeWidth={1}
         />
@@ -149,7 +135,7 @@ function Attendee({ x, y, tone, lit }: { x: number; y: number; tone: IsoTone; li
       */}
       <IsoCylinder x={x} y={y} r={0.14} h={30} tone={tone} />
       <circle {...screen(x, y, 37)} r={4.8} fill={tone.top} stroke={tone.line} strokeWidth={1} />
-      {lit && <circle {...screen(x, y, 37)} r={4.8} fill="rgba(138,186,255,0.18)" />}
+      {lit && <circle {...screen(x, y, 37)} r={4.8} fill={HALO} />}
     </g>
   );
 }
@@ -404,7 +390,7 @@ export function ErpScene({ cx, cy, tone, lit }: Part) {
           [cx - 1.85, cy + 1.75, 1],
           [cx - 1.85, cy + 0.55, 1],
         ]}
-        color={lit ? 'rgba(138,186,255,0.4)' : 'rgba(148,163,184,0.22)'}
+        color={lit ? GUIDE.floorOn : GUIDE.floorOff}
         width={1.4}
         dashed
       />
@@ -642,7 +628,7 @@ export function DxpScene({ cx, cy, tone, lit }: Part) {
           [cx + 0.3, cy + 0.95, 30],
           [cx + 0.3, cy + 0.6, 30],
         ]}
-        color={lit ? 'rgba(138,186,255,0.8)' : 'rgba(148,163,184,0.45)'}
+        color={lit ? GUIDE.slotOn : GUIDE.slotOff}
         width={1.4}
         dashed
       />
@@ -813,7 +799,7 @@ function Booth({
 function AiRobot({ x, y, tone, lit }: { x: number; y: number; tone: IsoTone; lit: boolean }) {
   const glow = glowOf(lit);
   const line = lineOf(lit);
-  const eye = lit ? '#cfe4ff' : 'rgba(148,163,184,0.6)';
+  const eye = lit ? EYE.on : EYE.off;
 
   return (
     <g>
@@ -846,7 +832,7 @@ function AiRobot({ x, y, tone, lit }: { x: number; y: number; tone: IsoTone; lit
         color={line}
         width={1.4}
       />
-      <circle {...screen(x, y, 61)} r={2.4} fill={lit ? '#cfe4ff' : line} />
+      <circle {...screen(x, y, 61)} r={2.4} fill={lit ? SPARK : line} />
     </g>
   );
 }

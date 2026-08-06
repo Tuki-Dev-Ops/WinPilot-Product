@@ -1,5 +1,6 @@
 'use client';
 
+import { CLIP, NIGHT } from '@/lib/palette';
 import { useRef } from 'react';
 import { ArrowLeft, ArrowRight, ArrowUpRight, Play } from 'lucide-react';
 import { IR_COMPANY, MEDIA_CLIPS } from '@winpilot/store';
@@ -93,7 +94,7 @@ export function HomeMedia() {
           */}
           {MEDIA_CLIPS.map((clip) => (
             <article key={clip.id} className="flex w-72 shrink-0 snap-start flex-col gap-3 lg:w-80">
-            <div className="relative aspect-video overflow-hidden rounded-xl bg-[#05060d]">
+            <div className="relative aspect-video overflow-hidden rounded-xl bg-night">
               <ClipPattern seed={clip.seed} />
               {/* 재생 표시 — 이 카드가 글이 아니라 영상이라는 것을 말하는 유일한 것. */}
               <span className="absolute bottom-3 right-3 grid size-7 place-items-center rounded bg-black/70">
@@ -152,7 +153,7 @@ function ClipPattern({ seed }: { seed: number }) {
       <defs>
         <linearGradient id={`clip-${seed}`} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#101d33" />
-          <stop offset="100%" stopColor="#05060d" />
+          <stop offset="100%" stopColor={NIGHT} />
         </linearGradient>
       </defs>
       <rect width="320" height="180" fill={`url(#clip-${seed})`} />
@@ -164,7 +165,7 @@ function ClipPattern({ seed }: { seed: number }) {
             y1={-60}
             x2={-40 + index * 60}
             y2={240}
-            stroke={index === seed % 7 ? 'rgba(138,186,255,0.55)' : 'rgba(148,163,184,0.12)'}
+            stroke={index === seed % 7 ? CLIP.lead : CLIP.rest}
             strokeWidth={index === seed % 7 ? 3 : 1.5}
           />
         ))}

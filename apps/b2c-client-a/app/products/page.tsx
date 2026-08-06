@@ -1,3 +1,4 @@
+import { Search } from 'lucide-react';
 import type { Metadata } from 'next';
 import {
   CONTENT,
@@ -33,10 +34,7 @@ export const metadata: Metadata = { title: `${COPY.product.listTitle} — ${CONT
 /** 헤더와 같은 돋보기 — 획 굵기·크기까지 맞춰야 두 자리가 한 기능으로 읽힌다. */
 function SearchIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <circle cx="8.75" cy="8.75" r="5.25" />
-      <path d="M12.75 12.75 L17 17" strokeLinecap="round" />
-    </svg>
+    <Search aria-hidden className="size-5" strokeWidth={1.5} />
   );
 }
 

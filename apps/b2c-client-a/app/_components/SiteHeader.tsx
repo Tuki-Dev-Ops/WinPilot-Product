@@ -1,3 +1,4 @@
+import { Search } from 'lucide-react';
 import { CONTENT, COPY, ROUTES, SLOT, buildNav, cid } from '@winpilot/client-content';
 import { HeaderAccount } from './HeaderAccount';
 
@@ -23,10 +24,7 @@ import { HeaderAccount } from './HeaderAccount';
  */
 function SearchIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <circle cx="8.75" cy="8.75" r="5.25" />
-      <path d="M12.75 12.75 L17 17" strokeLinecap="round" />
-    </svg>
+    <Search aria-hidden className="size-5" strokeWidth={1.5} />
   );
 }
 

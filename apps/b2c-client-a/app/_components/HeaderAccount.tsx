@@ -1,5 +1,6 @@
 'use client';
 
+import { Bell, Heart, ShoppingCart, Smile } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { COPY, ROUTES, unreadAlarms } from '@winpilot/client-content';
 import { useToast } from '@winpilot/ui';
@@ -25,41 +26,26 @@ import { SESSION_EVENT, readSignedIn, setSignedIn } from './session-store';
  */
 function HeartIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path
-        d="M10 16.5 C10 16.5 3 12.4 3 7.9 A3.4 3.4 0 0 1 10 6.1 A3.4 3.4 0 0 1 17 7.9 C17 12.4 10 16.5 10 16.5 Z"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <Heart aria-hidden className="size-5" strokeWidth={1.5} />
   );
 }
 
 function AlarmIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M5.5 8 a4.5 4.5 0 0 1 9 0 v3.5 l1.5 2 h-12 l1.5 -2 z" strokeLinejoin="round" />
-      <path d="M8.25 16 a1.9 1.9 0 0 0 3.5 0" strokeLinecap="round" />
-    </svg>
+    <Bell aria-hidden className="size-5" strokeWidth={1.5} />
   );
 }
 
 function CartIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M2.5 3.5 h2 l2 8.5 h8 l2 -6.5 h-11" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="7.5" cy="16" r="1.2" />
-      <circle cx="14" cy="16" r="1.2" />
-    </svg>
+    <ShoppingCart aria-hidden className="size-5" strokeWidth={1.5} />
   );
 }
 
 /** 아바타 — 회색 원판 **안에 표정만** 둔다. 윤곽선을 그리면 원판 테두리와 두 겹이 된다. */
 function AvatarIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <path d="M7 8v.05M13 8v.05" strokeLinecap="round" />
-      <path d="M6.4 12a4.3 4.3 0 0 0 7.2 0" strokeLinecap="round" />
-    </svg>
+    <Smile aria-hidden className="size-5" strokeWidth={1.5} />
   );
 }
 

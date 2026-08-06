@@ -1,5 +1,6 @@
 'use client';
 
+import { Smile } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { COPY, ROUTES, SLOT, cid } from '@winpilot/client-content';
@@ -112,9 +113,6 @@ export function MyPageHeading({
 
 function AvatarMark() {
   return (
-    <svg width="26" height="26" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4">
-      <path d="M7 8v.05M13 8v.05" strokeLinecap="round" />
-      <path d="M6.4 12a4.3 4.3 0 0 0 7.2 0" strokeLinecap="round" />
-    </svg>
+    <Smile aria-hidden className="size-5" strokeWidth={1.5} />
   );
 }

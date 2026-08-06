@@ -129,24 +129,6 @@ export const LEGAL_NAV: readonly { href: string; label: string }[] = [
   { href: '/privacy', label: '개인정보 처리방침' },
 ];
 
-/**
- * 푸터의 IR 묶음.
- *
- * 헤더에서 뺀 대신 여기 전부 늘어놓는다 — 접어 두면 공시를 보러 온 사람이 검색으로만
- * 들어오게 되고, 그때는 사이트 안의 다른 자료를 지나친다.
- */
-export const IR_NAV: readonly { href: string; label: string }[] = [
-  { href: '/disclosures', label: '공시 정보' },
-  { href: '/financials', label: '재무 정보' },
-  { href: '/stock', label: '주가 정보' },
-  { href: '/dividends', label: '배당 정보' },
-  { href: '/meetings', label: '주주총회' },
-  { href: '/governance', label: '지배구조' },
-  { href: '/library', label: 'IR 자료실' },
-  { href: '/schedules', label: 'IR 일정' },
-  { href: '/subscribe', label: '공시 구독' },
-];
-
 export const IR_ROUTES = {
   home: '/',
   about: '/about',

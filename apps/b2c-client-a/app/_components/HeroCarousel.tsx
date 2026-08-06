@@ -1,5 +1,6 @@
 'use client';
 
+import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { SLOT, cid, type BannerItem } from '@winpilot/client-content';
 
@@ -39,39 +40,6 @@ const PLACEHOLDER = [
   'from-[#97266d] to-[#521b41]',
   'from-[#4a5568] to-[#1a202c]',
 ];
-
-function ChevronLeft() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <path d="M12.5 4 L6.5 10 L12.5 16" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function ChevronRight() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <path d="M7.5 4 L13.5 10 L7.5 16" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function PauseIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-      <rect x="2.5" y="2" width="2.5" height="8" rx="0.5" />
-      <rect x="7" y="2" width="2.5" height="8" rx="0.5" />
-    </svg>
-  );
-}
-
-function PlayIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-      <path d="M3 2 L10 6 L3 10 Z" />
-    </svg>
-  );
-}
 
 export function HeroCarousel({ banners }: { banners: BannerItem[] }) {
   const total = banners.length;
@@ -193,7 +161,7 @@ export function HeroCarousel({ banners }: { banners: BannerItem[] }) {
         className="absolute top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white text-ink shadow-lg"
         style={{ left: `calc(${PEEK} / 2 - 22px)` }}
       >
-        <ChevronLeft />
+        <ChevronLeft aria-hidden className="size-5" strokeWidth={1.6} />
       </button>
 
       <button
@@ -203,7 +171,7 @@ export function HeroCarousel({ banners }: { banners: BannerItem[] }) {
         className="absolute top-1/2 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white text-ink shadow-lg"
         style={{ right: `calc(${PEEK} / 2 - 22px)` }}
       >
-        <ChevronRight />
+        <ChevronRight aria-hidden className="size-5" strokeWidth={1.6} />
       </button>
 
       {/* 재생 제어와 순번 — 세 번째 카드 오른쪽 아래에 앉는다. */}
@@ -214,7 +182,11 @@ export function HeroCarousel({ banners }: { banners: BannerItem[] }) {
           aria-label={playing ? '자동 넘김 멈춤' : '자동 넘김 시작'}
           className="grid size-8 place-items-center rounded bg-black/60 text-white"
         >
-          {playing ? <PauseIcon /> : <PlayIcon />}
+          {playing ? (
+            <Pause aria-hidden className="size-3 fill-current" strokeWidth={0} />
+          ) : (
+            <Play aria-hidden className="size-3 fill-current" strokeWidth={0} />
+          )}
         </button>
 
         <p className="flex h-8 items-center gap-1.5 rounded bg-black/60 px-3 text-xs tabular-nums text-white">

@@ -26,7 +26,7 @@ import { IR_ROUTES } from '@/lib/navigation';
  */
 export function HomeIntro() {
   return (
-    <section className="bg-[#05060d] px-6 py-24 text-white lg:py-32">
+    <section className="bg-night px-6 py-24 text-white lg:py-32">
       <div className="mx-auto grid w-full max-w-320 grid-cols-1 gap-x-16 gap-y-12 lg:grid-cols-2">
         <div className="flex flex-col gap-10">
           <p className="text-lg font-bold tracking-tight">{IR_COMPANY.brandEn} Digital Factory</p>
@@ -65,7 +65,7 @@ export function HomeIntro() {
               화면마다 두면 **같은 화살표가 굵기와 끝 모양이 조금씩 다른 채로** 늘어난다 —
               그림 파일이 아니라 SVG 컴포넌트라 Figma 로 뽑는 데도 걸림이 없다.
             */}
-            <span className="grid size-6 shrink-0 place-items-center rounded-full bg-white text-[#05060d] transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
+            <span className="grid size-6 shrink-0 place-items-center rounded-full bg-white text-night transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
               <ArrowUpRight aria-hidden className="size-3.5" strokeWidth={2} />
             </span>
           </a>

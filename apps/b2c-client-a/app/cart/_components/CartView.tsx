@@ -1,5 +1,6 @@
 'use client';
 
+import { Minus, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { COPY, ROUTES, SLOT, cartTotal, cid, findProduct, formatMoney, type CartLine } from '@winpilot/client-content';
@@ -237,16 +238,12 @@ export function CartView({ initialLines }: { initialLines: CartLine[] }) {
 /* 수량 단추의 부호는 글자가 아니라 선으로 그린다 — 글꼴에 따라 −/+ 의 굵기와 위치가 흔들린다. */
 function MinusIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <path d="M3 7h8" strokeLinecap="round" />
-    </svg>
+    <Minus aria-hidden className="size-3.5" strokeWidth={1.6} />
   );
 }
 
 function PlusIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <path d="M3 7h8M7 3v8" strokeLinecap="round" />
-    </svg>
+    <Plus aria-hidden className="size-3.5" strokeWidth={1.6} />
   );
 }

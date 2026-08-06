@@ -1,5 +1,6 @@
 'use client';
 
+import { NIGHT } from '@/lib/palette';
 import { useEffect, useState } from 'react';
 import { IR_COMPANY } from '@winpilot/store';
 
@@ -130,7 +131,7 @@ export function HomeHero() {
       헤더는 이 위에 겹쳐 뜨므로 높이를 빼지 않는다 — 대신 글이 헤더에 가리지 않도록 위쪽에
       여백을 준다.
     */
-    <section className="relative isolate flex min-h-dvh flex-col justify-center overflow-hidden bg-[#05060d] px-6 pb-24 pt-32 text-white">
+    <section className="relative isolate flex min-h-dvh flex-col justify-center overflow-hidden bg-night px-6 pb-24 pt-32 text-white">
       {/* 1층 — 영상이 없을 때 남는 배경. */}
       <HeroBackdrop />
 
@@ -150,7 +151,7 @@ export function HomeHero() {
         playsInline
         preload="auto"
         /* 첫 프레임이 오기 전 한 순간이라도 흰 상자가 남지 않게 배경색을 깔아 둔다. */
-        style={{ backgroundColor: '#05060d' }}
+        style={{ backgroundColor: NIGHT }}
         aria-hidden
       />
 
@@ -269,7 +270,7 @@ function HeroBackdrop() {
     <svg aria-hidden viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 z-0 size-full">
       <defs>
         <linearGradient id="ir-hero-sky" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#05060d" />
+          <stop offset="0%" stopColor={NIGHT} />
           <stop offset="60%" stopColor="#0a1024" />
           <stop offset="100%" stopColor="#111a3a" />
         </linearGradient>

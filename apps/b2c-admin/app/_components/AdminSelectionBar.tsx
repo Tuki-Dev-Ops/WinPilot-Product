@@ -1,5 +1,6 @@
 'use client';
 
+import { X } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -19,9 +20,7 @@ export type AdminSelectionBarProps = {
 
 function CloseIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M4 4 L10 10 M10 4 L4 10" strokeLinecap="round" />
-    </svg>
+    <X aria-hidden className="size-3.5" strokeWidth={1.5} />
   );
 }
 

@@ -1,5 +1,6 @@
 'use client';
 
+import { ListFilter, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { COPY, ROUTES, formatMoney } from '@winpilot/client-content';
@@ -40,17 +41,13 @@ export type ProductFilterDrawerProps = {
 
 function FilterIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <path d="M3 5.5h14M5.5 10h9M8.5 14.5h3" strokeLinecap="round" />
-    </svg>
+    <ListFilter aria-hidden className="size-5" strokeWidth={1.5} />
   );
 }
 
 function CloseIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <path d="M5.5 5.5 L14.5 14.5 M14.5 5.5 L5.5 14.5" strokeLinecap="round" />
-    </svg>
+    <X aria-hidden className="size-5" strokeWidth={1.5} />
   );
 }
 

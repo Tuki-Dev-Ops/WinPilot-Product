@@ -1,5 +1,6 @@
 'use client';
 
+import { Heart } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useToast } from '@winpilot/ui';
 import { WISHLIST_EVENT, readWishlist, toggleWishlist } from './wishlist-store';
@@ -50,19 +51,7 @@ export function WishlistButton({ productId, productName }: { productId: string; 
         liked ? 'text-signal-danger' : 'text-white/90 hover:text-white'
       }`}
     >
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 20 20"
-        fill={liked ? 'currentColor' : 'none'}
-        stroke="currentColor"
-        strokeWidth="1.4"
-      >
-        <path
-          d="M10 16.5 C10 16.5 3 12.4 3 7.9 A3.4 3.4 0 0 1 10 6.1 A3.4 3.4 0 0 1 17 7.9 C17 12.4 10 16.5 10 16.5 Z"
-          strokeLinejoin="round"
-        />
-      </svg>
+      <Heart aria-hidden className={`size-5 ${liked ? 'fill-current' : ''}`} strokeWidth={1.4} />
     </button>
   );
 }

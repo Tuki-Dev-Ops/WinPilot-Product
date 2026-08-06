@@ -1,3 +1,5 @@
+import { type IsoTone } from '@/lib/palette';
+
 /**
  * 아이소메트릭 도형을 그리는 **자·컴퍼스**. 여기에는 뜻이 없고 모양만 있다.
  *
@@ -53,13 +55,6 @@ export function isoPoint(x: number, y: number, z = 0): [number, number] {
 function polygon(points: [number, number][]): string {
   return points.map(([x, y]) => `${x},${y}`).join(' ');
 }
-
-export type IsoTone = {
-  /** 윗면 */ top: string;
-  /** 오른쪽 면 — 빛이 드는 쪽이라 조금 밝다 */ right: string;
-  /** 왼쪽 면 */ left: string;
-  /** 모서리 */ line: string;
-};
 
 /**
  * 바닥판 — 각 서비스가 올라서는 마름모.

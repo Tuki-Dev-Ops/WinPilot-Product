@@ -1,5 +1,6 @@
 'use client';
 
+import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import {
   ACTION_LABEL,
@@ -62,9 +63,7 @@ export function AdminRoleGuide() {
           aria-hidden
           className={`shrink-0 text-ink-faint transition-transform duration-150 ${open ? 'rotate-180' : ''}`}
         >
-          <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M3 4.5 L6 7.5 L9 4.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <ChevronDown aria-hidden className="size-3.5" strokeWidth={1.5} />
         </span>
       </button>
 

@@ -1,5 +1,6 @@
 'use client';
 
+import { Link } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ALL_VALUE, ContentListView, type ContentColumn } from '@/app/contents/_components/ContentListView';
@@ -9,11 +10,7 @@ import { AdminVisibilityBadge } from '@/app/_components/AdminVisibilityBadge';
 
 function LinkIcon() {
   return (
-    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M6.5 9.5 L9.5 6.5" strokeLinecap="round" />
-      <path d="M7.25 4.75 L9 3 a2.5 2.5 0 0 1 3.5 3.5 L10.75 8.25" strokeLinecap="round" />
-      <path d="M8.75 11.25 L7 13 a2.5 2.5 0 0 1 -3.5 -3.5 L5.25 7.75" strokeLinecap="round" />
-    </svg>
+    <Link aria-hidden className="size-3" strokeWidth={1.5} />
   );
 }
 

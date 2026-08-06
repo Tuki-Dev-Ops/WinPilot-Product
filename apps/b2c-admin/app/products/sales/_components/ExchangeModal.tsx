@@ -1,5 +1,6 @@
 'use client';
 
+import { ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { exchangeableOptions, findOption, optionLabel } from '@/lib/data/product-options';
 import type { OrderRecord } from '@/lib/data/orders';
@@ -14,9 +15,7 @@ export type ExchangeModalProps = {
 
 function ArrowIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M3 8 h10 l-3 -3 M13 8 l-3 3" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
+    <ArrowRight aria-hidden className="size-4" strokeWidth={1.5} />
   );
 }
 

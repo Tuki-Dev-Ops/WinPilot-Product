@@ -1,5 +1,6 @@
 'use client';
 
+import { Star } from 'lucide-react';
 import { useState } from 'react';
 import { COPY, type ReviewRecord } from '@winpilot/client-content';
 import { RichBody } from '@/app/_components/SiteShell';
@@ -22,20 +23,7 @@ function Stars({ rating }: { rating: number }) {
   return (
     <span className="flex shrink-0 items-center gap-0.5" aria-label={`별점 ${rating}점`}>
       {[1, 2, 3, 4, 5].map((step) => (
-        <svg
-          key={step}
-          width="14"
-          height="14"
-          viewBox="0 0 20 20"
-          /* 채운 별과 빈 별을 모양으로 구분한다 — 색만 다르면 색각 이상 사용자가 셀 수 없다. */
-          fill={step <= rating ? 'currentColor' : 'none'}
-          stroke="currentColor"
-          strokeWidth="1.4"
-          strokeLinejoin="round"
-          className={step <= rating ? 'text-signal-warn' : 'text-border-strong'}
-        >
-          <path d="M10 2.8 L12.2 7.6 L17.4 8.2 L13.6 11.8 L14.6 17 L10 14.5 L5.4 17 L6.4 11.8 L2.6 8.2 L7.8 7.6 Z" />
-        </svg>
+        <Star aria-hidden className="size-4 fill-current" strokeWidth={1.4} />
       ))}
     </span>
   );

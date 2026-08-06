@@ -1,5 +1,6 @@
 'use client';
 
+import { X } from 'lucide-react';
 import { useState, type KeyboardEvent } from 'react';
 import { HintInput, useToast } from '@winpilot/ui';
 import {
@@ -45,9 +46,7 @@ function TokenList({
             aria-label={`${item} 삭제`}
             className="shrink-0 rounded-full p-1 text-ink-faint transition-colors duration-150 hover:text-signal-danger"
           >
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.6">
-              <path d="M2.5 2.5 L7.5 7.5 M7.5 2.5 L2.5 7.5" strokeLinecap="round" />
-            </svg>
+            <X aria-hidden className="size-2.5" strokeWidth={1.6} />
           </button>
         </span>
       ))}

@@ -1,5 +1,6 @@
 'use client';
 
+import { Ban, Repeat, Truck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState, type MouseEvent } from 'react';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
@@ -31,29 +32,19 @@ const TAB_LABEL: Record<string, string> = {
 
 function TruckIcon() {
   return (
-    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-      <path d="M1.5 4.5 h7 v6 h-7 z M8.5 6.5 h3 l2 2 v2 h-5 z" strokeLinejoin="round" />
-      <circle cx="4.25" cy="12" r="1.15" />
-      <circle cx="11" cy="12" r="1.15" />
-    </svg>
+    <Truck aria-hidden className="size-[15px]" strokeWidth={1.4} />
   );
 }
 
 function CancelIcon() {
   return (
-    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-      <circle cx="8" cy="8" r="5.75" />
-      <path d="M4.5 4.5 L11.5 11.5" strokeLinecap="round" />
-    </svg>
+    <Ban aria-hidden className="size-[15px]" strokeWidth={1.4} />
   );
 }
 
 function ExchangeIcon() {
   return (
-    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-      <path d="M2.5 6 h9 l-2 -2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M13.5 10 h-9 l2 2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
+    <Repeat aria-hidden className="size-[15px]" strokeWidth={1.4} />
   );
 }
 

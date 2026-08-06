@@ -1,5 +1,6 @@
 'use client';
 
+import { Star } from 'lucide-react';
 import { Badge, Button, Modal } from '@winpilot/ui';
 import { AdminVisibilityBadge } from '@/app/_components/AdminVisibilityBadge';
 import type { ReviewRecord } from '@/lib/data/reviews';
@@ -17,20 +18,12 @@ function Stars({ rating }: { rating: number }) {
   return (
     <span className="flex shrink-0 items-center gap-0.5" aria-label={`별점 ${rating}점`}>
       {[1, 2, 3, 4, 5].map((step) => (
-        <svg
+        <Star
           key={step}
-          width="14"
-          height="14"
-          viewBox="0 0 20 20"
-          fill={step <= rating ? 'currentColor' : 'none'}
-          stroke="currentColor"
-          strokeWidth="1.4"
-          strokeLinejoin="round"
           aria-hidden
-          className={step <= rating ? 'text-signal-warn' : 'text-border-strong'}
-        >
-          <path d="M10 2.8 L12.2 7.6 L17.4 8.2 L13.6 11.8 L14.6 17 L10 14.5 L5.4 17 L6.4 11.8 L2.6 8.2 L7.8 7.6 Z" />
-        </svg>
+          className={`size-3 ${step <= rating ? 'fill-current text-signal-warn' : 'text-border-strong'}`}
+          strokeWidth={1.4}
+        />
       ))}
     </span>
   );
