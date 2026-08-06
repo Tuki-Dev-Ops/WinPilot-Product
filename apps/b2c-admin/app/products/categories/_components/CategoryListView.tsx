@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useState, type MouseEvent } from 'react';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
-import { AdminListToolbar, ALL_VALUE, type AdminFilterField } from '@/app/_components/AdminListToolbar';
-import { useToast } from '@winpilot/ui';
+import { ALL_VALUE, Badge, ListToolbar, PageHeading, RowActions, RowIconButton, RowSelectCell, SelectAllCell, useToast, type ListFilterField } from '@winpilot/ui';
 import type { CategoryFormInput, CategoryFormMode } from '@/lib/validation/category-record';
 import { CategoryFormModal, type CategoryRecord } from './CategoryFormModal';
+import { AdminVisibilityBadge, visibilityLabel } from '@/app/_components/AdminVisibilityBadge';
 
 /** 프론트엔드 전용 — 서버 없이 이 배열이 목록의 원본이다. */
 const INITIAL_CATEGORIES: CategoryRecord[] = [
@@ -22,30 +22,13 @@ const INITIAL_CATEGORIES: CategoryRecord[] = [
 const TAB_VISIBLE: Record<string, boolean | null> = { all: null, shown: true, hidden: false };
 const TAB_LABEL: Record<string, string> = { all: '전체', shown: '노출', hidden: '숨김' };
 
-// shrink-0 · whitespace-nowrap — 좁은 폭에서 flex 가 버튼을 눌러 글자가 접히는 것을 막는다.
-const ACTION_BUTTON = 'h-8 shrink-0 whitespace-nowrap rounded-lg border px-3 text-sm transition-colors duration-150';
-const NEUTRAL_ACTION = `${ACTION_BUTTON} border-border-strong text-ink-muted hover:border-ink-faint`;
-const DANGER_ACTION = `${ACTION_BUTTON} border-border-strong text-signal-danger hover:border-signal-danger`;
 
-/** 행 클릭이 선택/상세를 담당하므로, 행 안의 버튼은 자기 동작만 하도록 전파를 끊는다. */
-const stopRowClick = (event: MouseEvent) => event.stopPropagation();
 
 function nextCategoryId(categories: CategoryRecord[]): string {
   const max = categories.reduce((biggest, item) => Math.max(biggest, Number(item.id.replace('C-', ''))), 0);
   return `C-${`${max + 1}`.padStart(2, '0')}`;
 }
 
-function VisibilityBadge({ visible }: { visible: boolean }) {
-  return (
-    <span
-      className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${
-        visible ? 'bg-signal-ok/12 text-signal-ok' : 'bg-surface text-ink-muted'
-      }`}
-    >
-      {visible ? '노출' : '숨김'}
-    </span>
-  );
-}
 
 type FormTarget = { mode: CategoryFormMode; depth: 1 | 2; record: CategoryRecord | null; parentId: string };
 
@@ -65,7 +48,7 @@ export function CategoryListView() {
   const roots = useMemo(() => categories.filter((item) => !item.parentId), [categories]);
   const childrenOf = (rootId: string) => categories.filter((item) => item.parentId === rootId);
 
-  const filterFields = useMemo<AdminFilterField[]>(
+  const filterFields = useMemo<ListFilterField[]>(
     () => [
       {
         id: 'children',
@@ -115,6 +98,14 @@ export function CategoryListView() {
   };
 
   // 대분류는 자기 자신이 걸리거나 하위 중 하나라도 걸리면 남긴다 — 하위를 찾을 때 상위가 사라지면 못 찾는다.
+  /*
+    고르는 칸. **일괄로 할 일이 아직 없어 선택 줄(일괄 작업 막대)은 그리지 않는다** — 지우는 일은
+    줄마다의 휴지통이 이미 맡고 있고, 대분류를 여럿 한꺼번에 지우면 그 아래 세부 분류와 상품이
+    어디로 가는지 물어볼 자리가 없다. 그래도 칸은 둔다: 표마다 맨 왼쪽이 같은 자리여야 한다.
+  */
+  const [pickedRoots, setPickedRoots] = useState<string[]>([]);
+  const [pickedChildren, setPickedChildren] = useState<string[]>([]);
+
   const visibleRoots = useMemo(
     () => roots.filter((root) => matches(root) || childrenOf(root.id).some(matches)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -218,7 +209,9 @@ export function CategoryListView() {
 
   return (
     <>
-      <AdminListToolbar
+      <PageHeading title="카테고리" description="상품을 묶는 분류를 관리하세요." />
+
+      <ListToolbar
         tabs={tabs}
         activeTabId={activeTabId}
         onTabChange={setActiveTabId}
@@ -264,11 +257,15 @@ export function CategoryListView() {
             <>
               {/* 열 구성은 2Depth 와 같아야 한다 — 같은 목록인데 열이 다르면 읽는 법을 두 번 배워야 한다. */}
               <div className="hidden gap-4 border-b border-border px-5 py-3 text-xs text-ink-faint lg:grid lg:grid-cols-12 lg:items-center">
-                <span className="lg:col-span-1 lg:text-center">순번</span>
+                <SelectAllCell
+                  checked={visibleRoots.length > 0 && pickedRoots.length === visibleRoots.length}
+                  indeterminate={pickedRoots.length > 0}
+                  onChange={(checked) => setPickedRoots(checked ? visibleRoots.map((one) => one.id) : [])}
+                />
                 <span className="lg:col-span-4">카테고리명</span>
                 <span className="lg:col-span-2">상품</span>
-                <span className="lg:col-span-2 lg:text-center">노출</span>
-                <span className="lg:col-span-3 lg:text-right">관리</span>
+                <span className="lg:col-span-2 lg:text-center">상태</span>
+                <span className="lg:col-span-3 lg:text-center">관리</span>
               </div>
 
               <div className="flex flex-col">
@@ -282,9 +279,16 @@ export function CategoryListView() {
                         active ? 'bg-brand-50 dark:bg-brand-900' : 'hover:bg-surface'
                       }`}
                     >
-                      <span className="font-mono text-sm tabular-nums text-ink-faint lg:col-span-1 lg:text-center">
-                        {index + 1}
-                      </span>
+                      <RowSelectCell
+                        checked={pickedRoots.includes(root.id)}
+                        onChange={(checked) =>
+                          setPickedRoots((previous) =>
+                            checked ? [...previous, root.id] : previous.filter((one) => one !== root.id),
+                          )
+                        }
+                        label={`${root.name} 선택`}
+                        index={index}
+                      />
 
                       <div className="min-w-0 lg:col-span-4">
                         <p
@@ -303,21 +307,24 @@ export function CategoryListView() {
                       </div>
 
                       <div className="flex items-center gap-2 lg:col-span-2 lg:justify-center">
-                        <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">노출</span>
-                        <VisibilityBadge visible={root.visible} />
+                        <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">상태</span>
+                        <AdminVisibilityBadge visible={root.visible} />
                       </div>
 
-                      <div className="flex items-center gap-2 lg:col-span-3 lg:justify-end" onClick={stopRowClick}>
-                        <button
-                          type="button"
-                          onClick={() => setForm({ mode: 'edit', depth: 1, record: root, parentId: '' })}
-                          className={NEUTRAL_ACTION}
-                        >
-                          조회
-                        </button>
-                        <button type="button" onClick={() => setPendingDelete(root)} className={DANGER_ACTION}>
-                          삭제
-                        </button>
+                      <div className="lg:col-span-3">
+                        <RowActions>
+                          <RowIconButton
+                            icon="view"
+                            label={`${root.name} 상세`}
+                            onClick={() => setForm({ mode: 'edit', depth: 1, record: root, parentId: '' })}
+                          />
+                          <RowIconButton
+                            icon="delete"
+                            tone="danger"
+                            label={`${root.name} 삭제`}
+                            onClick={() => setPendingDelete(root)}
+                          />
+                        </RowActions>
                       </div>
                     </div>
                   );
@@ -358,11 +365,15 @@ export function CategoryListView() {
           ) : (
             <>
               <div className="hidden gap-4 border-b border-border px-5 py-3 text-xs text-ink-faint lg:grid lg:grid-cols-12 lg:items-center">
-                <span className="lg:col-span-1 lg:text-center">순번</span>
+                <SelectAllCell
+                  checked={visibleChildren.length > 0 && pickedChildren.length === visibleChildren.length}
+                  indeterminate={pickedChildren.length > 0}
+                  onChange={(checked) => setPickedChildren(checked ? visibleChildren.map((one) => one.id) : [])}
+                />
                 <span className="lg:col-span-4">카테고리명</span>
                 <span className="lg:col-span-2">상품</span>
-                <span className="lg:col-span-2 lg:text-center">노출</span>
-                <span className="lg:col-span-3 lg:text-right">관리</span>
+                <span className="lg:col-span-2 lg:text-center">상태</span>
+                <span className="lg:col-span-3 lg:text-center">관리</span>
               </div>
 
               <div className="flex flex-col">
@@ -372,9 +383,16 @@ export function CategoryListView() {
                     onClick={() => setForm({ mode: 'edit', depth: 2, record: child, parentId: selectedRoot.id })}
                     className="grid cursor-pointer grid-cols-1 gap-x-4 gap-y-2 border-b border-border px-5 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface lg:grid-cols-12 lg:items-center lg:gap-y-0"
                   >
-                    <span className="font-mono text-sm tabular-nums text-ink-faint lg:col-span-1 lg:text-center">
-                      {index + 1}
-                    </span>
+                    <RowSelectCell
+                      checked={pickedChildren.includes(child.id)}
+                      onChange={(checked) =>
+                        setPickedChildren((previous) =>
+                          checked ? [...previous, child.id] : previous.filter((one) => one !== child.id),
+                        )
+                      }
+                      label={`${child.name} 선택`}
+                      index={index}
+                    />
 
                     <div className="lg:col-span-4">
                       <p className="text-sm font-medium">{child.name}</p>
@@ -387,21 +405,24 @@ export function CategoryListView() {
                     </div>
 
                     <div className="flex items-center gap-2 lg:col-span-2 lg:justify-center">
-                      <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">노출</span>
-                      <VisibilityBadge visible={child.visible} />
+                      <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">상태</span>
+                      <AdminVisibilityBadge visible={child.visible} />
                     </div>
 
-                    <div className="flex items-center gap-2 lg:col-span-3 lg:justify-end" onClick={stopRowClick}>
-                      <button
-                        type="button"
-                        onClick={() => setForm({ mode: 'edit', depth: 2, record: child, parentId: selectedRoot.id })}
-                        className={NEUTRAL_ACTION}
-                      >
-                        조회
-                      </button>
-                      <button type="button" onClick={() => setPendingDelete(child)} className={DANGER_ACTION}>
-                        삭제
-                      </button>
+                    <div className="lg:col-span-3">
+                      <RowActions>
+                        <RowIconButton
+                          icon="view"
+                          label={`${child.name} 상세`}
+                          onClick={() => setForm({ mode: 'edit', depth: 2, record: child, parentId: selectedRoot.id })}
+                        />
+                        <RowIconButton
+                          icon="delete"
+                          tone="danger"
+                          label={`${child.name} 삭제`}
+                          onClick={() => setPendingDelete(child)}
+                        />
+                      </RowActions>
                     </div>
                   </div>
                 ))}
@@ -438,7 +459,7 @@ export function CategoryListView() {
                 { label: '구분', value: pendingSave.depth === 1 ? '1Depth · 대분류' : '2Depth · 세부 분류' },
                 ...(pendingSave.depth === 2 && selectedRoot ? [{ label: '상위', value: selectedRoot.name }] : []),
                 { label: '이름', value: pendingSave.name },
-                { label: '노출', value: pendingSave.visible ? '노출' : '숨김' },
+                { label: '노출', value: visibilityLabel(pendingSave.visible) },
               ]
             : []
         }

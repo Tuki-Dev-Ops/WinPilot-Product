@@ -24,8 +24,8 @@ export function SectionList({
           href={`${base}/${entry.slug}`}
           className="flex flex-col gap-1 rounded-xl border border-border px-5 py-4 hover:border-border-strong"
         >
-          <span className="truncate text-sm font-medium">{entry.title}</span>
-          <span className="truncate font-mono text-xs text-ink-faint">
+          <span className="min-w-0 truncate text-sm font-medium">{entry.title}</span>
+          <span className="min-w-0 truncate font-mono text-xs text-ink-faint">
             {base}/{entry.slug}
           </span>
         </a>

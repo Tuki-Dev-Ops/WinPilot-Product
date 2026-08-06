@@ -20,7 +20,9 @@
 
 ## 2. 기능 뷰
 
-_캡처가 아직 없습니다 — `pnpm docs:capture` 로 뜹니다._
+![Tenant Detail 데스크톱](/page-view/tenants-detail/tenants-detail-desktop.jpg)
+
+세 너비(데스크톱·태블릿·모바일)와 예외 화면은 `apps/internal-admin/docs/page-view/tenants-detail/` 에서 본다.
 
 ### 화면 구성
 

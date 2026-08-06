@@ -16,7 +16,7 @@
  * 말이라 갈래를 따로 두었고, 5 통계는 넷을 합쳐 읽는 자리다.
  *
  * ## 7 설정을 따로 둔 이유
- * - **7.1 사내 계정**은 2.2 `권한` 과 성격이 다르다. 2.2 는 **고객사가 자기 콘솔에서 쓰는**
+ * - **7.1 관리자**는 2.2 `권한` 과 성격이 다르다. 2.2 는 **고객사가 자기 콘솔에서 쓰는**
  *   권한이고, 7.1 은 **이 콘솔에 들어오는 우리 직원**이다. 한 갈래에 두면 고객사 권한을
  *   고치러 들어온 사람이 직원 계정을 만지게 된다.
  * - **7.2 알림**은 5·6 이 만들어 내는 신호(만료 임박·연체)를 받을 곳이 필요해서 둔다.
@@ -36,6 +36,14 @@ export type InternalMenuChild = {
 
 export type InternalMenuItem = InternalMenuChild & {
   children?: InternalMenuChild[];
+  /**
+   * 이 항목 **앞에 가는 선**을 그을지.
+   *
+   * 위치를 셸에 박지 않고 메뉴가 들고 있는 이유: 선이 필요한 까닭은 "마지막 항목이라서" 가
+   * 아니라 **성격이 다르기 때문**이다(7 설정은 고객사가 아니라 이 콘솔 자신의 값을 다룬다 —
+   * 위 머리말 참고). 자리로 판단하면 갈래가 하나 늘어나는 날 선이 엉뚱한 곳에 남는다.
+   */
+  separatedBefore?: boolean;
 };
 
 export const INTERNAL_MENU: readonly InternalMenuItem[] = [
@@ -87,7 +95,7 @@ export const INTERNAL_MENU: readonly InternalMenuItem[] = [
       { id: 'integration-pg', label: 'PG', href: '/integrations/pg', ready: true },
       { id: 'integration-oauth', label: 'OAuth', href: '/integrations/oauth', ready: true },
       { id: 'integration-plugin', label: 'Plugin', href: '/integrations/plugin', ready: true },
-      { id: 'integration-dns', label: 'DNS', href: '/integrations/dns', ready: true },
+      { id: 'integration-dns', label: 'DNS / SSL', href: '/integrations/dns', ready: true },
     ],
   },
   {
@@ -116,8 +124,10 @@ export const INTERNAL_MENU: readonly InternalMenuItem[] = [
     label: '설정',
     href: '/settings/staff',
     ready: true,
+    // 1~6 은 고객사를 두고 묻는 것이고, 7 은 이 콘솔 자신의 값이다. 그 경계를 선으로 긋는다.
+    separatedBefore: true,
     children: [
-      { id: 'settings-staff', label: '사내 계정', href: '/settings/staff', ready: true },
+      { id: 'settings-staff', label: '관리자', href: '/settings/staff', ready: true },
       { id: 'settings-alarm', label: '알림', href: '/settings/notifications', ready: true },
       { id: 'settings-code', label: '기준 값', href: '/settings/codes', ready: true },
     ],

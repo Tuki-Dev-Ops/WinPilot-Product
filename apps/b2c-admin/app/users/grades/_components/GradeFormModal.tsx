@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState, type FormEvent } from 'react';
-import { AdminModal } from '@/app/_components/AdminModal';
-import { HintInput } from '@winpilot/ui';
+import { Button, Field, HintInput, Modal } from '@winpilot/ui';
 import {
   formatAmount,
   parseAmount,
@@ -80,35 +79,29 @@ export function GradeFormModal({ open, mode, record, onClose, onSubmit }: GradeF
   const previewRate = value.discountRate.trim();
 
   return (
-    <AdminModal
+    <Modal
       open={open}
       title={mode === 'create' ? '등급 추가' : '등급 수정'}
       description="누적 결제금액이 기준을 넘으면 해당 등급의 할인율이 적용됩니다."
       onClose={onClose}
       footer={
         <>
-          <button
-            type="button"
-            onClick={onClose}
-            className="h-9 rounded-lg border border-border-strong px-4 text-sm text-ink-muted"
-          >
+          <Button tone="secondary" onClick={onClose}>
             취소
-          </button>
-          <button
-            type="submit"
-            form="grade-form"
-            className="h-9 rounded-lg bg-brand-500 px-4 text-sm font-medium text-white hover:bg-brand-600"
-          >
+          </Button>
+          <Button type="submit" form="grade-form">
             {mode === 'create' ? '추가' : '저장'}
-          </button>
+          </Button>
         </>
       }
     >
       <form id="grade-form" noValidate onSubmit={handleSubmit} className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2">
-          <label htmlFor="grade-name" className="text-sm font-medium">
-            등급명
-          </label>
+        <Field
+          label="등급명"
+          htmlFor="grade-name"
+          required
+          {...(errors.name ? { error: errors.name } : {})}
+        >
           <HintInput
             id="grade-name"
             type="text"
@@ -118,17 +111,15 @@ export function GradeFormModal({ open, mode, record, onClose, onSubmit }: GradeF
             invalid={Boolean(errors.name)}
             {...(errors.name ? { 'aria-describedby': 'grade-name-error' } : {})}
           />
-          {errors.name && (
-            <p id="grade-name-error" className="text-sm text-signal-danger">
-              {errors.name}
-            </p>
-          )}
-        </div>
+        </Field>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="grade-threshold" className="text-sm font-medium">
-            누적금액 기준
-          </label>
+        <Field
+          label="누적금액 기준"
+          htmlFor="grade-threshold"
+          required
+          {...(errors.threshold ? { error: errors.threshold } : {})}
+        >
+          {/* 단위(`원 이상`)는 입력 옆에 붙어야 무엇을 넣는 칸인지가 눈으로 읽힌다. */}
           <div className="flex items-center gap-2">
             <HintInput
               id="grade-threshold"
@@ -143,17 +134,14 @@ export function GradeFormModal({ open, mode, record, onClose, onSubmit }: GradeF
             />
             <span className="shrink-0 text-sm text-ink-muted">원 이상</span>
           </div>
-          {errors.threshold && (
-            <p id="grade-threshold-error" className="text-sm text-signal-danger">
-              {errors.threshold}
-            </p>
-          )}
-        </div>
+        </Field>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="grade-discountRate" className="text-sm font-medium">
-            할인율
-          </label>
+        <Field
+          label="할인율"
+          htmlFor="grade-discountRate"
+          required
+          {...(errors.discountRate ? { error: errors.discountRate } : {})}
+        >
           <div className="flex items-center gap-2">
             <HintInput
               id="grade-discountRate"
@@ -168,12 +156,7 @@ export function GradeFormModal({ open, mode, record, onClose, onSubmit }: GradeF
             />
             <span className="shrink-0 text-sm text-ink-muted">%</span>
           </div>
-          {errors.discountRate && (
-            <p id="grade-discountRate-error" className="text-sm text-signal-danger">
-              {errors.discountRate}
-            </p>
-          )}
-        </div>
+        </Field>
 
         <div className="rounded-lg bg-surface px-4 py-3">
           <p className="text-xs font-medium uppercase tracking-widest text-ink-faint">적용 규칙</p>
@@ -183,6 +166,6 @@ export function GradeFormModal({ open, mode, record, onClose, onSubmit }: GradeF
           </p>
         </div>
       </form>
-    </AdminModal>
+    </Modal>
   );
 }

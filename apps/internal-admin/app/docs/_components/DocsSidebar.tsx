@@ -43,8 +43,8 @@ export function DocsSidebar({ groups }: { groups: NavGroup[] }) {
                       : 'text-ink-muted hover:bg-surface hover:text-ink'
                   }`}
                 >
-                  <span className="truncate">{item.label}</span>
-                  {item.hint && <span className="shrink-0 font-mono text-[11px] text-ink-faint">{item.hint}</span>}
+                  <span className="min-w-0 truncate">{item.label}</span>
+                  {item.hint && <span className="shrink-0 font-mono text-2xs text-ink-faint">{item.hint}</span>}
                 </a>
               );
             })}

@@ -40,7 +40,7 @@ InternalPaymentSettingsPage payment.settings /integrations/pg
 | 자리 | 접두어 | 예 |
 |---|---|---|
 | `app/**/page.tsx` | `Internal` | `InternalContactListPage` |
-| `app/_components/` | `Internal` | `InternalShell` · `InternalModal` · `InternalToolbar` |
+| `app/_components/` | `Internal` | `InternalShell` · `InternalModal` · `InternalPanel` |
 | `app/<route>/_components/` | 없음 | `ContactListView` · `PipelineBoardView` |
 
 ## 3. 이 앱에서 쓰는 자원 이름
@@ -114,6 +114,16 @@ InternalPaymentSettingsPage payment.settings /integrations/pg
 훑으면 되게 하려는 것이다. 화면 이름으로 두면 한 자원을 두 화면이 나눠 쓸 때 어느 파일에
 있는지 알 수 없다.
 
+### 5.1 시드는 색을 모른다
+
+`lib/data/*.ts` 에는 상태 색 표(`*_TONE`)가 함께 있는데, 값은 Tailwind 클래스가 아니라
+`BadgeTone`(`'ok'` · `'neutral'` · …)이다 — `@winpilot/ui` 의 `Badge` 가 받는 이름이다.
+
+클래스 문자열을 담으면 둘이 깨진다. **시드가 화면을 알게 되고**(값을 서버에서 받는 날 그
+문자열은 갈 곳이 없다), **타입이 `string` 이라 어긋나도 컴파일이 통과한다** — 다크 모드
+접두어를 빠뜨린 표가 있어도 그 화면을 다크 모드로 열기 전에는 드러나지 않는다. 실제로 표
+열두 개가 같은 클래스 문자열을 손으로 옮겨 적고 있었고, 실제 값은 넷뿐이었다.
+
 ## 6. 주석
 
 - **한국어로 적고, "무엇" 이 아니라 "왜" 를 적는다.** 무엇은 코드가 이미 말한다.
@@ -126,6 +136,9 @@ InternalPaymentSettingsPage payment.settings /integrations/pg
 - 레지스트리를 거치지 않고 화면을 만들기 — `spec:check` 가 막는다
 - 같은 역할의 조각을 화면마다 복제하기 — 두 벌이 되면 한 벌만 고쳐진다
 - 도메인을 모르는 원시 요소를 앱 안에 두기 (`@winpilot/ui` 로 간다)
-- 화면 구조를 아는 조각을 `@winpilot/ui` 에 넣기 (앱마다 구조가 다르다)
+- **두 어드민이 같은 것을 쓰기로 정한 조각을 앱 안에 두기** — 올릴지 말지의 기준은 "화면
+  구조를 아느냐" 가 아니라 **"두 앱이 같은 것을 쓰기로 정했느냐"** 다
+  (`docs/component.md` §4). 반대로 한쪽만 쓰는 것을 올리지도 않는다
+- Tailwind 클래스 문자열을 `lib/data/*.ts` 에 담기 (§5.1)
 - 생성물(`docs/FSD/**` · `docs/NFS/**`)을 손으로 고치기 — 다음 생성 때 지워진다
 - 서버·API·DB 를 만들기 — 이 저장소는 **프론트엔드 전용**이다

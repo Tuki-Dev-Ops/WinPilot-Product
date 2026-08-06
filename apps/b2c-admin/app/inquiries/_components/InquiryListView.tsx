@@ -4,17 +4,8 @@ import { useMemo, useState, type MouseEvent } from 'react';
 import { AdminBulkBar } from '@/app/_components/AdminBulkBar';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
 import { AdminListPager } from '@/app/_components/AdminListPager';
-import { AdminListToolbar, ALL_VALUE, type AdminFilterField } from '@/app/_components/AdminListToolbar';
-import { Checkbox, useToast } from '@winpilot/ui';
-import {
-  INQUIRIES,
-  INQUIRY_CATEGORIES,
-  INQUIRY_PATHS,
-  INQUIRY_STATE_TONE,
-  pathLabel,
-  type InquiryRecord,
-  type InquiryState,
-} from '@/lib/data/inquiries';
+import { ALL_VALUE, Badge, Checkbox, ListToolbar, PageHeading, RowActions, RowIconButton, RowSelectCell, RowTextButton, useToast, type ListFilterField } from '@winpilot/ui';
+import { INQUIRIES, INQUIRY_CATEGORIES, INQUIRY_PATHS, INQUIRY_STATE_TONE, pathLabel, type InquiryRecord, type InquiryState } from '@/lib/data/inquiries';
 import { InquiryDetailModal, type InquiryAnswerInput } from './InquiryDetailModal';
 
 const TAB_STATE: Record<string, InquiryState | null> = {
@@ -32,11 +23,7 @@ const TAB_LABEL: Record<string, string> = {
   hold: '보류',
 };
 
-// shrink-0 · whitespace-nowrap — 좁은 폭에서 flex 가 버튼을 눌러 글자가 접히는 것을 막는다.
-const ACTION_BUTTON = 'h-8 shrink-0 whitespace-nowrap rounded-lg border px-3 text-sm transition-colors duration-150';
 
-/** 행 클릭으로 상세가 열리므로, 행 안의 컨트롤은 자기 동작만 하도록 전파를 끊는다. */
-const stopRowClick = (event: MouseEvent) => event.stopPropagation();
 
 function stamp(): string {
   const now = new Date();
@@ -67,7 +54,7 @@ export function InquiryListView() {
     [inquiries, detailId],
   );
 
-  const filterFields = useMemo<AdminFilterField[]>(
+  const filterFields = useMemo<ListFilterField[]>(
     () => [
       {
         id: 'path',
@@ -181,7 +168,9 @@ export function InquiryListView() {
 
   return (
     <>
-      <AdminListToolbar
+      <PageHeading title="목록" description="답변이 필요한 문의를 먼저 확인하세요." />
+
+      <ListToolbar
         tabs={tabs}
         activeTabId={activeTabId}
         onTabChange={setActiveTabId}
@@ -230,7 +219,7 @@ export function InquiryListView() {
           <span className="lg:col-span-1">유형</span>
           <span className="lg:col-span-1">접수일</span>
           <span className="lg:col-span-1 lg:text-center">상태</span>
-          <span className="lg:col-span-2 lg:text-right">관리</span>
+          <span className="lg:col-span-2 lg:text-center">관리</span>
         </div>
 
         {visible.length === 0 ? (
@@ -243,41 +232,39 @@ export function InquiryListView() {
                 onClick={() => setDetailId(inquiry.id)}
                 className="grid cursor-pointer grid-cols-1 gap-x-4 gap-y-2 border-b border-border px-5 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface lg:grid-cols-12 lg:items-center lg:gap-y-0"
               >
-                <div className="flex items-center gap-3 lg:col-span-1" onClick={stopRowClick}>
-                  <Checkbox
-                    checked={selectedIds.includes(inquiry.id)}
-                    onChange={(checked) =>
-                      setSelectedIds((previous) =>
-                        checked ? [...previous, inquiry.id] : previous.filter((id) => id !== inquiry.id),
-                      )
-                    }
-                    label={`${inquiry.title} 선택`}
-                  />
-                  <span className="w-6 text-center font-mono text-sm tabular-nums text-ink-faint">{index + 1}</span>
-                </div>
+                <RowSelectCell
+                  checked={selectedIds.includes(inquiry.id)}
+                  onChange={(checked) =>
+                    setSelectedIds((previous) =>
+                      checked ? [...previous, inquiry.id] : previous.filter((id) => id !== inquiry.id),
+                    )
+                  }
+                  label={`${inquiry.title} 선택`}
+                  index={index}
+                />
 
                 {/* Path — 어느 화면의 문의 폼에서 왔는지. 경로만으로는 뜻이 안 잡혀 이름을 함께 둔다. */}
                 <div className="min-w-0 lg:col-span-2">
                   <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">Path</span>
-                  <p className="truncate text-sm">{pathLabel(inquiry.path)}</p>
-                  <p className="truncate font-mono text-xs text-ink-faint">{inquiry.path}</p>
+                  <p className="min-w-0 truncate text-sm">{pathLabel(inquiry.path)}</p>
+                  <p className="min-w-0 truncate font-mono text-xs text-ink-faint">{inquiry.path}</p>
                 </div>
 
                 <div className="min-w-0 lg:col-span-4">
-                  <p className="truncate text-sm font-medium">
+                  <p className="min-w-0 truncate text-sm font-medium">
                     {inquiry.title}
                     {!inquiry.answer.trim() && (
                       <span className="ml-1.5 text-xs font-normal text-signal-danger">미답변</span>
                     )}
                   </p>
-                  <p className="truncate font-mono text-xs text-ink-faint">
+                  <p className="min-w-0 truncate font-mono text-xs text-ink-faint">
                     {inquiry.id} · {inquiry.name} · {inquiry.email}
                   </p>
                 </div>
 
                 <div className="flex items-baseline gap-2 lg:col-span-1">
                   <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">유형</span>
-                  <span className="truncate text-sm text-ink-muted">{inquiry.category}</span>
+                  <span className="min-w-0 truncate text-sm text-ink-muted">{inquiry.category}</span>
                 </div>
 
                 <div className="flex items-baseline gap-2 lg:col-span-1">
@@ -289,28 +276,25 @@ export function InquiryListView() {
 
                 <div className="flex items-center gap-2 lg:col-span-1 lg:justify-center">
                   <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">상태</span>
-                  <span
-                    className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${INQUIRY_STATE_TONE[inquiry.state]}`}
-                  >
+                  <Badge tone={INQUIRY_STATE_TONE[inquiry.state]}>
                     {inquiry.state}
-                  </span>
+                  </Badge>
                 </div>
 
-                <div className="flex items-center gap-2 lg:col-span-2 lg:justify-end" onClick={stopRowClick}>
-                  <button
-                    type="button"
-                    onClick={() => setDetailId(inquiry.id)}
-                    className={`${ACTION_BUTTON} border-border-strong text-ink-muted hover:border-ink-faint`}
-                  >
-                    답변
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPendingDelete([inquiry.id])}
-                    className={`${ACTION_BUTTON} border-border-strong text-signal-danger hover:border-signal-danger`}
-                  >
-                    삭제
-                  </button>
+                <div className="lg:col-span-2">
+                  <RowActions>
+                    {/*
+                      답변은 글자로 남긴다. 말풍선이든 화살표든 그림 하나로 옮기면 댓글·전달로도
+                      읽혀서, 아이콘을 읽는 데 드는 시간이 글자를 읽는 시간보다 길어진다.
+                    */}
+                    <RowTextButton onClick={() => setDetailId(inquiry.id)}>답변</RowTextButton>
+                    <RowIconButton
+                      icon="delete"
+                      tone="danger"
+                      label={`${inquiry.title} 삭제`}
+                      onClick={() => setPendingDelete([inquiry.id])}
+                    />
+                  </RowActions>
                 </div>
               </div>
             ))}

@@ -506,6 +506,26 @@ export const FEATURES: readonly FeatureSpec[] = [
       'b2c-admin': { route: '/inquiries', component: 'AdminInquiryListPage', status: 'implemented' },
     },
   },
+  /*
+    **고객사가 우리에게** 보내는 문의다. `inquiry.list` 는 고객이 고객사에게 보낸 것이라
+    받는 쪽도 답하는 쪽도 다르다 — 같은 id 에 묶으면 두 자원이 한 이름을 갖는다.
+    사내 콘솔의 `support-inquiry.list`(=`/inquiries`)가 이 목록의 답하는 쪽이다.
+  */
+  {
+    id: 'support.list',
+    label: { ko: '고객 지원', en: 'Support' },
+    entity: 'support',
+    action: 'list',
+    views: {
+      'b2c-admin': {
+        route: '/support',
+        component: 'AdminSupportListPage',
+        status: 'implemented',
+        note: '고객사가 스페이스플래닝에 올리는 문의다 — 사내 어드민의 문의 목록에 그대로 선다',
+      },
+    },
+    singleViewByDesign: true,
+  },
 
   // ── 설정 ────────────────────────────────────────────────────────────
   {
@@ -575,7 +595,7 @@ export const FEATURES: readonly FeatureSpec[] = [
   },
   {
     id: 'dns.settings',
-    label: { ko: 'DNS', en: 'DNS settings' },
+    label: { ko: 'DNS / SSL', en: 'DNS and SSL' },
     entity: 'dns',
     action: 'settings',
     views: {
@@ -583,7 +603,7 @@ export const FEATURES: readonly FeatureSpec[] = [
         route: '/integrations/dns',
         component: 'InternalDnsSettingsPage',
         status: 'implemented',
-        note: '레코드 한 줄이 틀리면 고객사 사이트 전체가 열리지 않는다 — 값을 만들어 주고 확인만 받는다',
+        note: '인증서는 DNS 로 발급받으므로 한 화면에 둔다 — 값을 만들어 주고 확인만 받는다',
       },
     },
     singleViewByDesign: true,
@@ -836,6 +856,21 @@ export const FEATURES: readonly FeatureSpec[] = [
         component: 'InternalRoleListPage',
         status: 'implemented',
         note: '고객사가 자기 콘솔에서 쓰는 권한이다 — 이 콘솔에 들어오는 직원은 /settings/staff 에 있다',
+      },
+    },
+    singleViewByDesign: true,
+  },
+  {
+    id: 'role.detail',
+    label: { ko: '권한 상세', en: 'Role detail' },
+    entity: 'role',
+    action: 'detail',
+    views: {
+      'internal-admin': {
+        route: '/subscriptions/roles/[roleId]',
+        component: 'InternalRoleDetailPage',
+        status: 'implemented',
+        note: '자원 열다섯 × 동작 넷을 켜고 끄는 자리라 모달에 담기지 않는다 — 목록에서 들어간다',
       },
     },
     singleViewByDesign: true,

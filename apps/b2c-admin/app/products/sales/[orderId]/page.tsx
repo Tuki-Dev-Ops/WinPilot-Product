@@ -24,7 +24,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   if (!order) notFound();
 
   return (
-    <AdminShell sectionId="product" trail={['상품', '판매', '상세페이지']} activeChildId="product-sales">
+    <AdminShell sectionId="product" trail={['상품', '판매', '상세페이지']} activeChildId="product-sales" back={{ href: '/products/sales', label: '판매 목록' }}>
       <OrderDetailView order={order} />
     </AdminShell>
   );

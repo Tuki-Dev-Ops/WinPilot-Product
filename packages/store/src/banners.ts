@@ -179,12 +179,18 @@ export function scheduleState(
   return '노출 중';
 }
 
-export const SCHEDULE_TONE: Record<ScheduleState, string> = {
-  '노출 중': 'bg-signal-ok/12 text-signal-ok',
-  예정: 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200',
-  종료: 'bg-signal-danger/12 text-signal-danger',
-  숨김: 'bg-surface text-ink-muted',
-};
+/*
+ * `SCHEDULE_TONE` 은 여기 있었다 — 어드민 배지에 쓸 Tailwind 클래스 표였다.
+ * `apps/b2c-admin/lib/data/banners.ts` 로 내렸다. 두 가지가 걸렸다.
+ *
+ * 1. **이 패키지는 값이 사는 곳이지 화면이 사는 곳이 아니다.** 시드가 `dark:bg-brand-900` 을
+ *    들고 있으면, 값이 서버에서 오게 되는 날 이 문자열은 갈 곳이 없다.
+ * 2. **쓰는 곳이 어드민 하나뿐이었다.** 고객 화면 여섯 벌 중 어느 것도 이 표를 부르지 않는다.
+ *    공유 패키지에 두는 값의 기준은 "두 화면이 같은 것을 본다" 인데 여기 맞지 않았다.
+ *
+ * `scheduleState()` 는 여기 남는다 — 그것은 색이 아니라 **날짜 계산**이고, 고객 화면이
+ * 배너를 걸지 말지 정할 때 같은 답이 나와야 한다.
+ */
 
 /** 기간을 한 줄로. 종료일이 없으면 '상시'. */
 export function periodText(item: { startAt: string; endAt: string }): string {

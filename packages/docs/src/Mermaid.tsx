@@ -134,7 +134,7 @@ export function Mermaid({ code, title }: MermaidProps) {
     <figure className="my-5 overflow-hidden rounded-xl border border-border">
       <figcaption className="flex items-center justify-between gap-3 border-b border-border bg-surface px-4 py-2">
         <span className="truncate text-xs font-medium text-ink-muted">{title ?? '도면'}</span>
-        <span className="shrink-0 font-mono text-[11px] text-ink-faint">mermaid</span>
+        <span className="shrink-0 font-mono text-2xs text-ink-faint">mermaid</span>
       </figcaption>
 
       {failed ? (
@@ -171,7 +171,7 @@ export function Mermaid({ code, title }: MermaidProps) {
 
       <details className="border-t border-border bg-surface">
         <summary className="cursor-pointer px-4 py-2 text-xs text-ink-muted">원본 보기</summary>
-        <pre className="overflow-x-auto px-4 pb-4 font-mono text-[11px] leading-relaxed text-ink-muted">{code}</pre>
+        <pre className="overflow-x-auto px-4 pb-4 font-mono text-2xs leading-relaxed text-ink-muted">{code}</pre>
       </details>
 
       {zoomed && (

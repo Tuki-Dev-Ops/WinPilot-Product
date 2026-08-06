@@ -1,13 +1,12 @@
 'use client';
 
+import { MemberFormModal, type MemberFormConfig, type MemberRecord } from '@/app/_components/MemberFormModal';
 import { useMemo, useState, type MouseEvent } from 'react';
 import { AdminBulkBar } from '@/app/_components/AdminBulkBar';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
 import { AdminListPager } from '@/app/_components/AdminListPager';
-import { AdminListToolbar, ALL_VALUE, type AdminFilterField } from '@/app/_components/AdminListToolbar';
-import { MemberFormModal, type MemberFormConfig, type MemberRecord } from '@/app/_components/MemberFormModal';
-import { Checkbox, useToast } from '@winpilot/ui';
-import { type MemberFormInput, type MemberFormMode } from '@/lib/validation/member-record';
+import { ALL_VALUE, Badge, Checkbox, ListToolbar, PageHeading, RowActions, RowIconButton, RowSelectCell, useToast, type BadgeTone, type ListFilterField } from '@winpilot/ui';
+import type { MemberFormInput, MemberFormMode } from '@/lib/validation/member-record';
 
 /** 프론트엔드 전용 — 서버 없이 이 배열이 목록의 원본이다. */
 const INITIAL_USERS: MemberRecord[] = [
@@ -30,20 +29,16 @@ const CONFIG: MemberFormConfig = {
   role: { label: '등급', kind: 'auto', autoValue: '신규' },
 };
 
-const STATE_TONE: Record<string, string> = {
-  활성: 'bg-signal-ok/12 text-signal-ok',
-  휴면: 'bg-surface text-ink-muted',
-  차단: 'bg-signal-danger/12 text-signal-danger',
+const STATE_TONE: Record<string, BadgeTone> = {
+  활성: 'ok',
+  휴면: 'neutral',
+  차단: 'danger',
 };
 
 const TAB_STATE: Record<string, string | null> = { all: null, active: '활성', dormant: '휴면', blocked: '차단' };
 const TAB_LABEL: Record<string, string> = { all: '전체', active: '활성', dormant: '휴면', blocked: '차단' };
 
-// shrink-0 · whitespace-nowrap — 좁은 폭에서 flex 가 버튼을 눌러 글자가 접히는 것을 막는다.
-const ACTION_BUTTON = 'h-8 shrink-0 whitespace-nowrap rounded-lg border px-3 text-sm transition-colors duration-150';
 
-/** 행 클릭으로 상세가 열리므로, 행 안의 컨트롤은 자기 동작만 하도록 전파를 끊는다. */
-const stopRowClick = (event: MouseEvent) => event.stopPropagation();
 
 function nextUserId(users: MemberRecord[]): string {
   const max = users.reduce((biggest, user) => Math.max(biggest, Number(user.id.replace('U-', ''))), 10000);
@@ -72,7 +67,7 @@ export function UserListView() {
 
   const detail = useMemo(() => users.find((user) => user.id === detailId) ?? null, [users, detailId]);
 
-  const filterFields = useMemo<AdminFilterField[]>(
+  const filterFields = useMemo<ListFilterField[]>(
     () => [
       {
         id: 'role',
@@ -227,7 +222,9 @@ export function UserListView() {
 
   return (
     <>
-      <AdminListToolbar
+      <PageHeading title="사용자" description="가입한 회원과 등급을 확인하세요." />
+
+      <ListToolbar
         tabs={tabs}
         activeTabId={activeTabId}
         onTabChange={setActiveTabId}
@@ -276,7 +273,7 @@ export function UserListView() {
           <span className="lg:col-span-1">등급</span>
           <span className="lg:col-span-1">가입일</span>
           <span className="lg:col-span-1 lg:text-center">상태</span>
-          <span className="lg:col-span-2 lg:text-right">관리</span>
+          <span className="lg:col-span-2 lg:text-center">관리</span>
         </div>
 
         {visible.length === 0 ? (
@@ -289,22 +286,16 @@ export function UserListView() {
                 onClick={() => openDetail(user.id)}
                 className="grid cursor-pointer grid-cols-1 gap-x-4 gap-y-2 border-b border-border px-5 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface lg:grid-cols-12 lg:items-center lg:gap-y-0"
               >
-                {/*
-                  행 전체가 상세를 연다. 안쪽 체크박스·버튼은 자기 동작만 하도록 전파를 끊는다.
-                  키보드 사용자는 끝의 조회 버튼으로 같은 곳에 도달한다.
-                */}
-                <div className="flex items-center gap-3 lg:col-span-1" onClick={stopRowClick}>
-                  <Checkbox
-                    checked={selectedIds.includes(user.id)}
-                    onChange={(checked) =>
-                      setSelectedIds((previous) =>
-                        checked ? [...previous, user.id] : previous.filter((id) => id !== user.id),
-                      )
-                    }
-                    label={`${user.name} 선택`}
-                  />
-                  <span className="w-6 text-center font-mono text-sm tabular-nums text-ink-faint">{index + 1}</span>
-                </div>
+                <RowSelectCell
+                  checked={selectedIds.includes(user.id)}
+                  onChange={(checked) =>
+                    setSelectedIds((previous) =>
+                      checked ? [...previous, user.id] : previous.filter((id) => id !== user.id),
+                    )
+                  }
+                  label={`${user.name} 선택`}
+                  index={index}
+                />
 
                 <div className="lg:col-span-3">
                   <p className="text-sm font-medium">
@@ -330,28 +321,21 @@ export function UserListView() {
 
                 <div className="flex items-center gap-2 lg:col-span-1 lg:justify-center">
                   <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">상태</span>
-                  <span
-                    className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${STATE_TONE[user.state] ?? 'bg-surface text-ink-muted'}`}
-                  >
+                  <Badge tone={STATE_TONE[user.state] ?? 'neutral'}>
                     {user.state}
-                  </span>
+                  </Badge>
                 </div>
 
-                <div className="flex items-center gap-2 lg:col-span-2 lg:justify-end" onClick={stopRowClick}>
-                  <button
-                    type="button"
-                    onClick={() => openDetail(user.id)}
-                    className={`${ACTION_BUTTON} border-border-strong text-ink-muted hover:border-ink-faint`}
-                  >
-                    조회
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPendingDelete([user.id])}
-                    className={`${ACTION_BUTTON} border-border-strong text-signal-danger hover:border-signal-danger`}
-                  >
-                    삭제
-                  </button>
+                <div className="lg:col-span-2">
+                  <RowActions>
+                    <RowIconButton icon="view" label={`${user.name} 조회`} onClick={() => openDetail(user.id)} />
+                    <RowIconButton
+                      icon="delete"
+                      tone="danger"
+                      label={`${user.name} 삭제`}
+                      onClick={() => setPendingDelete([user.id])}
+                    />
+                  </RowActions>
                 </div>
               </div>
             ))}

@@ -80,7 +80,7 @@ export function CompanyProfileForm() {
         </ContentSection>
 
         <ContentSection title="기본 정보">
-          <ContentField id="company-name" label="회사명" {...(errors.name ? { error: errors.name } : {})}>
+          <ContentField id="company-name" label="회사명" required {...(errors.name ? { error: errors.name } : {})}>
             <HintInput
               id="company-name"
               type="text"
@@ -91,7 +91,7 @@ export function CompanyProfileForm() {
             />
           </ContentField>
 
-          <ContentField id="company-ceo" label="대표자" {...(errors.ceo ? { error: errors.ceo } : {})}>
+          <ContentField id="company-ceo" label="대표자" required {...(errors.ceo ? { error: errors.ceo } : {})}>
             <HintInput
               id="company-ceo"
               type="text"
@@ -136,7 +136,7 @@ export function CompanyProfileForm() {
         </ContentSection>
 
         <ContentSection title="연락처">
-          <ContentField id="company-address" label="주소" {...(errors.address ? { error: errors.address } : {})}>
+          <ContentField id="company-address" label="주소" required {...(errors.address ? { error: errors.address } : {})}>
             <HintInput
               id="company-address"
               type="text"
@@ -147,7 +147,7 @@ export function CompanyProfileForm() {
             />
           </ContentField>
 
-          <ContentField id="company-phone" label="대표 전화" {...(errors.phone ? { error: errors.phone } : {})}>
+          <ContentField id="company-phone" label="대표 전화" required {...(errors.phone ? { error: errors.phone } : {})}>
             <HintInput
               id="company-phone"
               type="text"
@@ -159,7 +159,7 @@ export function CompanyProfileForm() {
             />
           </ContentField>
 
-          <ContentField id="company-email" label="대표 이메일" {...(errors.email ? { error: errors.email } : {})}>
+          <ContentField id="company-email" label="대표 이메일" required {...(errors.email ? { error: errors.email } : {})}>
             <HintInput
               id="company-email"
               type="email"
@@ -173,7 +173,7 @@ export function CompanyProfileForm() {
         </ContentSection>
 
         <ContentSection title="소개 내용" description="글자 서식과 이미지를 넣을 수 있습니다.">
-          <ContentField id="company-intro" label="회사 소개" {...(errors.intro ? { error: errors.intro } : {})}>
+          <ContentField id="company-intro" label="회사 소개" required {...(errors.intro ? { error: errors.intro } : {})}>
             <RichTextEditor
               id="company-intro"
               hint="회사를 소개하는 내용을 입력해 주세요"

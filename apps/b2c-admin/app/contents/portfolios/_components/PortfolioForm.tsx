@@ -18,6 +18,7 @@ import {
   type PortfolioFormErrors,
   type PortfolioFormInput,
 } from '@/lib/validation/content-record';
+import { visibilityLabel } from '@/app/_components/AdminVisibilityBadge';
 
 export const EMPTY_PORTFOLIO: PortfolioFormInput = {
   title: '',
@@ -104,7 +105,7 @@ export function PortfolioForm({ mode, portfolioCode, createdAt, initial }: Portf
           />
           <ContentReadonly label="등록일" value={createdAt} note="자동입력" />
 
-          <ContentField id="portfolio-title" label="제목" {...(errors.title ? { error: errors.title } : {})}>
+          <ContentField id="portfolio-title" label="제목" required {...(errors.title ? { error: errors.title } : {})}>
             <HintInput
               id="portfolio-title"
               type="text"
@@ -115,7 +116,7 @@ export function PortfolioForm({ mode, portfolioCode, createdAt, initial }: Portf
             />
           </ContentField>
 
-          <ContentField id="portfolio-client" label="고객사" {...(errors.client ? { error: errors.client } : {})}>
+          <ContentField id="portfolio-client" label="고객사" required {...(errors.client ? { error: errors.client } : {})}>
             <HintInput
               id="portfolio-client"
               type="text"
@@ -126,7 +127,7 @@ export function PortfolioForm({ mode, portfolioCode, createdAt, initial }: Portf
             />
           </ContentField>
 
-          <ContentField id="portfolio-period" label="기간 (선택)">
+          <ContentField id="portfolio-period" label="기간">
             <HintInput
               id="portfolio-period"
               type="text"
@@ -138,7 +139,7 @@ export function PortfolioForm({ mode, portfolioCode, createdAt, initial }: Portf
         </ContentSection>
 
         <ContentSection title="본문" description="글자 서식과 이미지를 넣을 수 있습니다. HTML 원본도 직접 고칠 수 있습니다.">
-          <ContentField id="portfolio-body" label="상세 내용" {...(errors.body ? { error: errors.body } : {})}>
+          <ContentField id="portfolio-body" label="상세 내용" required {...(errors.body ? { error: errors.body } : {})}>
             <RichTextEditor
               id="portfolio-body"
               hint="과제 · 진행 · 결과를 적어 주세요"
@@ -189,7 +190,7 @@ export function PortfolioForm({ mode, portfolioCode, createdAt, initial }: Portf
           { label: '고객사', value: value.client.trim() },
           { label: '기간', value: value.period.trim() || '미입력' },
           { label: '대표 이미지', value: `${images.length}장` },
-          { label: '노출', value: value.visible ? '노출' : '숨김' },
+          { label: '노출', value: visibilityLabel(value.visible) },
         ]}
         onConfirm={applySubmit}
         onClose={() => setConfirmOpen(false)}

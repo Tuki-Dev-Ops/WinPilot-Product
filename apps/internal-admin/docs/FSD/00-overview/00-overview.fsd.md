@@ -18,11 +18,12 @@
 | 15 | Tenant Detail | `/tenants/[tenantId]` | [열기](/docs/fsd/tenants-detail) |
 | 20 | Plans | `/subscriptions/plans` | [열기](/docs/fsd/subscriptions-plans) |
 | 21 | Roles | `/subscriptions/roles` | [열기](/docs/fsd/subscriptions-roles) |
+| 22 | Role Detail | `/subscriptions/roles/[roleId]` | [열기](/docs/fsd/subscriptions-roles-detail) |
 | 30 | Inquiries | `/inquiries` | [열기](/docs/fsd/inquiries) |
 | 40 | Integration PG | `/integrations/pg` | [열기](/docs/fsd/integrations-pg) |
 | 41 | Integration OAuth | `/integrations/oauth` | [열기](/docs/fsd/integrations-oauth) |
 | 42 | Integration Plugin | `/integrations/plugin` | [열기](/docs/fsd/integrations-plugin) |
-| 43 | Integration DNS | `/integrations/dns` | [열기](/docs/fsd/integrations-dns) |
+| 43 | Integration DNS / SSL | `/integrations/dns` | [열기](/docs/fsd/integrations-dns) |
 | 50 | Revenue | `/statistics/revenue` | [열기](/docs/fsd/statistics-revenue) |
 | 51 | Members | `/statistics/members` | [열기](/docs/fsd/statistics-members) |
 | 60 | Billing Due | `/billing/due` | [열기](/docs/fsd/billing-due) |

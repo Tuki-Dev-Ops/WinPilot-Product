@@ -7,6 +7,8 @@
  * 목록은 **예정일(`/billing/due`)과 연체(`/billing/overdue`)로 갈라 놓는다.** 한 목록에 섞으면
  * 급한 것이 묻히기 때문이고, 그것 말고 다른 이유는 없다 — 자원은 하나이므로 시드도 하나다.
  */
+import type { BadgeTone } from '@winpilot/ui';
+
 export type InvoiceKind = '구축' | '유지보수' | '추가 개발' | '호스팅';
 export type InvoiceState = '견적' | '청구' | '수납' | '연체';
 
@@ -127,11 +129,11 @@ export const INVOICES: InvoiceRecord[] = [
   },
 ];
 
-export const INVOICE_TONE: Record<InvoiceState, string> = {
-  견적: 'bg-surface text-ink-muted',
-  청구: 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200',
-  수납: 'bg-signal-ok/12 text-signal-ok',
-  연체: 'bg-signal-danger/12 text-signal-danger',
+export const INVOICE_TONE: Record<InvoiceState, BadgeTone> = {
+  견적: 'neutral',
+  청구: 'brand',
+  수납: 'ok',
+  연체: 'danger',
 };
 
 export function formatAmount(value: number): string {
@@ -194,8 +196,29 @@ export function overdueBucket(dueAt: string, today: string): OverdueBucket {
 
 export const OVERDUE_BUCKETS: OverdueBucket[] = ['30일 이내', '60일 이내', '60일 초과'];
 
-export const OVERDUE_TONE: Record<OverdueBucket, string> = {
-  '30일 이내': 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200',
-  '60일 이내': 'bg-signal-danger/12 text-signal-danger',
-  '60일 초과': 'bg-signal-danger/12 text-signal-danger',
+export const OVERDUE_TONE: Record<OverdueBucket, BadgeTone> = {
+  '30일 이내': 'brand',
+  '60일 이내': 'danger',
+  '60일 초과': 'danger',
 };
+
+/**
+ * 그 달의 **말일**. 유지보수는 달 단위라 기한이 언제나 월말이다(시드의 `2026-08-31` · `2026-09-30`).
+ *
+ * 손으로 적게 두면 30일과 31일을 헷갈리고, 2월은 매번 틀린다. 틀린 기한은 그날이 지나서야
+ * 연체 목록에서 드러난다.
+ */
+export function monthEnd(stamp: string): string {
+  const [year, month] = stamp.split('-').map(Number);
+  if (!year || !month) return stamp;
+  // 다음 달 0일 = 이번 달 말일. UTC 로 세어 시간대에 따라 하루가 밀리지 않게 한다.
+  const last = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  return `${year}-${`${month}`.padStart(2, '0')}-${`${last}`.padStart(2, '0')}`;
+}
+
+/** `2026-08-31` → `2026년 8월`. 청구 제목에 그대로 쓴다. */
+export function monthLabel(stamp: string): string {
+  const [year, month] = stamp.split('-').map(Number);
+  if (!year || !month) return stamp;
+  return `${year}년 ${month}월`;
+}

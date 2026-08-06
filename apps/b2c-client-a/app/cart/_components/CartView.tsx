@@ -125,10 +125,10 @@ export function CartView({ initialLines }: { initialLines: CartLine[] }) {
                 </span>
 
                 <div className="min-w-0 flex-1">
-                  <a href={ROUTES.productDetail(line.productId)} className="truncate text-sm font-medium">
+                  <a href={ROUTES.productDetail(line.productId)} className="min-w-0 truncate text-sm font-medium">
                     {line.productName}
                   </a>
-                  <p className="truncate text-xs text-ink-muted">{line.optionLabel}</p>
+                  <p className="min-w-0 truncate text-xs text-ink-muted">{line.optionLabel}</p>
                   {soldOut && <p className="mt-1 text-xs text-signal-danger">{COPY.cart.soldOutLine}</p>}
                 </div>
 

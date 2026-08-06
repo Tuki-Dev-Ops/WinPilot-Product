@@ -181,7 +181,7 @@ export function DonutChart({ points, ariaLabel }: DonutChartProps) {
                 className="size-2.5 shrink-0 rounded-full"
                 style={{ backgroundColor: tones[index % tones.length] }}
               />
-              <span className="truncate text-sm">{point.label}</span>
+              <span className="min-w-0 truncate text-sm">{point.label}</span>
             </span>
             <span className="shrink-0 text-sm tabular-nums text-ink-muted">
               {Math.round((point.value / total) * 100)}%

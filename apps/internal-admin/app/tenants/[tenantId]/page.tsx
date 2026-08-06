@@ -1,18 +1,11 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { InternalShell } from '@/app/_components/InternalShell';
-import { ACTIVITY_TONE, activitiesOf } from '@/lib/data/activities';
-import { ROLE_TONE, contactsOf } from '@/lib/data/contacts';
-import { formatAmount, invoicesOf, outstanding, INVOICE_TONE } from '@/lib/data/invoices';
-import {
-  DEPLOYMENT_TONE,
-  PLAN_TONE,
-  SUPPORT_TONE,
-  TENANTS,
-  findTenant,
-  supportState,
-  todayStamp,
-} from '@/lib/data/tenants';
+import { activitiesOf, ACTIVITY_TONE } from '@/lib/data/activities';
+import { contactsOf, ROLE_TONE } from '@/lib/data/contacts';
+import { formatAmount, INVOICE_TONE, invoicesOf, outstanding } from '@/lib/data/invoices';
+import { DEPLOYMENT_TONE, findTenant, PLAN_TONE, SUPPORT_TONE, supportState, TENANTS, todayStamp } from '@/lib/data/tenants';
+import { Badge } from '@winpilot/ui';
 
 /**
  * Feature: `tenant.detail` · Internal Admin · route `/tenants/{tenantId}`
@@ -53,17 +46,15 @@ export default async function InternalTenantDetailPage({ params }: { params: Pro
   const activities = activitiesOf(tenant.id);
 
   return (
-    <InternalShell sectionId="tenant" trail={['고객사', '고객', tenant.name]} activeChildId="tenant-list">
+    <InternalShell sectionId="tenant" trail={['고객사', '고객', tenant.name]} activeChildId="tenant-list" back={{ href: '/tenants', label: '고객사 목록' }}>
       <div className="flex flex-col gap-6 xl:flex-row xl:items-start">
         <div className="flex min-w-0 flex-1 flex-col gap-6">
           <section className="rounded-xl border border-border bg-canvas">
             <div className="flex items-center justify-between gap-3 border-b border-border px-6 py-4">
               <h2 className="text-base font-semibold tracking-tight">고객사 정보</h2>
-              <span
-                className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${PLAN_TONE[tenant.plan]}`}
-              >
+              <Badge tone={PLAN_TONE[tenant.plan]}>
                 {tenant.plan}
-              </span>
+              </Badge>
             </div>
             <dl className="flex flex-col gap-4 px-6 py-5">
               <Row label="고객사명">{tenant.name}</Row>
@@ -101,14 +92,12 @@ export default async function InternalTenantDetailPage({ params }: { params: Pro
                 >
                   <div className="min-w-0">
                     <p className="text-sm font-medium">{deployment.kind}</p>
-                    <p className="truncate font-mono text-xs text-ink-muted">{deployment.domain}</p>
-                    <p className="truncate font-mono text-xs text-ink-faint">{deployment.account}</p>
+                    <p className="min-w-0 truncate font-mono text-xs text-ink-muted">{deployment.domain}</p>
+                    <p className="min-w-0 truncate font-mono text-xs text-ink-faint">{deployment.account}</p>
                   </div>
-                  <span
-                    className={`w-fit shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${DEPLOYMENT_TONE[deployment.status]}`}
-                  >
+                  <Badge tone={DEPLOYMENT_TONE[deployment.status]}>
                     {deployment.status}
-                  </span>
+                  </Badge>
                 </div>
               ))}
             </div>
@@ -132,18 +121,16 @@ export default async function InternalTenantDetailPage({ params }: { params: Pro
                     className="flex items-center justify-between gap-4 border-b border-border px-6 py-4 last:border-b-0"
                   >
                     <div className="min-w-0">
-                      <p className="truncate text-sm">{invoice.title}</p>
-                      <p className="truncate font-mono text-xs text-ink-faint">
+                      <p className="min-w-0 truncate text-sm">{invoice.title}</p>
+                      <p className="min-w-0 truncate font-mono text-xs text-ink-faint">
                         {invoice.id} · {invoice.kind} · 기한 {invoice.dueAt}
                       </p>
                     </div>
                     <div className="flex shrink-0 items-center gap-3">
                       <span className="text-sm tabular-nums">{formatAmount(invoice.amount)}원</span>
-                      <span
-                        className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${INVOICE_TONE[invoice.state]}`}
-                      >
+                      <Badge tone={INVOICE_TONE[invoice.state]}>
                         {invoice.state}
-                      </span>
+                      </Badge>
                     </div>
                   </div>
                 ))}
@@ -177,25 +164,23 @@ export default async function InternalTenantDetailPage({ params }: { params: Pro
                     className="flex flex-col gap-2 border-b border-border px-6 py-4 last:border-b-0 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-medium">
+                      <p className="min-w-0 truncate text-sm font-medium">
                         {contact.name}
                         {contact.primary && (
-                          <span className="ml-1.5 shrink-0 whitespace-nowrap rounded-full bg-surface px-2 py-0.5 text-[10px] text-ink-muted">
+                          <span className="ml-1.5 shrink-0 whitespace-nowrap rounded-full bg-surface px-2 py-0.5 text-3xs text-ink-muted">
                             대표
                           </span>
                         )}
                       </p>
-                      <p className="truncate text-xs text-ink-faint">{contact.title}</p>
+                      <p className="min-w-0 truncate text-xs text-ink-faint">{contact.title}</p>
                       {/* 상세는 사내 전용이라 연락처를 가리지 않는다 — 여기서 바로 걸어야 한다. */}
-                      <p className="truncate font-mono text-xs text-ink-muted">
+                      <p className="min-w-0 truncate font-mono text-xs text-ink-muted">
                         {contact.email} · {contact.phone}
                       </p>
                     </div>
-                    <span
-                      className={`w-fit shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${ROLE_TONE[contact.role]}`}
-                    >
+                    <Badge tone={ROLE_TONE[contact.role]}>
                       {contact.role}
-                    </span>
+                    </Badge>
                   </div>
                 ))}
               </div>
@@ -225,11 +210,9 @@ export default async function InternalTenantDetailPage({ params }: { params: Pro
                 {activities.map((activity) => (
                   <li key={activity.id} className="flex flex-col gap-2 border-b border-border px-6 py-4 last:border-b-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span
-                        className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${ACTIVITY_TONE[activity.kind]}`}
-                      >
+                      <Badge tone={ACTIVITY_TONE[activity.kind]}>
                         {activity.kind}
-                      </span>
+                      </Badge>
                       <span className="font-mono text-xs text-ink-faint">
                         {activity.staff} → {activity.counterpart}
                       </span>
@@ -254,11 +237,9 @@ export default async function InternalTenantDetailPage({ params }: { params: Pro
           <section className="rounded-xl border border-border bg-canvas px-6 py-5">
             <h2 className="text-base font-semibold tracking-tight">유지보수</h2>
             <div className="mt-3 flex items-center justify-between gap-3">
-              <span
-                className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${SUPPORT_TONE[state]}`}
-              >
+              <Badge tone={SUPPORT_TONE[state]}>
                 {state}
-              </span>
+              </Badge>
               <span className="font-mono text-xs tabular-nums text-ink-muted">
                 {tenant.supportUntil || '기한 없음'}
               </span>

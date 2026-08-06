@@ -13,7 +13,8 @@ import {
   formatMoney,
   reviewsOf,
 } from '@winpilot/client-content';
-import { PageTitle, SiteShell } from '@/app/_components/SiteShell';
+import { SiteShell } from '@/app/_components/SiteShell';
+import { BackLink } from '@winpilot/ui';
 import { ProductArt } from '@/app/_components/ProductArt';
 import { ProductDetailTabs } from '@/app/products/_components/ProductDetailTabs';
 import { ProductPurchase } from '@/app/products/_components/ProductPurchase';
@@ -46,6 +47,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   return (
     <SiteShell>
+      {/*
+        되돌아가는 길을 **맨 위로** 올렸다. 아래에도 목록 링크가 있었는데, 상세는 사진·옵션·
+        리뷰로 길어 그 링크가 첫 화면에 보이지 않는다 — 돌아가려면 끝까지 스크롤해야 했다.
+      */}
+      <BackLink href={ROUTES.products} label={COPY.product.listTitle} />
+
       <section
         id={SLOT.productDetail}
         data-ssot-cid={cid('product.detail', 'SiteProductDetail')}
@@ -130,9 +137,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         average={averageRating(product.id)}
       />
 
-      <a href={ROUTES.products} className="w-fit text-sm text-brand-700 dark:text-brand-300">
-        {COPY.product.listTitle}
-      </a>
     </SiteShell>
   );
 }

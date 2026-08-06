@@ -1,28 +1,38 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useMemo, useState, type MouseEvent } from 'react';
-import { Dropdown, HintInput, useToast } from '@winpilot/ui';
+import { useMemo, useState } from 'react';
+import { ALL_VALUE, Badge, Dropdown, HintInput, ListToolbar, PageHeading, RowActions, RowIconButton, RowSelectCell, RowTextButton, SelectAllCell, useToast, type ListFilterField, type ListToolbarTab } from '@winpilot/ui';
 import { InternalField } from '@/app/_components/InternalForm';
 import { InternalModal } from '@/app/_components/InternalModal';
-import { InternalChips, InternalToolbar } from '@/app/_components/InternalToolbar';
+import { DEPLOYMENT_TONE, PLAN_TONE, SUPPORT_TONE, supportState, TENANT_PLANS, TENANTS, type TenantPlan, type TenantRecord } from '@/lib/data/tenants';
 import {
-  DEPLOYMENT_TONE,
-  PLAN_TONE,
-  SUPPORT_TONE,
-  TENANTS,
-  TENANT_PLANS,
-  supportState,
-  type TenantPlan,
-  type TenantRecord,
-} from '@/lib/data/tenants';
+  DATE,
+  errorSummary,
+  hasErrors,
+  maxLength,
+  validate,
+  type FormErrors,
+  type FormSpec,
+} from '@/lib/validation/form';
 
-const ACTION_BUTTON = 'h-8 shrink-0 whitespace-nowrap rounded-lg border px-3 text-sm transition-colors duration-150';
 
-/** 행 클릭으로 상세로 이동하므로, 행 안의 컨트롤은 자기 동작만 하도록 전파를 끊는다. */
-const stopRowClick = (event: MouseEvent) => event.stopPropagation();
 
 const EMPTY_DRAFT = { name: '', manager: '', plan: TENANT_PLANS[0] as TenantPlan, supportUntil: '' };
+
+type TenantField = 'name' | 'manager' | 'supportUntil';
+
+/** 이 폼이 받는 값. **별표와 검사가 이 표 하나를 읽는다.** */
+const TENANT_FORM: FormSpec<TenantField> = {
+  name: { label: '고객사명', required: true, hint: '계약서에 적힌 이름을 그대로 씁니다.', rules: [maxLength(40)] },
+  manager: { label: '담당자', required: true, hint: '고객사 쪽에서 우리와 이야기하는 사람입니다.', rules: [maxLength(20)] },
+  supportUntil: {
+    label: '유지보수 종료일',
+    // 계약 시점에 정해지지 않은 곳이 있다 — 비울 수 있게 두고, 적었을 때만 모양을 본다.
+    hint: '비워 두면 기한 없음으로 둡니다. (YYYY-MM-DD)',
+    rules: [DATE],
+  },
+};
 
 /**
  * 고객사 목록.
@@ -39,16 +49,39 @@ export function TenantListView({ today }: { today: string }) {
   const router = useRouter();
   const toast = useToast();
   const [search, setSearch] = useState('');
-  const [plan, setPlan] = useState<string>('all');
+  const [tab, setTab] = useState('all');
+  const [filterValues, setFilterValues] = useState<Record<string, string>>({});
   const [rows, setRows] = useState<TenantRecord[]>(TENANTS);
   const [creating, setCreating] = useState(false);
   const [draft, setDraft] = useState(EMPTY_DRAFT);
 
+  /*
+    탭은 **유지보수 상태**로 가른다. 플랜이 아니라 이것으로 가르는 이유: 이 목록을 여는 사람은
+    거의 언제나 "곧 끊기는 곳이 있나" 를 묻는다. 플랜은 그다음 물음이라 필터로 내렸다.
+  */
+  const tabs: ListToolbarTab[] = useMemo(() => {
+    const count = (state: string) =>
+      rows.filter((tenant) => supportState(tenant.supportUntil, today) === state).length;
+    return [
+      { id: 'all', label: '전체', count: rows.length },
+      { id: '만료', label: '만료', count: count('만료') },
+      { id: '만료 임박', label: '만료 임박', count: count('만료 임박') },
+      { id: '유효', label: '유효', count: count('유효') },
+      { id: '기한 없음', label: '기한 없음', count: count('기한 없음') },
+    ];
+  }, [rows, today]);
+
+  const filters: ListFilterField[] = [
+    { id: 'plan', label: '플랜', options: TENANT_PLANS.map((item) => ({ value: item, label: item })) },
+  ];
+
   const visible = useMemo(() => {
     const keyword = search.trim().toLowerCase();
+    const plan = filterValues.plan ?? ALL_VALUE;
     return rows
       .filter((tenant) => {
-        if (plan !== 'all' && tenant.plan !== plan) return false;
+        if (tab !== 'all' && supportState(tenant.supportUntil, today) !== tab) return false;
+        if (plan !== ALL_VALUE && tenant.plan !== plan) return false;
         if (!keyword) return true;
         return (
           tenant.name.toLowerCase().includes(keyword) ||
@@ -62,15 +95,29 @@ export function TenantListView({ today }: { today: string }) {
         const order = { 만료: 0, '만료 임박': 1, 유효: 2, '기한 없음': 3 } as const;
         return order[supportState(a.supportUntil, today)] - order[supportState(b.supportUntil, today)];
       });
-  }, [rows, search, plan, today]);
+  }, [rows, search, tab, filterValues, today]);
+
+  /* 고른 줄. 일괄로 할 일이 아직 없어 선택 막대는 그리지 않는다 — 누를 수 없는 단추를 두지 않는다. */
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const visibleIds = visible.map((tenant) => tenant.id);
+  const selectedVisible = selectedIds.filter((id) => visibleIds.includes(id));
+  const allChecked = visibleIds.length > 0 && selectedVisible.length === visibleIds.length;
+
+  const [errors, setErrors] = useState<FormErrors<TenantField>>({});
+  const [submitted, setSubmitted] = useState(false);
+
+  const commit = (next: typeof draft) => {
+    setDraft(next);
+    if (submitted) setErrors(validate(TENANT_FORM, next));
+  };
 
   const create = () => {
-    if (!draft.name.trim() || !draft.manager.trim()) {
-      toast.error({ message: '등록하지 못했습니다.', detail: '고객사명과 담당자는 반드시 입력해야 합니다.' });
-      return;
-    }
-    if (draft.supportUntil && !/^\d{4}-\d{2}-\d{2}$/.test(draft.supportUntil)) {
-      toast.error({ message: '등록하지 못했습니다.', detail: '유지보수 종료일은 YYYY-MM-DD 로 넣어 주세요.' });
+    setSubmitted(true);
+    const found = validate(TENANT_FORM, draft);
+    setErrors(found);
+    // 끝까지 검사하고 한꺼번에 알린다 — 첫 실패에서 멈추면 고칠 때마다 다시 눌러야 한다.
+    if (hasErrors(found)) {
+      toast.error({ message: '등록하지 못했습니다.', detail: errorSummary(found) });
       return;
     }
 
@@ -96,24 +143,37 @@ export function TenantListView({ today }: { today: string }) {
 
   return (
     <>
-      <InternalToolbar
+      <PageHeading title="고객" description="계약과 유지보수 현황을 한눈에 확인하세요." />
+
+      <ListToolbar
+        tabs={tabs}
+        activeTabId={tab}
+        onTabChange={setTab}
         searchId="tenant-search"
         searchLabel="고객사 검색"
         searchHint="고객사명, 담당자, 도메인으로 검색"
-        search={search}
-        onSearch={setSearch}
-        filters={<InternalChips label="플랜" options={TENANT_PLANS} value={plan} onChange={setPlan} />}
-        action={{ label: '고객사 등록', onClick: () => setCreating(true) }}
+        searchValue={search}
+        onSearchChange={setSearch}
+        actionLabel="고객사 등록"
+        onAction={() => setCreating(true)}
+        filters={filters}
+        filterValues={filterValues}
+        onFilterChange={(id, value) => setFilterValues((previous) => ({ ...previous, [id]: value }))}
+        onFilterReset={() => setFilterValues({})}
       />
 
       <section className="overflow-hidden rounded-xl border border-border bg-canvas">
         <div className="hidden gap-4 border-b border-border px-5 py-3 text-xs text-ink-faint lg:grid lg:grid-cols-12 lg:items-center">
-          <span className="lg:col-span-1 lg:text-center">순번</span>
+          <SelectAllCell
+            checked={allChecked}
+            indeterminate={selectedVisible.length > 0}
+            onChange={(checked) => setSelectedIds(checked ? visibleIds : [])}
+          />
           <span className="lg:col-span-3">고객사 · 담당자</span>
           <span className="lg:col-span-3">배포 · 도메인</span>
           <span className="lg:col-span-1 lg:text-center">플랜</span>
           <span className="lg:col-span-2">유지보수</span>
-          <span className="lg:col-span-2 lg:text-right">관리</span>
+          <span className="lg:col-span-2 lg:text-center">관리</span>
         </div>
 
         {visible.length === 0 ? (
@@ -128,13 +188,20 @@ export function TenantListView({ today }: { today: string }) {
                   onClick={() => router.push(`/tenants/${tenant.id}`)}
                   className="grid cursor-pointer grid-cols-1 gap-x-4 gap-y-2 border-b border-border px-5 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface lg:grid-cols-12 lg:items-center lg:gap-y-0"
                 >
-                  <span className="font-mono text-sm tabular-nums text-ink-faint lg:col-span-1 lg:text-center">
-                    {index + 1}
-                  </span>
+                  <RowSelectCell
+                    checked={selectedIds.includes(tenant.id)}
+                    onChange={(checked) =>
+                      setSelectedIds((previous) =>
+                        checked ? [...previous, tenant.id] : previous.filter((id) => id !== tenant.id),
+                      )
+                    }
+                    label={`${tenant.name} 선택`}
+                    index={index}
+                  />
 
                   <div className="min-w-0 lg:col-span-3">
-                    <p className="truncate text-sm font-medium">{tenant.name}</p>
-                    <p className="truncate font-mono text-xs text-ink-faint">
+                    <p className="min-w-0 truncate text-sm font-medium">{tenant.name}</p>
+                    <p className="min-w-0 truncate font-mono text-xs text-ink-faint">
                       {tenant.id} · {tenant.manager}
                     </p>
                   </div>
@@ -146,12 +213,10 @@ export function TenantListView({ today }: { today: string }) {
                     ) : (
                       tenant.deployments.map((deployment) => (
                         <div key={deployment.kind} className="flex min-w-0 items-center gap-2">
-                          <span
-                            className={`shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-medium ${DEPLOYMENT_TONE[deployment.status]}`}
-                          >
+                          <Badge tone={DEPLOYMENT_TONE[deployment.status]} size="sm">
                             {deployment.kind}
-                          </span>
-                          <span className="truncate font-mono text-xs text-ink-muted">{deployment.domain}</span>
+                          </Badge>
+                          <span className="min-w-0 truncate font-mono text-xs text-ink-muted">{deployment.domain}</span>
                         </div>
                       ))
                     )}
@@ -159,43 +224,41 @@ export function TenantListView({ today }: { today: string }) {
 
                   <div className="flex items-center gap-2 lg:col-span-1 lg:justify-center">
                     <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">플랜</span>
-                    <span
-                      className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${PLAN_TONE[tenant.plan]}`}
-                    >
+                    <Badge tone={PLAN_TONE[tenant.plan]}>
                       {tenant.plan}
-                    </span>
+                    </Badge>
                   </div>
 
                   <div className="flex items-center gap-2 lg:col-span-2">
                     <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">유지보수</span>
-                    <span
-                      className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${SUPPORT_TONE[state]}`}
-                    >
+                    <Badge tone={SUPPORT_TONE[state]}>
                       {state}
-                    </span>
+                    </Badge>
                     {tenant.supportUntil && (
                       <span className="font-mono text-xs tabular-nums text-ink-faint">{tenant.supportUntil}</span>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2 lg:col-span-2 lg:justify-end" onClick={stopRowClick}>
-                    <button
-                      type="button"
-                      onClick={() => router.push(`/tenants/${tenant.id}`)}
-                      className={`${ACTION_BUTTON} border-border-strong text-ink-muted hover:border-ink-faint`}
-                    >
-                      상세
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        toast.info({ message: 'OAuth 설정으로 이동합니다.', detail: tenant.name });
-                        router.push(`/integrations/oauth?tenant=${tenant.id}`);
-                      }}
-                      className={`${ACTION_BUTTON} border-border-strong text-ink-muted hover:border-ink-faint`}
-                    >
-                      연동
-                    </button>
+                  <div className="lg:col-span-2">
+                    <RowActions>
+                      <RowIconButton
+                        icon="view"
+                        label={`${tenant.name} 상세`}
+                        onClick={() => router.push(`/tenants/${tenant.id}`)}
+                      />
+                      {/*
+                        연동은 글자로 남긴다. 그림 하나로 옮기면 링크·공유·설정 어느 쪽으로도
+                        읽혀서, 아이콘을 읽는 데 드는 시간이 글자를 읽는 시간보다 길어진다.
+                      */}
+                      <RowTextButton
+                        onClick={() => {
+                          toast.info({ message: 'OAuth 설정으로 이동합니다.', detail: tenant.name });
+                          router.push(`/integrations/oauth?tenant=${tenant.id}`);
+                        }}
+                      >
+                        연동
+                      </RowTextButton>
+                    </RowActions>
                   </div>
                 </div>
               );
@@ -218,24 +281,34 @@ export function TenantListView({ today }: { today: string }) {
         onSubmit={create}
         submitLabel="등록"
       >
-        <InternalField label="고객사명" htmlFor="tenant-new-name">
+        <InternalField
+          label={TENANT_FORM.name.label}
+          htmlFor="tenant-new-name"
+          required={TENANT_FORM.name.required}
+          {...(errors.name ? { error: errors.name } : { hint: TENANT_FORM.name.hint })}
+        >
           <HintInput
             id="tenant-new-name"
             type="text"
             hint="계약서에 적히는 이름"
             value={draft.name}
-            onChange={(event) => setDraft((previous) => ({ ...previous, name: event.target.value }))}
+            onChange={(event) => commit({ ...draft, name: event.target.value })}
             invalid={!draft.name.trim()}
           />
         </InternalField>
 
-        <InternalField label="담당자" htmlFor="tenant-new-manager">
+        <InternalField
+          label={TENANT_FORM.manager.label}
+          htmlFor="tenant-new-manager"
+          required={TENANT_FORM.manager.required}
+          {...(errors.manager ? { error: errors.manager } : { hint: TENANT_FORM.manager.hint })}
+        >
           <HintInput
             id="tenant-new-manager"
             type="text"
             hint="고객사 쪽 담당자 이름"
             value={draft.manager}
-            onChange={(event) => setDraft((previous) => ({ ...previous, manager: event.target.value }))}
+            onChange={(event) => commit({ ...draft, manager: event.target.value })}
             invalid={!draft.manager.trim()}
           />
         </InternalField>
@@ -246,7 +319,7 @@ export function TenantListView({ today }: { today: string }) {
             label="플랜 선택"
             options={TENANT_PLANS.map((item) => ({ value: item, label: item }))}
             value={draft.plan}
-            onChange={(next) => setDraft((previous) => ({ ...previous, plan: next as TenantPlan }))}
+            onChange={(next) => commit({ ...draft, plan: next as TenantPlan })}
           />
         </InternalField>
 
@@ -260,7 +333,7 @@ export function TenantListView({ today }: { today: string }) {
             type="text"
             hint="YYYY-MM-DD"
             value={draft.supportUntil}
-            onChange={(event) => setDraft((previous) => ({ ...previous, supportUntil: event.target.value }))}
+            onChange={(event) => commit({ ...draft, supportUntil: event.target.value })}
           />
         </InternalField>
       </InternalModal>

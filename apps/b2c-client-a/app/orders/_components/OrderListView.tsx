@@ -1,17 +1,9 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import {
-  COPY,
-  ORDER_STATE_TONE,
-  ROUTES,
-  SHIP_STATE_TONE,
-  SLOT,
-  cid,
-  formatMoney,
-  type OrderSummary,
-} from '@winpilot/client-content';
+import { cid, COPY, formatMoney, ORDER_STATE_TONE, ROUTES, SHIP_STATE_TONE, SLOT, type OrderSummary } from '@winpilot/client-content';
 import { SectionTabs } from '@/app/_components/SectionTabs';
+import { Badge } from '@winpilot/ui';
 
 /**
  * 주문 내역 — **배송 상태 탭으로 나눠 본다.**
@@ -71,16 +63,12 @@ export function OrderListView({ orders }: { orders: OrderSummary[] }) {
                 {formatMoney(order.amount)}
                 {COPY.product.priceUnit}
               </span>
-              <span
-                className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${ORDER_STATE_TONE[order.payState]}`}
-              >
+              <Badge tone={ORDER_STATE_TONE[order.payState]}>
                 {order.payState}
-              </span>
-              <span
-                className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${SHIP_STATE_TONE[order.shipState]}`}
-              >
+              </Badge>
+              <Badge tone={SHIP_STATE_TONE[order.shipState]}>
                 {order.shipState}
-              </span>
+              </Badge>
             </a>
           ))}
         </section>

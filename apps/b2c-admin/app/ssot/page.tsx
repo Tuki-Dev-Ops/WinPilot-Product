@@ -41,7 +41,7 @@ export default function SsotStatusPage() {
           </span>
           <div className="leading-tight">
             <div className="text-[15px] font-semibold tracking-tight">WinPilot</div>
-            <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-ink-faint">Design SSOT</div>
+            <div className="font-mono text-2xs uppercase tracking-[0.14em] text-ink-faint">Design SSOT</div>
           </div>
         </div>
         <span className="rounded-full border border-border bg-surface px-3 py-1 text-[11.5px] text-ink-muted">
@@ -171,7 +171,7 @@ export default function SsotStatusPage() {
 function Stat({ label, value, sub }: { label: string; value: string; sub: string }) {
   return (
     <div className="bg-surface-raised px-5 py-5">
-      <div className="text-[11px] font-medium uppercase tracking-[0.1em] text-ink-faint">{label}</div>
+      <div className="text-2xs font-medium uppercase tracking-[0.1em] text-ink-faint">{label}</div>
       <div className="mt-2 text-2xl font-semibold tabular-nums tracking-tight">{value}</div>
       <div className="mt-1 text-[12px] tabular-nums text-ink-muted">{sub}</div>
     </div>
@@ -193,7 +193,7 @@ function Section({ title, note, children }: { title: string; note: string; child
 function Step({ n, children }: { n: number; children: React.ReactNode }) {
   return (
     <li className="flex items-start gap-3">
-      <span className="mt-px grid size-5 shrink-0 place-items-center rounded-full border border-border-strong font-mono text-[11px] text-ink-muted">
+      <span className="mt-px grid size-5 shrink-0 place-items-center rounded-full border border-border-strong font-mono text-2xs text-ink-muted">
         {n}
       </span>
       <span className="text-[14px] leading-6 text-ink-muted">{children}</span>
@@ -235,7 +235,7 @@ function Criterion({
 }) {
   return (
     <div className="bg-surface-raised px-5 py-5">
-      <div className="text-[11px] font-medium uppercase tracking-[0.1em] text-brand-600 dark:text-brand-400">
+      <div className="text-2xs font-medium uppercase tracking-[0.1em] text-brand-600 dark:text-brand-400">
         {stage}
       </div>
       <div className="mt-2 text-[15px] font-semibold tracking-tight">{headline}</div>

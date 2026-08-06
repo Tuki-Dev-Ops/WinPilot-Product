@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { COPY, pathLabel, type InquiryRecord } from '@winpilot/client-content';
 import { SectionTabs } from '@/app/_components/SectionTabs';
+import { Badge, type BadgeTone } from '@winpilot/ui';
 
 /**
  * 문의 내역 — **상태 탭으로 나눠 본다.**
@@ -15,11 +16,11 @@ import { SectionTabs } from '@/app/_components/SectionTabs';
  * - 상태 이름(접수·처리중·답변완료·보류)은 어드민 화면과 글자까지 같다
  * - Path 는 문의 > 설정에 등록된 경로 이름으로 바꿔 보여 준다 (store `INQUIRY_PATHS`)
  */
-const STATE_TONE: Record<string, string> = {
-  접수: 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200',
-  처리중: 'bg-surface text-ink-muted',
-  답변완료: 'bg-signal-ok/12 text-signal-ok',
-  보류: 'bg-signal-danger/12 text-signal-danger',
+const STATE_TONE: Record<string, BadgeTone> = {
+  접수: 'brand',
+  처리중: 'neutral',
+  답변완료: 'ok',
+  보류: 'danger',
 };
 
 const STATES = ['접수', '처리중', '답변완료', '보류'] as const;
@@ -54,11 +55,9 @@ export function InquiryListView({ inquiries }: { inquiries: InquiryRecord[] }) {
           {visible.map((inquiry) => (
             <article key={inquiry.id} className="flex flex-col gap-3 rounded-xl border border-border px-5 py-5">
               <div className="flex flex-wrap items-center gap-2">
-                <span
-                  className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${STATE_TONE[inquiry.state] ?? 'bg-surface text-ink-muted'}`}
-                >
+                <Badge tone={STATE_TONE[inquiry.state] ?? 'neutral'}>
                   {inquiry.state}
-                </span>
+                </Badge>
                 <span className="shrink-0 whitespace-nowrap rounded-full bg-surface px-2.5 py-1 text-xs text-ink-muted">
                   {inquiry.category}
                 </span>

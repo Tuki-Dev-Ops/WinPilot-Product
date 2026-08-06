@@ -1,18 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import {
-  ACCOUNT,
-  CONTENT,
-  COPY,
-  ORDER_STATE_TONE,
-  ROUTES,
-  SHIP_STATE_TONE,
-  SLOT,
-  cid,
-  findOrder,
-  formatMoney,
-} from '@winpilot/client-content';
+import { ACCOUNT, cid, CONTENT, COPY, findOrder, formatMoney, ORDER_STATE_TONE, ROUTES, SHIP_STATE_TONE, SLOT } from '@winpilot/client-content';
 import { PageTitle, SiteShell } from '@/app/_components/SiteShell';
+import { Badge } from '@winpilot/ui';
 
 /**
  * Feature: `order.detail` · B2C Client (템플릿 A) · route `/orders/{orderId}`
@@ -47,7 +37,11 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ or
 
   return (
     <SiteShell>
-      <PageTitle title={COPY.order.detail} description={order.id} />
+      <PageTitle
+        title={COPY.order.detail}
+        description={order.id}
+        back={{ href: ROUTES.orders, label: COPY.order.title }}
+      />
 
       <section
         id={SLOT.orderDetail}
@@ -92,19 +86,15 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ or
         <aside className="flex w-full shrink-0 flex-col gap-3 rounded-xl border border-border px-6 py-5 lg:w-72">
           <div className="flex items-center justify-between gap-3">
             <span className="text-xs text-ink-faint">{COPY.order.payState}</span>
-            <span
-              className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${ORDER_STATE_TONE[order.payState]}`}
-            >
+            <Badge tone={ORDER_STATE_TONE[order.payState]}>
               {order.payState}
-            </span>
+            </Badge>
           </div>
           <div className="flex items-center justify-between gap-3">
             <span className="text-xs text-ink-faint">{COPY.order.shipState}</span>
-            <span
-              className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${SHIP_STATE_TONE[order.shipState]}`}
-            >
+            <Badge tone={SHIP_STATE_TONE[order.shipState]}>
               {order.shipState}
-            </span>
+            </Badge>
           </div>
           <a
             href={ROUTES.orders}

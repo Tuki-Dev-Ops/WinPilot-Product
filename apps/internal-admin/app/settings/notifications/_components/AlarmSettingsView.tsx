@@ -1,18 +1,10 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { Checkbox, Dropdown, HintInput, useToast } from '@winpilot/ui';
+import { Badge, Checkbox, Dropdown, HintInput, useToast } from '@winpilot/ui';
 import { InternalPrimaryButton, InternalSaveRow } from '@/app/_components/InternalForm';
 import { InternalPanel, InternalSummary } from '@/app/_components/InternalPanel';
-import {
-  ALARM_CHANNELS,
-  ALARM_RULES,
-  RANK_TONE,
-  STAFF_RANKS,
-  type AlarmChannel,
-  type AlarmRule,
-  type StaffRank,
-} from '@/lib/data/settings';
+import { ALARM_CHANNELS, ALARM_RULES, RANK_TONE, STAFF_RANKS, type AlarmChannel, type AlarmRule, type StaffRank } from '@/lib/data/settings';
 
 /**
  * 알림 규칙.
@@ -83,15 +75,13 @@ export function AlarmSettingsView() {
                   />
                   <div className="min-w-0">
                     <p className="text-sm font-medium">{rule.event}</p>
-                    <p className="truncate font-mono text-xs text-ink-faint">{rule.source}</p>
+                    <p className="min-w-0 truncate font-mono text-xs text-ink-faint">{rule.source}</p>
                   </div>
                 </div>
 
-                <span
-                  className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${RANK_TONE[rule.audience]}`}
-                >
+                <Badge tone={RANK_TONE[rule.audience]}>
                   {rule.audience}
-                </span>
+                </Badge>
               </div>
 
               {rule.enabled && (

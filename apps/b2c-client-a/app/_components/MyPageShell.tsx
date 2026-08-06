@@ -89,8 +89,8 @@ export function MyPageHeading({
           </span>
         )}
         <div className="min-w-0">
-          <h1 className="truncate text-[22px] font-bold leading-snug tracking-tight">{title}</h1>
-          {meta && <p className="mt-1 truncate text-sm text-ink-muted">{meta}</p>}
+          <h1 className="min-w-0 truncate text-[22px] font-bold leading-snug tracking-tight">{title}</h1>
+          {meta && <p className="mt-1 min-w-0 truncate text-sm text-ink-muted">{meta}</p>}
         </div>
       </div>
 

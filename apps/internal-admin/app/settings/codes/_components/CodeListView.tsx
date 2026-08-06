@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { HintInput, useToast } from '@winpilot/ui';
+import { Badge, HintInput, ListToolbar, PageHeading, useToast, type ListToolbarTab } from '@winpilot/ui';
 import {
   InternalField,
   InternalGhostButton,
@@ -9,9 +9,31 @@ import {
   InternalSaveRow,
 } from '@/app/_components/InternalForm';
 import { InternalModal } from '@/app/_components/InternalModal';
-import { InternalEmpty, InternalPanel, InternalSummary } from '@/app/_components/InternalPanel';
-import { InternalToolbar } from '@/app/_components/InternalToolbar';
+import { InternalEmpty, InternalPanel } from '@/app/_components/InternalPanel';
 import { CODE_GROUPS, type CodeGroup } from '@/lib/data/settings';
+import {
+  errorSummary,
+  hasErrors,
+  maxLength,
+  notIn,
+  validate,
+  type FormErrors,
+  type FormSpec,
+} from '@/lib/validation/form';
+
+type CodeField = 'name' | 'usedBy' | 'first';
+
+const CODE_BASE: FormSpec<CodeField> = {
+  name: { label: '목록 이름', required: true, hint: '화면에서 이 목록을 부르는 말입니다.', rules: [maxLength(20)] },
+  usedBy: { label: '읽는 화면', hint: '쉼표로 나눠 적습니다. 비워 두어도 됩니다.', rules: [maxLength(120)] },
+  first: {
+    label: '첫 값',
+    required: true,
+    hint: '값이 하나도 없는 목록은 화면에서 고를 것이 없습니다.',
+    rules: [maxLength(20)],
+  },
+};
+
 
 const EMPTY_DRAFT = { name: '', usedBy: '', first: '' };
 
@@ -30,21 +52,35 @@ const EMPTY_DRAFT = { name: '', usedBy: '', first: '' };
 export function CodeListView() {
   const toast = useToast();
   const [search, setSearch] = useState('');
+  const [tab, setTab] = useState('all');
   const [groups, setGroups] = useState<CodeGroup[]>(CODE_GROUPS);
   const [draft, setDraft] = useState<Record<string, string>>({});
   const [creating, setCreating] = useState(false);
   const [newGroup, setNewGroup] = useState(EMPTY_DRAFT);
 
+  /*
+    탭을 잠금 여부로 가른다. 여기서 값을 늘릴 수 있는 목록과 화면을 함께 고쳐야 하는 목록은
+    할 수 있는 일이 다르고, 그것이 이 화면에서 가장 먼저 갈려야 하는 것이다.
+  */
+  const tabs: ListToolbarTab[] = [
+    { id: 'all', label: '전체', count: groups.length },
+    { id: 'open', label: '고칠 수 있음', count: groups.filter((group) => !group.locked).length },
+    { id: 'locked', label: '잠김', count: groups.filter((group) => group.locked).length },
+  ];
+
   const visible = useMemo(() => {
     const keyword = search.trim().toLowerCase();
-    if (!keyword) return groups;
-    return groups.filter(
-      (group) =>
+    return groups.filter((group) => {
+      if (tab === 'open' && group.locked) return false;
+      if (tab === 'locked' && !group.locked) return false;
+      if (!keyword) return true;
+      return (
         group.name.toLowerCase().includes(keyword) ||
         group.values.some((value) => value.toLowerCase().includes(keyword)) ||
-        group.usedBy.some((screen) => screen.toLowerCase().includes(keyword)),
-    );
-  }, [groups, search]);
+        group.usedBy.some((screen) => screen.toLowerCase().includes(keyword))
+      );
+    });
+  }, [groups, search, tab]);
 
   const locked = groups.filter((group) => group.locked);
   const total = groups.reduce((sum, group) => sum + group.values.length, 0);
@@ -66,13 +102,28 @@ export function CodeListView() {
     toast.success({ message: `${group.name} 에 값을 더했습니다.`, detail: `${value} · ${group.usedBy.length}개 화면에 반영됩니다.` });
   };
 
+  const [errors, setErrors] = useState<FormErrors<CodeField>>({});
+  const [submitted, setSubmitted] = useState(false);
+
+  const spec: FormSpec<CodeField> = {
+    ...CODE_BASE,
+    name: {
+      ...CODE_BASE.name,
+      rules: [...(CODE_BASE.name.rules ?? []), notIn(groups.map((group) => group.name), '이미 있는 목록 이름입니다.')],
+    },
+  };
+
+  const commit = (next: typeof newGroup) => {
+    setNewGroup(next);
+    if (submitted) setErrors(validate(spec, next));
+  };
+
   const createGroup = () => {
-    if (!newGroup.name.trim() || !newGroup.first.trim()) {
-      toast.error({ message: '등록하지 못했습니다.', detail: '목록 이름과 첫 값을 모두 적어 주세요.' });
-      return;
-    }
-    if (groups.some((group) => group.name === newGroup.name.trim())) {
-      toast.error({ message: '등록하지 못했습니다.', detail: `'${newGroup.name.trim()}' 은 이미 있는 목록입니다.` });
+    setSubmitted(true);
+    const found = validate(spec, newGroup);
+    setErrors(found);
+    if (hasErrors(found)) {
+      toast.error({ message: '등록하지 못했습니다.', detail: errorSummary(found) });
       return;
     }
 
@@ -109,25 +160,20 @@ export function CodeListView() {
 
   return (
     <>
-      <InternalSummary
-        cards={[
-          { label: '목록', value: `${groups.length}개` },
-          { label: '값', value: `${total}개` },
-          {
-            label: '잠긴 목록',
-            value: `${locked.length}개`,
-            hint: '화면이 코드로 들고 있어 여기서 늘릴 수 없습니다.',
-          },
-        ]}
-      />
+      <PageHeading title="기준 값" description="여러 화면이 함께 쓰는 목록을 한 곳에서 관리하세요." />
 
-      <InternalToolbar
+      {/* 거를 것이 잠금 여부 하나뿐이라 필터 단추를 두지 않는다 — 탭이 그 일을 이미 한다. */}
+      <ListToolbar
+        tabs={tabs}
+        activeTabId={tab}
+        onTabChange={setTab}
         searchId="code-search"
         searchLabel="기준 값 검색"
         searchHint="목록 이름, 값, 쓰는 화면으로 검색"
-        search={search}
-        onSearch={setSearch}
-        action={{ label: '기준 값 목록 등록', onClick: () => setCreating(true) }}
+        searchValue={search}
+        onSearchChange={setSearch}
+        actionLabel="기준 값 목록 등록"
+        onAction={() => setCreating(true)}
       />
 
       {visible.length === 0 ? (
@@ -144,11 +190,12 @@ export function CodeListView() {
               aside={
                 <div className="flex shrink-0 items-center gap-2">
                   <span className="font-mono text-xs text-ink-faint">{group.id}</span>
-                  {group.locked && (
-                    <span className="shrink-0 whitespace-nowrap rounded-full bg-surface px-2.5 py-1 text-xs text-ink-muted">
-                      잠김
-                    </span>
-                  )}
+                  {/*
+                    잠긴 것만 표시하지 않고 **언제나** 상태를 적는다. 전에는 잠겼을 때만 칩이
+                    떠서, 표시가 없는 카드가 '고칠 수 있음' 인지 '아직 안 정해짐' 인지
+                    구분되지 않았다 — 없는 표시는 뜻을 갖지 못한다.
+                  */}
+                  <Badge tone={group.locked ? 'neutral' : 'ok'}>{group.locked ? '잠김' : '수정 가능'}</Badge>
                 </div>
               }
             >
@@ -229,13 +276,18 @@ export function CodeListView() {
         onSubmit={createGroup}
         submitLabel="등록"
       >
-        <InternalField label="목록 이름" htmlFor="code-new-name">
+        <InternalField
+          label={spec.name.label}
+          htmlFor="code-new-name"
+          required={spec.name.required}
+          {...(errors.name ? { error: errors.name } : { hint: spec.name.hint })}
+        >
           <HintInput
             id="code-new-name"
             type="text"
             hint="예: 계약 형태"
             value={newGroup.name}
-            onChange={(event) => setNewGroup((previous) => ({ ...previous, name: event.target.value }))}
+            onChange={(event) => commit({ ...newGroup, name: event.target.value })}
             invalid={!newGroup.name.trim()}
           />
         </InternalField>
@@ -250,17 +302,22 @@ export function CodeListView() {
             type="text"
             hint="예: 고객사 · 고객, 결제 · 예정일"
             value={newGroup.usedBy}
-            onChange={(event) => setNewGroup((previous) => ({ ...previous, usedBy: event.target.value }))}
+            onChange={(event) => commit({ ...newGroup, usedBy: event.target.value })}
           />
         </InternalField>
 
-        <InternalField label="첫 값" htmlFor="code-new-first" hint="값이 하나도 없는 목록은 화면에서 고를 것이 없습니다.">
+        <InternalField
+          label={spec.first.label}
+          htmlFor="code-new-first"
+          required={spec.first.required}
+          {...(errors.first ? { error: errors.first } : { hint: spec.first.hint })}
+        >
           <HintInput
             id="code-new-first"
             type="text"
             hint="예: 연간 계약"
             value={newGroup.first}
-            onChange={(event) => setNewGroup((previous) => ({ ...previous, first: event.target.value }))}
+            onChange={(event) => commit({ ...newGroup, first: event.target.value })}
             invalid={!newGroup.first.trim()}
           />
         </InternalField>

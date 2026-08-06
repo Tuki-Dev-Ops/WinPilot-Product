@@ -1,6 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { Field } from '@winpilot/ui';
 
 export function ContentSection({
   title,
@@ -22,29 +23,41 @@ export function ContentSection({
   );
 }
 
+/**
+ * 입력 한 칸 — `@winpilot/ui` 의 `Field` 를 그대로 쓴다.
+ *
+ * `required` 가 새로 생겼다. 전에는 별표가 **고객 화면 여섯 자리에만** 손으로 적혀 있었고
+ * 어드민 폼에는 하나도 없어서, 무엇이 필수인지는 저장을 눌러 봐야 알 수 있었다.
+ *
+ * 손으로 붙이지 않고 **검증 스키마가 정한 값**을 넘긴다 — 필수라는 사실을 화면과 검사
+ * 두 곳에 적으면, 검사에서 뺐는데 별표는 남거나 그 반대가 되고 타입은 둘 다 통과한다.
+ */
 export function ContentField({
   id,
   label,
+  required,
+  hint,
   error,
   children,
 }: {
   id: string;
   label: string;
+  /** `lib/validation/field-spec.ts` 의 스키마에서 온 값 */
+  required?: boolean;
+  hint?: string;
   error?: string;
   children: ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="text-sm font-medium">
-        {label}
-      </label>
+    <Field
+      label={label}
+      htmlFor={id}
+      {...(required ? { required } : {})}
+      {...(hint ? { hint } : {})}
+      {...(error ? { error } : {})}
+    >
       {children}
-      {error && (
-        <p id={`${id}-error`} className="text-sm text-signal-danger">
-          {error}
-        </p>
-      )}
-    </div>
+    </Field>
   );
 }
 

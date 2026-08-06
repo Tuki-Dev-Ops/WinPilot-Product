@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
-import { AdminModal } from '@/app/_components/AdminModal';
-import { Dropdown, HintInput } from '@winpilot/ui';
+import { Button, Dropdown, HintInput, Modal } from '@winpilot/ui';
 import {
   COUNTRY_CODES,
   formatPhone,
@@ -230,43 +229,29 @@ export function MemberFormModal({
         : '수정하려면 오른쪽 아래 수정을 누르세요.';
 
   return (
-    <AdminModal
+    <Modal
       open={open}
       title={title}
       description={description}
       onClose={onClose}
       footer={
         <>
-          <button
-            type="button"
-            onClick={onClose}
-            className="h-9 rounded-lg border border-border-strong px-4 text-sm text-ink-muted"
-          >
+          <Button tone="secondary" onClick={onClose}>
             취소
-          </button>
+          </Button>
           {/*
             key 를 다르게 주는 것이 중요하다. 같은 위치의 버튼을 React 가 재사용하면,
             '수정' 클릭 → mode 변경 → 같은 DOM 노드가 type="submit" 으로 바뀌고
             브라우저가 그 클릭의 기본 동작으로 폼을 제출해 버린다(모달이 즉시 닫힘).
           */}
           {mode === 'view' ? (
-            <button
-              key="enter-edit"
-              type="button"
-              onClick={() => onModeChange('edit')}
-              className="h-9 rounded-lg bg-brand-500 px-4 text-sm font-medium text-white hover:bg-brand-600"
-            >
+            <Button key="enter-edit" onClick={() => onModeChange('edit')}>
               수정
-            </button>
+            </Button>
           ) : (
-            <button
-              key="submit-form"
-              type="submit"
-              form="member-form"
-              className="h-9 rounded-lg bg-brand-500 px-4 text-sm font-medium text-white hover:bg-brand-600"
-            >
+            <Button key="submit-form" type="submit" form="member-form">
               {mode === 'create' ? '추가' : '저장'}
-            </button>
+            </Button>
           )}
         </>
       }
@@ -437,6 +422,6 @@ export function MemberFormModal({
         <ReadonlyField label={config.joinedLabel} value={record?.joined ?? '등록 시 자동'} note="자동입력" />
         <ReadonlyField label="마지막 접속일" value={record?.lastSeen ?? '접속 시 기록'} note="자동입력" />
       </form>
-    </AdminModal>
+    </Modal>
   );
 }

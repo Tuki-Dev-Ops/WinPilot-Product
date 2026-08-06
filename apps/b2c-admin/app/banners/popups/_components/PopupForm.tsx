@@ -99,7 +99,7 @@ export function PopupForm({ mode, popupCode, createdAt, today, initial }: PopupF
           <ContentReadonly label="팝업 코드" value={popupCode} note={mode === 'create' ? '자동생성' : '수정 불가'} />
           <ContentReadonly label="등록일" value={createdAt} note="자동입력" />
 
-          <ContentField id="popup-title" label="제목" {...(errors.title ? { error: errors.title } : {})}>
+          <ContentField id="popup-title" label="제목" required {...(errors.title ? { error: errors.title } : {})}>
             <HintInput
               id="popup-title"
               type="text"
@@ -112,7 +112,7 @@ export function PopupForm({ mode, popupCode, createdAt, today, initial }: PopupF
 
           <ContentField
             id="popup-linkUrl"
-            label="링크 주소 (선택)"
+            label="링크 주소"
             {...(errors.linkUrl ? { error: errors.linkUrl } : {})}
           >
             <HintInput
@@ -128,7 +128,7 @@ export function PopupForm({ mode, popupCode, createdAt, today, initial }: PopupF
         </ContentSection>
 
         <ContentSection title="내용" description="글자 서식과 이미지를 넣을 수 있습니다.">
-          <ContentField id="popup-body" label="본문" {...(errors.body ? { error: errors.body } : {})}>
+          <ContentField id="popup-body" label="본문" required {...(errors.body ? { error: errors.body } : {})}>
             <RichTextEditor
               id="popup-body"
               hint="팝업에 보여줄 내용을 입력해 주세요"
@@ -150,7 +150,7 @@ export function PopupForm({ mode, popupCode, createdAt, today, initial }: PopupF
             />
           </div>
 
-          <ContentField id="popup-width" label="가로 폭" {...(errors.width ? { error: errors.width } : {})}>
+          <ContentField id="popup-width" label="가로 폭" required {...(errors.width ? { error: errors.width } : {})}>
             <div className="flex items-center gap-2">
               <HintInput
                 id="popup-width"
@@ -175,7 +175,7 @@ export function PopupForm({ mode, popupCode, createdAt, today, initial }: PopupF
         </ContentSection>
 
         <ContentSection title="노출 기간" description="종료일을 비우면 종료 없이 계속 노출됩니다.">
-          <ContentField id="popup-startAt" label="시작일" {...(errors.startAt ? { error: errors.startAt } : {})}>
+          <ContentField id="popup-startAt" label="시작일" required {...(errors.startAt ? { error: errors.startAt } : {})}>
             <HintInput
               id="popup-startAt"
               type="text"
@@ -187,7 +187,7 @@ export function PopupForm({ mode, popupCode, createdAt, today, initial }: PopupF
             />
           </ContentField>
 
-          <ContentField id="popup-endAt" label="종료일 (선택)" {...(errors.endAt ? { error: errors.endAt } : {})}>
+          <ContentField id="popup-endAt" label="종료일" {...(errors.endAt ? { error: errors.endAt } : {})}>
             <HintInput
               id="popup-endAt"
               type="text"

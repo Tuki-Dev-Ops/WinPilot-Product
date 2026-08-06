@@ -6,9 +6,9 @@ import type { ReactNode } from 'react';
  * 세 조각이 한 파일에 있는 이유: 목록 화면이 셋을 언제나 함께 쓴다. 파일을 나누면 화면마다
  * import 가 셋으로 늘고, 그러다 한 화면이 자기 카드를 따로 그리기 시작한다.
  *
- * B2C Admin 의 `AdminListToolbar` 계열과 **같은 자리에 같은 것**을 두되, 조각은 이 앱 안에서
- * 만든다 — 뷰 하나가 곧 레포 하나라 앱 사이로 화면 구조를 아는 조각을 옮기지 않는다
- * (`docs/component.md` §5).
+ * **목록 위 툴바는 여기 없다.** 두 어드민이 같은 것을 쓰기로 정해 `@winpilot/ui` 의
+ * `ListToolbar` 로 올렸다. 여기 남은 것은 아직 이 콘솔만 쓰는 카드·요약·빈 상태다 —
+ * 다른 앱이 같은 것을 쓰기로 정하면 그때 올린다 (`docs/component.md` §2.1).
  */
 export function InternalPanel({
   title,
@@ -81,9 +81,17 @@ export function InternalSummary({ cards }: { cards: SummaryCard[] }) {
  * 좁은 화면에서는 머리줄을 숨기고 각 행이 자기 라벨을 갖는다. 좁은 폭에 열 이름을 그대로
  * 두면 글자가 겹쳐 어느 값이 어느 열인지 오히려 알 수 없다.
  */
-export function InternalTableHead({ columns }: { columns: Array<{ label: string; span: string }> }) {
+export function InternalTableHead({
+  columns,
+  lead,
+}: {
+  columns: Array<{ label: string; span: string }>;
+  /** 맨 왼쪽 칸 — 전체 선택 체크박스와 `순번` 라벨. 표마다 자리가 같아야 눈이 헤매지 않는다 */
+  lead?: ReactNode;
+}) {
   return (
     <div className="hidden gap-4 border-b border-border px-5 py-3 text-xs text-ink-faint lg:grid lg:grid-cols-12 lg:items-center">
+      {lead}
       {columns.map((column) => (
         <span key={column.label} className={column.span}>
           {column.label}

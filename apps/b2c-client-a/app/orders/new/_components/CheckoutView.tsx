@@ -202,8 +202,8 @@ export function CheckoutView({ initialLines }: { initialLines: Line[] }) {
                         )}
                       </span>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium">{line.productName}</p>
-                        <p className="truncate text-xs text-ink-muted">
+                        <p className="min-w-0 truncate text-sm font-medium">{line.productName}</p>
+                        <p className="min-w-0 truncate text-xs text-ink-muted">
                           {line.optionLabel} · {line.quantity}개
                         </p>
                       </div>

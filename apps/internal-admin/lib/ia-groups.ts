@@ -105,14 +105,16 @@ export const IA_GROUPS: IaGroup[] = [
     screens: [
       { screen: 'subscriptions-plans', ko: '플랜' },
       { screen: 'subscriptions-roles', ko: '권한' },
+      { screen: 'subscriptions-roles-detail', ko: '권한 상세' },
     ],
-    edges: [],
-    data: ['lib/data/subscriptions.ts'],
+    edges: [['subscriptions-roles', 'subscriptions-roles-detail']],
+    data: ['lib/data/subscriptions.ts', 'lib/data/plan-features.ts', 'packages/store/src/permissions.ts'],
     notes: [
-      '플랜이 권한을 켠다 — 두 화면이 같은 관계를 양쪽에서 묻는다. 플랜에서는 “이 플랜이 무엇을 켜는가”, 권한에서는 “이 권한을 쓰려면 얼마부터인가”.',
+      '두 화면이 묻는 것이 다르다. 플랜에서는 “이 등급에 이 화면이 들어오는가”(기능), 권한에서는 “그 화면에서 직원 한 명이 무엇을 하는가”(역할). 기능이 꺼져 있으면 권한을 켜도 화면이 없다.',
+      '둘 다 위쪽 탭이 B2C · B2B · IR 이다 — 파는 것이 다르면 등급이 뜻하는 것도 자원 목록도 달라진다.',
       '여기 권한은 고객사가 자기 콘솔에서 쓰는 것이다. 이 콘솔에 들어오는 직원은 설정 갈래에 있다.',
+      '권한 상세는 메뉴에 항목이 없고 목록에서만 들어간다. 자원 열다섯 × 동작 넷을 목록 밑에 펼치면 역할이 몇 개인지 보러 온 사람이 예순 칸을 지나쳐야 한다.',
       '팔지 않는 플랜을 숨기지 않는다. 쓰던 고객사의 계약서에 그 이름이 적혀 있다.',
-      '플랜은 표가 아니라 카드로 늘어놓는다 — 한 줄에 밀어 넣으면 가로로 스크롤해야 읽힌다.',
     ],
   },
   {
@@ -135,7 +137,7 @@ export const IA_GROUPS: IaGroup[] = [
       { screen: 'integrations-pg', ko: 'PG' },
       { screen: 'integrations-oauth', ko: 'OAuth' },
       { screen: 'integrations-plugin', ko: 'Plugin' },
-      { screen: 'integrations-dns', ko: 'DNS' },
+      { screen: 'integrations-dns', ko: 'DNS / SSL' },
     ],
     edges: [],
     data: ['lib/data/integrations.ts', 'lib/data/tenants.ts', '주소 질의문자열 (tenant)'],
@@ -184,7 +186,7 @@ export const IA_GROUPS: IaGroup[] = [
     id: 'settings',
     purpose: '이 콘솔 자신의 값을 한자리에서 정한다.',
     screens: [
-      { screen: 'settings-staff', ko: '사내 계정' },
+      { screen: 'settings-staff', ko: '관리자' },
       { screen: 'settings-notifications', ko: '알림' },
       { screen: 'settings-codes', ko: '기준 값' },
     ],
@@ -192,7 +194,7 @@ export const IA_GROUPS: IaGroup[] = [
     data: ['lib/data/settings.ts', 'lib/data/tenants.ts'],
     notes: [
       '세 화면 모두 고객사를 고르지 않는다 — 고객사에 붙는 값이 아니라 이 콘솔 자신의 값이다.',
-      '사내 계정은 구독 · 권한과 성격이 다르다. 저기는 고객사가 쓰는 권한, 여기는 이 콘솔에 들어오는 우리 직원이다.',
+      '관리자는 구독 · 권한과 성격이 다르다. 저기는 고객사가 쓰는 권한, 여기는 이 콘솔에 들어오는 우리 직원이다.',
       '알림은 통계·결제가 만들어 내는 신호를 받을 곳이다. 신호를 내는 화면마다 조건을 박아 두면 규칙이 화면 수만큼 늘어난다.',
       '기준 값은 여러 화면이 함께 쓰는 목록이다. 화면마다 박아 두면 두 벌이 되고, 그때부터 어느 쪽이 맞는지 알 수 없다.',
       '중지한 계정을 지우지 않는다 — 지난 기록에 누가 무엇을 고쳤는지가 이름으로 남아 있다.',

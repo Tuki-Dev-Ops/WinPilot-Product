@@ -109,7 +109,7 @@ export function PolicyEditorView({ policy, today }: PolicyEditorViewProps) {
           title="개정 정보"
           description="본문을 바꾸면 버전을 올리고 무엇이 바뀌었는지 남겨야 합니다."
         >
-          <ContentField id="policy-version" label="버전" {...(errors.version ? { error: errors.version } : {})}>
+          <ContentField id="policy-version" label="버전" required {...(errors.version ? { error: errors.version } : {})}>
             <HintInput
               id="policy-version"
               type="text"
@@ -125,6 +125,7 @@ export function PolicyEditorView({ policy, today }: PolicyEditorViewProps) {
           <ContentField
             id="policy-effectiveAt"
             label="시행일"
+            required
             {...(errors.effectiveAt ? { error: errors.effectiveAt } : {})}
           >
             <HintInput

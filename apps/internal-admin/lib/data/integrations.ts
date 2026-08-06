@@ -8,6 +8,8 @@
  * 넷을 한 파일에 두는 이유: 모두 **고객사 하나에 붙는 바깥 연결**이라 고르는 대상이 같다.
  * 파일을 넷으로 나누면 고객사 선택기가 네 벌이 된다.
  */
+import type { BadgeTone } from '@winpilot/ui';
+
 export type OauthProviderId = 'kakao' | 'naver' | 'google' | 'apple';
 
 export type OauthProvider = {
@@ -20,30 +22,22 @@ export type OauthProvider = {
   redirectUri: string;
 };
 
-export type PgProviderId = 'toss' | 'nice' | 'kg' | 'stripe';
-
-export type PgSetting = {
-  provider: PgProviderId;
-  label: string;
-  merchantId: string;
-  secretKey: string;
-  /** 실결제 여부 — 테스트 모드면 실제로 돈이 움직이지 않는다 */
-  live: boolean;
-  methods: string[];
-};
+/*
+ * 결제대행사의 목록과 **대행사마다 다른 연동 값**은 `lib/data/pg-providers.ts` 로 옮겼다.
+ *
+ * 여기 있던 `PgSetting` 은 어느 대행사든 `merchantId` + `secretKey` 두 칸으로 받았는데,
+ * 실제로는 이니시스가 넷(MID · signkey · INIAPI Key · IV), KCP 가 둘(사이트코드 · 사이트키)을
+ * 받는 식으로 개수도 이름도 다르다 — **두 칸에는 이니시스의 signkey 를 넣을 자리가 없었다.**
+ *
+ * 대행사가 늘어날 때마다 이 타입에 칸을 더하면 쓰지 않는 칸이 대행사 수만큼 쌓인다.
+ * 그래서 값은 `Record<string, string>` 한 벌로 두고, **어떤 키를 받아야 하는지는 표가 안다.**
+ */
 
 export const OAUTH_LABELS: Record<OauthProviderId, string> = {
   kakao: '카카오',
   naver: '네이버',
   google: '구글',
   apple: '애플',
-};
-
-export const PG_LABELS: Record<PgProviderId, string> = {
-  toss: '토스페이먼츠',
-  nice: '나이스페이',
-  kg: 'KG이니시스',
-  stripe: 'Stripe',
 };
 
 export const PAY_METHODS = ['신용카드', '계좌이체', '가상계좌', '간편결제', '휴대폰'];
@@ -58,15 +52,6 @@ export function defaultOauth(domain: string): OauthProvider[] {
     redirectUri: `https://${domain}/auth/callback/${id}`,
   }));
 }
-
-export const DEFAULT_PG: PgSetting = {
-  provider: 'toss',
-  label: PG_LABELS.toss,
-  merchantId: 'mid_0000000000',
-  secretKey: '****************wxyz',
-  live: true,
-  methods: ['신용카드', '간편결제', '계좌이체'],
-};
 
 /** 비밀값은 뒷 4자리만 남긴다. 목록·요약에 그대로 흘리지 않기 위해서다. */
 export function maskSecret(value: string): string {
@@ -85,7 +70,21 @@ export function maskSecret(value: string): string {
  * 적어 둔다. 채팅 상담처럼 화면에 눈에 띄게 나타나는 것과, 분석 스크립트처럼 보이지 않는
  * 것이 섞여 있어서 켠 사람도 무엇을 켰는지 잊는다.
  */
-export type PluginId = 'chat' | 'analytics' | 'review-photo' | 'crm' | 'translate';
+export type PluginId = 'adsense';
+
+/**
+ * 이 조각이 받는 키의 **모양**. 조각마다 다르므로 표가 들고 있는다 —
+ * `연동 키` 라고만 적어 두면 어느 콘솔의 무슨 값인지 알 수 없다.
+ */
+export type PluginKeyField = {
+  /** 서비스 콘솔에 적힌 말 그대로 */
+  label: string;
+  hint: string;
+  note: string;
+  /** 값의 생김새. 맞지 않으면 `patternMessage` 를 보여 준다 */
+  pattern?: RegExp;
+  patternMessage?: string;
+};
 
 export type PluginSetting = {
   id: PluginId;
@@ -95,57 +94,34 @@ export type PluginSetting = {
   /** 고객사 화면에 보이는지. 보이지 않는 것은 켠 사실을 잊기 쉽다 */
   visible: boolean;
   enabled: boolean;
-  /** 이 조각을 붙이는 데 필요한 키. 비우면 키가 필요 없다 */
+  /** 이 조각을 붙이는 데 필요한 키 값 */
   key: string;
+  /** 키를 받지 않는 조각이면 비운다 — 빈 칸을 그리지 않기 위해서다 */
+  keyField?: PluginKeyField;
   /** 켜려면 있어야 하는 최소 플랜 이름 */
   requires: string;
 };
 
 export const PLUGIN_DEFAULTS: PluginSetting[] = [
   {
-    id: 'chat',
-    label: '채팅 상담',
-    purpose: '고객 화면 오른쪽 아래에 상담 창을 띄운다.',
+    id: 'adsense',
+    label: '구글 애드센스',
+    purpose: '고객 화면의 정해진 자리에 애드센스 광고를 띄운다.',
     visible: true,
-    enabled: true,
-    key: 'chat_live_0000000000',
+    enabled: false,
+    key: '',
+    keyField: {
+      label: '게시자 ID',
+      hint: 'ca-pub- 로 시작하는 16자리',
+      note: 'AdSense > 계정 > 계정 정보 에 있습니다. 사이트마다 다르지 않고 계정마다 하나입니다.',
+      /*
+        `ca-pub-` + 숫자 16자리가 애드센스 게시자 ID 의 모양이다. 이 값이 틀리면 광고 자리는
+        잡히는데 광고가 뜨지 않아, 화면만 보고는 무엇이 잘못됐는지 알 수 없다.
+      */
+      pattern: /^ca-pub-\d{16}$/,
+      patternMessage: '게시자 ID 는 ca-pub- 뒤에 숫자 16자리입니다. (예: ca-pub-1234567890123456)',
+    },
     requires: '베이직',
-  },
-  {
-    id: 'analytics',
-    label: '방문 분석',
-    purpose: '어느 화면을 얼마나 보는지 모아 통계로 넘긴다.',
-    visible: false,
-    enabled: true,
-    key: 'GA-0000000000',
-    requires: '베이직',
-  },
-  {
-    id: 'review-photo',
-    label: '포토 리뷰',
-    purpose: '리뷰에 사진을 붙일 수 있게 한다.',
-    visible: true,
-    enabled: false,
-    key: '',
-    requires: '스탠다드',
-  },
-  {
-    id: 'crm',
-    label: '고객 관리 연동',
-    purpose: '가입·주문을 바깥 고객 관리 도구로 넘긴다.',
-    visible: false,
-    enabled: false,
-    key: '',
-    requires: '엔터프라이즈',
-  },
-  {
-    id: 'translate',
-    label: '다국어 표시',
-    purpose: '고객 화면의 문구를 다른 언어로 바꿔 보여 준다.',
-    visible: true,
-    enabled: false,
-    key: '',
-    requires: '엔터프라이즈',
   },
 ];
 
@@ -220,9 +196,9 @@ export function defaultDns(clientDomain: string, adminDomain: string): DnsRecord
   ];
 }
 
-export const DNS_TONE: Record<DnsState, string> = {
-  확인됨: 'bg-signal-ok/12 text-signal-ok',
-  '확인 중': 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200',
-  불일치: 'bg-signal-danger/12 text-signal-danger',
-  없음: 'bg-signal-danger/12 text-signal-danger',
+export const DNS_TONE: Record<DnsState, BadgeTone> = {
+  확인됨: 'ok',
+  '확인 중': 'brand',
+  불일치: 'danger',
+  없음: 'danger',
 };

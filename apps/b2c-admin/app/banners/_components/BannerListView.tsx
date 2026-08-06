@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ALL_VALUE, ContentListView, type ContentColumn } from '@/app/contents/_components/ContentListView';
-import { useToast } from '@winpilot/ui';
+import { Badge, useToast } from '@winpilot/ui';
 import { BANNERS, periodText, SCHEDULE_TONE, scheduleState, type BannerRecord } from '@/lib/data/banners';
 
 function columns(today: string): Array<ContentColumn<BannerRecord>> {
@@ -23,12 +23,12 @@ function columns(today: string): Array<ContentColumn<BannerRecord>> {
       render: (banner) => (
         <div className="flex min-w-0 items-center gap-3">
           {/* 목록 썸네일 — 업로드된 이미지는 브라우저 메모리에만 있어 목록에서는 자리표시자로 둔다. */}
-          <span className="flex h-10 w-14 shrink-0 items-center justify-center rounded-lg bg-surface text-[10px] text-ink-faint">
+          <span className="flex h-10 w-14 shrink-0 items-center justify-center rounded-lg bg-surface text-3xs text-ink-faint">
             이미지
           </span>
           <div className="min-w-0">
-            <p className="truncate text-sm font-medium">{banner.title}</p>
-            <p className="truncate font-mono text-xs text-ink-faint">
+            <p className="min-w-0 truncate text-sm font-medium">{banner.title}</p>
+            <p className="min-w-0 truncate font-mono text-xs text-ink-faint">
               {banner.id}
               {banner.linkUrl && ` · ${banner.linkUrl}`}
             </p>
@@ -50,11 +50,9 @@ function columns(today: string): Array<ContentColumn<BannerRecord>> {
       render: (banner) => {
         const state = scheduleState(banner, today);
         return (
-          <span
-            className={`inline-block shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${SCHEDULE_TONE[state]}`}
-          >
+          <Badge tone={SCHEDULE_TONE[state]}>
             {state}
-          </span>
+          </Badge>
         );
       },
     },
@@ -74,6 +72,8 @@ export function BannerListView({ today }: { today: string }) {
 
   return (
     <ContentListView<BannerRecord>
+      title="메인 비주얼"
+      description="홈 맨 위에 걸리는 배너와 노출 기간을 관리하세요."
       entityLabel="배너"
       items={[...banners].sort((a, b) => a.order - b.order)}
       onItemsChange={setBanners}

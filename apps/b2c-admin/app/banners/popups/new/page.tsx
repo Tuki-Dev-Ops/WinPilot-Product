@@ -18,7 +18,7 @@ export default function AdminPopupCreatePage() {
   const today = todayStamp();
 
   return (
-    <AdminShell sectionId="banner" trail={['배너', '팝업', '상세페이지 (등록)']} activeChildId="banner-popup">
+    <AdminShell sectionId="banner" trail={['배너', '팝업', '상세페이지 (등록)']} activeChildId="banner-popup" back={{ href: '/banners/popups', label: '팝업 목록' }}>
       {/* 코드·기준일은 서버에서 정한다 — 화면이 스스로 읽으면 서버·브라우저 값이 어긋난다. */}
       <PopupForm
         mode="create"

@@ -48,6 +48,7 @@
 | 71 | Settings SEO | `/settings/seo` | [열기](/docs/fsd/settings-seo) |
 | 72 | Settings Terms | `/settings/terms` | [열기](/docs/fsd/settings-terms) |
 | 73 | Settings Privacy | `/settings/privacy` | [열기](/docs/fsd/settings-privacy) |
+| 80 | Support | `/support` | [열기](/docs/fsd/support) |
 | 23 | Product Reviews | `/products/reviews` | [열기](/docs/fsd/products-reviews) |
 | 24 | Product Coupons | `/products/coupons` | [열기](/docs/fsd/products-coupons) |
 | 100 | Components | `/ssot/components` | [열기](/docs/fsd/components) |

@@ -1,15 +1,21 @@
 'use client';
 
+import { MemberFormModal, type MemberFormConfig, type MemberRecord } from '@/app/_components/MemberFormModal';
 import { useMemo, useState, type MouseEvent } from 'react';
 import { AdminBulkBar } from '@/app/_components/AdminBulkBar';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
 import { AdminListPager } from '@/app/_components/AdminListPager';
-import { AdminListToolbar, ALL_VALUE, type AdminFilterField } from '@/app/_components/AdminListToolbar';
-import { MemberFormModal, type MemberFormConfig, type MemberRecord } from '@/app/_components/MemberFormModal';
-import { Checkbox, useToast } from '@winpilot/ui';
-import { type MemberFormInput, type MemberFormMode } from '@/lib/validation/member-record';
+import { ALL_VALUE, Badge, Checkbox, ListToolbar, PageHeading, RowActions, RowIconButton, RowSelectCell, useToast, type BadgeTone, type ListFilterField } from '@winpilot/ui';
+import type { MemberFormInput, MemberFormMode } from '@/lib/validation/member-record';
+import { TENANT_ROLES } from '@winpilot/store';
+import { AdminRoleGuide } from '@/app/_components/AdminRoleGuide';
 
-const ROLES = ['최고 관리자', '운영', '상품 심사', 'CS'];
+/*
+  역할은 **우리가 정하고 고객사가 고른다.** 목록을 여기 손으로 적어 두면 사내 콘솔
+  (`/subscriptions/roles`)에서 역할을 하나 더 열어 줘도 이 화면에는 나타나지 않는다.
+  두 앱이 같은 카탈로그(`@winpilot/store`)를 읽는 이유가 이것이다.
+*/
+const ROLES = TENANT_ROLES.map((role) => role.label);
 
 /** 프론트엔드 전용 — 서버 없이 이 배열이 목록의 원본이다. */
 const INITIAL_STAFF: MemberRecord[] = [
@@ -29,23 +35,19 @@ const CONFIG: MemberFormConfig = {
   role: { label: '역할', kind: 'select', options: ROLES },
 };
 
-const STATE_TONE: Record<string, string> = {
-  활성: 'bg-signal-ok/12 text-signal-ok',
-  정지: 'bg-signal-danger/12 text-signal-danger',
+const STATE_TONE: Record<string, BadgeTone> = {
+  활성: 'ok',
+  정지: 'danger',
 };
 
-const ROLE_TONE: Record<string, string> = {
-  '최고 관리자': 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200',
+const ROLE_TONE: Record<string, BadgeTone> = {
+  '최고 관리자': 'brand',
 };
 
 const TAB_STATE: Record<string, string | null> = { all: null, active: '활성', suspended: '정지' };
 const TAB_LABEL: Record<string, string> = { all: '전체', active: '활성', suspended: '정지' };
 
-// shrink-0 · whitespace-nowrap — 좁은 폭에서 flex 가 버튼을 눌러 글자가 접히는 것을 막는다.
-const ACTION_BUTTON = 'h-8 shrink-0 whitespace-nowrap rounded-lg border px-3 text-sm transition-colors duration-150';
 
-/** 행 클릭으로 상세가 열리므로, 행 안의 컨트롤은 자기 동작만 하도록 전파를 끊는다. */
-const stopRowClick = (event: MouseEvent) => event.stopPropagation();
 
 function nextStaffId(staff: MemberRecord[]): string {
   const max = staff.reduce((biggest, member) => Math.max(biggest, Number(member.id.replace('S-', ''))), 0);
@@ -74,7 +76,7 @@ export function StaffListView() {
 
   const detail = useMemo(() => staff.find((member) => member.id === detailId) ?? null, [staff, detailId]);
 
-  const filterFields = useMemo<AdminFilterField[]>(
+  const filterFields = useMemo<ListFilterField[]>(
     () => [
       {
         id: 'role',
@@ -220,7 +222,9 @@ export function StaffListView() {
 
   return (
     <>
-      <AdminListToolbar
+      <PageHeading title="관리자" description="운영 권한을 가진 계정을 관리하세요." />
+
+      <ListToolbar
         tabs={tabs}
         activeTabId={activeTabId}
         onTabChange={setActiveTabId}
@@ -268,7 +272,7 @@ export function StaffListView() {
           <span className="lg:col-span-3">이메일</span>
           <span className="lg:col-span-2">역할</span>
           <span className="lg:col-span-1 lg:text-center">상태</span>
-          <span className="lg:col-span-2 lg:text-right">관리</span>
+          <span className="lg:col-span-2 lg:text-center">관리</span>
         </div>
 
         {visible.length === 0 ? (
@@ -281,22 +285,16 @@ export function StaffListView() {
                 onClick={() => openDetail(member.id)}
                 className="grid cursor-pointer grid-cols-1 gap-x-4 gap-y-2 border-b border-border px-5 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface lg:grid-cols-12 lg:items-center lg:gap-y-0"
               >
-                {/*
-                  행 전체가 상세를 연다. 안쪽 체크박스·버튼은 자기 동작만 하도록 전파를 끊는다.
-                  키보드 사용자는 끝의 조회 버튼으로 같은 곳에 도달한다.
-                */}
-                <div className="flex items-center gap-3 lg:col-span-1" onClick={stopRowClick}>
-                  <Checkbox
-                    checked={selectedIds.includes(member.id)}
-                    onChange={(checked) =>
-                      setSelectedIds((previous) =>
-                        checked ? [...previous, member.id] : previous.filter((id) => id !== member.id),
-                      )
-                    }
-                    label={`${member.name} 선택`}
-                  />
-                  <span className="w-6 text-center font-mono text-sm tabular-nums text-ink-faint">{index + 1}</span>
-                </div>
+                <RowSelectCell
+                  checked={selectedIds.includes(member.id)}
+                  onChange={(checked) =>
+                    setSelectedIds((previous) =>
+                      checked ? [...previous, member.id] : previous.filter((id) => id !== member.id),
+                    )
+                  }
+                  label={`${member.name} 선택`}
+                  index={index}
+                />
 
                 <div className="lg:col-span-3">
                   <p className="text-sm font-medium">
@@ -312,37 +310,28 @@ export function StaffListView() {
 
                 <div className="flex items-center gap-2 lg:col-span-2">
                   <span className="w-20 shrink-0 text-xs text-ink-faint lg:hidden">역할</span>
-                  <span
-                    className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${ROLE_TONE[member.role] ?? 'bg-surface text-ink-muted'}`}
-                  >
+                  <Badge tone={ROLE_TONE[member.role] ?? 'neutral'}>
                     {member.role}
-                  </span>
+                  </Badge>
                 </div>
 
                 <div className="flex items-center gap-2 lg:col-span-1 lg:justify-center">
                   <span className="w-20 shrink-0 text-xs text-ink-faint lg:hidden">상태</span>
-                  <span
-                    className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${STATE_TONE[member.state] ?? 'bg-surface text-ink-muted'}`}
-                  >
+                  <Badge tone={STATE_TONE[member.state] ?? 'neutral'}>
                     {member.state}
-                  </span>
+                  </Badge>
                 </div>
 
-                <div className="flex items-center gap-2 lg:col-span-2 lg:justify-end" onClick={stopRowClick}>
-                  <button
-                    type="button"
-                    onClick={() => openDetail(member.id)}
-                    className={`${ACTION_BUTTON} border-border-strong text-ink-muted hover:border-ink-faint`}
-                  >
-                    조회
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPendingDelete([member.id])}
-                    className={`${ACTION_BUTTON} border-border-strong text-signal-danger hover:border-signal-danger`}
-                  >
-                    삭제
-                  </button>
+                <div className="lg:col-span-2">
+                  <RowActions>
+                    <RowIconButton icon="view" label={`${member.name} 조회`} onClick={() => openDetail(member.id)} />
+                    <RowIconButton
+                      icon="delete"
+                      tone="danger"
+                      label={`${member.name} 삭제`}
+                      onClick={() => setPendingDelete([member.id])}
+                    />
+                  </RowActions>
                 </div>
               </div>
             ))}
@@ -351,6 +340,8 @@ export function StaffListView() {
 
         <AdminListPager total={visible.length} page={1} pageSize={Math.max(visible.length, 1)} />
       </section>
+
+      <AdminRoleGuide />
 
       <MemberFormModal
         open={modalOpen}

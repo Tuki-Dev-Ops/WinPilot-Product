@@ -9,6 +9,8 @@
  * (목록은 표, 파이프라인은 단계별 세로 칸). 그래서 운영 단계의 건은 `tenantId` 를 갖고,
  * 아직 계약 전인 건은 비운다. 시드를 두 벌로 두면 같은 고객사가 두 화면에서 다르게 보인다.
  */
+import type { BadgeTone } from '@winpilot/ui';
+
 export type PipelineStage = '문의' | '상담' | '계약' | '구축' | '운영';
 
 export type PipelineDeal = {
@@ -128,21 +130,21 @@ export const DEALS: PipelineDeal[] = [
   },
 ];
 
-export const STAGE_TONE: Record<PipelineStage, string> = {
-  문의: 'bg-surface text-ink-muted',
-  상담: 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200',
-  계약: 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200',
-  구축: 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200',
-  운영: 'bg-signal-ok/12 text-signal-ok',
+export const STAGE_TONE: Record<PipelineStage, BadgeTone> = {
+  문의: 'neutral',
+  상담: 'brand',
+  계약: 'brand',
+  구축: 'brand',
+  운영: 'ok',
 };
 
 /** 그 단계에서 무엇을 하는 중인지 — 칸 머리에 적어 둔다. 단계 이름만으로는 갈리지 않는다. */
 export const STAGE_MEANING: Record<PipelineStage, string> = {
-  문의: '아직 이야기를 나누기 전. 누가 왜 물어봤는지만 있다.',
-  상담: '무엇이 필요한지 맞춰 보는 중.',
-  계약: '금액과 조건이 정해졌고 문서가 오간다.',
-  구축: '배포를 붙이고 연동을 잡는 중.',
-  운영: '고객사가 되었다 — 이 칸의 건이 곧 고객 목록이다.',
+  문의: '아직 상담 전 단계입니다. 문의 경로와 기본 정보만 확인된 상태입니다.',
+  상담: '고객 요구사항을 확인하고 제안 범위를 협의하는 단계입니다.',
+  계약: '견적과 계약 조건이 확정되어 계약 절차를 진행하는 단계입니다.',
+  구축: '서비스를 개발·설정하고 배포를 준비하는 단계입니다.',
+  운영: '구축이 완료되어 서비스를 운영하고 유지보수를 진행하는 단계입니다.',
 };
 
 export function stageIndex(stage: PipelineStage): number {

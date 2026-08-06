@@ -8,6 +8,8 @@
  * 남겨야 하므로 `dealId`(`lib/data/pipeline.ts`)로도 걸 수 있게 두 칸을 둔다 — 둘 다 비운
  * 기록은 만들지 않는다. 누구와 한 일인지 없는 활동은 나중에 찾을 길이 없다.
  */
+import type { BadgeTone } from '@winpilot/ui';
+
 export type ActivityKind = '통화' | '미팅' | '메일' | '점검';
 
 export type ActivityRecord = {
@@ -21,7 +23,7 @@ export type ActivityRecord = {
   target: string;
   /** `YYYY-MM-DD HH:mm` */
   at: string;
-  /** 우리 쪽 사람 — `lib/data/settings.ts` 의 이름과 같다 */
+  /** 사내 담당자 — `lib/data/settings.ts` 의 이름과 같다 */
   staff: string;
   /** 고객사 쪽 사람 — `lib/data/contacts.ts` 의 이름과 같다 */
   counterpart: string;
@@ -112,11 +114,11 @@ export const ACTIVITIES: ActivityRecord[] = [
   },
 ];
 
-export const ACTIVITY_TONE: Record<ActivityKind, string> = {
-  통화: 'bg-surface text-ink-muted',
-  미팅: 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200',
-  메일: 'bg-surface text-ink-muted',
-  점검: 'bg-signal-ok/12 text-signal-ok',
+export const ACTIVITY_TONE: Record<ActivityKind, BadgeTone> = {
+  통화: 'neutral',
+  미팅: 'brand',
+  메일: 'neutral',
+  점검: 'ok',
 };
 
 /** 그 고객사의 활동 — 최신순. 상세 화면이 목록으로 나가지 않고 여기서 읽는다. */

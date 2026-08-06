@@ -4,9 +4,8 @@ import { useRouter } from 'next/navigation';
 import { useMemo, useState, type MouseEvent } from 'react';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
 import { AdminListPager } from '@/app/_components/AdminListPager';
-import { AdminListToolbar, ALL_VALUE, type AdminFilterField } from '@/app/_components/AdminListToolbar';
 import { AdminSelectionBar } from '@/app/_components/AdminSelectionBar';
-import { Checkbox, useToast } from '@winpilot/ui';
+import { ALL_VALUE, Badge, Checkbox, ListToolbar, PageHeading, RowActions, RowIconButton, RowSelectCell, useToast, type ListFilterField } from '@winpilot/ui';
 import { COURIERS, ORDERS, PAY_TONE, SHIP_TONE, type OrderRecord } from '@/lib/data/orders';
 import { canExchange, findOption, optionLabelOf } from '@/lib/data/product-options';
 import { formatAmount } from '@/lib/validation/product-record';
@@ -28,11 +27,7 @@ const TAB_LABEL: Record<string, string> = {
   exchange: '교환요청',
 };
 
-// shrink-0 · whitespace-nowrap — 좁은 폭에서 flex 가 버튼을 눌러 글자가 접히는 것을 막는다.
-const ACTION_BUTTON = 'h-8 shrink-0 whitespace-nowrap rounded-lg border px-3 text-sm transition-colors duration-150';
 
-/** 행 클릭으로 상세로 이동하므로, 행 안의 컨트롤은 자기 동작만 하도록 전파를 끊는다. */
-const stopRowClick = (event: MouseEvent) => event.stopPropagation();
 
 function TruckIcon() {
   return (
@@ -85,7 +80,7 @@ export function OrderListView() {
   const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
   const [exchangeOrder, setExchangeOrder] = useState<OrderRecord | null>(null);
 
-  const filterFields = useMemo<AdminFilterField[]>(
+  const filterFields = useMemo<ListFilterField[]>(
     () => [
       {
         id: 'pay',
@@ -274,7 +269,9 @@ export function OrderListView() {
 
   return (
     <>
-      <AdminListToolbar
+      <PageHeading title="판매" description="들어온 주문과 배송 상태를 확인하세요." />
+
+      <ListToolbar
         tabs={tabs}
         activeTabId={activeTabId}
         onTabChange={setActiveTabId}
@@ -316,7 +313,7 @@ export function OrderListView() {
           <span className="lg:col-span-1 lg:text-right">결제금액</span>
           <span className="lg:col-span-1 lg:text-center">결제</span>
           <span className="lg:col-span-1 lg:text-center">배송</span>
-          <span className="lg:col-span-2 lg:text-right">관리</span>
+          <span className="lg:col-span-2 lg:text-center">관리</span>
         </div>
 
         {visible.length === 0 ? (
@@ -329,21 +326,19 @@ export function OrderListView() {
                 onClick={() => router.push(`/products/sales/${order.id}`)}
                 className="grid cursor-pointer grid-cols-1 gap-x-4 gap-y-2 border-b border-border px-5 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface lg:grid-cols-12 lg:items-center lg:gap-y-0"
               >
-                <div className="flex items-center gap-3 lg:col-span-1" onClick={stopRowClick}>
-                  <Checkbox
-                    checked={selectedIds.includes(order.id)}
-                    onChange={(checked) =>
-                      setSelectedIds((previous) =>
-                        checked ? [...previous, order.id] : previous.filter((id) => id !== order.id),
-                      )
-                    }
-                    label={`${order.id} 선택`}
-                  />
-                  <span className="w-6 text-center font-mono text-sm tabular-nums text-ink-faint">{index + 1}</span>
-                </div>
+                <RowSelectCell
+                  checked={selectedIds.includes(order.id)}
+                  onChange={(checked) =>
+                    setSelectedIds((previous) =>
+                      checked ? [...previous, order.id] : previous.filter((id) => id !== order.id),
+                    )
+                  }
+                  label={`${order.id} 선택`}
+                  index={index}
+                />
 
                 <div className="min-w-0 lg:col-span-4">
-                  <p className="truncate text-sm font-medium">
+                  <p className="min-w-0 truncate text-sm font-medium">
                     {order.productName} <span className="text-ink-muted">· {optionLabelOf(order.optionId)}</span>
                     {order.exchangedFromOptionId && (
                       <span className="ml-1.5 text-xs font-normal text-ink-faint">
@@ -359,7 +354,7 @@ export function OrderListView() {
 
                 <div className="flex items-baseline gap-2 lg:col-span-2">
                   <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">구매자</span>
-                  <span className="truncate text-sm">{order.buyerName}</span>
+                  <span className="min-w-0 truncate text-sm">{order.buyerName}</span>
                 </div>
 
                 <div className="flex items-baseline gap-2 lg:col-span-1 lg:justify-end">
@@ -369,30 +364,26 @@ export function OrderListView() {
 
                 <div className="flex items-center gap-2 lg:col-span-1 lg:justify-center">
                   <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">결제</span>
-                  <span
-                    className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${PAY_TONE[order.payState]}`}
-                  >
+                  <Badge tone={PAY_TONE[order.payState]}>
                     {order.payState}
-                  </span>
+                  </Badge>
                 </div>
 
                 <div className="flex items-center gap-2 lg:col-span-1 lg:justify-center">
                   <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">배송</span>
-                  <span
-                    className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${SHIP_TONE[order.shipState]}`}
-                  >
+                  <Badge tone={SHIP_TONE[order.shipState]}>
                     {order.shipState}
-                  </span>
+                  </Badge>
                 </div>
 
-                <div className="flex items-center gap-2 lg:col-span-2 lg:justify-end" onClick={stopRowClick}>
-                  <button
-                    type="button"
-                    onClick={() => router.push(`/products/sales/${order.id}`)}
-                    className={`${ACTION_BUTTON} border-border-strong text-ink-muted hover:border-ink-faint`}
-                  >
-                    상세
-                  </button>
+                <div className="lg:col-span-2">
+                  <RowActions>
+                    <RowIconButton
+                      icon="view"
+                      label={`주문 ${order.id} 상세`}
+                      onClick={() => router.push(`/products/sales/${order.id}`)}
+                    />
+                  </RowActions>
                 </div>
               </div>
             ))}

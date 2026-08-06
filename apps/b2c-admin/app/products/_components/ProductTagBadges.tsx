@@ -9,7 +9,7 @@ export type ProductTagBadgesProps = {
 export function ProductTagBadges({ tags, size = 'md' }: ProductTagBadgesProps) {
   if (tags.length === 0) return null;
 
-  const scale = size === 'sm' ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-0.5 text-xs';
+  const scale = size === 'sm' ? 'px-1.5 py-0.5 text-3xs' : 'px-2 py-0.5 text-xs';
 
   return (
     <>

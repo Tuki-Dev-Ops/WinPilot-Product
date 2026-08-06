@@ -148,8 +148,8 @@ export function InquirySettingsView() {
             <div className="hidden gap-4 border-b border-border bg-surface px-4 py-2.5 text-xs text-ink-faint sm:grid sm:grid-cols-12 sm:items-center">
               <span className="sm:col-span-4">이름</span>
               <span className="sm:col-span-5">경로</span>
-              <span className="sm:col-span-1 sm:text-center">노출</span>
-              <span className="sm:col-span-2 sm:text-right">관리</span>
+              <span className="sm:col-span-1 sm:text-center">상태</span>
+              <span className="sm:col-span-2 sm:text-center">관리</span>
             </div>
 
             <div className="flex flex-col">
@@ -290,6 +290,7 @@ export function InquirySettingsView() {
           <ContentField
             id="inquiry-guide"
             label="폼 상단 안내"
+            required
             {...(errors.guideText ? { error: errors.guideText } : {})}
           >
             <HintTextarea
@@ -304,6 +305,7 @@ export function InquirySettingsView() {
           <ContentField
             id="inquiry-done"
             label="접수 완료 메시지"
+            required
             {...(errors.doneText ? { error: errors.doneText } : {})}
           >
             <HintTextarea

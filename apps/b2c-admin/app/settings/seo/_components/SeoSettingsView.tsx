@@ -135,7 +135,7 @@ export function SeoSettingsView({ today }: { today: string }) {
     <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-6 xl:flex-row xl:items-start">
       <div className="flex min-w-0 flex-1 flex-col gap-6">
         <ContentSection title="검색엔진" description="구글·네이버 검색 결과에 나오는 제목과 설명입니다.">
-          <ContentField id="seo-title" label="검색 제목" {...(errors.title ? { error: errors.title } : {})}>
+          <ContentField id="seo-title" label="검색 제목" required {...(errors.title ? { error: errors.title } : {})}>
             <HintInput
               id="seo-title"
               type="text"
@@ -150,6 +150,7 @@ export function SeoSettingsView({ today }: { today: string }) {
           <ContentField
             id="seo-description"
             label="검색 설명"
+            required
             {...(errors.description ? { error: errors.description } : {})}
           >
             <HintTextarea
@@ -165,6 +166,7 @@ export function SeoSettingsView({ today }: { today: string }) {
           <ContentField
             id="seo-canonicalUrl"
             label="대표 주소"
+            required
             {...(errors.canonicalUrl ? { error: errors.canonicalUrl } : {})}
           >
             <HintInput
@@ -195,7 +197,7 @@ export function SeoSettingsView({ today }: { today: string }) {
           title="공유 카드"
           description="카카오톡·슬랙 등에 링크를 붙였을 때 보이는 미리보기입니다."
         >
-          <ContentField id="seo-ogTitle" label="공유 제목">
+          <ContentField id="seo-ogTitle" label="공유 제목" required>
             <HintInput
               id="seo-ogTitle"
               type="text"
@@ -206,7 +208,7 @@ export function SeoSettingsView({ today }: { today: string }) {
             <LengthHint value={value.ogTitle} limit={SEO_LIMITS.ogTitle} />
           </ContentField>
 
-          <ContentField id="seo-ogDescription" label="공유 설명">
+          <ContentField id="seo-ogDescription" label="공유 설명" required>
             <HintTextarea
               id="seo-ogDescription"
               hint="비우면 검색 설명을 씁니다"
@@ -264,6 +266,7 @@ export function SeoSettingsView({ today }: { today: string }) {
           <ContentField
             id="seo-sitemapPaths"
             label="사이트맵에 넣을 경로"
+            required
             {...(errors.sitemapPaths ? { error: errors.sitemapPaths } : {})}
           >
             <HintTextarea
@@ -281,7 +284,7 @@ export function SeoSettingsView({ today }: { today: string }) {
             </p>
           </ContentField>
 
-          <ContentField id="seo-keywords" label="키워드 (선택)">
+          <ContentField id="seo-keywords" label="키워드">
             <HintInput
               id="seo-keywords"
               type="text"
@@ -343,8 +346,8 @@ export function SeoSettingsView({ today }: { today: string }) {
         {/* 검색 결과 미리보기 — 실제로 어떻게 잘리는지 보여준다 */}
         <ContentSection title="검색 결과 미리보기">
           <div className="flex flex-col gap-1 rounded-lg bg-surface px-4 py-3">
-            <p className="truncate text-xs text-ink-muted">{host || 'example.com'}</p>
-            <p className="truncate text-sm font-medium text-brand-700 dark:text-brand-300">
+            <p className="min-w-0 truncate text-xs text-ink-muted">{host || 'example.com'}</p>
+            <p className="min-w-0 truncate text-sm font-medium text-brand-700 dark:text-brand-300">
               {value.title.trim() || '검색 제목이 여기에 표시됩니다'}
             </p>
             <p className="line-clamp-2 text-xs leading-relaxed text-ink-muted">
@@ -380,13 +383,13 @@ export function SeoSettingsView({ today }: { today: string }) {
                 )}
               </span>
               <div className="min-w-0">
-                <p className="truncate text-xs font-medium">
+                <p className="min-w-0 truncate text-xs font-medium">
                   {value.ogTitle.trim() || value.title.trim() || '공유 제목'}
                 </p>
-                <p className="line-clamp-2 text-[11px] leading-relaxed text-ink-muted">
+                <p className="line-clamp-2 text-2xs leading-relaxed text-ink-muted">
                   {value.ogDescription.trim() || value.description.trim() || '공유 설명'}
                 </p>
-                <p className="mt-1 truncate text-[10px] text-ink-faint">{host || 'example.com'}</p>
+                <p className="mt-1 min-w-0 truncate text-3xs text-ink-faint">{host || 'example.com'}</p>
               </div>
             </div>
           </div>

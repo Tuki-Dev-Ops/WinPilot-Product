@@ -219,13 +219,13 @@ export function ImageUploader({ images, onChange, rules }: ImageUploaderProps) {
             <p className="text-xs font-medium leading-snug">
               {checking ? '확인 중…' : full ? '더 올릴 수 없습니다' : '끌어다 놓거나 클릭'}
             </p>
-            <p className="text-[11px] tabular-nums text-ink-faint">
+            <p className="text-2xs tabular-nums text-ink-faint">
               {images.length} / {maxCount}장
             </p>
           </div>
           {/* 썸네일의 figcaption 높이만큼 자리를 맞춰 타일 아랫줄이 어긋나지 않게 한다 */}
           <div className="px-2 py-2">
-            <p className="truncate text-xs text-ink-faint">
+            <p className="min-w-0 truncate text-xs text-ink-faint">
               {images.length === 0 ? '첫 장이 대표 이미지' : `대표: ${images[0]?.name ?? ''}`}
             </p>
           </div>

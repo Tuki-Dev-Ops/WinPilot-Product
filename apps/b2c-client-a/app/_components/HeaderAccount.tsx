@@ -94,7 +94,7 @@ export function HeaderAccount() {
             <AlarmIcon />
             {/* 읽지 않은 알람 수 — 숫자를 보여야 '몇 개나 밀렸는지' 가 전달된다. */}
             {unread > 0 && (
-              <span className="absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-signal-danger px-1 text-[10px] font-medium leading-none tabular-nums text-white">
+              <span className="absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-signal-danger px-1 text-3xs font-medium leading-none tabular-nums text-white">
                 {unread}
               </span>
             )}

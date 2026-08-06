@@ -3,8 +3,9 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ALL_VALUE, ContentListView, type ContentColumn } from '@/app/contents/_components/ContentListView';
-import { useToast } from '@winpilot/ui';
+import { Badge, useToast } from '@winpilot/ui';
 import { NOTICES, type NoticeRecord } from '@/lib/data/contents';
+import { AdminVisibilityBadge } from '@/app/_components/AdminVisibilityBadge';
 
 const COLUMNS: Array<ContentColumn<NoticeRecord>> = [
   {
@@ -19,7 +20,7 @@ const COLUMNS: Array<ContentColumn<NoticeRecord>> = [
           </span>
         )}
         <div className="min-w-0">
-          <p className="truncate text-sm font-medium">{notice.title}</p>
+          <p className="min-w-0 truncate text-sm font-medium">{notice.title}</p>
           <p className="font-mono text-xs text-ink-faint">{notice.id}</p>
         </div>
       </div>
@@ -33,17 +34,11 @@ const COLUMNS: Array<ContentColumn<NoticeRecord>> = [
   },
   {
     id: 'visible',
-    label: '노출',
+    label: '상태',
     span: 1,
     align: 'center',
     render: (notice) => (
-      <span
-        className={`inline-block shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${
-          notice.visible ? 'bg-signal-ok/12 text-signal-ok' : 'bg-surface text-ink-muted'
-        }`}
-      >
-        {notice.visible ? '노출' : '숨김'}
-      </span>
+      <AdminVisibilityBadge visible={notice.visible} />
     ),
   },
 ];
@@ -56,6 +51,8 @@ export function NoticeListView() {
 
   return (
     <ContentListView<NoticeRecord>
+      title="공지사항"
+      description="고객에게 알릴 공지를 등록하고 노출을 관리하세요."
       entityLabel="공지사항"
       items={notices}
       onItemsChange={setNotices}

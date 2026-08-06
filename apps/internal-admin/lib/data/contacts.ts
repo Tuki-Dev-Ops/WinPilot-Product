@@ -8,6 +8,8 @@
  * `tenantId` 는 고객사 코드와 같다 — 두 화면이 같은 고객사를 가리키게 하려는 것이라 이름을
  * 여기 다시 적지 않는다.
  */
+import type { BadgeTone } from '@winpilot/ui';
+
 export type ContactRole = '총괄' | '결제' | '기술' | '운영';
 
 export type ContactRecord = {
@@ -108,11 +110,11 @@ export const CONTACTS: ContactRecord[] = [
   },
 ];
 
-export const ROLE_TONE: Record<ContactRole, string> = {
-  총괄: 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200',
-  결제: 'bg-surface text-ink-muted',
-  기술: 'bg-signal-ok/12 text-signal-ok',
-  운영: 'bg-surface text-ink-muted',
+export const ROLE_TONE: Record<ContactRole, BadgeTone> = {
+  총괄: 'brand',
+  결제: 'neutral',
+  기술: 'ok',
+  운영: 'neutral',
 };
 
 /** 그 고객사의 담당자. 대표가 맨 위로 온다 — 급할 때 먼저 읽혀야 한다. */

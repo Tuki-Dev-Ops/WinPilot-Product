@@ -3,12 +3,45 @@ import { join } from 'node:path';
 import { chromium } from 'playwright';
 import { pages as clientPages, breakpoints as clientBreakpoints } from '../apps/b2c-client-a/pages.manifest';
 import { pages as adminPages, breakpoints as adminBreakpoints } from '../apps/b2c-admin/pages.manifest';
+import {
+  pages as internalPages,
+  breakpoints as internalBreakpoints,
+} from '../apps/internal-admin/pages.manifest';
 
-/** 어느 앱을 찍을지 — `CAPTURE_APP=admin pnpm docs:capture` */
-const APP = process.env.CAPTURE_APP === 'admin' ? 'admin' : 'client';
-const DIR = APP === 'admin' ? 'b2c-admin' : 'b2c-client-a';
-const pages = APP === 'admin' ? adminPages : clientPages;
-const breakpoints = APP === 'admin' ? adminBreakpoints : clientBreakpoints;
+/**
+ * 어느 앱을 찍을지 — `CAPTURE_APP=internal pnpm docs:capture`
+ *
+ * 세 앱이 같은 문서 세트를 갖는다. 한 앱만 캡처가 없으면 그 앱의 `Page View` 는 주소는
+ * 있는데 내용이 없는 자리가 되고, 문서를 훑는 사람이 **캡처를 아직 안 뜬 것인지 화면이
+ * 없는 것인지** 알 수 없다.
+ */
+const TARGETS = {
+  client: { dir: 'b2c-client-a', pages: clientPages, breakpoints: clientBreakpoints, base: 'http://localhost:3310' },
+  admin: { dir: 'b2c-admin', pages: adminPages, breakpoints: adminBreakpoints, base: 'http://localhost:3301' },
+  internal: { dir: 'internal-admin', pages: internalPages, breakpoints: internalBreakpoints, base: 'http://localhost:3302' },
+} as const;
+
+type TargetName = keyof typeof TARGETS;
+
+/**
+ * 고를 앱. `--app=internal` 이 먼저이고 환경 변수는 그다음이다.
+ *
+ * 인자를 받는 이유: 환경 변수 앞에 붙이는 문법이 셸마다 다르다(`CAPTURE_APP=x cmd` 은
+ * PowerShell 에서 통하지 않는다). 스크립트에 적어 둘 수 있는 형태가 하나는 있어야 한다.
+ */
+function pickApp(): TargetName {
+  const flag = process.argv.find((one) => one.startsWith('--app='))?.slice('--app='.length);
+  const raw = flag ?? process.env.CAPTURE_APP ?? 'client';
+  if (raw === 'admin' || raw === 'internal' || raw === 'client') return raw;
+  throw new Error(`모르는 앱: ${raw} (client · admin · internal 중 하나)`);
+}
+
+const APP: TargetName = pickApp();
+
+const TARGET = TARGETS[APP];
+const DIR = TARGET.dir;
+const pages = TARGET.pages;
+const breakpoints = TARGET.breakpoints;
 
 /**
  * 화면 캡처 — **정상 화면과 예외 화면을 같은 방식으로** 찍는다.
@@ -24,7 +57,7 @@ const breakpoints = APP === 'admin' ? adminBreakpoints : clientBreakpoints;
  *
  * 실행: 개발 서버를 띄운 뒤 `pnpm docs:capture` (기본 http://localhost:3310)
  */
-const BASE = process.env.CAPTURE_BASE ?? (APP === 'admin' ? 'http://localhost:3301' : 'http://localhost:3310');
+const BASE = process.env.CAPTURE_BASE ?? TARGET.base;
 const OUT = join('apps', DIR, 'docs', 'page-view');
 /*
   그림은 `public/` 아래에 둔다 — 문서(`docs/`)는 빌드 때 읽는 글이고, 그림은 브라우저가
@@ -35,7 +68,13 @@ const IMAGES = join('apps', DIR, 'public', 'page-view');
 /** 정상 화면 밖의 상태들. `screen` 은 매니페스트 id 이고, 없는 id 면 따로 문서를 만든다. */
 type Exception = { screen: string; id: string; label: string; url: string; note: string };
 
-/** 예외 화면은 고객 화면에만 정해 두었다. 어드민은 정상 화면만 찍는다. */
+/**
+ * 예외 화면은 고객 화면에만 정해 두었다.
+ *
+ * 두 어드민은 정상 화면만 찍는다 — 빈 목록·실패는 **조건을 주소에 담을 수 없는 자리**가
+ * 많아(고른 고객사·연 창) 주소 하나로 재현되지 않는다. 재현되지 않는 것을 찍어 두면
+ * 다음에 다시 뜰 때 다른 그림이 나와 비교가 되지 않는다.
+ */
 const CLIENT_EXCEPTIONS: Exception[] = [
   {
     screen: 'products',
@@ -96,7 +135,7 @@ const CLIENT_EXCEPTIONS: Exception[] = [
   },
 ];
 
-const EXCEPTIONS: Exception[] = APP === 'admin' ? [] : CLIENT_EXCEPTIONS;
+const EXCEPTIONS: Exception[] = APP === 'client' ? CLIENT_EXCEPTIONS : [];
 
 type Shot = { id: string; label: string; url: string; note: string; screen: string };
 

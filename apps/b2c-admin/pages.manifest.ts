@@ -118,6 +118,9 @@ export const pages: PageSpec[] = [
   { order: 72, id: 'settings-terms', name: 'Settings Terms', route: '/settings/terms' },
   { order: 73, id: 'settings-privacy', name: 'Settings Privacy', route: '/settings/privacy' },
 
+  // 80번대 — 고객 지원 (우리에게 묻는 자리)
+  { order: 80, id: 'support', name: 'Support', route: '/support' },
+
   // 100번대 — 시스템·디자인 시스템 면
   { order: 23, id: 'products-reviews', name: 'Product Reviews', route: '/products/reviews' },
   { order: 24, id: 'products-coupons', name: 'Product Coupons', route: '/products/coupons' },

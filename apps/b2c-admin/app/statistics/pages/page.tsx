@@ -53,8 +53,8 @@ export default function AdminPageviewListPage() {
               </span>
 
               <div className="min-w-0 lg:col-span-4">
-                <p className="truncate text-sm font-medium">{page.label}</p>
-                <p className="truncate font-mono text-xs text-ink-faint">{page.path}</p>
+                <p className="min-w-0 truncate text-sm font-medium">{page.label}</p>
+                <p className="min-w-0 truncate font-mono text-xs text-ink-faint">{page.path}</p>
               </div>
 
               <div className="flex items-baseline gap-2 lg:col-span-2 lg:justify-end">

@@ -22,6 +22,7 @@ import {
 import { ProductMobilePreview } from './ProductMobilePreview';
 import { ProductOptionEditor } from './ProductOptionEditor';
 import { ProductTagBadges } from './ProductTagBadges';
+import { visibilityLabel } from '@/app/_components/AdminVisibilityBadge';
 
 const SALE_STATES = ['판매중', '판매대기', '판매중지'];
 const REWARD_KINDS: RewardKind[] = ['정률', '정액'];
@@ -292,7 +293,7 @@ export function ProductForm({
               ) : (
                 <span className="text-sm text-ink-faint">해당 없음</span>
               )}
-              <span className="ml-auto truncate text-xs text-ink-faint">
+              <span className="ml-auto min-w-0 truncate text-xs text-ink-faint">
                 누적 판매 {formatAmount(salesCount)}건
               </span>
             </div>
@@ -560,7 +561,7 @@ export function ProductForm({
           <ChoiceGroup
             legend="고객 화면 노출"
             options={['노출', '숨김']}
-            value={value.visible ? '노출' : '숨김'}
+            value={visibilityLabel(value.visible)}
             onChange={(next) => update('visible', next === '노출')}
           />
         </Section>
@@ -606,7 +607,7 @@ export function ProductForm({
                 : '없음',
           },
           { label: '재고', value: `${formatAmount(totalStock(value))}개` },
-          { label: '노출', value: value.visible ? '노출' : '숨김' },
+          { label: '노출', value: visibilityLabel(value.visible) },
           { label: '이미지', value: `${images.length}장` },
           { label: '자동 분류', value: tags.length > 0 ? tags.join(' · ') : '해당 없음' },
         ]}

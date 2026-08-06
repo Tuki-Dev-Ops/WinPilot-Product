@@ -76,7 +76,7 @@ export function ContentMobilePreview({
 
             <div className="flex flex-col gap-3 px-4 py-4">
               {badge && (
-                <span className="w-fit shrink-0 whitespace-nowrap rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-semibold text-brand-700 dark:bg-brand-900 dark:text-brand-200">
+                <span className="w-fit shrink-0 whitespace-nowrap rounded-full bg-brand-50 px-2 py-0.5 text-3xs font-semibold text-brand-700 dark:bg-brand-900 dark:text-brand-200">
                   {badge}
                 </span>
               )}

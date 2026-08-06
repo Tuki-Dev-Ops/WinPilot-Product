@@ -24,7 +24,7 @@ export default async function AdminNewsDetailPage({ params }: { params: Promise<
   if (!news) notFound();
 
   return (
-    <AdminShell sectionId="content" trail={['콘텐츠', '뉴스', '상세페이지 (수정)']} activeChildId="content-news">
+    <AdminShell sectionId="content" trail={['콘텐츠', '뉴스', '상세페이지 (수정)']} activeChildId="content-news" back={{ href: '/contents/news', label: '뉴스 목록' }}>
       <NewsForm
         mode="edit"
         newsCode={news.id}

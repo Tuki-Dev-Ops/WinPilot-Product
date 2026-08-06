@@ -2,42 +2,19 @@
 
 import { useEffect, useMemo, useState, type MouseEvent } from 'react';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
-import { AdminListToolbar } from '@/app/_components/AdminListToolbar';
-import { useToast } from '@winpilot/ui';
-import {
-  FAQ_CATEGORIES,
-  FAQS,
-  nextContentId,
-  type FaqCategoryRecord,
-  type FaqRecord,
-} from '@/lib/data/contents';
+import { Badge, ListToolbar, PageHeading, RowActions, RowIconButton, RowSelectCell, SelectAllCell, useToast } from '@winpilot/ui';
+import { FAQ_CATEGORIES, FAQS, nextContentId, type FaqCategoryRecord, type FaqRecord } from '@/lib/data/contents';
 import { todayStamp } from '@/lib/data/product-tags';
 import type { FaqFormInput } from '@/lib/validation/content-record';
 import { FaqCategoryModal, type FaqCategoryInput } from './FaqCategoryModal';
 import { FaqFormModal, type FaqFormMode } from './FaqFormModal';
+import { AdminVisibilityBadge } from '@/app/_components/AdminVisibilityBadge';
 
 const TAB_VISIBLE: Record<string, boolean | null> = { all: null, shown: true, hidden: false };
 const TAB_LABEL: Record<string, string> = { all: '전체', shown: '노출', hidden: '숨김' };
 
-// shrink-0 · whitespace-nowrap — 좁은 폭에서 flex 가 버튼을 눌러 글자가 접히는 것을 막는다.
-const ACTION_BUTTON = 'h-8 shrink-0 whitespace-nowrap rounded-lg border px-3 text-sm transition-colors duration-150';
-const NEUTRAL_ACTION = `${ACTION_BUTTON} border-border-strong text-ink-muted hover:border-ink-faint`;
-const DANGER_ACTION = `${ACTION_BUTTON} border-border-strong text-signal-danger hover:border-signal-danger`;
 
-/** 행 클릭이 선택/상세를 담당하므로, 행 안의 버튼은 자기 동작만 하도록 전파를 끊는다. */
-const stopRowClick = (event: MouseEvent) => event.stopPropagation();
 
-function VisibilityBadge({ visible }: { visible: boolean }) {
-  return (
-    <span
-      className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${
-        visible ? 'bg-signal-ok/12 text-signal-ok' : 'bg-surface text-ink-muted'
-      }`}
-    >
-      {visible ? '노출' : '숨김'}
-    </span>
-  );
-}
 
 /** HTML 답변에서 목록에 보여줄 한 줄을 뽑는다. */
 function plainText(html: string): string {
@@ -88,6 +65,14 @@ export function FaqListView() {
   };
 
   // 카테고리는 자기 자신이 걸리거나 그 안의 FAQ 가 걸리면 남긴다 — 항목을 찾을 때 상위가 사라지면 못 찾는다.
+  /*
+    고르는 칸. **일괄로 할 일이 아직 없어 선택 줄(일괄 작업 막대)은 그리지 않는다** — 지우는 일은
+    줄마다의 휴지통이 이미 맡고 있고, 카테고리를 여럿 한꺼번에 지우면 그 아래 FAQ 가 어디로 가는지
+    물어볼 자리가 없다. 그래도 칸은 둔다: 표마다 맨 왼쪽이 같은 자리여야 눈이 헤매지 않는다.
+  */
+  const [pickedCategories, setPickedCategories] = useState<string[]>([]);
+  const [pickedFaqs, setPickedFaqs] = useState<string[]>([]);
+
   const visibleCategories = useMemo(
     () =>
       categories.filter((category) => {
@@ -215,7 +200,9 @@ export function FaqListView() {
 
   return (
     <>
-      <AdminListToolbar
+      <PageHeading title="FAQ" description="자주 묻는 질문과 분류를 관리하세요." />
+
+      <ListToolbar
         tabs={tabs}
         activeTabId={activeTabId}
         onTabChange={setActiveTabId}
@@ -247,11 +234,17 @@ export function FaqListView() {
           ) : (
             <>
               <div className="hidden gap-4 border-b border-border px-5 py-3 text-xs text-ink-faint lg:grid lg:grid-cols-12 lg:items-center">
-                <span className="lg:col-span-1 lg:text-center">순번</span>
+                <SelectAllCell
+                  checked={visibleCategories.length > 0 && pickedCategories.length === visibleCategories.length}
+                  indeterminate={pickedCategories.length > 0}
+                  onChange={(checked) =>
+                    setPickedCategories(checked ? visibleCategories.map((one) => one.id) : [])
+                  }
+                />
                 <span className="lg:col-span-4">카테고리명</span>
                 <span className="lg:col-span-2">FAQ</span>
-                <span className="lg:col-span-2 lg:text-center">노출</span>
-                <span className="lg:col-span-3 lg:text-right">관리</span>
+                <span className="lg:col-span-2 lg:text-center">상태</span>
+                <span className="lg:col-span-3 lg:text-center">관리</span>
               </div>
 
               <div className="flex flex-col">
@@ -265,9 +258,16 @@ export function FaqListView() {
                         active ? 'bg-brand-50 dark:bg-brand-900' : 'hover:bg-surface'
                       }`}
                     >
-                      <span className="font-mono text-sm tabular-nums text-ink-faint lg:col-span-1 lg:text-center">
-                        {index + 1}
-                      </span>
+                      <RowSelectCell
+                        checked={pickedCategories.includes(category.id)}
+                        onChange={(checked) =>
+                          setPickedCategories((previous) =>
+                            checked ? [...previous, category.id] : previous.filter((one) => one !== category.id),
+                          )
+                        }
+                        label={`${category.name} 선택`}
+                        index={index}
+                      />
 
                       <div className="min-w-0 lg:col-span-4">
                         <p
@@ -284,25 +284,24 @@ export function FaqListView() {
                       </div>
 
                       <div className="flex items-center gap-2 lg:col-span-2 lg:justify-center">
-                        <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">노출</span>
-                        <VisibilityBadge visible={category.visible} />
+                        <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">상태</span>
+                        <AdminVisibilityBadge visible={category.visible} />
                       </div>
 
-                      <div className="flex items-center gap-2 lg:col-span-3 lg:justify-end" onClick={stopRowClick}>
-                        <button
-                          type="button"
-                          onClick={() => setCategoryForm({ mode: 'edit', record: category })}
-                          className={NEUTRAL_ACTION}
-                        >
-                          조회
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setPendingDelete({ kind: 'category', record: category })}
-                          className={DANGER_ACTION}
-                        >
-                          삭제
-                        </button>
+                      <div className="lg:col-span-3">
+                        <RowActions>
+                          <RowIconButton
+                            icon="view"
+                            label={`${category.name} 상세`}
+                            onClick={() => setCategoryForm({ mode: 'edit', record: category })}
+                          />
+                          <RowIconButton
+                            icon="delete"
+                            tone="danger"
+                            label={`${category.name} 삭제`}
+                            onClick={() => setPendingDelete({ kind: 'category', record: category })}
+                          />
+                        </RowActions>
                       </div>
                     </div>
                   );
@@ -338,11 +337,15 @@ export function FaqListView() {
           ) : (
             <>
               <div className="hidden gap-4 border-b border-border px-5 py-3 text-xs text-ink-faint lg:grid lg:grid-cols-12 lg:items-center">
-                <span className="lg:col-span-1 lg:text-center">순번</span>
+                <SelectAllCell
+                  checked={visibleFaqs.length > 0 && pickedFaqs.length === visibleFaqs.length}
+                  indeterminate={pickedFaqs.length > 0}
+                  onChange={(checked) => setPickedFaqs(checked ? visibleFaqs.map((one) => one.id) : [])}
+                />
                 <span className="lg:col-span-4">질문</span>
                 <span className="lg:col-span-2">등록일</span>
-                <span className="lg:col-span-2 lg:text-center">노출</span>
-                <span className="lg:col-span-3 lg:text-right">관리</span>
+                <span className="lg:col-span-2 lg:text-center">상태</span>
+                <span className="lg:col-span-3 lg:text-center">관리</span>
               </div>
 
               <div className="flex flex-col">
@@ -352,13 +355,20 @@ export function FaqListView() {
                     onClick={() => setFaqForm({ mode: 'edit', record: faq })}
                     className="grid cursor-pointer grid-cols-1 gap-x-4 gap-y-2 border-b border-border px-5 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface lg:grid-cols-12 lg:items-center lg:gap-y-0"
                   >
-                    <span className="font-mono text-sm tabular-nums text-ink-faint lg:col-span-1 lg:text-center">
-                      {index + 1}
-                    </span>
+                    <RowSelectCell
+                      checked={pickedFaqs.includes(faq.id)}
+                      onChange={(checked) =>
+                        setPickedFaqs((previous) =>
+                          checked ? [...previous, faq.id] : previous.filter((one) => one !== faq.id),
+                        )
+                      }
+                      label={`${faq.question} 선택`}
+                      index={index}
+                    />
 
                     <div className="min-w-0 lg:col-span-4">
-                      <p className="truncate text-sm font-medium">{faq.question}</p>
-                      <p className="truncate text-xs text-ink-faint">{plainText(faq.answer)}</p>
+                      <p className="min-w-0 truncate text-sm font-medium">{faq.question}</p>
+                      <p className="min-w-0 truncate text-xs text-ink-faint">{plainText(faq.answer)}</p>
                     </div>
 
                     <div className="flex items-baseline gap-2 lg:col-span-2">
@@ -367,25 +377,24 @@ export function FaqListView() {
                     </div>
 
                     <div className="flex items-center gap-2 lg:col-span-2 lg:justify-center">
-                      <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">노출</span>
-                      <VisibilityBadge visible={faq.visible} />
+                      <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">상태</span>
+                      <AdminVisibilityBadge visible={faq.visible} />
                     </div>
 
-                    <div className="flex items-center gap-2 lg:col-span-3 lg:justify-end" onClick={stopRowClick}>
-                      <button
-                        type="button"
-                        onClick={() => setFaqForm({ mode: 'edit', record: faq })}
-                        className={NEUTRAL_ACTION}
-                      >
-                        조회
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setPendingDelete({ kind: 'faq', record: faq })}
-                        className={DANGER_ACTION}
-                      >
-                        삭제
-                      </button>
+                    <div className="lg:col-span-3">
+                      <RowActions>
+                        <RowIconButton
+                          icon="view"
+                          label={`${faq.question} 상세`}
+                          onClick={() => setFaqForm({ mode: 'edit', record: faq })}
+                        />
+                        <RowIconButton
+                          icon="delete"
+                          tone="danger"
+                          label={`${faq.question} 삭제`}
+                          onClick={() => setPendingDelete({ kind: 'faq', record: faq })}
+                        />
+                      </RowActions>
                     </div>
                   </div>
                 ))}

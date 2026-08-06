@@ -78,7 +78,7 @@ export function PortfolioListView({ items }: { items: PortfolioItem[] }) {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <p className="truncate text-xs text-ink-faint">
+                <p className="min-w-0 truncate text-xs text-ink-faint">
                   {item.client} · {item.period}
                 </p>
                 {/* 제목도 두 줄까지만 — 길이가 제각각이라 자르지 않으면 카드 높이가 들쭉날쭉해진다. */}

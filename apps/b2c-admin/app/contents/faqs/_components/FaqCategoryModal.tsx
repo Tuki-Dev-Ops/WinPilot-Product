@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AdminModal } from '@/app/_components/AdminModal';
-import { HintInput } from '@winpilot/ui';
+import { Button, Field, HintInput, Modal } from '@winpilot/ui';
 import { CONTENT_MESSAGES } from '@/lib/validation/content-record';
 
 export type FaqCategoryInput = { name: string; visible: boolean };
@@ -37,34 +36,27 @@ export function FaqCategoryModal({ open, mode, initial, onClose, onSubmit }: Faq
   };
 
   return (
-    <AdminModal
+    <Modal
       open={open}
       title={mode === 'create' ? 'FAQ 카테고리 추가' : 'FAQ 카테고리 수정'}
       onClose={onClose}
       footer={
         <>
-          <button
-            type="button"
-            onClick={onClose}
-            className="h-9 shrink-0 whitespace-nowrap rounded-lg border border-border-strong px-4 text-sm text-ink-muted"
-          >
+          <Button tone="secondary" onClick={onClose}>
             취소
-          </button>
-          <button
-            type="button"
-            onClick={submit}
-            className="h-9 shrink-0 whitespace-nowrap rounded-lg bg-brand-500 px-4 text-sm font-medium text-white hover:bg-brand-600"
-          >
+          </Button>
+          <Button onClick={submit}>
             {mode === 'create' ? '추가' : '저장'}
-          </button>
+          </Button>
         </>
       }
     >
       <div className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2">
-          <label htmlFor="faq-category-name" className="text-sm font-medium">
-            카테고리명
-          </label>
+        <Field
+          label="카테고리명"
+          htmlFor="faq-category-name"
+          required
+        >
           <HintInput
             id="faq-category-name"
             type="text"
@@ -77,7 +69,7 @@ export function FaqCategoryModal({ open, mode, initial, onClose, onSubmit }: Faq
             invalid={Boolean(error)}
           />
           {error && <p className="text-sm text-signal-danger">{error}</p>}
-        </div>
+        </Field>
 
         <fieldset className="flex flex-col gap-2">
           <legend className="text-sm font-medium">노출</legend>
@@ -103,6 +95,6 @@ export function FaqCategoryModal({ open, mode, initial, onClose, onSubmit }: Faq
           </div>
         </fieldset>
       </div>
-    </AdminModal>
+    </Modal>
   );
 }

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function AdminNewsCreatePage() {
   return (
-    <AdminShell sectionId="content" trail={['콘텐츠', '뉴스', '상세페이지 (등록)']} activeChildId="content-news">
+    <AdminShell sectionId="content" trail={['콘텐츠', '뉴스', '상세페이지 (등록)']} activeChildId="content-news" back={{ href: '/contents/news', label: '뉴스 목록' }}>
       {/* 코드·등록일은 서버에서 정한다 — 화면이 스스로 읽으면 서버·브라우저 값이 어긋난다. */}
       <NewsForm
         mode="create"

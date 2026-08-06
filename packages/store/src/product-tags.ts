@@ -51,7 +51,8 @@ export function todayStamp(): string {
   return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 }
 
-export const TAG_TONE: Record<ProductTag, string> = {
-  NEW: 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200',
-  BEST: 'bg-signal-danger/12 text-signal-danger',
-};
+/*
+ * `TAG_TONE` 은 `apps/b2c-admin/lib/data/product-tags.ts` 로 내렸다 — 이유는
+ * `banners.ts` 의 `SCHEDULE_TONE` 과 같다. 태그가 무엇인지(`productTags()`)는 두 화면이
+ * 같아야 하지만, 그것을 무슨 색으로 그릴지는 화면이 정한다.
+ */

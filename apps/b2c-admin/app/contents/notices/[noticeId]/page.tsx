@@ -28,6 +28,7 @@ export default async function AdminNoticeDetailPage({ params }: { params: Promis
       sectionId="content"
       trail={['콘텐츠', '공지사항', '상세페이지 (수정)']}
       activeChildId="content-notice"
+      back={{ href: '/contents/notices', label: '공지사항 목록' }}
     >
       <NoticeForm
         mode="edit"

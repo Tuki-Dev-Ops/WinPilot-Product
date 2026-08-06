@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState, type ReactNode } from 'react';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
-import { useToast } from '@winpilot/ui';
+import { Badge, useToast } from '@winpilot/ui';
 import { PAY_TONE, SHIP_TONE, type OrderRecord } from '@/lib/data/orders';
 import { canExchange, findOption, optionLabelOf } from '@/lib/data/product-options';
 import { formatAmount } from '@/lib/validation/product-record';
@@ -119,18 +119,14 @@ export function OrderDetailView({ order: initial }: { order: OrderRecord }) {
               <span className="font-mono tabular-nums text-ink-muted">{order.orderedAt}</span>
             </Row>
             <Row label="결제 상태">
-              <span
-                className={`inline-block shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${PAY_TONE[order.payState]}`}
-              >
+              <Badge tone={PAY_TONE[order.payState]}>
                 {order.payState}
-              </span>
+              </Badge>
             </Row>
             <Row label="배송 상태">
-              <span
-                className={`inline-block shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${SHIP_TONE[order.shipState]}`}
-              >
+              <Badge tone={SHIP_TONE[order.shipState]}>
                 {order.shipState}
-              </span>
+              </Badge>
             </Row>
           </Section>
 

@@ -1,5 +1,6 @@
 'use client';
 
+import { Check, Minus } from 'lucide-react';
 import { useEffect, useRef, type ChangeEvent } from 'react';
 
 export type CheckboxProps = {
@@ -43,31 +44,22 @@ export function Checkbox({ checked, indeterminate = false, onChange, label, disa
         */
         className="peer size-[18px] cursor-pointer appearance-none rounded border-[1.5px] border-border-strong bg-canvas transition-colors duration-100 hover:border-ink-faint checked:border-brand-500 checked:bg-brand-500 indeterminate:border-brand-500 indeterminate:bg-brand-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 disabled:cursor-not-allowed disabled:opacity-50"
       />
-      {/* 체크 표시는 실제 SVG 라 추출된다 — 글꼴 글리프(✓)로 두면 Figma 에서 모양이 달라진다. */}
-      <svg
-        aria-hidden="true"
-        width="12"
-        height="12"
-        viewBox="0 0 12 12"
-        fill="none"
-        stroke="#ffffff"
-        strokeWidth="2"
-        className="pointer-events-none absolute hidden peer-checked:block"
-      >
-        <path d="M2.5 6.3 L5 8.8 L9.5 3.6" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-      <svg
-        aria-hidden="true"
-        width="12"
-        height="12"
-        viewBox="0 0 12 12"
-        fill="none"
-        stroke="#ffffff"
-        strokeWidth="2"
-        className="pointer-events-none absolute hidden peer-indeterminate:block"
-      >
-        <path d="M3 6 L9 6" strokeLinecap="round" />
-      </svg>
+      {/*
+        체크와 빗금도 실제 SVG 라 Figma 로 추출된다 — 글꼴 글리프(✓)로 두면 모양이 달라진다.
+
+        색을 `stroke="#ffffff"` 로 못 박지 않고 `text-white` 로 준다. 라이브러리 아이콘은
+        `currentColor` 를 쓰므로, 색을 글자색으로 다루면 나중에 톤을 바꿀 때 손댈 자리가 한 곳이다.
+      */}
+      <Check
+        aria-hidden
+        className="pointer-events-none absolute hidden size-3 text-white peer-checked:block"
+        strokeWidth={3}
+      />
+      <Minus
+        aria-hidden
+        className="pointer-events-none absolute hidden size-3 text-white peer-indeterminate:block"
+        strokeWidth={3}
+      />
     </span>
   );
 }

@@ -86,12 +86,12 @@ export function AlarmListView({ alarms }: { alarms: AlarmItem[] }) {
               />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="shrink-0 whitespace-nowrap rounded-full bg-surface px-2 py-0.5 text-[10px] text-ink-muted">
+                  <span className="shrink-0 whitespace-nowrap rounded-full bg-surface px-2 py-0.5 text-3xs text-ink-muted">
                     {alarm.kind}
                   </span>
                   <span className="min-w-0 truncate text-sm font-medium">{alarm.title}</span>
                 </div>
-                <p className="mt-1 truncate text-xs text-ink-muted">{alarm.body}</p>
+                <p className="mt-1 min-w-0 truncate text-xs text-ink-muted">{alarm.body}</p>
               </div>
               <span className="shrink-0 whitespace-nowrap font-mono text-xs tabular-nums text-ink-faint">
                 {alarm.createdAt.slice(5)}

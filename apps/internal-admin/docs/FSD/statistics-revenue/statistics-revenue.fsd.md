@@ -20,13 +20,14 @@
 
 ## 2. 기능 뷰
 
-_캡처가 아직 없습니다 — `pnpm docs:capture` 로 뜹니다._
+![Revenue 데스크톱](/page-view/statistics-revenue/statistics-revenue-desktop.jpg)
+
+세 너비(데스크톱·태블릿·모바일)와 예외 화면은 `apps/internal-admin/docs/page-view/statistics-revenue/` 에서 본다.
 
 ### 화면 구성
 
 | 영역 | 용도 | 표시 조건 |
 |---|---|---|
-| 요약 카드 | 최근 12개월 · 이번 달 · 앞 달 대비 · 월평균 | — |
 | 달별 매출 | 인라인 SVG 막대 | — |
 | 무엇으로 · 어디서 | 항목별·고객사별 비중 | — |
 | 달별 내역 | 차트와 같은 값의 표 | — |

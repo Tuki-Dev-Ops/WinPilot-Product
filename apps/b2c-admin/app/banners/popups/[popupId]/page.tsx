@@ -25,7 +25,7 @@ export default async function AdminPopupDetailPage({ params }: { params: Promise
   if (!popup) notFound();
 
   return (
-    <AdminShell sectionId="banner" trail={['배너', '팝업', '상세페이지 (수정)']} activeChildId="banner-popup">
+    <AdminShell sectionId="banner" trail={['배너', '팝업', '상세페이지 (수정)']} activeChildId="banner-popup" back={{ href: '/banners/popups', label: '팝업 목록' }}>
       <PopupForm
         mode="edit"
         popupCode={popup.id}

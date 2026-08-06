@@ -1,126 +1,49 @@
 /**
- * 고객사가 **우리에게** 보낸 문의 — **프론트엔드 전용** 시드.
+ * 고객사가 **우리에게** 보낸 문의.
  *
- * B2C Admin 의 문의는 고객이 고객사에게 보낸 것이고, 여기 문의는 고객사가 우리에게 보낸
- * 것이다. 받는 쪽도 답하는 쪽도 달라 자원을 나눴다.
+ * ## 값이 여기 있지 않다
+ * 원본은 `@winpilot/store` 의 `support.ts` 다. **고객사가 올리고 우리가 답하는** 한 자원이라,
+ * 올리는 쪽(`b2c-admin` 의 `/support`)과 답하는 쪽(이 콘솔의 `/inquiries`)이 같은 것을 읽어야
+ * 한다. 두 벌로 두면 고객사가 올린 문의가 우리 목록에 없거나 우리가 쓴 답이 고객사에게 보이지
+ * 않고, 그 어긋남은 고객사가 "답이 없다" 고 전화할 때 처음 드러난다.
  *
- * 상태 이름(접수·처리중·답변완료·보류)은 **B2C Admin 과 글자까지 같다.** 두 콘솔을 오가며
- * 일하는 사람이 같은 말을 다르게 읽지 않게 하려는 것이고, 장애 상황에서 서로 통해야 한다.
+ * ## 이름은 이 콘솔의 말로 쓴다
+ * 공유 패키지에서는 `SupportRequest` 이다 — 고객사 쪽에서는 그것이 `문의` 가 아니라 `지원 요청`
+ * 에 가깝기 때문이다. 이 콘솔의 화면 열몇 곳은 이미 `문의` 라는 말로 적혀 있고, 그 말이 사이드바
+ * 메뉴 이름이기도 하다. 그래서 **이 자리에서 이름만 갈아 끼운다.**
+ *
+ * B2C Admin 의 `문의` 는 **고객이 고객사에게** 보낸 것이다. 받는 쪽도 답하는 쪽도 달라 자원을
+ * 나눴다.
  */
-export type InquiryState = '접수' | '처리중' | '답변완료' | '보류';
+import type { BadgeTone } from '@winpilot/ui';
+import {
+  SUPPORT_CATEGORIES,
+  SUPPORT_STATES,
+  SUPPORT_REQUESTS,
+  openRequests,
+  type SupportCategory,
+  type SupportState,
+  type SupportRequest,
+} from '@winpilot/store';
 
-/** 분류는 기준 값(`/settings/codes`)의 `문의 분류` 와 같은 목록이다 — 여기서 새로 정하지 않는다. */
-export type InquiryCategory = '장애' | '기능 요청' | '결제' | '계약' | '기타';
+export type InquiryState = SupportState;
+export type InquiryCategory = SupportCategory;
+export type InquiryRecord = SupportRequest;
 
-export type InquiryRecord = {
-  id: string;
-  tenantId: string;
-  category: InquiryCategory;
-  title: string;
-  body: string;
-  /** 보낸 사람 — 고객사 담당자 */
-  sender: string;
-  receivedAt: string;
-  state: InquiryState;
-  /** 답한 사람. 아직 답하지 않았으면 빈 값 */
-  assignee: string;
-  answer: string;
-  /** 장애처럼 시간이 곧 손해인 문의 */
-  urgent: boolean;
-};
-
-export const INQUIRY_STATES: InquiryState[] = ['접수', '처리중', '답변완료', '보류'];
-export const INQUIRY_CATEGORIES: InquiryCategory[] = ['장애', '기능 요청', '결제', '계약', '기타'];
-
-export const INQUIRIES: InquiryRecord[] = [
-  {
-    id: 'Q-3081',
-    tenantId: 'T-103',
-    category: '장애',
-    title: '카카오 로그인이 되지 않습니다',
-    body: '어제 저녁부터 카카오 로그인 버튼을 누르면 오류 화면으로 갑니다.',
-    sender: '이하늘',
-    receivedAt: '2026-08-04',
-    state: '접수',
-    assignee: '',
-    answer: '',
-    urgent: true,
-  },
-  {
-    id: 'Q-3080',
-    tenantId: 'T-101',
-    category: '기능 요청',
-    title: '정기 구독 결제를 붙일 수 있나요',
-    body: '매달 같은 상품을 자동으로 결제하는 방식이 필요합니다.',
-    sender: '김서연',
-    receivedAt: '2026-08-03',
-    state: '처리중',
-    assignee: '박현우',
-    answer: '',
-    urgent: false,
-  },
-  {
-    id: 'Q-3079',
-    tenantId: 'T-102',
-    category: '결제',
-    title: '테스트 결제가 실결제로 잡혔습니다',
-    body: '테스트 모드였는데 카드에서 금액이 빠져나갔다는 문의를 받았습니다.',
-    sender: '박지훈',
-    receivedAt: '2026-08-02',
-    state: '답변완료',
-    assignee: '박현우',
-    answer: '실결제 모드로 저장되어 있었습니다. 테스트로 되돌리고 결제는 취소 처리했습니다.',
-    urgent: true,
-  },
-  {
-    id: 'Q-3078',
-    tenantId: 'T-101',
-    category: '계약',
-    title: '유지보수 연장 견적을 받고 싶습니다',
-    body: '내년 3월에 끝나는데 미리 조건을 알고 싶습니다.',
-    sender: '김서연',
-    receivedAt: '2026-07-30',
-    state: '답변완료',
-    assignee: '정소미',
-    answer: '엔터프라이즈 기준 월 120만 원으로 동일하게 연장 가능합니다.',
-    urgent: false,
-  },
-  {
-    id: 'Q-3077',
-    tenantId: 'T-102',
-    category: '기능 요청',
-    title: '상품 목록을 엑셀로 내려받고 싶습니다',
-    body: '월말 정산에 쓰려고 합니다.',
-    sender: '박지훈',
-    receivedAt: '2026-07-28',
-    state: '보류',
-    assignee: '정소미',
-    answer: '',
-    urgent: false,
-  },
-  {
-    id: 'Q-3076',
-    tenantId: 'T-103',
-    category: '기타',
-    title: '담당자가 바뀌었습니다',
-    body: '9월부터 다른 사람이 맡습니다. 계정을 옮겨 주세요.',
-    sender: '이하늘',
-    receivedAt: '2026-07-25',
-    state: '답변완료',
-    assignee: '정소미',
-    answer: '새 담당자 계정을 만들고 이전 계정은 중지했습니다.',
-    urgent: false,
-  },
-];
-
-export const INQUIRY_TONE: Record<InquiryState, string> = {
-  접수: 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200',
-  처리중: 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200',
-  답변완료: 'bg-signal-ok/12 text-signal-ok',
-  보류: 'bg-surface text-ink-muted',
-};
+export const INQUIRY_STATES: InquiryState[] = SUPPORT_STATES;
+export const INQUIRY_CATEGORIES: InquiryCategory[] = SUPPORT_CATEGORIES;
+export const INQUIRIES: InquiryRecord[] = SUPPORT_REQUESTS;
 
 /** 아직 답하지 않은 것. 대시보드와 목록이 같은 기준으로 세어야 두 수치가 갈리지 않는다. */
-export function openInquiries(items: readonly InquiryRecord[] = INQUIRIES): InquiryRecord[] {
-  return items.filter((inquiry) => inquiry.state === '접수' || inquiry.state === '처리중');
-}
+export const openInquiries = openRequests;
+
+/*
+  톤 표는 여기 남는다. 공유 패키지는 `@winpilot/ui` 를 알지 못하고, 알게 하면 값만 쓰려는
+  곳까지 UI 를 함께 끌고 온다. 색은 콘솔마다 다를 수 있는 것이기도 하다.
+*/
+export const INQUIRY_TONE: Record<InquiryState, BadgeTone> = {
+  접수: 'brand',
+  처리중: 'brand',
+  답변완료: 'ok',
+  보류: 'neutral',
+};

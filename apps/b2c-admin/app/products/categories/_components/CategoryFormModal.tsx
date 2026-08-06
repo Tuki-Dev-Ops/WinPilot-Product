@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState, type FormEvent } from 'react';
-import { AdminModal } from '@/app/_components/AdminModal';
-import { HintInput } from '@winpilot/ui';
+import { Button, Field, HintInput, Modal } from '@winpilot/ui';
 import {
   validateCategoryField,
   validateCategoryForm,
@@ -78,7 +77,7 @@ export function CategoryFormModal({
   const depthLabel = depth === 1 ? '대분류' : '세부 분류';
 
   return (
-    <AdminModal
+    <Modal
       open={open}
       title={`${depthLabel} ${mode === 'create' ? '추가' : '수정'}`}
       description={
@@ -89,20 +88,12 @@ export function CategoryFormModal({
       onClose={onClose}
       footer={
         <>
-          <button
-            type="button"
-            onClick={onClose}
-            className="h-9 rounded-lg border border-border-strong px-4 text-sm text-ink-muted"
-          >
+          <Button tone="secondary" onClick={onClose}>
             취소
-          </button>
-          <button
-            type="submit"
-            form="category-form"
-            className="h-9 rounded-lg bg-brand-500 px-4 text-sm font-medium text-white hover:bg-brand-600"
-          >
+          </Button>
+          <Button type="submit" form="category-form">
             {mode === 'create' ? '추가' : '저장'}
-          </button>
+          </Button>
         </>
       }
     >
@@ -118,10 +109,12 @@ export function CategoryFormModal({
           </p>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="category-name" className="text-sm font-medium">
-            카테고리명
-          </label>
+        <Field
+          label="카테고리명"
+          htmlFor="category-name"
+          required
+          {...(errors.name ? { error: errors.name } : {})}
+        >
           <HintInput
             id="category-name"
             type="text"
@@ -131,12 +124,7 @@ export function CategoryFormModal({
             invalid={Boolean(errors.name)}
             {...(errors.name ? { 'aria-describedby': 'category-name-error' } : {})}
           />
-          {errors.name && (
-            <p id="category-name-error" className="text-sm text-signal-danger">
-              {errors.name}
-            </p>
-          )}
-        </div>
+        </Field>
 
         <fieldset className="flex flex-col gap-2">
           <legend className="text-sm font-medium">고객 화면 노출</legend>
@@ -162,6 +150,6 @@ export function CategoryFormModal({
           </div>
         </fieldset>
       </form>
-    </AdminModal>
+    </Modal>
   );
 }

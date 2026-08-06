@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AdminModal } from '@/app/_components/AdminModal';
-import { HintInput, RichTextEditor } from '@winpilot/ui';
+import { Button, Field, HintInput, Modal, RichTextEditor } from '@winpilot/ui';
 import {
   hasErrors,
   validateFaq,
@@ -65,35 +64,28 @@ export function FaqFormModal({
   };
 
   return (
-    <AdminModal
+    <Modal
       open={open}
       title={mode === 'create' ? 'FAQ 등록' : 'FAQ 수정'}
       description={`${categoryName} 카테고리에 ${mode === 'create' ? '추가' : '저장'}합니다.`}
       onClose={onClose}
       footer={
         <>
-          <button
-            type="button"
-            onClick={onClose}
-            className="h-9 shrink-0 whitespace-nowrap rounded-lg border border-border-strong px-4 text-sm text-ink-muted"
-          >
+          <Button tone="secondary" onClick={onClose}>
             취소
-          </button>
-          <button
-            type="button"
-            onClick={submit}
-            className="h-9 shrink-0 whitespace-nowrap rounded-lg bg-brand-500 px-4 text-sm font-medium text-white hover:bg-brand-600"
-          >
+          </Button>
+          <Button onClick={submit}>
             {mode === 'create' ? '추가' : '저장'}
-          </button>
+          </Button>
         </>
       }
     >
       <div className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2">
-          <label htmlFor="faq-question" className="text-sm font-medium">
-            질문
-          </label>
+        <Field
+          label="질문"
+          htmlFor="faq-question"
+          required
+        >
           <HintInput
             id="faq-question"
             type="text"
@@ -103,12 +95,13 @@ export function FaqFormModal({
             invalid={Boolean(errors.question)}
           />
           {errors.question && <p className="text-sm text-signal-danger">{errors.question}</p>}
-        </div>
+        </Field>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="faq-answer" className="text-sm font-medium">
-            답변
-          </label>
+        <Field
+          label="답변"
+          htmlFor="faq-answer"
+          required
+        >
           <RichTextEditor
             id="faq-answer"
             hint="답변을 입력해 주세요"
@@ -116,7 +109,7 @@ export function FaqFormModal({
             onChange={(html) => update('answer', html)}
           />
           {errors.answer && <p className="text-sm text-signal-danger">{errors.answer}</p>}
-        </div>
+        </Field>
 
         <fieldset className="flex flex-col gap-2">
           <legend className="text-sm font-medium">노출</legend>
@@ -142,6 +135,6 @@ export function FaqFormModal({
           </div>
         </fieldset>
       </div>
-    </AdminModal>
+    </Modal>
   );
 }

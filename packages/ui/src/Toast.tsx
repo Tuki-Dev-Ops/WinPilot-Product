@@ -1,5 +1,6 @@
 'use client';
 
+import { CircleAlert, CircleCheck, Info, X } from 'lucide-react';
 import {
   createContext,
   useCallback,
@@ -42,35 +43,22 @@ const DURATION_MS = 3200;
 function ToastIcon({ tone }: { tone: ToastTone }) {
   if (tone === 'success') {
     return (
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.6">
-        <circle cx="9" cy="9" r="7" />
-        <path d="M5.75 9.25 L8 11.5 L12.25 6.75" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+      <CircleCheck aria-hidden className="size-[18px]" strokeWidth={1.6} />
     );
   }
   if (tone === 'error') {
     return (
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.6">
-        <circle cx="9" cy="9" r="7" />
-        <path d="M9 5.5 V9.75" strokeLinecap="round" />
-        <path d="M9 12.25 V12.3" strokeLinecap="round" />
-      </svg>
+      <CircleAlert aria-hidden className="size-[18px]" strokeWidth={1.6} />
     );
   }
   return (
-    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <circle cx="9" cy="9" r="7" />
-      <path d="M9 8.25 V12.5" strokeLinecap="round" />
-      <path d="M9 5.7 V5.75" strokeLinecap="round" />
-    </svg>
+    <Info aria-hidden className="size-[18px]" strokeWidth={1.6} />
   );
 }
 
 function CloseIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M4 4 L10 10 M10 4 L4 10" strokeLinecap="round" />
-    </svg>
+    <X aria-hidden className="size-3.5" strokeWidth={1.5} />
   );
 }
 

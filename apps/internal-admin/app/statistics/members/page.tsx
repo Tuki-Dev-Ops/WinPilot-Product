@@ -78,7 +78,7 @@ export default function InternalUserListPage() {
             return (
               <div key={row.tenantId} className="flex min-w-0 flex-col gap-1.5">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <span className="truncate text-sm">
+                  <span className="min-w-0 truncate text-sm">
                     {findTenant(row.tenantId)?.name ?? row.tenantId}
                     <span className="ml-1.5 font-mono text-xs text-ink-faint">{row.tenantId}</span>
                   </span>

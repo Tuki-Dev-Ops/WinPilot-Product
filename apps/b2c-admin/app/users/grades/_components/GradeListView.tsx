@@ -4,7 +4,7 @@ import { useMemo, useState, type MouseEvent } from 'react';
 import { AdminBulkBar } from '@/app/_components/AdminBulkBar';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
 import { AdminListPager } from '@/app/_components/AdminListPager';
-import { Checkbox, useToast } from '@winpilot/ui';
+import { Button, Checkbox, RowActions, RowIconButton, RowSelectCell, useToast } from '@winpilot/ui';
 import { formatAmount, parseAmount, type GradeFormInput, type GradeFormMode } from '@/lib/validation/grade-record';
 import { GradeFormModal, type GradeRecord } from './GradeFormModal';
 
@@ -16,8 +16,6 @@ const INITIAL_GRADES: GradeRecord[] = [
   { id: 'G-04', name: 'VVIP', threshold: 5000000, discountRate: 12, memberCount: 40 },
 ];
 
-/** 행 클릭으로 상세가 열리므로, 행 안의 컨트롤은 자기 동작만 하도록 전파를 끊는다. */
-const stopRowClick = (event: MouseEvent) => event.stopPropagation();
 
 function nextGradeId(grades: GradeRecord[]): string {
   const max = grades.reduce((biggest, grade) => Math.max(biggest, Number(grade.id.replace('G-', ''))), 0);
@@ -121,17 +119,13 @@ export function GradeListView() {
         <p className="text-sm leading-relaxed text-ink-muted">
           누적 결제금액이 기준을 넘으면 해당 등급의 할인율이 적용됩니다.
         </p>
-        <button
-          type="button"
-          onClick={() => {
+        <Button onClick={() => {
             setEditingId(null);
             setMode('create');
             setFormOpen(true);
-          }}
-          className="h-9 shrink-0 rounded-lg bg-brand-500 px-4 text-sm font-medium text-white hover:bg-brand-600"
-        >
+          }}>
           등급 추가
-        </button>
+        </Button>
       </div>
 
       <AdminBulkBar
@@ -153,7 +147,7 @@ export function GradeListView() {
           <span className="lg:col-span-3">누적금액 기준</span>
           <span className="lg:col-span-2">할인율</span>
           <span className="lg:col-span-1">사용자</span>
-          <span className="lg:col-span-2 lg:text-right">관리</span>
+          <span className="lg:col-span-2 lg:text-center">관리</span>
         </div>
 
         {ordered.length === 0 ? (
@@ -166,15 +160,12 @@ export function GradeListView() {
                 onClick={() => openDetail(grade.id)}
                 className="grid cursor-pointer grid-cols-1 gap-x-4 gap-y-2 border-b border-border px-5 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface lg:grid-cols-12 lg:items-center lg:gap-y-0"
               >
-                {/* 행 전체가 상세를 연다. 안쪽 컨트롤은 전파를 끊어 자기 동작만 한다. */}
-                <div className="flex items-center gap-3 lg:col-span-1" onClick={stopRowClick}>
-                  <Checkbox
-                    checked={selected.includes(grade.id)}
-                    onChange={(checked) => toggleOne(grade.id, checked)}
-                    label={`${grade.name} 선택`}
-                  />
-                  <span className="w-6 text-center font-mono text-sm tabular-nums text-ink-faint">{index + 1}</span>
-                </div>
+                <RowSelectCell
+                  checked={selected.includes(grade.id)}
+                  onChange={(checked) => toggleOne(grade.id, checked)}
+                  label={`${grade.name} 선택`}
+                  index={index}
+                />
 
                 <div className="lg:col-span-3">
                   <p className="text-sm font-medium">{grade.name}</p>
@@ -198,21 +189,16 @@ export function GradeListView() {
                   <span className="text-sm tabular-nums text-ink-muted">{grade.memberCount}</span>
                 </div>
 
-                <div className="flex items-center gap-2 lg:col-span-2 lg:justify-end" onClick={stopRowClick}>
-                  <button
-                    type="button"
-                    onClick={() => openDetail(grade.id)}
-                    className="h-8 rounded-lg border border-border-strong px-3 text-sm text-ink-muted transition-colors duration-150 hover:border-ink-faint"
-                  >
-                    조회
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPendingDelete([grade.id])}
-                    className="h-8 rounded-lg border border-border-strong px-3 text-sm text-signal-danger transition-colors duration-150 hover:border-signal-danger"
-                  >
-                    삭제
-                  </button>
+                <div className="lg:col-span-2">
+                  <RowActions>
+                    <RowIconButton icon="view" label={`${grade.name} 상세`} onClick={() => openDetail(grade.id)} />
+                    <RowIconButton
+                      icon="delete"
+                      tone="danger"
+                      label={`${grade.name} 삭제`}
+                      onClick={() => setPendingDelete([grade.id])}
+                    />
+                  </RowActions>
                 </div>
               </div>
             ))}

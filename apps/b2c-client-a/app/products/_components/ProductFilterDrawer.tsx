@@ -167,7 +167,7 @@ export function ProductFilterDrawer({
         <FilterIcon />
         {COPY.product.filter}
         {activeCount > 0 && (
-          <span className="grid size-5 place-items-center rounded-full bg-ink text-[11px] font-medium leading-none tabular-nums text-white">
+          <span className="grid size-5 place-items-center rounded-full bg-ink text-2xs font-medium leading-none tabular-nums text-white">
             {activeCount}
           </span>
         )}

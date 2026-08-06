@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
+import { BackLink } from '@winpilot/ui';
 import { COPY, ROUTES, SLOT, cid } from '@winpilot/client-content';
 
 /**
@@ -68,28 +69,25 @@ export function SupportShell({ children }: { children: ReactNode }) {
  * 상세에서는 **제목 위에 목록으로 돌아가는 길**을 둔다. 브라우저 뒤로가기에 맡기면 검색이나
  * 링크로 바로 들어온 사람에게는 돌아갈 곳이 없다.
  */
-export function SupportHeading({ title, meta, backHref }: { title: string; meta?: string; backHref?: string }) {
+export function SupportHeading({
+  title,
+  meta,
+  backHref,
+  backLabel = '목록으로',
+}: {
+  title: string;
+  meta?: string;
+  backHref?: string;
+  /** 어디로 돌아가는지. 무엇의 목록인지 적을 수 있으면 적는다 */
+  backLabel?: string;
+}) {
   return (
     <header className="flex flex-col gap-2 border-b border-border pb-4">
-      {backHref && (
-        <a
-          href={backHref}
-          className="flex w-fit shrink-0 items-center gap-1 whitespace-nowrap text-sm text-ink-muted hover:text-ink"
-        >
-          <BackIcon />
-          목록으로
-        </a>
-      )}
+      {/* 되돌아가는 길은 공용 조각이다 — 세 콘솔이 같은 모양을 쓰기로 했다(`@winpilot/ui` 의 BackLink). */}
+      {backHref && <BackLink href={backHref} label={backLabel} />}
       <h1 className="text-[22px] font-bold leading-snug tracking-tight">{title}</h1>
       {meta && <p className="font-mono text-xs tabular-nums text-ink-faint">{meta}</p>}
     </header>
   );
 }
 
-function BackIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7">
-      <path d="M12 4.5 L6.5 10 L12 15.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}

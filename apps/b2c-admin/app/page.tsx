@@ -3,13 +3,14 @@ import { AdminShell } from './_components/AdminShell';
 import { BarChart, LineChart } from './statistics/_components/Charts';
 import { StatCard, StatGrid, StatSection } from './statistics/_components/StatCard';
 import { BANNERS, periodText, SCHEDULE_TONE, scheduleState } from '@/lib/data/banners';
-import { DAILY, PAGE_VIEWS, changeRate, formatAmount, pointsFor, shortAmount, sum } from '@/lib/data/analytics';
+import { changeRate, DAILY, formatAmount, PAGE_VIEWS, pointsFor, shortAmount, sum } from '@/lib/data/analytics';
 import { INQUIRIES, INQUIRY_STATE_TONE, pathLabel } from '@/lib/data/inquiries';
 import { ORDERS, PAY_TONE, SHIP_TONE } from '@/lib/data/orders';
 import { optionLabelOf } from '@/lib/data/product-options';
 import { todayStamp } from '@/lib/data/product-tags';
 import { PRODUCTS } from '@/lib/data/products';
 import { parseAmount } from '@/lib/validation/product-record';
+import { Badge } from '@winpilot/ui';
 
 /**
  * Feature: `site.dashboard` · B2C Admin · route `/`
@@ -124,16 +125,12 @@ export default function AdminSiteDashboardPage() {
                     <span className="ml-1.5 text-ink-muted">· {optionLabelOf(order.optionId)}</span>
                   </span>
                   <span className="shrink-0 text-sm tabular-nums">{formatAmount(order.amount)}원</span>
-                  <span
-                    className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${PAY_TONE[order.payState]}`}
-                  >
+                  <Badge tone={PAY_TONE[order.payState]}>
                     {order.payState}
-                  </span>
-                  <span
-                    className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${SHIP_TONE[order.shipState]}`}
-                  >
+                  </Badge>
+                  <Badge tone={SHIP_TONE[order.shipState]}>
                     {order.shipState}
-                  </span>
+                  </Badge>
                 </a>
               ))}
             </div>
@@ -162,16 +159,14 @@ export default function AdminSiteDashboardPage() {
             {unanswered.slice(0, 4).map((inquiry) => (
               <a key={inquiry.id} href="/inquiries" className={TODO_ROW}>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">{inquiry.title}</p>
-                  <p className="truncate text-xs text-ink-faint">
+                  <p className="min-w-0 truncate text-sm font-medium">{inquiry.title}</p>
+                  <p className="min-w-0 truncate text-xs text-ink-faint">
                     {pathLabel(inquiry.path)} · {inquiry.name}
                   </p>
                 </div>
-                <span
-                  className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${INQUIRY_STATE_TONE[inquiry.state]}`}
-                >
+                <Badge tone={INQUIRY_STATE_TONE[inquiry.state]}>
                   {inquiry.state}
-                </span>
+                </Badge>
               </a>
             ))}
           </TodoSection>
@@ -185,8 +180,8 @@ export default function AdminSiteDashboardPage() {
             {soldOut.map((product) => (
               <a key={product.id} href={`/products/${product.id}`} className={TODO_ROW}>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">{product.name}</p>
-                  <p className="truncate font-mono text-xs text-ink-faint">{product.id}</p>
+                  <p className="min-w-0 truncate text-sm font-medium">{product.name}</p>
+                  <p className="min-w-0 truncate font-mono text-xs text-ink-faint">{product.id}</p>
                 </div>
                 <span className="shrink-0 whitespace-nowrap rounded-full bg-signal-danger/12 px-2.5 py-1 text-xs font-medium text-signal-danger">
                   재고 0
@@ -204,8 +199,8 @@ export default function AdminSiteDashboardPage() {
             {exchanges.map((order) => (
               <a key={order.id} href={`/products/sales/${order.id}`} className={TODO_ROW}>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">{order.productName}</p>
-                  <p className="truncate font-mono text-xs text-ink-faint">
+                  <p className="min-w-0 truncate text-sm font-medium">{order.productName}</p>
+                  <p className="min-w-0 truncate font-mono text-xs text-ink-faint">
                     {order.id} · {order.buyerName}
                   </p>
                 </div>
@@ -225,14 +220,12 @@ export default function AdminSiteDashboardPage() {
             {endedBanners.map((banner) => (
               <a key={banner.id} href={`/banners/${banner.id}`} className={TODO_ROW}>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">{banner.title}</p>
-                  <p className="truncate text-xs text-ink-faint">{periodText(banner)}</p>
+                  <p className="min-w-0 truncate text-sm font-medium">{banner.title}</p>
+                  <p className="min-w-0 truncate text-xs text-ink-faint">{periodText(banner)}</p>
                 </div>
-                <span
-                  className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${SCHEDULE_TONE['종료']}`}
-                >
+                <Badge tone={SCHEDULE_TONE['종료']}>
                   종료
-                </span>
+                </Badge>
               </a>
             ))}
           </TodoSection>

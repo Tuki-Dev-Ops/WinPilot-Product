@@ -26,17 +26,33 @@
 | 이름 | 층 | 하는 일 | 쓰이는 화면 |
 |---|---|---|---|
 | `AdminShell` | 껍데기 | 사이드바(최상위 메뉴) · 상단 헤더(현재 위치 · 로그아웃) · 본문 왼쪽 보조 메뉴를 그린다. `lg` 미만에서는 사이드바가 칩 내비게이션으로 접힌다 | **41장** — `/login` 을 뺀 매니페스트의 모든 화면 |
-| `AdminListToolbar` | 목록 | 윗줄에 상태 탭과 주요 액션, 아랫줄에 검색과 필터. 필터는 조건이 걸려 있으면 펼친 채로 시작한다 | `/products` · `/products/categories` · `/products/sales` · `/users` · `/users/admins` · `/inquiries` · `/contents/faqs` · 그리고 `ContentListView` 를 통해 8장 더 (§4) |
-| `AdminListPager` | 목록 | 표 아래 — 총 건수와 이전/다음. 쪽 번호를 늘어놓지 않는다 | `AdminListToolbar` 를 쓰는 화면 중 `/products/categories` · `/contents/faqs` 를 뺀 전부 + `/users/grades` |
+| `AdminListPager` | 목록 | 표 아래 — 총 건수와 이전/다음. 쪽 번호를 늘어놓지 않는다 | `ListToolbar` 를 쓰는 화면 중 `/products/categories` · `/contents/faqs` 를 뺀 전부 + `/users/grades` |
 | `AdminBulkBar` | 목록 | 선택된 항목이 있을 때만 표 위에 뜨는 줄 — 선택 해제 · 선택 삭제 | `/products` · `/users` · `/users/admins` · `/users/grades` · `/inquiries` · 그리고 `ContentListView` 를 통해 8장 |
 | `AdminSelectionBar` | 목록 | 선택한 항목에 걸 동작을 **화면 아래 가운데**에 띄우는 막대. `body` 로 포털한다 | `/products/sales` 한 장 |
-| `AdminModal` | 폼 | 모달의 바탕 — Esc 로 닫고, 열릴 때 본문 스크롤을 잠그고, 첫 입력 요소로 포커스를 옮긴다. 겹쳐 뜬 경우 **맨 위 모달만** Esc 에 반응한다 | 직접 부르지 않고 아래 열 개의 모달이 감싸 쓴다 (§4) |
 | `AdminConfirmModal` | 알림 | 되돌리기 어렵거나 기록이 남는 동작 앞의 확인 창. `tone` 으로 삭제(danger)와 저장(brand)을 가르고, `summary` 로 무엇을 저장하는지 보여 준다 | **22장** — 목록의 삭제·상태 변경, 폼의 등록·저장 전부 |
+| `AdminVisibilityBadge` · `visibilityLabel` | 목록 | 노출/숨김 한 쌍 — 목록의 배지와 확인 창 요약이 **같은 말**을 쓴다 | 목록 7장 + 폼 5장 |
 | `MemberFormModal` | 폼 | 사용자·관리자 등록/수정 폼. 두 화면이 **같은 폼을 설정으로만 가른다**(라벨·상태 목록·역할이 자동인지 선택인지) | `/users` · `/users/admins` |
 | `AdminPagePlaceholder` | 껍데기 | 배선은 끝났고 본문만 비어 있는 화면의 자리표시자 | **없다** — 지금 모든 화면에 본문이 들어가 있다 |
 
 `AdminPagePlaceholder` 를 지우지 않고 두는 이유는 화면을 새로 배선할 때 다시 쓰기 때문이다.
 쓰는 곳이 없다는 것은 지금 비어 있는 화면이 없다는 뜻이므로, 그 자체가 읽을 값이 있는 정보다.
+
+### 2.0 `AdminModal` 은 여기 없다
+
+전에는 이 표에 `AdminModal` 이 있었다. 사내 어드민의 `InternalModal` 과 **백 줄 중 여든 줄이
+같은 파일**이었고, 같지 않은 스무 줄은 전부 한쪽에만 있는 것이었다 — 모달 스택 · 열림
+애니메이션 · `elevated` · `bg-surface-raised`. 특히 모달 스택이 없는 쪽에서는 **확인 창 위에서
+Esc 를 누르면 뒤의 입력 폼까지 함께 닫혔다.**
+
+복사한 날에는 같았고 고친 날부터 갈라졌다. 그래서 `@winpilot/ui` 의 `Modal` 로 올렸다(§5).
+이 앱의 모달들은 이제 그것을 바로 감싼다.
+
+### 2.2 `AdminVisibilityBadge` 가 두 개를 함께 내보내는 이유
+
+목록에는 배지로, 저장 확인 창에는 요약 줄의 **값**으로 같은 말이 나간다. 전에는 열두 자리가
+`x.visible ? '노출' : '숨김'` 을 각자 적고 있었는데, 되풀이되는 값이 **색과 말 둘**이라
+한쪽만 바꾼 화면이 생기기 쉬웠다. 배지가 필요 없는 자리(확인 창)를 위해 `visibilityLabel()` 을
+함께 내보내 둘이 갈라지지 않게 한다.
 
 ### 2.1 확인 창을 삭제에만 세우지 않는 이유
 
@@ -77,7 +93,7 @@
 등록 화면과 상세 화면이 같은 `*Form` 을 쓰는 것은 **상세가 곧 수정 화면**이기 때문이다.
 그 이유는 `docs/path.md` §3.3 에 적혀 있다.
 
-### 4.1 `AdminModal` 을 감싸 쓰는 모달
+### 4.1 `Modal` 을 감싸 쓰는 모달
 
 | 이름 | 여는 화면 |
 |---|---|
@@ -95,24 +111,46 @@
 
 ## 5. `@winpilot/ui` — 세 앱이 나눠 쓰는 원시 요소
 
-여기 들어가는 것은 **도메인을 모르는 것만**이다. 목록 툴바나 어드민 셸처럼 화면 구조를 아는
-것은 앱이 갖는다 — 앱마다 구조가 다르기 때문이다. 뷰 하나가 곧 레포 하나이므로, 앱 안에
-복사해 두면 레포를 나누는 순간 두 벌이 되어 어긋난다.
+여기 들어가는 것은 **도메인을 모르는 것**과, **두 어드민이 같은 것을 쓰기로 정한 것**이다.
+뷰 하나가 곧 레포 하나이므로 앱 안에 복사해 두면 레포를 나누는 순간 두 벌이 되어 어긋난다.
 
-| 이름 | 층 | 하는 일 | 어드민에서 쓰는 파일 수 |
+`ListToolbar` 는 원래 이 앱의 `AdminListToolbar` 였다. 사내 어드민이 같은 툴바를 쓰기로
+정해지면서 올렸고, 그 순간부터 앱마다 두는 것은 두 벌을 만드는 일이 된다. **셸은 여전히 앱이
+갖는다** — 사이드바와 구분 표시가 실제로 다르기 때문이다.
+
+숫자는 그 이름을 쓰는 **파일 수**다 (b2c-admin / internal-admin / b2c-client-a).
+
+| 이름 | 층 | 하는 일 | 쓰는 파일 |
 |---|---|---|---|
-| `Checkbox` | 목록 | 표의 행 선택. 네이티브 렌더는 OS 마다 달라 `appearance-none` 으로 직접 그린다 | 8 |
-| `Dropdown` | 폼 | 네이티브 `<select>` 대신. 목록을 `body` 로 포털해 카드·모달의 `overflow` 에 잘리지 않는다 | 7 |
-| `HintInput` | 폼 | 안내 문구가 있는 한 줄 입력란 | 19 |
-| `HintTextarea` | 폼 | 안내 문구가 있는 여러 줄 입력란 | 5 |
-| `ImageUploader` | 폼 | 이미지 올리기 — 서버로 보내지 않고 `URL.createObjectURL` 로 미리보기만 만든다 | 6 |
-| `RichTextEditor` | 폼 | 본문 편집기 | 8 |
-| `StatusScreen` | 알림 | 404 · 오류 · 완료 · 실패가 한 컴포넌트를 쓴다 | `app/not-found.tsx` · `app/error.tsx` · `/result` |
-| `ToastProvider` · `useToast` | 알림 | 동작 결과 통지. 공급자는 `app/layout.tsx` 에 한 번만 둔다 | 31 |
+| `Badge` | 목록 | 상태 알약. 색이 아니라 **뜻**(`neutral`·`brand`·`ok`·`wait`·`danger`)을 받는다 | 18 / 16 / 3 |
+| `Button` | 폼 | 폼·툴바·모달 아래줄의 단추 (h-9). `primary`·`secondary`·`danger` | 11 / 1 / 0 |
+| `Checkbox` | 목록 | 표의 행 선택. 네이티브 렌더는 OS 마다 달라 `appearance-none` 으로 직접 그린다 | 8 / 4 / 4 |
+| `Dropdown` | 폼 | 네이티브 `<select>` 대신. 목록을 `body` 로 포털해 카드·모달의 `overflow` 에 잘리지 않는다 | 6 / 10 / 2 |
+| `HintInput` | 폼 | 안내 문구가 있는 한 줄 입력란 | 20 / 13 / 0 |
+| `HintTextarea` | 폼 | 안내 문구가 있는 여러 줄 입력란 | 5 / 0 / 0 |
+| `ImageUploader` | 폼 | 이미지 올리기 — 서버로 보내지 않고 `URL.createObjectURL` 로 미리보기만 만든다 | 6 / 0 / 0 |
+| `ListToolbar` | 목록 | 윗줄에 상태 탭과 주요 액션, 아랫줄에 검색과 필터. 넘겨받지 않은 것은 그 줄이나 단추를 그리지 않는다 | 8 / 13 / 0 |
+| `Modal` | 폼 | 모달의 바탕 — Esc 로 닫고, 본문 스크롤을 잠그고, 첫 입력 요소로 포커스를 옮긴다. 겹쳐 뜬 경우 **맨 위 모달만** Esc 에 반응한다 | 10 / 1 / 0 |
+| `PageHeading` | 껍데기 | 화면 제목과 한 줄 설명 | 8 / 12 / 0 |
+| `RichTextEditor` | 폼 | 본문 편집기 | 8 / 0 / 0 |
+| `RowActions` · `RowIconButton` · `RowTextButton` | 목록 | 행 오른쪽 끝의 동작 (h-8). 묶음이 행 클릭 전파를 끊는다 | 9 / 1 / 0 |
+| `RowSelectCell` · `SelectAllCell` | 목록 | 표 맨 왼쪽 칸 — 체크박스와 순번 | 7 / 7 / 0 |
+| `StatusScreen` | 알림 | 404 · 오류 · 완료 · 실패가 한 컴포넌트를 쓴다 | 3 / 3 / 3 |
+| `ToastProvider` · `useToast` | 알림 | 동작 결과 통지. 공급자는 `app/layout.tsx` 에 한 번만 둔다 | 31 / 14 / 11 |
+
+### 5.0 단추가 둘로 갈린 이유 — `Button`(36px) 과 `RowTextButton`(32px)
+
+크기가 아니라 **서는 자리**로 갈랐다. 행은 한 줄에 대여섯 칸이 들어가는 자리라 36px 단추를
+넣으면 줄 높이가 그 단추에 끌려간다. 하나의 `size` 로 묶지 않는 것은, 자리가 다르면 나중에
+갈라질 것(테두리 색 · 아이콘 짝 · 접근성 라벨 규칙)도 다르기 때문이다.
+
+`RowIconButton` 과 `RowTextButton` 을 가르는 기준은 **뜻이 한 번에 읽히는가**다. `조회`·`삭제`
+처럼 그림이 분명한 것은 아이콘으로, `답변`·`연동`처럼 그림 하나로 옮기면 다른 뜻으로도 읽히는
+것은 글자로 남긴다.
 
 ### 5.1 `placeholder` 를 쓰지 않는다
 
-`HintInput` · `HintTextarea` · `AdminListToolbar` 의 검색이 모두 안내 문구를 **실제 텍스트
+`HintInput` · `HintTextarea` · `ListToolbar` 의 검색이 모두 안내 문구를 **실제 텍스트
 노드**로 겹쳐 두고 CSS 로만 숨긴다. `placeholder` 속성은 DOM 텍스트 노드가 아니라 추출되지
 않고 Figma 에서 빈 상자로 나온다 (`docs/spec/05-component.md`).
 
@@ -123,7 +161,12 @@
 
 - 같은 역할의 컴포넌트를 화면마다 복제하기 — 세 벌이 되면 한 벌만 고쳐진다
 - 도메인을 모르는 원시 요소를 앱 안에 두기 (`@winpilot/ui` 로 간다)
-- 화면 구조를 아는 조각을 `@winpilot/ui` 에 넣기 (앱마다 구조가 다르다)
+- **두 앱이 같은 것을 쓰기로 정한 조각을 앱 안에 두기** — `Modal` 이 그렇게 갈라졌다 (§2.0)
+- 두 앱 중 하나만 쓰는 조각을 `@winpilot/ui` 에 올리기 — 올릴지 말지의 기준은 "화면 구조를
+  아느냐" 가 아니라 **"두 앱이 같은 것을 쓰기로 정했느냐"** 다. 셸이 여전히 앱에 있는 이유가
+  이것이고, `AdminListPager` · `AdminBulkBar` 가 아직 안 올라간 이유도 같다
+- Tailwind 클래스 문자열을 **값 쪽 파일**(`lib/data/*` · `packages/store`)에 담기 — 색은
+  `BadgeTone` 처럼 뜻으로 적고 클래스는 컴포넌트만 안다
 - `app/<route>/_components/` 의 조각에 `Admin` 접두어 붙이기
 - 인라인 `style` 속성 · raw hex · raw px (`docs/design.md` §9)
 

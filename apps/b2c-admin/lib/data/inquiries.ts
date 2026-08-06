@@ -4,6 +4,8 @@
  * 남아 있는 것은 **어드민에서만 쓰는 것**뿐이다: 상태 뱃지 색과 상태 목록, 그리고 폼 설정을
  * 한 덩어리로 묶은 기본값. 고객 화면은 상태 색을 쓰지 않으므로 store 로 올리지 않는다.
  */
+import type { BadgeTone } from '@winpilot/ui';
+
 import {
   INQUIRY_CATEGORIES,
   INQUIRY_DONE_TEXT,
@@ -31,11 +33,11 @@ export {
   type InquiryState,
 } from '@winpilot/store';
 
-export const INQUIRY_STATE_TONE: Record<InquiryState, string> = {
-  접수: 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200',
-  처리중: 'bg-surface text-ink-muted',
-  답변완료: 'bg-signal-ok/12 text-signal-ok',
-  보류: 'bg-signal-danger/12 text-signal-danger',
+export const INQUIRY_STATE_TONE: Record<InquiryState, BadgeTone> = {
+  접수: 'brand',
+  처리중: 'neutral',
+  답변완료: 'ok',
+  보류: 'danger',
 };
 
 export const INQUIRY_STATES: InquiryState[] = ['접수', '처리중', '답변완료', '보류'];

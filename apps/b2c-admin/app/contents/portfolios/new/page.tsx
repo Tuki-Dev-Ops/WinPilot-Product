@@ -19,6 +19,7 @@ export default function AdminPortfolioCreatePage() {
       sectionId="content"
       trail={['콘텐츠', '포트폴리오', '상세페이지 (등록)']}
       activeChildId="content-portfolio"
+      back={{ href: '/contents/portfolios', label: '포트폴리오 목록' }}
     >
       {/* 코드·등록일은 서버에서 정한다 — 화면이 스스로 읽으면 서버·브라우저 값이 어긋난다. */}
       <PortfolioForm

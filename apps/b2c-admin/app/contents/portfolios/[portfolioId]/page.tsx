@@ -28,6 +28,7 @@ export default async function AdminPortfolioDetailPage({ params }: { params: Pro
       sectionId="content"
       trail={['콘텐츠', '포트폴리오', '상세페이지 (수정)']}
       activeChildId="content-portfolio"
+      back={{ href: '/contents/portfolios', label: '포트폴리오 목록' }}
     >
       <PortfolioForm
         mode="edit"

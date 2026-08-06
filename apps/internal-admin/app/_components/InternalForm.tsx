@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Field } from '@winpilot/ui';
 
 /**
  * 폼 화면의 뼈대 — 입력 묶음과 저장 줄.
@@ -6,30 +7,43 @@ import type { ReactNode } from 'react';
  * 폼 화면이 모두 같은 모양을 쓰게 하려고 여기 한 벌만 둔다. 화면마다 라벨과 저장 단추를
  * 따로 그리면 여백이 조금씩 어긋나고, 그 어긋남은 화면을 나란히 놓기 전에는 드러나지 않는다.
  */
+/**
+ * 입력 한 칸 — 이제 `@winpilot/ui` 의 `Field` 를 그대로 쓴다.
+ *
+ * 이 겹을 남겨 두는 이유는 화면 마흔한 곳의 import 를 바꾸지 않으려는 것이 아니라,
+ * **이 콘솔의 폼이 앞으로 갈라질 수 있는 자리**를 하나로 유지하기 위해서다. 지금은 넘기는
+ * 것을 그대로 넘긴다.
+ *
+ * `required` 가 새로 생겼다. 전에는 이 콘솔의 폼에 **필수 표시가 아예 없어서**, 무엇을 반드시
+ * 넣어야 하는지는 저장을 눌러 토스트를 봐야 알 수 있었다.
+ */
 export function InternalField({
   label,
   htmlFor,
+  required,
   hint,
+  error,
   children,
 }: {
   label: string;
   /** 라벨이 가리키는 입력의 id. 입력이 여럿인 묶음이면 비운다 — 그때는 라벨이 제목 노릇만 한다 */
   htmlFor?: string;
+  /** 스키마가 정한 필수 여부. 손으로 별표를 붙이지 않는다 */
+  required?: boolean;
   hint?: string;
+  error?: string;
   children: ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-2">
-      {htmlFor ? (
-        <label htmlFor={htmlFor} className="text-sm font-medium">
-          {label}
-        </label>
-      ) : (
-        <span className="text-sm font-medium">{label}</span>
-      )}
+    <Field
+      label={label}
+      {...(htmlFor ? { htmlFor } : {})}
+      {...(required ? { required } : {})}
+      {...(hint ? { hint } : {})}
+      {...(error ? { error } : {})}
+    >
       {children}
-      {hint && <p className="text-xs leading-relaxed text-ink-faint">{hint}</p>}
-    </div>
+    </Field>
   );
 }
 

@@ -235,6 +235,18 @@ export const IA_GROUPS: IaGroup[] = [
     ],
   },
   {
+    id: 'support',
+    purpose: '이 콘솔에서 못 바꾸는 것을 스페이스플래닝에 묻는다.',
+    screens: [{ screen: 'support', ko: '고객 지원' }],
+    edges: [],
+    data: ['@winpilot/store · support'],
+    notes: [
+      '위쪽 문의 갈래와 자원이 다르다 — 그쪽은 고객이 이 고객사에게, 여기는 이 고객사가 스페이스플래닝에게 보낸다.',
+      '설정 바로 아래에 둔다. 설정에서 만지다 막히는 일이 곧 여기서 묻는 일이고, OAuth·PG 는 아예 이 콘솔에 없다.',
+      '보낸 문의는 사내 어드민의 문의 목록에 그대로 선다. 값이 한 곳이라 답이 어긋나지 않는다.',
+    ],
+  },
+  {
     id: 'system',
     label: '시스템',
     purpose: '메뉴에 없지만 주소가 있는 화면 — 들어오는 문과 끝나는 자리.',

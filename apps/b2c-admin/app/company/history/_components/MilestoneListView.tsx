@@ -2,16 +2,11 @@
 
 import { useMemo, useState } from 'react';
 import { ALL_VALUE, ContentListView, type ContentColumn } from '@/app/contents/_components/ContentListView';
-import { useToast } from '@winpilot/ui';
-import {
-  MILESTONES,
-  milestoneDate,
-  nextMilestoneId,
-  sortMilestones,
-  type MilestoneRecord,
-} from '@/lib/data/company';
+import { Badge, useToast } from '@winpilot/ui';
+import { milestoneDate, MILESTONES, nextMilestoneId, sortMilestones, type MilestoneRecord } from '@/lib/data/company';
 import type { MilestoneFormInput } from '@/lib/validation/company-record';
 import { MilestoneFormModal, type MilestoneFormMode } from './MilestoneFormModal';
+import { AdminVisibilityBadge } from '@/app/_components/AdminVisibilityBadge';
 
 const COLUMNS: Array<ContentColumn<MilestoneRecord>> = [
   {
@@ -29,24 +24,18 @@ const COLUMNS: Array<ContentColumn<MilestoneRecord>> = [
     span: 5,
     render: (item) => (
       <div className="min-w-0">
-        <p className="truncate text-sm font-medium">{item.title}</p>
-        {item.description && <p className="truncate text-xs text-ink-faint">{item.description}</p>}
+        <p className="min-w-0 truncate text-sm font-medium">{item.title}</p>
+        {item.description && <p className="min-w-0 truncate text-xs text-ink-faint">{item.description}</p>}
       </div>
     ),
   },
   {
     id: 'visible',
-    label: '노출',
+    label: '상태',
     span: 2,
     align: 'center',
     render: (item) => (
-      <span
-        className={`inline-block shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${
-          item.visible ? 'bg-signal-ok/12 text-signal-ok' : 'bg-surface text-ink-muted'
-        }`}
-      >
-        {item.visible ? '노출' : '숨김'}
-      </span>
+      <AdminVisibilityBadge visible={item.visible} />
     ),
   },
 ];
@@ -92,6 +81,8 @@ export function MilestoneListView() {
   return (
     <>
       <ContentListView<MilestoneRecord>
+      title="연혁"
+      description="회사 소개에 나가는 연혁을 관리하세요."
         entityLabel="연혁"
         items={ordered}
         onItemsChange={setMilestones}

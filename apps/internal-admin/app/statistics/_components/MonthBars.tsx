@@ -67,7 +67,7 @@ export function MonthBars({
                   x={x + barWidth / 2}
                   y={height + 18}
                   textAnchor="middle"
-                  className="fill-ink-faint text-[11px]"
+                  className="fill-ink-faint text-2xs"
                 >
                   {point.month.slice(2)}
                 </text>
@@ -102,7 +102,7 @@ export function ShareBars({
         return (
           <div key={row.label} className="flex min-w-0 flex-col gap-1.5">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <span className="truncate text-sm">
+              <span className="min-w-0 truncate text-sm">
                 {row.label}
                 {row.hint && <span className="ml-1.5 font-mono text-xs text-ink-faint">{row.hint}</span>}
               </span>

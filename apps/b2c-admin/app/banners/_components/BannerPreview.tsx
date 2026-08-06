@@ -74,7 +74,7 @@ export function BannerPreview({
                 <p className="text-sm font-semibold leading-snug">
                   {title.trim() || '배너 제목이 여기에 표시됩니다'}
                 </p>
-                <p className="truncate text-xs text-ink-faint">
+                <p className="min-w-0 truncate text-xs text-ink-faint">
                   {linkUrl.trim() || '링크 없음 — 눌러도 이동하지 않습니다'}
                 </p>
               </div>
@@ -111,19 +111,19 @@ export function BannerPreview({
                       바깥에서 받아 온 값이 아니므로 편집기에 넣은 것과 같은 신뢰 수준으로 그린다.
                     */
                     <div
-                      className="text-[11px] leading-relaxed [&_a]:text-brand-700 [&_a]:underline [&_img]:my-1 [&_img]:max-w-full [&_img]:rounded [&_ol]:list-decimal [&_ol]:pl-4 [&_p]:my-1 [&_ul]:list-disc [&_ul]:pl-4"
+                      className="text-2xs leading-relaxed [&_a]:text-brand-700 [&_a]:underline [&_img]:my-1 [&_img]:max-w-full [&_img]:rounded [&_ol]:list-decimal [&_ol]:pl-4 [&_p]:my-1 [&_ul]:list-disc [&_ul]:pl-4"
                       dangerouslySetInnerHTML={{ __html: body ?? '' }}
                     />
                   ) : (
-                    <p className="text-[11px] text-ink-faint">본문이 여기에 표시됩니다.</p>
+                    <p className="text-2xs text-ink-faint">본문이 여기에 표시됩니다.</p>
                   )}
                 </div>
 
                 <div className="mt-3 flex items-center justify-between gap-2 border-t border-border pt-2">
-                  <span className="text-[10px] text-ink-faint">
+                  <span className="text-3xs text-ink-faint">
                     {todayClose ? '오늘 하루 보지 않기' : ''}
                   </span>
-                  <span className="text-[10px] text-ink-muted">닫기</span>
+                  <span className="text-3xs text-ink-muted">닫기</span>
                 </div>
               </div>
 
@@ -140,8 +140,8 @@ export function BannerPreview({
           )}
 
           <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-3">
-            <span className="shrink-0 whitespace-nowrap text-[10px] text-ink-faint">{scheduleLabel}</span>
-            <span className="truncate text-right text-[10px] text-ink-muted">{periodText}</span>
+            <span className="shrink-0 whitespace-nowrap text-3xs text-ink-faint">{scheduleLabel}</span>
+            <span className="min-w-0 truncate text-right text-3xs text-ink-muted">{periodText}</span>
           </div>
         </div>
       </div>

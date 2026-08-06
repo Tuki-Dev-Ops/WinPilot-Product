@@ -101,9 +101,19 @@
 | `text-base` | 카드 제목 (`ContentSection`) · 모달 제목 |
 | `text-sm` | **본문 기본** — 표의 값 · 입력란 · 버튼 · 메뉴 · 탭 |
 | `text-xs` | 표 머리글 · 항목 라벨 · 상태 뱃지 · 식별자 |
+| `text-2xs` (11px) | 미리보기 안의 보조 줄 · 문서 사이드바의 구역 이름 |
+| `text-3xs` (10px) | 뱃지 안의 보조 표시 · 미리보기 속 도메인 줄 |
 
 예외는 둘이다. 로그인 화면의 왼쪽 문구(`text-3xl`)와 통계 카드의 숫자(`StatCard`, `text-3xl`).
 둘 다 표가 없는 화면이다.
+
+**`text-2xs`·`text-3xs` 는 나중에 스케일에 들인 것이다.** Tailwind 의 크기 스케일은 12px 에서
+끝나는데 화면에는 그보다 작은 글자가 실제로 있어서, 지금까지는 `text-[10px]`·`text-[11px]`
+같은 **임의값**으로 서른일곱 자리에 흩어져 있었다. 그러면 셋이 어긋난다 — 같은 성격의 글자가
+10px 인지 11px 인지 우연으로 정해지고, 한 단계 키우려면 서른일곱 자리를 찾아야 하며,
+**추출기가 보지 못해** Figma Variables 에서 통째로 빠진다(임의값은 `@theme` 가 방출하는
+`--*` 가 아니라 유틸리티 클래스 안에 박힌 상수다). 8px 은 파비콘 자리 표시 한 곳뿐이라
+올리지 않았다 — 한 곳을 위한 토큰은 스케일이 아니다.
 
 **고객 화면과 다른 점은 제목 계단이 없다는 것이다.** 고객 화면에는 `text-2xl` 화면 제목
 (`PageTitle`)과 `text-xl` 구획 제목이 있어 위계가 크기로 드러나지만, 어드민의 제목은
@@ -146,6 +156,16 @@
 가로로 놓이는 버튼에는 `shrink-0 whitespace-nowrap` 을 함께 건다. 좁은 폭에서 flex 가 버튼을
 눌러 글자가 잘리거나 두 줄로 접히는 것을 막는다.
 
+**이 값들은 이제 손으로 적지 않는다.** 36px 은 `@winpilot/ui` 의 `Button`, 32px 은
+`RowTextButton`·`RowIconButton` 이 갖는다. 손으로 적는 동안 같은 파란 단추가 **열다섯 가지
+클래스 조합**으로 갈라져 있었다 — `transition-colors` 가 있는 것과 없는 것(옆 단추는 색이
+탁 바뀐다), `shrink-0` 이 있는 것과 없는 것(좁은 폭에서 어떤 단추만 글자가 접힌다), 취소
+단추에 `hover:` 가 있는 것과 없는 것. 셋 다 고칠 때 한 곳만 고쳐서 생긴 자리이고, 눈에 잘
+띄지 않아 오래 남았다.
+
+44px(`h-11`) 은 아직 컴포넌트가 없다. 폼 화면의 조각들(`ContentField` 등)이 각자 들고 있는데,
+두 앱이 같은 폼 뼈대를 쓰기로 정한 적이 없어 올릴 근거가 아직 없다.
+
 ## 5. 모서리
 
 `--radius-*` 는 **전 단계가 4px 하나로 고정**되어 있다(`packages/tokens/theme.css`). `rounded-lg`
@@ -161,28 +181,52 @@
 
 ## 6. 상태 뱃지
 
-목록 화면의 대부분이 상태 한 칸을 가진다. 모양은 어디서나 같다.
+목록 화면의 대부분이 상태 한 칸을 가진다. 모양은 어디서나 같다 — `@winpilot/ui` 의 `Badge`
+하나가 그린다. **클래스를 손으로 적지 않는다.**
 
-```
-inline-block shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium
-```
+색은 뜻에 따라 **다섯 중 하나**이고, 화면은 클래스가 아니라 그 **뜻 이름**을 넘긴다.
 
-색은 뜻에 따라 **네 가지 중 하나**다. 화면마다 색을 새로 고르지 않는다.
-
-| 뜻 | 클래스 | 예 |
+| `tone` | 뜻 | 예 |
 |---|---|---|
-| 긍정 · 살아 있음 | `bg-signal-ok/12 text-signal-ok` | 노출 · 판매중 · 답변완료 · 결제완료 · 배송완료 · 활성 · 사용 가능 |
-| 중립 · 아직 · 끝남 | `bg-surface text-ink-muted` | 숨김 · 판매대기 · 배송준비 · 처리중 · 휴면 · 환불완료 · 사용 완료 |
-| 진행 · 정보 | `bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200` | 접수 · 배송중 · 예정 · 최고 관리자 |
-| 부정 · 막힘 | `bg-signal-danger/12 text-signal-danger` | 판매중지 · 차단 · 정지 · 결제취소 · 교환요청 · 종료 · 기간 만료 |
+| `ok` | 긍정 · 살아 있음 | 노출 · 판매중 · 답변완료 · 결제완료 · 배송완료 · 활성 · 사용 가능 |
+| `neutral` | 중립 · 아직 · 끝남 | 숨김 · 판매대기 · 배송준비 · 처리중 · 휴면 · 환불완료 · 사용 완료 |
+| `brand` | 진행 · 정보 | 접수 · 배송중 · 예정 · 최고 관리자 |
+| `danger` | 부정 · 막힘 | 판매중지 · 차단 · 정지 · 결제취소 · 교환요청 · 종료 · 기간 만료 |
+| `wait` | 기다리는 중 | **아직 쓰는 곳이 없다** — 아래 참고 |
 
 바탕에 `/12` 를 붙여 12% 로 옅게 깐다. 색을 꽉 채우면 표 한 장에 원색 덩어리가 스무 개
 생겨 글자보다 뱃지가 먼저 읽힌다.
 
-색 지도는 **화면이 아니라 데이터 쪽에 둔다** — `PAY_TONE` · `SHIP_TONE` 은
-`lib/data/orders.ts`, `SCHEDULE_TONE` 은 `@winpilot/store`, `INQUIRY_STATE_TONE` 은
-`lib/data/inquiries.ts`, `COUPON_STATE_TONE` 은 `lib/data/coupons.ts` 에 있다. 목록과 상세가
-같은 뱃지를 그리므로, 화면 안에 두면 두 벌이 되어 한쪽만 고쳐진다.
+### 6.0 클래스가 아니라 뜻을 넘기는 이유
+
+전에는 화면과 시드 파일이 `'bg-signal-ok/12 text-signal-ok'` 같은 **클래스 문자열**을 직접
+들고 있었다. 서른세 장에 마흔아홉 자리, 톤 표만 스물한 개였는데 실제 값은 위의 넷뿐이었다 —
+같은 말을 스물한 번 적어 둔 셈이고, 그래서 셋이 어긋났다.
+
+1. **어긋나도 드러나지 않는다.** `dark:bg-brand-900` 을 빠뜨린 표가 있어도 그 화면을 다크
+   모드로 열기 전에는 모른다. 타입이 `string` 이라 컴파일은 통과한다.
+2. **색을 바꾸려면 스물한 곳을 고쳐야 한다.** 하나라도 놓치면 그 화면만 옛 색으로 남는다.
+3. **시드가 화면을 안다.** `packages/store` 는 값이 사는 곳인데 Tailwind 클래스를 들고 있었다.
+   서버에서 값을 받게 되는 날 그 문자열은 갈 곳이 없다.
+
+이제 표는 `엔터프라이즈: 'ok'` 처럼 뜻만 적고(`Record<X, BadgeTone>`), 클래스는 `Badge` 만 안다.
+
+### 6.0.1 `wait` 를 쓰는 곳이 없다는 것
+
+`--color-signal-wait` 는 토큰에 있는데 뱃지에서 아무도 쓰지 않는다. 지금은 '만료 임박'·'보류'
+처럼 **끝난 것이 아니라 기다리는 것**을 `danger` 나 `neutral` 로 적고 있어, 고객사 목록에서
+`만료` 와 `만료 임박` 이 **같은 붉은색으로 선다.** 색을 바꾸는 것은 디자인 결정이라 여기서
+하지 않고 자리만 열어 두었다 — 정하면 톤 표 한 줄만 고치면 된다.
+
+### 6.0.2 색 지도를 두는 곳
+
+**어드민만 쓰는 것은 어드민에** 둔다. `PAY_TONE`·`SHIP_TONE` 은 `lib/data/orders.ts`,
+`INQUIRY_STATE_TONE` 은 `lib/data/inquiries.ts`, `COUPON_STATE_TONE` 은 `lib/data/coupons.ts`,
+`SCHEDULE_TONE`·`TAG_TONE` 은 `lib/data/banners.ts`·`lib/data/product-tags.ts` 에 있다.
+
+뒤의 둘은 원래 `@winpilot/store` 에 있었다. 고객 화면 여섯 벌 중 어느 것도 부르지 않는데
+공유 패키지에 있었던 것이라 내렸다 — 공유 패키지에 값을 두는 기준은 "두 화면이 같은 것을
+본다" 이고, 여기 맞지 않았다.
 
 ### 6.1 뱃지를 쓰지 않는 자리
 
@@ -193,7 +237,7 @@ inline-block shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-me
 
 ## 7. 목록 화면의 크기 규칙
 
-### 7.1 툴바 (`AdminListToolbar`)
+### 7.1 툴바 (`@winpilot/ui` 의 `ListToolbar`)
 
 두 줄로 고정한다. **윗줄은 상태 탭(왼쪽)과 주요 액션(오른쪽), 아랫줄은 검색과 필터**다.
 
@@ -257,14 +301,24 @@ inline-block shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-me
 앱마다 제각각인 지속시간이 생기지 않도록 `packages/tokens/theme.css` 에 모아 두었다.
 추출기는 캡처 직전 애니메이션을 모두 끄므로 Figma 결과에는 영향이 없다.
 
+이 표의 값은 `@winpilot/ui` 의 `Modal` 한 곳에 있다. **두 어드민이 각자 모달을 들고 있던
+동안 위의 넷 중 셋이 사내 어드민에만 없었다** — 열림 애니메이션 · `elevated` ·
+`bg-surface-raised`(그쪽은 `bg-canvas` 라 다크 모드에서 뒤 배경과 붙어 보였다). 여기에
+모달 스택까지 없어 확인 창 위에서 Esc 를 누르면 뒤의 입력 폼까지 함께 닫혔다. 표를 문서에
+적어 두는 것만으로는 두 벌이 갈라지는 것을 막지 못한다는 자리다.
+
 ## 9. 금지 사항
 
-- raw hex · raw px · `rounded-[Npx]` 같은 임의값
+- raw hex · raw px · `rounded-[Npx]` · **`text-[Npx]`** 같은 임의값 (§3.1)
 - 어드민 전용 팔레트 (`--color-admin-*`)
 - 인라인 `style` 로 색·간격 지정 — 추출은 되지만 토큰 추적이 끊긴다
 - `oklch()` · `lab()` 직접 사용
 - `bg-white` · `text-black` 처럼 모드를 따라가지 않는 값
 - 클래스 이름 문자열 조립 (`` `lg:col-span-${n}` ``)
+- **Tailwind 클래스 문자열을 값 쪽 파일에 담기** — `lib/data/*` · `packages/store` 는 색을
+  모른다. 상태 색은 `BadgeTone` 처럼 뜻으로 적는다 (§6.0)
+- **뱃지·단추·모달의 클래스를 손으로 적기** — 각각 `Badge` · `Button`/`RowTextButton` ·
+  `Modal` 이 갖는다. 이 셋은 전부 손으로 적는 동안 갈라진 적이 있다
 
 ## 10. 아직 없는 것
 
@@ -275,3 +329,21 @@ inline-block shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-me
   우리 네임스페이스의 그림자 토큰은 없다.
 - **밀도 전환** — 표를 더 좁게 보는 옵션은 없다. 위의 값 한 벌이 전부다.
 - **다크 모드 수동 전환** — `prefers-color-scheme` 를 따르기만 하고 화면에서 고를 수 없다.
+
+### 상태 탭과 보조 메뉴의 선택 표시
+
+골라진 것과 누르는 것을 **색으로 가른다.**
+
+| 자리 | 골라졌을 때 | 아닐 때 |
+|---|---|---|
+| 상태 탭 (`ListToolbar`) | `bg-ink text-white` · 모서리 `rounded`(4px) | `bg-surface text-ink-muted` |
+| 등록 단추 | 언제나 `bg-brand-500 text-white` | — |
+| 본문 왼쪽 보조 메뉴 | `border-l-2 border-brand-500` · `font-semibold` · `text-brand-700` | `border-l-2 border-transparent` · `text-ink-muted` |
+
+탭을 브랜드색으로 채우지 않는 이유: 같은 줄 오른쪽의 등록 단추가 이미 브랜드색이라, 둘을 같은
+색으로 채우면 **골라진 상태**와 **누르는 것**이 같은 무게로 보인다. 연한 `bg-brand-50` 도 쓰지
+않는다 — 흰 바탕과 거의 붙어 어느 탭이 켜졌는지 눈으로 찾지 못했다.
+
+보조 메뉴는 배경을 채우지 않고 **왼쪽 모서리 선 하나**로만 알린다. 채우면 왼쪽 사이드바의 최상위
+선택과 무게가 같아져 지금 자리가 어느 쪽인지 헷갈린다. 꺼진 항목에도 같은 두께의 투명 선을 주어
+켜고 끌 때 글자가 옆으로 밀리지 않게 한다.

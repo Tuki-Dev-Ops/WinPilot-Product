@@ -1,6 +1,6 @@
 'use client';
 
-import { AdminModal } from '@/app/_components/AdminModal';
+import { Button, Modal } from '@winpilot/ui';
 
 export type AdminConfirmModalProps = {
   open: boolean;
@@ -20,6 +20,11 @@ export type AdminConfirmModalProps = {
 /**
  * 되돌리기 어렵거나 기록이 남는 동작 앞에 세우는 확인 창.
  * 삭제뿐 아니라 등록·저장에도 세운다 — 목록이 소리 없이 바뀌면 무엇을 했는지 알 수 없다.
+ *
+ * `tone` 을 `Button` 의 톤으로 그냥 넘기지 않고 한 번 옮기는 이유: 여기서 `brand` 는
+ * '되돌릴 수 있다' 는 뜻이고 `Button` 의 `primary` 는 '이 화면에서 하려던 일' 이라는 뜻이라
+ * 두 어휘가 가리키는 것이 다르다. 같은 말로 묶어 두면 한쪽 뜻이 바뀔 때 다른 쪽이 소리 없이
+ * 끌려간다.
  */
 export function AdminConfirmModal({
   open,
@@ -33,29 +38,19 @@ export function AdminConfirmModal({
   summary,
 }: AdminConfirmModalProps) {
   return (
-    <AdminModal
+    <Modal
       open={open}
       title={title}
       onClose={onClose}
       elevated={elevated}
       footer={
         <>
-          <button
-            type="button"
-            onClick={onClose}
-            className="h-9 shrink-0 whitespace-nowrap rounded-lg border border-border-strong px-4 text-sm text-ink-muted"
-          >
+          <Button tone="secondary" onClick={onClose}>
             취소
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className={`h-9 shrink-0 whitespace-nowrap rounded-lg px-4 text-sm font-medium text-white ${
-              tone === 'danger' ? 'bg-signal-danger' : 'bg-brand-500 hover:bg-brand-600'
-            }`}
-          >
+          </Button>
+          <Button tone={tone === 'danger' ? 'danger' : 'primary'} onClick={onConfirm}>
             {confirmLabel}
-          </button>
+          </Button>
         </>
       }
     >
@@ -73,6 +68,6 @@ export function AdminConfirmModal({
           </dl>
         )}
       </div>
-    </AdminModal>
+    </Modal>
   );
 }

@@ -20,13 +20,14 @@
 
 ## 2. 기능 뷰
 
-_캡처가 아직 없습니다 — `pnpm docs:capture` 로 뜹니다._
+![Members 데스크톱](/page-view/statistics-members/statistics-members-desktop.jpg)
+
+세 너비(데스크톱·태블릿·모바일)와 예외 화면은 `apps/internal-admin/docs/page-view/statistics-members/` 에서 본다.
 
 ### 화면 구성
 
 | 영역 | 용도 | 표시 조건 |
 |---|---|---|
-| 요약 카드 | 누적 · 이번 달 가입 · 앞 달 대비 · 상한에 가까운 고객사 | — |
 | 달별 누적 회원 | 인라인 SVG 막대 | — |
 | 고객사별 규모 | 상한 대비 비율 막대 | — |
 | 달별 내역 | 누적 · 가입 · 탈퇴 · 순증 | — |

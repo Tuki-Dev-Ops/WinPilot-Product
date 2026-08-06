@@ -26,7 +26,7 @@
 | 대상 | 접두어 | 예 |
 |---|---|---|
 | 페이지 컴포넌트 (레지스트리 파생) | **붙인다** | `AdminProductCreatePage` · `AdminOrderListPage` |
-| 어드민 전체가 쓰는 뼈대 — `app/_components/` | **붙인다** | `AdminShell` · `AdminListToolbar` · `AdminModal` |
+| 어드민 전체가 쓰는 뼈대 — `app/_components/` | **붙인다** | `AdminShell` · `AdminConfirmModal` · `AdminListPager` |
 | 화면·섹션 전용 조각 — `app/<route>/_components/` | **붙이지 않는다** | `ProductForm` · `OrderListView` · `NoticeForm` |
 | 도메인 조각 — `components/domain/<entity>/` | 붙이지 않는다 | `components/domain/user/AuthField.tsx` |
 
@@ -184,6 +184,17 @@ export { PRODUCTS, findProduct, nextProductCode, type ProductRecord } from '@win
 
 값을 직접 들고 있는 셋은 `analytics.ts`(통계 시드) · `orders.ts`(판매 시드) ·
 `industry.ts`(업태·업종 분류)다. 고객 화면이 쓰지 않는 값이라 공유 패키지에 올릴 이유가 없다.
+
+### 8.1.1 시드는 색을 모른다
+
+`lib/data/*.ts` 에는 상태 색 표(`*_TONE`)가 함께 있는데, **값은 Tailwind 클래스가 아니라
+`BadgeTone`**(`'ok'` · `'neutral'` · …)이다. 클래스 문자열을 여기 담으면 두 가지가 깨진다 —
+시드가 화면을 알게 되고(서버에서 값을 받는 날 그 문자열은 갈 곳이 없다), 타입이 `string` 이라
+`dark:` 접두어를 빠뜨려도 컴파일이 통과한다.
+
+같은 이유로 `SCHEDULE_TONE`·`TAG_TONE` 을 `@winpilot/store` 에서 이 앱으로 내렸다.
+고객 화면 여섯 벌 중 어느 것도 부르지 않는데 공유 패키지에 있었다 — 공유 패키지에 값을 두는
+기준은 §8.1 의 "두 화면이 같은 것을 본다" 이고, 여기 맞지 않았다.
 
 ### 8.2 `lib/validation/*-record.ts` — 검증은 화면 밖에 둔다
 

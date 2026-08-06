@@ -3,8 +3,9 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ALL_VALUE, ContentListView, type ContentColumn } from '@/app/contents/_components/ContentListView';
-import { useToast } from '@winpilot/ui';
+import { Badge, useToast } from '@winpilot/ui';
 import { NEWS, type NewsRecord } from '@/lib/data/contents';
+import { AdminVisibilityBadge } from '@/app/_components/AdminVisibilityBadge';
 
 function LinkIcon() {
   return (
@@ -24,7 +25,7 @@ const COLUMNS: Array<ContentColumn<NewsRecord>> = [
     span: 4,
     render: (news) => (
       <div className="min-w-0">
-        <p className="truncate text-sm font-medium">{news.title}</p>
+        <p className="block min-w-0 truncate text-sm font-medium">{news.title}</p>
         {/*
           원문 링크는 새 창으로 연다. 어드민 작업 중에 목록을 잃지 않기 위해서다.
           rel="noreferrer" 는 새 창이 이 화면을 조작하지 못하게 막는다.
@@ -39,7 +40,7 @@ const COLUMNS: Array<ContentColumn<NewsRecord>> = [
           <span className="shrink-0">
             <LinkIcon />
           </span>
-          <span className="truncate">{news.url}</span>
+          <span className="block min-w-0 truncate">{news.url}</span>
         </a>
       </div>
     ),
@@ -48,7 +49,7 @@ const COLUMNS: Array<ContentColumn<NewsRecord>> = [
     id: 'press',
     label: '언론사',
     span: 2,
-    render: (news) => <span className="truncate text-sm text-ink-muted">{news.press}</span>,
+    render: (news) => <span className="block min-w-0 truncate text-sm text-ink-muted">{news.press}</span>,
   },
   {
     id: 'publishedAt',
@@ -58,17 +59,11 @@ const COLUMNS: Array<ContentColumn<NewsRecord>> = [
   },
   {
     id: 'visible',
-    label: '노출',
+    label: '상태',
     span: 1,
     align: 'center',
     render: (news) => (
-      <span
-        className={`inline-block shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${
-          news.visible ? 'bg-signal-ok/12 text-signal-ok' : 'bg-surface text-ink-muted'
-        }`}
-      >
-        {news.visible ? '노출' : '숨김'}
-      </span>
+      <AdminVisibilityBadge visible={news.visible} />
     ),
   },
 ];
@@ -81,6 +76,8 @@ export function NewsListView() {
 
   return (
     <ContentListView<NewsRecord>
+      title="뉴스"
+      description="언론에 나간 소식을 모아 고객 화면에 노출하세요."
       entityLabel="뉴스"
       items={news}
       onItemsChange={setNews}

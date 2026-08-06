@@ -15,6 +15,7 @@
 | 6 | [디자인 시스템](06-design-system.md) | 토큰, 타이포, 색, 모드 | `apps/web/app/globals.css` → `artifacts/tokens/tokens.json` |
 | 7 | [기능 명세서](07-functional.md) | 기능별 동작 명세 템플릿 + 작성분 | 문서 |
 | 8 | [비기능 명세서](08-non-functional.md) | 성능·접근성·보안·반응형 예산 | 문서 + `packages/uir/src/tolerance.ts` |
+| 9 | [뷰 연동 대조표](09-view-linkage.md) | 두 뷰의 화면 짝과 **값 연동** — 어드민에서 바꾼 것이 고객 화면에 나타나는가 | `features.ts` (짝) + `packages/store` (값) |
 
 ## 두 뷰를 한 문서에 담은 이유
 

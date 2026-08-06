@@ -4,6 +4,8 @@
  * 고객사 하나가 보통 **B2C Client 와 B2C Admin 두 배포**를 쓴다. 도메인과 계정이
  * 각각 따로 있으므로 한 줄로 합치지 않고 배포 단위로 나눠 둔다.
  */
+import type { BadgeTone } from '@winpilot/ui';
+
 export type DeploymentKind = 'B2C Client' | 'B2C Admin';
 
 export type Deployment = {
@@ -84,16 +86,16 @@ export function findTenant(id: string): TenantRecord | undefined {
   return TENANTS.find((tenant) => tenant.id === id);
 }
 
-export const PLAN_TONE: Record<TenantPlan, string> = {
-  베이직: 'bg-surface text-ink-muted',
-  스탠다드: 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200',
-  엔터프라이즈: 'bg-signal-ok/12 text-signal-ok',
+export const PLAN_TONE: Record<TenantPlan, BadgeTone> = {
+  베이직: 'neutral',
+  스탠다드: 'brand',
+  엔터프라이즈: 'ok',
 };
 
-export const DEPLOYMENT_TONE: Record<Deployment['status'], string> = {
-  운영중: 'bg-signal-ok/12 text-signal-ok',
-  준비중: 'bg-surface text-ink-muted',
-  중지: 'bg-signal-danger/12 text-signal-danger',
+export const DEPLOYMENT_TONE: Record<Deployment['status'], BadgeTone> = {
+  운영중: 'ok',
+  준비중: 'neutral',
+  중지: 'danger',
 };
 
 /**
@@ -112,11 +114,11 @@ export function supportState(supportUntil: string, today: string): SupportState 
   return left <= 30 ? '만료 임박' : '유효';
 }
 
-export const SUPPORT_TONE: Record<SupportState, string> = {
-  유효: 'bg-signal-ok/12 text-signal-ok',
-  '만료 임박': 'bg-signal-danger/12 text-signal-danger',
-  만료: 'bg-signal-danger/12 text-signal-danger',
-  '기한 없음': 'bg-surface text-ink-muted',
+export const SUPPORT_TONE: Record<SupportState, BadgeTone> = {
+  유효: 'ok',
+  '만료 임박': 'danger',
+  만료: 'danger',
+  '기한 없음': 'neutral',
 };
 
 /** 오늘 날짜를 `YYYY-MM-DD` 로. 서버 컴포넌트에서 한 번만 호출한다. */

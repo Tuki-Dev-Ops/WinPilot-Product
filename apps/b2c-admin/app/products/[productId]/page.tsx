@@ -27,7 +27,7 @@ export default async function AdminProductDetailPage({ params }: { params: Promi
   const { id, createdAt, salesCount, ...input } = product;
 
   return (
-    <AdminShell sectionId="product" trail={['상품', '등록', '상세페이지 (수정)']} activeChildId="product-create">
+    <AdminShell sectionId="product" trail={['상품', '등록', '상세페이지 (수정)']} activeChildId="product-create" back={{ href: '/products', label: '상품 목록' }}>
       {/* 기준일은 서버에서 정한다 — 화면이 스스로 읽으면 서버·브라우저 값이 어긋난다. */}
       <ProductForm
         mode="edit"

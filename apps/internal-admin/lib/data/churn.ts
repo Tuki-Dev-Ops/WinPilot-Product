@@ -6,6 +6,8 @@
  * 곳을 맡고 있나" 를 셀 때마다 상태로 걸러야 한다. 다른 하나는 **떠난 이유를 남기기 위해서**다.
  * 계약이 끝난 뒤에 남는 것은 금액이 아니라 이유이고, 그것이 다음 계약의 조건을 정한다.
  */
+import type { BadgeTone } from '@winpilot/ui';
+
 export type ChurnReason = '가격' | '기능 부족' | '내부 사정' | '경쟁사 이동' | '연락 두절';
 
 export type ChurnRecord = {
@@ -90,12 +92,12 @@ export const CHURNED: ChurnRecord[] = [
   },
 ];
 
-export const CHURN_TONE: Record<ChurnReason, string> = {
-  가격: 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200',
-  '기능 부족': 'bg-signal-danger/12 text-signal-danger',
-  '내부 사정': 'bg-surface text-ink-muted',
-  '경쟁사 이동': 'bg-signal-danger/12 text-signal-danger',
-  '연락 두절': 'bg-surface text-ink-muted',
+export const CHURN_TONE: Record<ChurnReason, BadgeTone> = {
+  가격: 'brand',
+  '기능 부족': 'danger',
+  '내부 사정': 'neutral',
+  '경쟁사 이동': 'danger',
+  '연락 두절': 'neutral',
 };
 
 /** 계약을 유지한 개월 수. 이탈이 초기에 일어나는지 후기에 일어나는지가 원인을 가른다. */

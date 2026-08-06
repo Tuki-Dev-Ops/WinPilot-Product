@@ -17,6 +17,14 @@ export type AdminMenuChild = {
 
 export type AdminMenuItem = AdminMenuChild & {
   children?: AdminMenuChild[];
+  /**
+   * 이 항목 위에 선을 하나 긋는다 — **성격이 다른 갈래가 시작되는 자리**에만 쓴다.
+   *
+   * 위쪽은 전부 고객에게 나가는 것(상품 · 콘텐츠 · 배너)을 다루고, 설정부터는 사이트 자체의
+   * 값이다. 선이 없으면 스무 개 남짓한 항목이 한 덩어리로 읽혀 어디까지가 파는 일이고
+   * 어디부터가 사이트 관리인지 매번 이름으로 판단하게 된다.
+   */
+  separatedBefore?: boolean;
 };
 
 export const ADMIN_MENU: readonly AdminMenuItem[] = [
@@ -105,6 +113,7 @@ export const ADMIN_MENU: readonly AdminMenuItem[] = [
     label: '설정',
     href: '/settings/supplier',
     ready: true,
+    separatedBefore: true,
     children: [
       { id: 'settings-supplier', label: '공급자 정보', href: '/settings/supplier', ready: true },
       { id: 'settings-seo', label: 'SEO 정보', href: '/settings/seo', ready: true },
@@ -113,6 +122,18 @@ export const ADMIN_MENU: readonly AdminMenuItem[] = [
       // OAuth · PG 는 사내 어드민(internal-admin)으로 옮겼다 — 고객사가 직접 만지면 로그인·결제가 멈춘다.
     ],
   },
+  /*
+    고객 지원 — **우리(스페이스플래닝)에게 묻는 자리**다.
+
+    설정 바로 아래에 두는 이유: 위에서 만지다 막히는 일이 곧 여기서 묻는 일이다. 특히 설정의
+    OAuth · PG 는 이 콘솔에서 아예 만질 수 없게 사내 어드민으로 옮겨 두었는데(위 주석),
+    그러면 **막힌 사람이 갈 곳이 화면에 있어야 한다.** 없으면 메일 주소를 찾아 나가게 되고,
+    그렇게 들어온 문의는 어느 목록에도 쌓이지 않는다.
+
+    `문의`(위쪽 갈래)와 헷갈리지 않게 이름을 갈랐다 — 그쪽은 **고객이 고객사에게** 보낸 것이고
+    여기는 **고객사가 우리에게** 보내는 것이다.
+  */
+  { id: 'support', label: '고객 지원', href: '/support', ready: true },
 ];
 
 export function findAdminSection(id: string): AdminMenuItem | undefined {

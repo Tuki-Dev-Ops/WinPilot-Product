@@ -29,6 +29,7 @@ export default async function AdminBannerDetailPage({ params }: { params: Promis
       sectionId="banner"
       trail={['배너', '메인 비주얼', '상세페이지 (수정)']}
       activeChildId="banner-visual"
+      back={{ href: '/banners', label: '메인 비주얼 목록' }}
     >
       <BannerForm
         mode="edit"

@@ -2,8 +2,9 @@ import type { Metadata } from 'next';
 import { InternalShell } from '@/app/_components/InternalShell';
 import { InternalEmpty, InternalPanel } from '@/app/_components/InternalPanel';
 import { INQUIRY_TONE, openInquiries } from '@/lib/data/inquiries';
-import { formatAmount, outstanding, overdueInvoices, INVOICES, daysFrom } from '@/lib/data/invoices';
-import { SUPPORT_TONE, TENANTS, findTenant, supportState, todayStamp } from '@/lib/data/tenants';
+import { daysFrom, formatAmount, INVOICES, outstanding, overdueInvoices } from '@/lib/data/invoices';
+import { findTenant, SUPPORT_TONE, supportState, TENANTS, todayStamp } from '@/lib/data/tenants';
+import { Badge } from '@winpilot/ui';
 
 /**
  * Feature: `tenant.dashboard` · Internal Admin · route `/`
@@ -90,18 +91,16 @@ export default function InternalTenantDashboardPage() {
                   className="flex items-center justify-between gap-4 border-b border-border px-6 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface"
                 >
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{tenant.name}</p>
-                    <p className="truncate font-mono text-xs text-ink-faint">
+                    <p className="min-w-0 truncate text-sm font-medium">{tenant.name}</p>
+                    <p className="min-w-0 truncate font-mono text-xs text-ink-faint">
                       {tenant.id} · {tenant.manager}
                     </p>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
                     <span className="font-mono text-xs tabular-nums text-ink-muted">{tenant.supportUntil}</span>
-                    <span
-                      className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${SUPPORT_TONE[state]}`}
-                    >
+                    <Badge tone={SUPPORT_TONE[state]}>
                       {state}
-                    </span>
+                    </Badge>
                   </div>
                 </a>
               );
@@ -123,8 +122,8 @@ export default function InternalTenantDashboardPage() {
                   className="flex items-center justify-between gap-4 border-b border-border px-6 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface"
                 >
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{findTenant(invoice.tenantId)?.name ?? '-'}</p>
-                    <p className="truncate font-mono text-xs text-ink-faint">
+                    <p className="min-w-0 truncate text-sm font-medium">{findTenant(invoice.tenantId)?.name ?? '-'}</p>
+                    <p className="min-w-0 truncate font-mono text-xs text-ink-faint">
                       {invoice.id} · {invoice.title}
                     </p>
                   </div>
@@ -154,23 +153,21 @@ export default function InternalTenantDashboardPage() {
                   className="flex items-center justify-between gap-4 border-b border-border px-6 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface"
                 >
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">
+                    <p className="min-w-0 truncate text-sm font-medium">
                       {inquiry.urgent && (
-                        <span className="mr-1.5 shrink-0 whitespace-nowrap rounded-full bg-signal-danger/12 px-2 py-0.5 text-[10px] font-medium text-signal-danger">
+                        <span className="mr-1.5 shrink-0 whitespace-nowrap rounded-full bg-signal-danger/12 px-2 py-0.5 text-3xs font-medium text-signal-danger">
                           급함
                         </span>
                       )}
                       {inquiry.title}
                     </p>
-                    <p className="truncate font-mono text-xs text-ink-faint">
+                    <p className="min-w-0 truncate font-mono text-xs text-ink-faint">
                       {findTenant(inquiry.tenantId)?.name ?? inquiry.tenantId} · {inquiry.receivedAt}
                     </p>
                   </div>
-                  <span
-                    className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${INQUIRY_TONE[inquiry.state]}`}
-                  >
+                  <Badge tone={INQUIRY_TONE[inquiry.state]}>
                     {inquiry.state}
-                  </span>
+                  </Badge>
                 </a>
               ))}
             </div>

@@ -35,7 +35,7 @@ export type MilestoneRecord = {
 };
 
 export const COMPANY_PROFILE: CompanyProfile = {
-  name: '윈파일럿',
+  name: '스페이스플래닝',
   ceo: '홍승범',
   foundedAt: '2019-04-01',
   businessNumber: '000-00-00000',

@@ -30,7 +30,7 @@ const LOGO_RULES: ImageRules = {
 };
 
 const DEFAULT_SUPPLIER: SupplierFormInput = {
-  companyName: '윈파일럿',
+  companyName: '스페이스플래닝',
   ceo: '홍승범',
   businessNumber: '000-00-00000',
   mailOrderNumber: '제2026-서울성동-0000호',
@@ -126,6 +126,7 @@ export function SupplierSettingsView() {
           <ContentField
             id="supplier-companyName"
             label="회사명 (상호)"
+            required
             {...(errors.companyName ? { error: errors.companyName } : {})}
           >
             <HintInput
@@ -138,7 +139,7 @@ export function SupplierSettingsView() {
             />
           </ContentField>
 
-          <ContentField id="supplier-ceo" label="대표자명" {...(errors.ceo ? { error: errors.ceo } : {})}>
+          <ContentField id="supplier-ceo" label="대표자명" required {...(errors.ceo ? { error: errors.ceo } : {})}>
             <HintInput
               id="supplier-ceo"
               type="text"
@@ -152,6 +153,7 @@ export function SupplierSettingsView() {
           <ContentField
             id="supplier-businessNumber"
             label="사업자등록번호"
+            required
             {...(errors.businessNumber ? { error: errors.businessNumber } : {})}
           >
             <HintInput
@@ -205,6 +207,7 @@ export function SupplierSettingsView() {
           <ContentField
             id="supplier-industry"
             label="업종"
+            required
             {...(errors.industry ? { error: errors.industry } : {})}
           >
             <HintInput
@@ -256,7 +259,7 @@ export function SupplierSettingsView() {
             />
           </ContentField>
 
-          <ContentField id="supplier-address" label="주소" {...(errors.address ? { error: errors.address } : {})}>
+          <ContentField id="supplier-address" label="주소" required {...(errors.address ? { error: errors.address } : {})}>
             <HintInput
               id="supplier-address"
               type="text"
@@ -267,7 +270,7 @@ export function SupplierSettingsView() {
             />
           </ContentField>
 
-          <ContentField id="supplier-addressDetail" label="상세주소 (선택)">
+          <ContentField id="supplier-addressDetail" label="상세주소">
             <HintInput
               id="supplier-addressDetail"
               type="text"
@@ -279,7 +282,7 @@ export function SupplierSettingsView() {
         </ContentSection>
 
         <ContentSection title="연락처">
-          <ContentField id="supplier-phone" label="대표 전화" {...(errors.phone ? { error: errors.phone } : {})}>
+          <ContentField id="supplier-phone" label="대표 전화" required {...(errors.phone ? { error: errors.phone } : {})}>
             <HintInput
               id="supplier-phone"
               type="text"
@@ -291,7 +294,7 @@ export function SupplierSettingsView() {
             />
           </ContentField>
 
-          <ContentField id="supplier-fax" label="FAX (선택)" {...(errors.fax ? { error: errors.fax } : {})}>
+          <ContentField id="supplier-fax" label="FAX" {...(errors.fax ? { error: errors.fax } : {})}>
             <HintInput
               id="supplier-fax"
               type="text"
@@ -303,7 +306,7 @@ export function SupplierSettingsView() {
             />
           </ContentField>
 
-          <ContentField id="supplier-email" label="Email" {...(errors.email ? { error: errors.email } : {})}>
+          <ContentField id="supplier-email" label="Email" required {...(errors.email ? { error: errors.email } : {})}>
             <HintInput
               id="supplier-email"
               type="email"
@@ -320,6 +323,7 @@ export function SupplierSettingsView() {
           <ContentField
             id="supplier-privacyOfficer"
             label="개인정보보호책임자"
+            required
             {...(errors.privacyOfficer ? { error: errors.privacyOfficer } : {})}
           >
             <HintInput
@@ -332,7 +336,7 @@ export function SupplierSettingsView() {
             />
           </ContentField>
 
-          <ContentField id="supplier-hostingProvider" label="호스팅 서비스 제공자 (선택)">
+          <ContentField id="supplier-hostingProvider" label="호스팅 서비스 제공자">
             <HintInput
               id="supplier-hostingProvider"
               type="text"

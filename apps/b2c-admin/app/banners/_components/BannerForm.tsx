@@ -109,7 +109,7 @@ export function BannerForm({ mode, bannerCode, createdAt, today, order, initial 
           <ContentReadonly label="배너 코드" value={bannerCode} note={mode === 'create' ? '자동생성' : '수정 불가'} />
           <ContentReadonly label="등록일" value={createdAt} note="자동입력" />
 
-          <ContentField id="banner-title" label="제목" {...(errors.title ? { error: errors.title } : {})}>
+          <ContentField id="banner-title" label="제목" required {...(errors.title ? { error: errors.title } : {})}>
             <HintInput
               id="banner-title"
               type="text"
@@ -120,7 +120,7 @@ export function BannerForm({ mode, bannerCode, createdAt, today, order, initial 
             />
           </ContentField>
 
-          <ContentField id="banner-subtitle" label="부제 (선택)">
+          <ContentField id="banner-subtitle" label="부제">
             <HintInput
               id="banner-subtitle"
               type="text"
@@ -130,7 +130,7 @@ export function BannerForm({ mode, bannerCode, createdAt, today, order, initial 
             />
           </ContentField>
 
-          <ContentField id="banner-badge" label="배지 (선택)">
+          <ContentField id="banner-badge" label="배지">
             <HintInput
               id="banner-badge"
               type="text"
@@ -142,7 +142,7 @@ export function BannerForm({ mode, bannerCode, createdAt, today, order, initial 
 
           <ContentField
             id="banner-linkUrl"
-            label="링크 주소 (선택)"
+            label="링크 주소"
             {...(errors.linkUrl ? { error: errors.linkUrl } : {})}
           >
             <HintInput
@@ -165,7 +165,7 @@ export function BannerForm({ mode, bannerCode, createdAt, today, order, initial 
         </ContentSection>
 
         <ContentSection title="노출 기간" description="종료일을 비우면 종료 없이 계속 노출됩니다.">
-          <ContentField id="banner-startAt" label="시작일" {...(errors.startAt ? { error: errors.startAt } : {})}>
+          <ContentField id="banner-startAt" label="시작일" required {...(errors.startAt ? { error: errors.startAt } : {})}>
             <HintInput
               id="banner-startAt"
               type="text"
@@ -179,7 +179,7 @@ export function BannerForm({ mode, bannerCode, createdAt, today, order, initial 
 
           <ContentField
             id="banner-endAt"
-            label="종료일 (선택)"
+            label="종료일"
             {...(errors.endAt ? { error: errors.endAt } : {})}
           >
             <HintInput

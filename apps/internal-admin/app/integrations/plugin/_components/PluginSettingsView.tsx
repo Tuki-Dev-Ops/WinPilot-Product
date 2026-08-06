@@ -1,140 +1,127 @@
 'use client';
 
-import { useMemo, useState, type FormEvent } from 'react';
-import { Checkbox, HintInput, useToast } from '@winpilot/ui';
-import { InternalField, InternalPrimaryButton, InternalSaveRow } from '@/app/_components/InternalForm';
-import { TenantPicker } from '@/app/integrations/_components/TenantPicker';
+import { useMemo, useState } from 'react';
+import { Badge, useToast } from '@winpilot/ui';
+import { InternalConfirmModal } from '@/app/_components/InternalConfirmModal';
+import { IntegrationTenantList } from '@/app/integrations/_components/IntegrationTenantList';
 import { PLUGIN_DEFAULTS, type PluginSetting } from '@/lib/data/integrations';
-import { TENANTS, findTenant } from '@/lib/data/tenants';
+import { findTenant, TENANTS } from '@/lib/data/tenants';
+import { PluginSettingsModal } from './PluginSettingsModal';
 
 /**
  * 플러그인 — 고객사 배포에 얹는 조각.
  *
- * **켜는 순간 고객사 화면에서 바로 돈다.** 그래서 항목마다 "고객사 화면에 보이는지" 를 함께
- * 적는다. 채팅 상담처럼 눈에 띄는 것과 분석 스크립트처럼 보이지 않는 것이 섞여 있어서,
- * 켠 사람도 시간이 지나면 무엇을 켰는지 잊는다.
+ * ## 목록만 남고 설정은 창으로 갔다
+ * 전에는 고객사 목록 밑에 설정 묶음이 이어져 있었다. 다른 고객사를 누르면 **화면은 그대로인데
+ * 아래 내용만 바뀌어서**, 지금 보고 있는 것이 누구 것인지 제목을 다시 읽어야 했다. 키는
+ * 고객사마다 다른 값이고 잘못 넣으면 남의 배포에 남의 키가 들어간다.
+ *
+ * 지금 이 화면이 답하는 것은 **어느 고객사에 무엇이 켜져 있는가** 하나이고, 켜고 끄는 일은
+ * 창에서 한다(`PluginSettingsModal`).
+ *
+ * ## 켜는 순간 고객사 화면에서 바로 돈다
+ * 그래서 조각마다 "고객사 화면에 보이는지" 를 함께 적는다. 채팅 상담처럼 눈에 띄는 것과 분석
+ * 스크립트처럼 보이지 않는 것이 섞여 있어서, 켠 사람도 시간이 지나면 무엇을 켰는지 잊는다.
  *
  * **프론트엔드 전용** — 저장 결과는 이 화면에만 반영된다.
  */
 export function PluginSettingsView({ initialTenantId }: { initialTenantId?: string }) {
   const toast = useToast();
-  const [tenantId, setTenantId] = useState(initialTenantId ?? TENANTS[0]?.id ?? '');
+  const [tenantId, setTenantId] = useState(initialTenantId ?? '');
   const tenant = useMemo(() => findTenant(tenantId), [tenantId]);
 
-  const [plugins, setPlugins] = useState<PluginSetting[]>(PLUGIN_DEFAULTS);
-  const [loadedFor, setLoadedFor] = useState(tenantId);
+  /*
+    고객사마다 켜 둔 조각. 아직 손대지 않은 고객사는 여기 없고, 그때는 기본값을 읽는다 —
+    빈 값과 "기본 그대로" 를 같은 것으로 두면 저장한 적 없는 곳이 꺼진 것으로 보인다.
+  */
+  const [saved, setSaved] = useState<Record<string, PluginSetting[]>>({});
+  /* 켠 조각은 **고객사 화면에서 바로 도는 것**이라, 저장 전에 무엇이 켜지는지 한 번 더 읽게 한다. */
+  const [pending, setPending] = useState<PluginSetting[] | null>(null);
+  const pluginsOf = (id: string) => saved[id] ?? PLUGIN_DEFAULTS;
 
-  // 고객사를 바꾸면 그 고객사의 값으로 다시 시작한다 — 앞 고객사의 키가 남아 있으면 사고가 난다.
-  if (loadedFor !== tenantId) {
-    setPlugins(PLUGIN_DEFAULTS);
-    setLoadedFor(tenantId);
-  }
+  const save = (plugins: PluginSetting[]) => {
+    if (!tenant) return;
 
-  const update = (id: string, patch: Partial<PluginSetting>) => {
-    setPlugins((previous) => previous.map((item) => (item.id === id ? { ...item, ...patch } : item)));
-  };
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    // 켜 두고 키가 비어 있으면 고객사 화면에서 아무 일도 일어나지 않는다.
-    const broken = plugins.filter((plugin) => plugin.enabled && plugin.key.trim() === '' && needsKey(plugin));
-    if (broken.length > 0) {
-      toast.error({
-        message: '저장하지 못했습니다.',
-        detail: `${broken.map((plugin) => plugin.label).join(', ')} — 켜 두었는데 키가 비어 있습니다.`,
-      });
-      return;
-    }
+    setSaved((previous) => ({ ...previous, [tenant.id]: plugins }));
+    setPending(null);
+    setTenantId('');
 
     const on = plugins.filter((plugin) => plugin.enabled);
     toast.success({
       message: '플러그인을 저장했습니다.',
-      detail: `${tenant?.name} · ${on.length > 0 ? on.map((plugin) => plugin.label).join(', ') : '켜 둔 것 없음'}`,
+      detail: `${tenant.name} · ${on.length > 0 ? on.map((plugin) => plugin.label).join(', ') : '켜 둔 것 없음'}`,
     });
   };
 
-  const hidden = plugins.filter((plugin) => plugin.enabled && !plugin.visible);
-
   return (
-    <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-6">
-      <TenantPicker value={tenantId} onChange={setTenantId} tenant={tenant} />
+    <div className="flex flex-col gap-6">
+      {/*
+        고객사 목록이 곧 이 화면이다. 켠 조각은 **고객사 화면에서 바로 도는 것**이라, 어디에
+        무엇이 켜져 있는지가 목록에서 읽혀야 한다.
+      */}
+      <IntegrationTenantList
+        value={tenantId}
+        onChange={setTenantId}
+        description="줄을 누르면 그 고객사 배포에 얹는 조각을 창에서 켜고 끕니다."
+        columns={[
+          { label: '배포 도메인', span: 'lg:col-span-3' },
+          { label: '켠 조각', span: 'lg:col-span-2' },
+          { label: '플랜', span: 'lg:col-span-2' },
+        ]}
+        render={(one) => {
+          const plugins = pluginsOf(one.id);
+          const on = plugins.filter((plugin) => plugin.enabled);
+          /* 보이지 않는데 켜져 있는 것은 목록에서 따로 센다 — 켠 사실을 잊기 쉬운 쪽이다. */
+          const hidden = on.filter((plugin) => !plugin.visible);
 
-      <section className="rounded-xl border border-border bg-canvas">
-        <div className="border-b border-border px-6 py-4">
-          <h2 className="text-base font-semibold tracking-tight">고객사 배포에 얹는 조각</h2>
-          <p className="mt-1 text-sm leading-relaxed text-ink-muted">
-            켜는 순간 고객사 화면에서 바로 돕니다. 플랜이 열어 주지 않는 것은 켤 수 없습니다.
-          </p>
-        </div>
+          return [
+            <span key="domain" className="min-w-0 truncate font-mono text-xs text-ink-muted">
+              {one.deployments.find((deployment) => deployment.kind === 'B2C Client')?.domain ?? '배포 없음'}
+            </span>,
+            <span key="on" className="flex min-w-0 items-center gap-2">
+              <span className="shrink-0 text-sm tabular-nums">
+                {on.length}
+                <span className="text-ink-faint"> / {plugins.length}</span>
+              </span>
+              {hidden.length > 0 && <Badge tone="wait">보이지 않음 {hidden.length}</Badge>}
+            </span>,
+            <span key="plan" className="min-w-0 truncate text-sm">
+              {one.plan}
+            </span>,
+          ];
+        }}
+      />
 
-        <div className="flex flex-col">
-          {plugins.map((plugin) => (
-            <div key={plugin.id} className="flex flex-col gap-4 border-b border-border px-6 py-5 last:border-b-0">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div className="flex min-w-0 items-start gap-3">
-                  <Checkbox
-                    checked={plugin.enabled}
-                    onChange={(checked) => update(plugin.id, { enabled: checked })}
-                    label={`${plugin.label} 사용`}
-                  />
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium">{plugin.label}</p>
-                    <p className="text-sm leading-relaxed text-ink-muted">{plugin.purpose}</p>
-                  </div>
-                </div>
+      <PluginSettingsModal
+        open={tenant !== undefined}
+        tenant={tenant}
+        onClose={() => setTenantId('')}
+        onSubmit={setPending}
+      />
 
-                <div className="flex shrink-0 items-center gap-2">
-                  {/* 보이지 않는 조각을 표시로 갈라 둔다 — 켠 사실을 잊기 쉬운 쪽이다. */}
-                  <span
-                    className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${
-                      plugin.visible ? 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200' : 'bg-surface text-ink-muted'
-                    }`}
-                  >
-                    {plugin.visible ? '화면에 보임' : '보이지 않음'}
-                  </span>
-                  <span className="shrink-0 whitespace-nowrap rounded-full bg-surface px-2.5 py-1 text-xs text-ink-muted">
-                    {plugin.requires} 이상
-                  </span>
-                </div>
-              </div>
-
-              {plugin.enabled && needsKey(plugin) && (
-                <InternalField
-                  label="연동 키"
-                  htmlFor={`plugin-${plugin.id}-key`}
-                  hint="각 서비스 콘솔에서 발급받은 값입니다."
-                >
-                  <HintInput
-                    id={`plugin-${plugin.id}-key`}
-                    type="text"
-                    hint="발급받은 키"
-                    value={plugin.key}
-                    onChange={(event) => update(plugin.id, { key: event.target.value })}
-                    invalid={!plugin.key.trim()}
-                  />
-                </InternalField>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {hidden.length > 0 && (
-          <p className="border-t border-border bg-surface px-6 py-4 text-sm leading-relaxed text-ink-muted">
-            보이지 않는 조각 {hidden.length}개가 켜져 있습니다 — {hidden.map((plugin) => plugin.label).join(', ')}.
-            고객사 화면에는 나타나지 않지만 값은 밖으로 나갑니다.
-          </p>
-        )}
-
-        <InternalSaveRow>
-          <InternalPrimaryButton>저장</InternalPrimaryButton>
-        </InternalSaveRow>
-      </section>
-    </form>
+      <InternalConfirmModal
+        open={pending !== null}
+        title="이 조각으로 저장할까요"
+        message="켜는 순간 고객사 화면에서 바로 돕니다. 보이지 않는 조각도 값은 밖으로 나갑니다."
+        detail={
+          pending && tenant
+            ? `${tenant.name} · ${
+                pending.filter((plugin) => plugin.enabled).length > 0
+                  ? pending.filter((plugin) => plugin.enabled).map((plugin) => plugin.label).join(', ')
+                  : '켜 둔 것 없음'
+              }`
+            : undefined
+        }
+        confirmLabel="저장"
+        onConfirm={() => pending && save(pending)}
+        onCancel={() => setPending(null)}
+      />
+    </div>
   );
 }
 
-/** 키가 있어야 도는 조각인지. 키를 받지 않는 조각까지 빈 칸을 그리면 무엇을 채워야 할지 흐려진다. */
-function needsKey(plugin: PluginSetting): boolean {
-  return plugin.id === 'chat' || plugin.id === 'analytics' || plugin.id === 'crm';
-}
+/*
+  `needsKey()` 는 여기 있었다 — 어떤 조각이 키를 받는지 id 로 판별하는 함수였다.
+  조각이 늘 때마다 이 함수를 함께 고쳐야 했고, 잊으면 키 칸이 조용히 사라졌다.
+  이제 `keyField` 가 있는지로 안다 — 사실이 표 한 곳에 있다.
+*/

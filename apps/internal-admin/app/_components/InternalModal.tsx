@@ -1,25 +1,24 @@
 'use client';
 
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
+import { Button, Modal } from '@winpilot/ui';
 
 /**
- * 사내 어드민 공통 모달.
+ * 사내 어드민의 **등록·수정 창** — 폼 하나와 `취소`/`저장` 두 단추가 붙은 모달.
  *
  * 등록 폼을 **목록 위 모달**에서 끝내는 이유: 이 콘솔의 자원은 한 줄에 들어가는 값이
  * 대여섯 개뿐이라, 화면을 따로 세우면 등급 하나 만드는 데 목록 → 등록 → 저장 → 목록으로
  * 네 번 오간다. 값이 많아지는 자원이 생기면 그때 화면을 나눈다 (`docs/path.md` §3.2).
  *
- * Esc 로 닫히고, 열릴 때 본문 스크롤을 잠그며, 첫 입력 요소로 포커스를 옮긴다.
- * **프론트엔드 전용** — 서버 통신 없이 로컬 상태로만 열고 닫는다.
+ * ## 창을 여닫는 일은 이제 여기서 하지 않는다
+ * Esc·스크롤 잠금·첫 요소 포커스는 `@winpilot/ui` 의 `Modal` 이 맡는다. 전에는 그 백 줄이
+ * B2C Admin 의 `AdminModal` 과 **두 벌로** 있었고, 두 벌인 동안 이쪽에만 없는 것이 넷 생겼다
+ * (모달 스택 · 열림 애니메이션 · `elevated` · `bg-surface-raised`). 특히 **모달 스택이 없어
+ * 확인 창 위에서 Esc 를 누르면 뒤의 이 폼까지 함께 닫혔다** — 쓰던 값이 사라진다.
+ *
+ * 남은 것은 이 콘솔이 정한 **모양** 하나다: 폼이 있고, 아래줄은 언제나 취소·저장 둘.
+ * 아홉 화면이 같은 모양을 쓰기로 했으므로 여기 한 번만 적는다.
  */
-function CloseIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-      <path d="M4 4 L12 12 M12 4 L4 12" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 export function InternalModal({
   open,
   title,
@@ -27,6 +26,7 @@ export function InternalModal({
   onClose,
   onSubmit,
   submitLabel,
+  elevated,
   children,
 }: {
   open: boolean;
@@ -36,87 +36,52 @@ export function InternalModal({
   /** 저장을 눌렀을 때. 막을 조건이 있으면 여기서 막고 토스트로 알린다 */
   onSubmit: () => void;
   submitLabel: string;
+  /**
+   * 창 **위에** 뜨는 창인지.
+   *
+   * 고객사 창 안에서 제공자·레코드 창을 여는 자리가 생겼다. 겹치는 창이 같은 높이면
+   * 뒤의 창이 앞을 덮어 눌리지 않는다 — 위에 뜨는 쪽이 자기가 위라고 말해야 한다.
+   */
+  elevated?: boolean;
   children: ReactNode;
 }) {
-  const panelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!open) return undefined;
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return;
-      // 안쪽 레이어(드롭다운 등)가 이미 이 Esc 를 소비했으면 모달은 닫지 않는다.
-      if (event.defaultPrevented) return;
-      onClose();
-    };
-    document.addEventListener('keydown', onKeyDown);
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    panelRef.current?.querySelector<HTMLElement>('input, select, textarea, button')?.focus();
-
-    return () => {
-      document.removeEventListener('keydown', onKeyDown);
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [open, onClose]);
-
-  if (!open) return null;
+  // 제목을 id 로 쓰면 공백이 들어가고 두 창이 같은 제목일 때 겹친다.
+  const formId = useId();
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-6 py-10">
-      <button type="button" aria-label="닫기" onClick={onClose} className="absolute inset-0 bg-ink/40" />
-
-      <div
-        ref={panelRef}
-        role="dialog"
-        aria-modal="true"
-        aria-label={title}
-        className="relative flex max-h-full w-full max-w-md flex-col overflow-hidden rounded-xl border border-border bg-canvas"
+    <Modal
+      open={open}
+      title={title}
+      {...(description === undefined ? {} : { description })}
+      onClose={onClose}
+      {...(elevated ? { elevated } : {})}
+      footer={
+        <>
+          <Button tone="secondary" onClick={onClose}>
+            취소
+          </Button>
+          {/*
+            `form` 속성으로 바깥의 단추를 안쪽 폼에 묶는다. `Modal` 의 아래줄은 본문 밖에 있어
+            단추를 `<form>` 안에 넣을 수 없는데, 그렇다고 `onClick` 으로 제출하면 Enter 키로
+            저장하는 길이 사라진다 — 값을 몇 개만 넣는 창에서 그 길이 가장 빠르다.
+          */}
+          <Button type="submit" form={formId}>
+            {submitLabel}
+          </Button>
+        </>
+      }
+    >
+      <form
+        id={formId}
+        noValidate
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSubmit();
+        }}
+        className="flex flex-col gap-5"
       >
-        <div className="flex items-start justify-between gap-4 border-b border-border px-6 py-5">
-          <div className="min-w-0">
-            <h2 className="text-base font-semibold tracking-tight">{title}</h2>
-            {description && <p className="mt-1 text-sm leading-relaxed text-ink-muted">{description}</p>}
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="닫기"
-            className="-mr-2 -mt-1 shrink-0 rounded-lg p-2 text-ink-muted"
-          >
-            <CloseIcon />
-          </button>
-        </div>
-
-        <form
-          noValidate
-          onSubmit={(event) => {
-            event.preventDefault();
-            onSubmit();
-          }}
-          className="flex min-h-0 flex-1 flex-col"
-        >
-          <div className="flex flex-1 flex-col gap-5 overflow-auto px-6 py-6">{children}</div>
-
-          <div className="flex justify-end gap-2 border-t border-border px-6 py-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="h-9 shrink-0 whitespace-nowrap rounded-lg border border-border-strong px-4 text-sm text-ink-muted transition-colors duration-150 hover:border-ink-faint"
-            >
-              취소
-            </button>
-            <button
-              type="submit"
-              className="h-9 shrink-0 whitespace-nowrap rounded-lg bg-brand-500 px-4 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-600"
-            >
-              {submitLabel}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        {children}
+      </form>
+    </Modal>
   );
 }

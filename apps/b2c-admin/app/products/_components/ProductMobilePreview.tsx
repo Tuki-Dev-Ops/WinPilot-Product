@@ -124,7 +124,7 @@ export function ProductMobilePreview({ value, imageUrl, tags = [] }: ProductMobi
                   <span className="group relative min-w-0">
                     <span
                       tabIndex={0}
-                      className="block cursor-default truncate text-right text-xs text-ink-muted underline decoration-dotted underline-offset-2"
+                      className="block cursor-default min-w-0 truncate text-right text-xs text-ink-muted underline decoration-dotted underline-offset-2"
                     >
                       {surchargeSummary}
                     </span>

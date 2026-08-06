@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
-import { AdminModal } from '@/app/_components/AdminModal';
-import { RichTextEditor } from '@winpilot/ui';
+import { Button, Modal, RichTextEditor } from '@winpilot/ui';
 import {
   INQUIRY_STATES,
   INQUIRY_STATE_TONE,
@@ -71,27 +70,19 @@ export function InquiryDetailModal({ open, inquiry, onClose, onSubmit }: Inquiry
 
   return (
     <>
-      <AdminModal
+      <Modal
         open={open}
         title="문의 상세"
         description={`${inquiry.id} · ${pathLabel(inquiry.path)}`}
         onClose={onClose}
         footer={
           <>
-            <button
-              type="button"
-              onClick={onClose}
-              className="h-9 shrink-0 whitespace-nowrap rounded-lg border border-border-strong px-4 text-sm text-ink-muted"
-            >
+            <Button tone="secondary" onClick={onClose}>
               닫기
-            </button>
-            <button
-              type="button"
-              onClick={submit}
-              className="h-9 shrink-0 whitespace-nowrap rounded-lg bg-brand-500 px-4 text-sm font-medium text-white hover:bg-brand-600"
-            >
+            </Button>
+            <Button onClick={submit}>
               답변 저장
-            </button>
+            </Button>
           </>
         }
       >
@@ -163,7 +154,7 @@ export function InquiryDetailModal({ open, inquiry, onClose, onSubmit }: Inquiry
             )}
           </div>
         </div>
-      </AdminModal>
+      </Modal>
 
       <AdminConfirmModal
         open={confirmOpen}

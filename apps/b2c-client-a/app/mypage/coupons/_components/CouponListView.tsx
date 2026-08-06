@@ -79,7 +79,7 @@ export function CouponListView({ mine, open }: { mine: CouponRecord[]; open: Cou
                 </p>
 
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium">{coupon.name}</p>
+                  <p className="min-w-0 truncate text-sm font-medium">{coupon.name}</p>
                   <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-muted">
                     <span className="font-mono tabular-nums">
                       {coupon.startAt} ~ {coupon.endAt}

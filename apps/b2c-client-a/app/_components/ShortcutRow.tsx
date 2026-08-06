@@ -69,7 +69,7 @@ export function ShortcutRow({ tiles, label }: { tiles: ShortcutTile[]; label: st
                   <span className="grid size-14 place-items-center rounded-2xl bg-surface text-ink transition-colors duration-150 group-hover:bg-border sm:size-16">
                     {tile.icon}
                   </span>
-                  <span className="w-full truncate text-center text-xs text-ink">{tile.label}</span>
+                  <span className="w-full min-w-0 truncate text-center text-xs text-ink">{tile.label}</span>
                 </a>
               ))}
             </div>

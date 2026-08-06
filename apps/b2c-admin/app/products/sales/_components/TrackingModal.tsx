@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AdminModal } from '@/app/_components/AdminModal';
-import { Dropdown, HintInput } from '@winpilot/ui';
+import { Button, Dropdown, HintInput, Modal } from '@winpilot/ui';
 import { COURIERS } from '@/lib/data/orders';
 
 export type TrackingInput = { courier: string; trackingNumber: string };
@@ -50,27 +49,19 @@ export function TrackingModal({ open, count, onClose, onSubmit }: TrackingModalP
   };
 
   return (
-    <AdminModal
+    <Modal
       open={open}
       title="운송장 번호 등록"
       description={`선택한 ${count}건에 같은 운송장 정보를 등록합니다.`}
       onClose={onClose}
       footer={
         <>
-          <button
-            type="button"
-            onClick={onClose}
-            className="h-9 shrink-0 whitespace-nowrap rounded-lg border border-border-strong px-4 text-sm text-ink-muted"
-          >
+          <Button tone="secondary" onClick={onClose}>
             취소
-          </button>
-          <button
-            type="button"
-            onClick={submit}
-            className="h-9 shrink-0 whitespace-nowrap rounded-lg bg-brand-500 px-4 text-sm font-medium text-white hover:bg-brand-600"
-          >
+          </Button>
+          <Button onClick={submit}>
             등록
-          </button>
+          </Button>
         </>
       }
     >
@@ -108,6 +99,6 @@ export function TrackingModal({ open, count, onClose, onSubmit }: TrackingModalP
           등록하면 배송 상태가 &lsquo;배송중&rsquo; 으로 바뀝니다.
         </p>
       </div>
-    </AdminModal>
+    </Modal>
   );
 }

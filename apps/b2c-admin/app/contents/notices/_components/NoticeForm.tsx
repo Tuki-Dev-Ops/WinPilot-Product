@@ -18,6 +18,7 @@ import {
   type NoticeFormErrors,
   type NoticeFormInput,
 } from '@/lib/validation/content-record';
+import { visibilityLabel } from '@/app/_components/AdminVisibilityBadge';
 
 export const EMPTY_NOTICE: NoticeFormInput = { title: '', body: '', pinned: false, visible: true };
 
@@ -90,7 +91,7 @@ export function NoticeForm({ mode, noticeCode, createdAt, initial }: NoticeFormP
           />
           <ContentReadonly label="등록일" value={createdAt} note="자동입력" />
 
-          <ContentField id="notice-title" label="제목" {...(errors.title ? { error: errors.title } : {})}>
+          <ContentField id="notice-title" label="제목" required {...(errors.title ? { error: errors.title } : {})}>
             <HintInput
               id="notice-title"
               type="text"
@@ -104,7 +105,7 @@ export function NoticeForm({ mode, noticeCode, createdAt, initial }: NoticeFormP
         </ContentSection>
 
         <ContentSection title="내용" description="글자 서식과 이미지를 넣을 수 있습니다.">
-          <ContentField id="notice-body" label="본문" {...(errors.body ? { error: errors.body } : {})}>
+          <ContentField id="notice-body" label="본문" required {...(errors.body ? { error: errors.body } : {})}>
             <RichTextEditor
               id="notice-body"
               hint="공지 내용을 입력해 주세요"
@@ -154,7 +155,7 @@ export function NoticeForm({ mode, noticeCode, createdAt, initial }: NoticeFormP
         summary={[
           { label: '공지 코드', value: noticeCode },
           { label: '제목', value: value.title.trim() },
-          { label: '노출', value: value.visible ? '노출' : '숨김' },
+          { label: '노출', value: visibilityLabel(value.visible) },
           { label: '상단 고정', value: value.pinned ? '고정' : '고정 안 함' },
         ]}
         onConfirm={applySubmit}

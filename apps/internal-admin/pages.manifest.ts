@@ -39,6 +39,14 @@ export const pages: PageSpec[] = [
   // 20번대 — 구독
   { order: 20, id: 'subscriptions-plans', name: 'Plans', route: '/subscriptions/plans' },
   { order: 21, id: 'subscriptions-roles', name: 'Roles', route: '/subscriptions/roles' },
+  /* 목록에서만 들어간다 — 상세를 매니페스트에서 빠뜨리면 명세에도 Figma 에도 자리가 없다. */
+  {
+    order: 22,
+    id: 'subscriptions-roles-detail',
+    name: 'Role Detail',
+    route: '/subscriptions/roles/[roleId]',
+    sampleUrl: '/subscriptions/roles/tenant-operator',
+  },
 
   // 30번대 — 문의
   { order: 30, id: 'inquiries', name: 'Inquiries', route: '/inquiries' },
@@ -47,7 +55,7 @@ export const pages: PageSpec[] = [
   { order: 40, id: 'integrations-pg', name: 'Integration PG', route: '/integrations/pg' },
   { order: 41, id: 'integrations-oauth', name: 'Integration OAuth', route: '/integrations/oauth' },
   { order: 42, id: 'integrations-plugin', name: 'Integration Plugin', route: '/integrations/plugin' },
-  { order: 43, id: 'integrations-dns', name: 'Integration DNS', route: '/integrations/dns' },
+  { order: 43, id: 'integrations-dns', name: 'Integration DNS / SSL', route: '/integrations/dns' },
 
   // 50번대 — 통계
   { order: 50, id: 'statistics-revenue', name: 'Revenue', route: '/statistics/revenue' },

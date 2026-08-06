@@ -18,8 +18,11 @@
     "ssot:selftest": "tsx tools/verifier/src/selftest.ts",
     "dev:internal": "pnpm --filter @winpilot/internal-admin dev",
     "sync:check": "tsx tools/check-component-sync.ts",
+    "docs:check": "tsx tools/check-docs-coverage.ts",
     "docs:build": "tsx tools/build-docs.ts",
-    "docs:capture": "tsx tools/capture-page-views.ts"
+    "docs:capture": "tsx tools/capture-page-views.ts",
+    "docs:capture:admin": "tsx tools/capture-page-views.ts --app=admin",
+    "docs:capture:internal": "tsx tools/capture-page-views.ts --app=internal"
   },
   "devDependencies": {
     "playwright": "^1.62.1",

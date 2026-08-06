@@ -19,6 +19,7 @@ import {
   type NewsFormErrors,
   type NewsFormInput,
 } from '@/lib/validation/content-record';
+import { visibilityLabel } from '@/app/_components/AdminVisibilityBadge';
 
 export const EMPTY_NEWS: NewsFormInput = {
   title: '',
@@ -99,7 +100,7 @@ export function NewsForm({ mode, newsCode, createdAt, initial }: NewsFormProps) 
           <ContentReadonly label="뉴스 코드" value={newsCode} note={mode === 'create' ? '자동생성' : '수정 불가'} />
           <ContentReadonly label="등록일" value={createdAt} note="자동입력" />
 
-          <ContentField id="news-title" label="제목" {...(errors.title ? { error: errors.title } : {})}>
+          <ContentField id="news-title" label="제목" required {...(errors.title ? { error: errors.title } : {})}>
             <HintInput
               id="news-title"
               type="text"
@@ -110,7 +111,7 @@ export function NewsForm({ mode, newsCode, createdAt, initial }: NewsFormProps) 
             />
           </ContentField>
 
-          <ContentField id="news-press" label="언론사" {...(errors.press ? { error: errors.press } : {})}>
+          <ContentField id="news-press" label="언론사" required {...(errors.press ? { error: errors.press } : {})}>
             <HintInput
               id="news-press"
               type="text"
@@ -124,6 +125,7 @@ export function NewsForm({ mode, newsCode, createdAt, initial }: NewsFormProps) 
           <ContentField
             id="news-publishedAt"
             label="발행일"
+            required
             {...(errors.publishedAt ? { error: errors.publishedAt } : {})}
           >
             <HintInput
@@ -139,7 +141,7 @@ export function NewsForm({ mode, newsCode, createdAt, initial }: NewsFormProps) 
         </ContentSection>
 
         <ContentSection title="원문 링크" description="고객이 이 주소로 이동합니다. 기사 본문은 싣지 않습니다.">
-          <ContentField id="news-url" label="링크 주소" {...(errors.url ? { error: errors.url } : {})}>
+          <ContentField id="news-url" label="링크 주소" required {...(errors.url ? { error: errors.url } : {})}>
             <HintInput
               id="news-url"
               type="url"
@@ -220,7 +222,7 @@ export function NewsForm({ mode, newsCode, createdAt, initial }: NewsFormProps) 
           { label: '언론사', value: value.press.trim() },
           { label: '발행일', value: value.publishedAt.trim() },
           { label: '원문 링크', value: value.url.trim() },
-          { label: '노출', value: value.visible ? '노출' : '숨김' },
+          { label: '노출', value: visibilityLabel(value.visible) },
         ]}
         onConfirm={applySubmit}
         onClose={() => setConfirmOpen(false)}

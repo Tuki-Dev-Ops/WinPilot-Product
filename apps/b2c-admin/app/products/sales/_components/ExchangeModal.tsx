@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AdminModal } from '@/app/_components/AdminModal';
 import { exchangeableOptions, findOption, optionLabel } from '@/lib/data/product-options';
 import type { OrderRecord } from '@/lib/data/orders';
+import { Button, Modal } from '@winpilot/ui';
 
 export type ExchangeModalProps = {
   open: boolean;
@@ -52,28 +52,19 @@ export function ExchangeModal({ open, order, onClose, onSubmit }: ExchangeModalP
   };
 
   return (
-    <AdminModal
+    <Modal
       open={open}
       title="교환"
       description="같은 색상의 다른 사이즈로만 교환할 수 있습니다."
       onClose={onClose}
       footer={
         <>
-          <button
-            type="button"
-            onClick={onClose}
-            className="h-9 shrink-0 whitespace-nowrap rounded-lg border border-border-strong px-4 text-sm text-ink-muted"
-          >
+          <Button tone="secondary" onClick={onClose}>
             취소
-          </button>
-          <button
-            type="button"
-            onClick={submit}
-            disabled={available.length === 0}
-            className="h-9 shrink-0 whitespace-nowrap rounded-lg bg-brand-500 px-4 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50"
-          >
+          </Button>
+          <Button onClick={submit} disabled={available.length === 0}>
             교환 접수
-          </button>
+          </Button>
         </>
       }
     >
@@ -126,7 +117,7 @@ export function ExchangeModal({ open, order, onClose, onSubmit }: ExchangeModalP
                         } disabled:cursor-not-allowed disabled:border-border disabled:text-ink-faint disabled:hover:border-border`}
                       >
                         {option.size}
-                        <span className="text-[10px] tabular-nums text-ink-faint">
+                        <span className="text-3xs tabular-nums text-ink-faint">
                           {option.selectable ? `재고 ${option.stock}` : '품절'}
                         </span>
                       </button>
@@ -156,6 +147,6 @@ export function ExchangeModal({ open, order, onClose, onSubmit }: ExchangeModalP
           </>
         )}
       </div>
-    </AdminModal>
+    </Modal>
   );
 }

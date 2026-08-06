@@ -1,5 +1,6 @@
 'use client';
 
+import { ChevronDown } from 'lucide-react';
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -25,9 +26,7 @@ const GAP = 4;
 
 function ChevronIcon() {
   return (
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M3 4.5 L6 7.5 L9 4.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
+    <ChevronDown aria-hidden className="size-3" strokeWidth={1.5} />
   );
 }
 
@@ -145,7 +144,7 @@ export function Dropdown({ id, label, options, value, onChange, invalid = false,
                 active ? 'bg-brand-50 font-medium text-brand-700 dark:bg-brand-900 dark:text-brand-200' : 'text-ink'
               }`}
             >
-              <span className="truncate">{option.label}</span>
+              <span className="min-w-0 truncate">{option.label}</span>
               {option.hint && <span className="shrink-0 text-xs text-ink-faint">{option.hint}</span>}
             </button>
           </li>
@@ -168,7 +167,7 @@ export function Dropdown({ id, label, options, value, onChange, invalid = false,
           invalid ? 'border-signal-danger' : open ? 'border-brand-500' : 'border-border-strong'
         } ${selected ? 'text-ink' : 'text-ink-faint'}`}
       >
-        <span className="truncate">{selected ? selected.label : label}</span>
+        <span className="min-w-0 truncate">{selected ? selected.label : label}</span>
         <span
           className={`shrink-0 text-ink-faint transition-transform duration-150 ease-out ${open ? 'rotate-180' : ''}`}
         >

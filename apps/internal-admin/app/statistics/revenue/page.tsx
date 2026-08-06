@@ -56,8 +56,8 @@ export default function InternalRevenueListPage() {
       />
 
       <InternalPanel
-        title="달별 매출"
-        description="바닥은 언제나 0 입니다. 최솟값을 바닥으로 잡으면 작은 차이가 커 보여 없는 추세를 읽게 됩니다."
+        title="월별 매출 추이"
+        description="세로축은 항상 0부터 시작합니다. 최솟값을 기준으로 잡으면 작은 변동이 크게 보여 실제와 다른 추세로 읽힐 수 있습니다."
       >
         <MonthBars
           label="달별 매출"
@@ -68,8 +68,8 @@ export default function InternalRevenueListPage() {
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <InternalPanel
-          title="무엇으로 버는가"
-          description="유지보수가 얇으면 한 번 팔고 끝나는 장사가 됩니다."
+          title="매출 구성"
+          description="매출을 유형별로 나눈 비중입니다. 유지보수·호스팅처럼 반복되는 매출의 비중이 낮을수록 다음 분기 실적을 신규 계약에 의존하게 됩니다."
         >
           <ShareBars
             rows={REVENUE_BY_KIND.map((row) => ({ label: row.kind, value: row.amount }))}
@@ -78,8 +78,8 @@ export default function InternalRevenueListPage() {
         </InternalPanel>
 
         <InternalPanel
-          title="어디서 버는가"
-          description="한 곳에 매출이 쏠려 있으면 그 한 곳이 떠날 때 회사가 흔들립니다."
+          title="고객사별 매출 비중"
+          description="고객사가 전체 매출에서 차지하는 비중입니다. 상위 고객사의 비중이 높을수록 해당 고객사의 계약 종료가 전체 실적에 미치는 영향이 커집니다."
         >
           <ShareBars
             rows={REVENUE_BY_TENANT.map((row) => ({
@@ -92,7 +92,7 @@ export default function InternalRevenueListPage() {
         </InternalPanel>
       </div>
 
-      <InternalPanel title="달별 내역" description="차트와 같은 값입니다 — 옮겨 적을 때는 이 표를 봅니다.">
+      <InternalPanel title="월별 상세 내역" description="위 차트와 동일한 데이터입니다. 수치를 그대로 옮겨야 할 때 이 표를 참고하세요.">
         <InternalTableHead columns={COLUMNS} />
 
         <div className="flex flex-col">

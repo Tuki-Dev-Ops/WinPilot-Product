@@ -3,15 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { ALL_VALUE, ContentListView, type ContentColumn } from '@/app/contents/_components/ContentListView';
-import { useToast } from '@winpilot/ui';
-import {
-  periodText,
-  POPUP_POSITIONS,
-  POPUPS,
-  SCHEDULE_TONE,
-  scheduleState,
-  type PopupRecord,
-} from '@/lib/data/banners';
+import { Badge, useToast } from '@winpilot/ui';
+import { periodText, POPUP_POSITIONS, POPUPS, SCHEDULE_TONE, scheduleState, type PopupRecord } from '@/lib/data/banners';
 
 function columns(today: string): Array<ContentColumn<PopupRecord>> {
   return [
@@ -22,8 +15,8 @@ function columns(today: string): Array<ContentColumn<PopupRecord>> {
       span: 4,
       render: (popup) => (
         <div className="min-w-0">
-          <p className="truncate text-sm font-medium">{popup.title}</p>
-          <p className="truncate font-mono text-xs text-ink-faint">
+          <p className="min-w-0 truncate text-sm font-medium">{popup.title}</p>
+          <p className="min-w-0 truncate font-mono text-xs text-ink-faint">
             {popup.id} · {popup.width}px{popup.todayClose && ' · 오늘 하루 보지 않기'}
           </p>
         </div>
@@ -49,11 +42,9 @@ function columns(today: string): Array<ContentColumn<PopupRecord>> {
       render: (popup) => {
         const state = scheduleState(popup, today);
         return (
-          <span
-            className={`inline-block shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${SCHEDULE_TONE[state]}`}
-          >
+          <Badge tone={SCHEDULE_TONE[state]}>
             {state}
-          </span>
+          </Badge>
         );
       },
     },
@@ -68,6 +59,8 @@ export function PopupListView({ today }: { today: string }) {
 
   return (
     <ContentListView<PopupRecord>
+      title="팝업"
+      description="고객 화면에 뜨는 팝업과 노출 기간을 관리하세요."
       entityLabel="팝업"
       items={popups}
       onItemsChange={setPopups}

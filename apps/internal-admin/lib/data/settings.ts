@@ -1,15 +1,17 @@
 /**
- * 설정 — 사내 계정 · 알림 · 기준 값. **프론트엔드 전용** 시드.
+ * 설정 — 관리자 · 알림 · 기준 값. **프론트엔드 전용** 시드.
  *
  * 셋 다 **이 콘솔 자신의 값**이라 한 파일에 둔다. 고객사에 붙는 값(구독·연동·청구)과 달리
  * 고객사를 고르지 않으며, 여기서 정한 것은 이 콘솔을 쓰는 우리에게만 걸린다.
  *
- * ## 7.1 사내 계정과 2.2 권한의 차이
- * 2.2 `권한`(`subscriptions.ts`)은 **고객사가 자기 콘솔에서 쓰는** 권한이고, 여기 `사내 계정`은
+ * ## 7.1 관리자과 2.2 권한의 차이
+ * 2.2 `권한`(`subscriptions.ts`)은 **고객사가 자기 콘솔에서 쓰는** 권한이고, 여기 `관리자`은
  * **이 콘솔에 들어오는 우리 직원**이다. 보는 사람도 여는 문도 달라 한 갈래에 두지 않는다.
  */
 
-/* ── 사내 계정 ───────────────────────────────────────────────────────── */
+import type { BadgeTone } from '@winpilot/ui';
+
+/* ── 관리자 ───────────────────────────────────────────────────────── */
 
 /**
  * 이 콘솔에서의 직급.
@@ -87,10 +89,10 @@ export const STAFF: StaffRecord[] = [
   },
 ];
 
-export const RANK_TONE: Record<StaffRank, string> = {
-  관리자: 'bg-signal-ok/12 text-signal-ok',
-  담당: 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200',
-  조회: 'bg-surface text-ink-muted',
+export const RANK_TONE: Record<StaffRank, BadgeTone> = {
+  관리자: 'ok',
+  담당: 'brand',
+  조회: 'neutral',
 };
 
 /** 직급이 여는 것 — 목록 옆에 적어 두어야 무엇을 주는 것인지 알고 고른다. */
@@ -119,7 +121,7 @@ export type AlarmRule = {
   /** 며칠 전/후에 알릴지. 0 이면 그 자리에서 */
   offsetDays: number;
   channel: AlarmChannel;
-  /** 받을 사람 — 사내 계정의 직급으로 고른다 */
+  /** 받을 사람 — 관리자의 직급으로 고른다 */
   audience: StaffRank;
   enabled: boolean;
 };
@@ -226,7 +228,8 @@ export const CODE_GROUPS: CodeGroup[] = [
     id: 'C-PLAN',
     name: '플랜 이름',
     usedBy: ['구독 · 플랜', '고객사 · 고객', '고객사 · 이탈', '통계 · 매출'],
-    values: ['베이직', '스탠다드', '엔터프라이즈', '스타터(종료)'],
+    // 등급은 도메인마다 셋으로 고정이다 (`subscriptions.ts` 의 `PLANS` 머리말).
+    values: ['베이직', '스탠다드', '엔터프라이즈'],
     locked: false,
     note: '계약서에 그대로 적히는 말이라 팔지 않는 플랜도 지우지 않는다.',
   },

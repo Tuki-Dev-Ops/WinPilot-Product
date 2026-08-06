@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AdminModal } from '@/app/_components/AdminModal';
-import { HintInput, HintTextarea } from '@winpilot/ui';
+import { Button, Field, HintInput, HintTextarea, Modal } from '@winpilot/ui';
 import { hasErrors } from '@/lib/validation/content-record';
 import {
   validateMilestone,
@@ -50,27 +49,19 @@ export function MilestoneFormModal({ open, mode, initial, onClose, onSubmit }: M
   };
 
   return (
-    <AdminModal
+    <Modal
       open={open}
       title={mode === 'create' ? '연혁 추가' : '연혁 수정'}
       description="월은 비워 둘 수 있습니다. 연도만 적는 연혁도 흔합니다."
       onClose={onClose}
       footer={
         <>
-          <button
-            type="button"
-            onClick={onClose}
-            className="h-9 shrink-0 whitespace-nowrap rounded-lg border border-border-strong px-4 text-sm text-ink-muted"
-          >
+          <Button tone="secondary" onClick={onClose}>
             취소
-          </button>
-          <button
-            type="button"
-            onClick={submit}
-            className="h-9 shrink-0 whitespace-nowrap rounded-lg bg-brand-500 px-4 text-sm font-medium text-white hover:bg-brand-600"
-          >
+          </Button>
+          <Button onClick={submit}>
             {mode === 'create' ? '추가' : '저장'}
-          </button>
+          </Button>
         </>
       }
     >
@@ -109,10 +100,11 @@ export function MilestoneFormModal({ open, mode, initial, onClose, onSubmit }: M
           </div>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="milestone-title" className="text-sm font-medium">
-            내용
-          </label>
+        <Field
+          label="내용"
+          htmlFor="milestone-title"
+          required
+        >
           <HintInput
             id="milestone-title"
             type="text"
@@ -122,19 +114,19 @@ export function MilestoneFormModal({ open, mode, initial, onClose, onSubmit }: M
             invalid={Boolean(errors.title)}
           />
           {errors.title && <p className="text-sm text-signal-danger">{errors.title}</p>}
-        </div>
+        </Field>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="milestone-description" className="text-sm font-medium">
-            설명 (선택)
-          </label>
+        <Field
+          label="설명 (선택)"
+          htmlFor="milestone-description"
+        >
           <HintTextarea
             id="milestone-description"
             hint="한두 문장으로 덧붙일 내용이 있으면 적어 주세요"
             value={value.description}
             onChange={(event) => update('description', event.target.value)}
           />
-        </div>
+        </Field>
 
         <fieldset className="flex flex-col gap-2">
           <legend className="text-sm font-medium">노출</legend>
@@ -160,6 +152,6 @@ export function MilestoneFormModal({ open, mode, initial, onClose, onSubmit }: M
           </div>
         </fieldset>
       </div>
-    </AdminModal>
+    </Modal>
   );
 }

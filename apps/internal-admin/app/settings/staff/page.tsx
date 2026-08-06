@@ -10,13 +10,13 @@ import { StaffListView } from './_components/StaffListView';
  * (`/subscriptions/roles`)에 있다 — 보는 사람도 여는 문도 달라 갈래를 나눴다.
  */
 export const metadata: Metadata = {
-  title: '설정 | 사내 계정 — WinPilot Internal',
+  title: '설정 | 관리자 — WinPilot Internal',
   robots: { index: false, follow: false },
 };
 
 export default function InternalStaffListPage() {
   return (
-    <InternalShell sectionId="settings" trail={['설정', '사내 계정']} activeChildId="settings-staff">
+    <InternalShell sectionId="settings" trail={['설정', '관리자']} activeChildId="settings-staff">
       <StaffListView />
     </InternalShell>
   );

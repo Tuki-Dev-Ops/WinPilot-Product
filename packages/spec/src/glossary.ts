@@ -118,7 +118,7 @@ export const GLOSSARY: readonly GlossaryEntry[] = [
     canonical: 'dns',
     ko: 'DNS',
     banned: ['nameserver', 'cname'],
-    note: '고객사 도메인이 우리 배포를 가리키게 하는 레코드. 값 하나가 틀리면 사이트 전체가 열리지 않는다.',
+    note: '고객사 도메인이 우리 배포를 가리키게 하는 레코드와 그것으로 발급받는 SSL 인증서. 값 하나가 틀리면 사이트 전체가 열리지 않는다.',
   },
   {
     canonical: 'overdue',
@@ -142,6 +142,12 @@ export const GLOSSARY: readonly GlossaryEntry[] = [
     문의를 `contact` 로 부르는 것은 여전히 안 되며, 그것은 `inquiry` 가 정규 용어라는 사실로 막힌다.
   */
   { canonical: 'inquiry', ko: '문의', banned: ['question', 'ticket'] },
+  {
+    canonical: 'support',
+    ko: '고객 지원',
+    banned: ['helpdesk', 'cs'],
+    note: '고객사가 **우리에게** 보내는 문의. 고객이 고객사에게 보내는 inquiry 와 받는 쪽·답하는 쪽이 모두 다르다. 값은 한 곳(@winpilot/store 의 support.ts)이고 b2c-admin 이 올리고 internal-admin 이 답한다.',
+  },
   {
     canonical: 'contact',
     ko: '담당자',

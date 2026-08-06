@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { BackLink } from '@winpilot/ui';
 import { CONTENT, COPY, ROUTES, SLOT, cid } from '@winpilot/client-content';
 import { SiteHeader } from './SiteHeader';
 
@@ -63,9 +64,24 @@ export function SiteShell({ children }: { children: ReactNode }) {
 }
 
 /** 화면 제목 — 템플릿마다 크기·정렬은 달라도 위치(본문 맨 위)는 같다. */
-export function PageTitle({ title, description }: { title: string; description?: string }) {
+export function PageTitle({
+  title,
+  description,
+  back,
+}: {
+  title: string;
+  description?: string;
+  /**
+   * 상세 화면에서 **돌아갈 목록**. 제목 위에 선다.
+   *
+   * 브라우저 뒤로가기에 맡기지 않는 이유: 검색 결과나 공유받은 링크로 바로 들어온 사람에게는
+   * 돌아갈 곳이 없다. 그 경우 뒤로가기는 사이트 밖으로 나간다.
+   */
+  back?: { href: string; label: string };
+}) {
   return (
     <div className="flex flex-col gap-2">
+      {back && <BackLink href={back.href} label={back.label} />}
       <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
       {description && <p className="text-sm leading-relaxed text-ink-muted">{description}</p>}
     </div>
