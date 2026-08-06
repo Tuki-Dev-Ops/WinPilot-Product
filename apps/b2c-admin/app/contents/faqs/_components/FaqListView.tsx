@@ -217,7 +217,7 @@ export function FaqListView() {
 
       <div className="flex flex-col gap-6 lg:flex-row">
         {/* 카테고리 — 고르면 오른쪽에 그 안의 FAQ 가 펼쳐진다 */}
-        <section className="w-full shrink-0 overflow-hidden rounded-xl border border-border bg-canvas lg:w-112 xl:w-128">
+        <section className="w-full shrink-0 overflow-hidden rounded-xl border border-border bg-canvas lg:w-128 xl:w-160">
           <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
             <h2 className="text-sm font-semibold">카테고리</h2>
             <button

@@ -234,11 +234,18 @@ export function CategoryListView() {
       <div className="flex flex-col gap-6 lg:flex-row">
         {/*
           1Depth — 클릭하면 오른쪽에 그 하위가 펼쳐진다.
-          순번·이름·코드·노출뱃지·조회/삭제가 한 줄에 들어가야 해서 320px 로는 좁다.
+
+          한 줄에 **여섯 칸**이 든다: 체크·순번 · 이름과 코드 · 상품 수 · 상태 · 관리 단추 둘.
+          28rem 에서는 이름이 서너 글자만 지나면 잘렸고, 코드(`C-01 · 하위 3`)가 그 아래로
+          접혀 두 줄이 되었다. 32rem(넓은 화면 40rem)이면 이름이 온전히 서고 관리 단추가
+          가운데에 남는다.
+
+          오른쪽 2Depth 는 `flex-1` 이라 여기서 가져간 만큼 줄어든다 — 그쪽은 칸이 적어
+          좁아져도 잘리는 것이 없다.
         */}
         <section
           data-ssot-cid="b2c-admin/category.list#AdminCategoryRootPanel"
-          className="w-full shrink-0 overflow-hidden rounded-xl border border-border bg-canvas lg:w-112 xl:w-128"
+          className="w-full shrink-0 overflow-hidden rounded-xl border border-border bg-canvas lg:w-128 xl:w-160"
         >
           <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
             <h2 className="text-sm font-semibold">1Depth · 대분류</h2>
