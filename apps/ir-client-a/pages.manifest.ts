@@ -19,10 +19,11 @@ export const pages: PageSpec[] = [
   { order: 4, id: 'about-certifications', name: 'Certifications', route: '/about/certifications' },
 
   // 5번대 — 솔루션 · 제품
-  { order: 5, id: 'solutions-erp', name: 'Solution ERP', route: '/solutions/erp' },
-  { order: 6, id: 'solutions-mes', name: 'Solution MES', route: '/solutions/mes' },
-  { order: 7, id: 'solutions-crm', name: 'Solution CRM', route: '/solutions/crm' },
-  { order: 8, id: 'products', name: 'Products', route: '/products' },
+  { order: 5, id: 'solutions-erp', name: 'Cloud ERP', route: '/solutions/erp' },
+  { order: 6, id: 'solutions-mes', name: 'Cloud MES', route: '/solutions/mes' },
+  { order: 7, id: 'solutions-crm', name: 'Cloud CRM', route: '/solutions/crm' },
+  { order: 8, id: 'solutions-dxp', name: 'Cloud DXP', route: '/solutions/dxp' },
+  { order: 9, id: 'products', name: 'Products', route: '/products' },
 
   // 10번대 — 공시
   { order: 10, id: 'disclosures', name: 'Disclosures', route: '/disclosures' },

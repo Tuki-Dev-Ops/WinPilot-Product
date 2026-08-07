@@ -100,7 +100,7 @@ export const SITE_SERVICES: SiteService[] = [
       '고객이 만나는 화면을 블록을 놓아 구성합니다. 개발 없이 담당자가 직접 만듭니다.',
       'ERP·MES·CRM 의 데이터를 그대로 끌어다 쓰므로, 화면과 데이터가 따로 놀지 않습니다.',
     ],
-    href: '/products',
+    href: '/solutions/dxp',
   },
 ];
 
@@ -109,7 +109,7 @@ export const SITE_SERVICES: SiteService[] = [
 export type Solution = {
   id: 'erp' | 'mes' | 'crm' | 'dxp';
   name: string;
-  /** 더 읽으러 가는 곳. 자기 화면이 없는 것(DXP)은 제품 소개로 보낸다 */
+  /** 더 읽으러 가는 곳. 넷 다 자기 화면을 갖는다 */
   href: string;
   tagline: string;
   /** 무엇을 푸는가 — 기능 목록이 아니라 문제를 적는다 */
@@ -254,8 +254,7 @@ export const SOLUTIONS: Solution[] = [
   {
     id: 'dxp',
     name: 'DXP',
-    /* `/solutions/dxp` 는 아직 없다. 없는 길로 보내면 눌러 본 사람이 404 를 만난다. */
-    href: '/products',
+    href: '/solutions/dxp',
     tagline: '화면을 코드가 아니라 블록으로',
     problem:
       '화면 하나를 고치려면 개발자에게 부탁하고 배포를 기다립니다. 문구 한 줄을 바꾸는 데 며칠이 걸리고, 그동안 담당자는 손을 놓고 있습니다.',

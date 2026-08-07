@@ -94,8 +94,7 @@ export const SITE_NAV: readonly SiteNavItem[] = [
           { href: '/solutions/mes', label: 'Cloud MES', ready: true },
           { href: '/solutions/erp', label: 'Cloud ERP', ready: true },
           { href: '/solutions/crm', label: 'Cloud CRM', ready: true },
-          /* `/solutions/dxp` 는 아직 없다. 없는 길로 보내면 눌러 본 사람이 404 를 만난다. */
-          { href: '/products', label: 'Cloud DXP', ready: true },
+          { href: '/solutions/dxp', label: 'Cloud DXP', ready: true },
         ],
       },
     ],
@@ -139,6 +138,7 @@ export const IR_ROUTES = {
   mes: '/solutions/mes',
   crm: '/solutions/crm',
   products: '/products',
+  dxp: '/solutions/dxp',
   contact: '/support/contact',
   notices: '/support/notices',
   news: '/support/news',
