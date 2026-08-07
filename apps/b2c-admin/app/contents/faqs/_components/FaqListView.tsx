@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, type MouseEvent } from 'react';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
+import { ChevronLeft } from 'lucide-react';
 import { Badge, ListToolbar, PageHeading, RowActions, RowIconButton, RowSelectCell, SelectAllCell, useToast } from '@winpilot/ui';
 import { FAQ_CATEGORIES, FAQS, nextContentId, type FaqCategoryRecord, type FaqRecord } from '@/lib/data/contents';
 import { todayStamp } from '@/lib/data/product-tags';
@@ -43,7 +44,14 @@ export function FaqListView() {
   const [faqs, setFaqs] = useState<FaqRecord[]>(FAQS);
   const [activeTabId, setActiveTabId] = useState('all');
   const [search, setSearch] = useState('');
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>(FAQ_CATEGORIES[0]?.id ?? '');
+  /**
+   * 지금 펼친 카테고리. **처음에는 아무것도 고르지 않았다.**
+   *
+   * 전에는 첫 카테고리를 미리 골라 두고 오른쪽 판을 늘 띄웠다. 그러면 들어오자마자 판 둘이 서고
+   * 그중 하나는 **내가 고른 적 없는 것**의 목록이다 — 무엇을 보고 있는지 알려면 왼쪽에서 어느
+   * 줄이 켜져 있는지 먼저 찾아야 했다.
+   */
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
   const [categoryForm, setCategoryForm] = useState<CategoryTarget | null>(null);
   const [faqForm, setFaqForm] = useState<FaqTarget | null>(null);
@@ -215,9 +223,15 @@ export function FaqListView() {
         onAction={() => setCategoryForm({ mode: 'create', record: null })}
       />
 
-      <div className="flex flex-col gap-6 lg:flex-row">
-        {/* 카테고리 — 고르면 오른쪽에 그 안의 FAQ 가 펼쳐진다 */}
-        <section className="w-full shrink-0 overflow-hidden rounded-xl border border-border bg-canvas lg:w-128 xl:w-160">
+      {/*
+        판 **하나만** 선다. 카테고리를 고르기 전에는 카테고리 목록, 고르고 나면 그 안의 FAQ 다.
+
+        카테고리 화면과 같은 짜임이다 — 같은 일(묶음을 고르고 그 안을 본다)을 하는 두 화면이
+        서로 다르게 움직이면 읽는 법을 두 번 배워야 한다.
+      */}
+      <div className="flex flex-col gap-6">
+        {!selectedCategory && (
+        <section className="w-full overflow-hidden rounded-xl border border-border bg-canvas">
           <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
             <h2 className="text-sm font-semibold">카테고리</h2>
             <button
@@ -233,7 +247,8 @@ export function FaqListView() {
             <p className="px-5 py-12 text-center text-sm text-ink-muted">조건에 맞는 카테고리가 없습니다.</p>
           ) : (
             <>
-              <div className="hidden gap-4 border-b border-border px-5 py-3 text-xs text-ink-faint lg:grid lg:grid-cols-12 lg:items-center">
+              {/* 머리 줄에는 전체 선택과 이름만 — 오른쪽에 서는 값은 그 자체가 무엇인지 말한다. */}
+              <div className="flex items-center gap-3 border-b border-border px-5 py-3 text-xs text-ink-faint">
                 <SelectAllCell
                   checked={visibleCategories.length > 0 && pickedCategories.length === visibleCategories.length}
                   indeterminate={pickedCategories.length > 0}
@@ -241,10 +256,7 @@ export function FaqListView() {
                     setPickedCategories(checked ? visibleCategories.map((one) => one.id) : [])
                   }
                 />
-                <span className="lg:col-span-4">카테고리명</span>
-                <span className="lg:col-span-2">FAQ</span>
-                <span className="lg:col-span-2 lg:text-center">상태</span>
-                <span className="lg:col-span-3 lg:text-center">관리</span>
+                <span>카테고리명</span>
               </div>
 
               <div className="flex flex-col">
@@ -254,7 +266,7 @@ export function FaqListView() {
                     <div
                       key={category.id}
                       onClick={() => setSelectedCategoryId(category.id)}
-                      className={`grid cursor-pointer grid-cols-1 gap-x-4 gap-y-2 border-b border-border px-5 py-4 transition-colors duration-100 last:border-b-0 lg:grid-cols-12 lg:items-center lg:gap-y-0 ${
+                      className={`group flex cursor-pointer items-center gap-3 border-b border-border px-5 py-3.5 transition-colors duration-100 last:border-b-0 ${
                         active ? 'bg-brand-50 dark:bg-brand-900' : 'hover:bg-surface'
                       }`}
                     >
@@ -269,40 +281,33 @@ export function FaqListView() {
                         index={index}
                       />
 
-                      <div className="min-w-0 lg:col-span-4">
+                      {/* 이름이 먼저, 코드와 개수가 그 아래 한 줄. 둘은 같은 것에 딸린 값이라 붙여 둔다. */}
+                      <div className="min-w-0 flex-1">
                         <p
                           className={`truncate text-sm font-medium ${active ? 'text-brand-700 dark:text-brand-200' : ''}`}
                         >
                           {category.name}
                         </p>
-                        <p className="font-mono text-xs text-ink-faint">{category.id}</p>
+                        <p className="truncate font-mono text-xs text-ink-faint">
+                          {category.id} · FAQ {faqsOf(category.id).length}
+                        </p>
                       </div>
 
-                      <div className="flex items-baseline gap-2 lg:col-span-2">
-                        <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">FAQ</span>
-                        <span className="text-sm tabular-nums text-ink-muted">{faqsOf(category.id).length}</span>
-                      </div>
+                      <AdminVisibilityBadge visible={category.visible} />
 
-                      <div className="flex items-center gap-2 lg:col-span-2 lg:justify-center">
-                        <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">상태</span>
-                        <AdminVisibilityBadge visible={category.visible} />
-                      </div>
-
-                      <div className="lg:col-span-3">
-                        <RowActions>
-                          <RowIconButton
-                            icon="view"
-                            label={`${category.name} 상세`}
-                            onClick={() => setCategoryForm({ mode: 'edit', record: category })}
-                          />
-                          <RowIconButton
-                            icon="delete"
-                            tone="danger"
-                            label={`${category.name} 삭제`}
-                            onClick={() => setPendingDelete({ kind: 'category', record: category })}
-                          />
-                        </RowActions>
-                      </div>
+                      <RowActions>
+                        <RowIconButton
+                          icon="view"
+                          label={`${category.name} 상세`}
+                          onClick={() => setCategoryForm({ mode: 'edit', record: category })}
+                        />
+                        <RowIconButton
+                          icon="delete"
+                          tone="danger"
+                          label={`${category.name} 삭제`}
+                          onClick={() => setPendingDelete({ kind: 'category', record: category })}
+                        />
+                      </RowActions>
                     </div>
                   );
                 })}
@@ -310,13 +315,27 @@ export function FaqListView() {
             </>
           )}
         </section>
+        )}
 
-        {/* 선택한 카테고리의 FAQ */}
-        <section className="min-w-0 flex-1 overflow-hidden rounded-xl border border-border bg-canvas">
+        {/* 고른 카테고리의 FAQ — 이때는 카테고리 목록이 사라지고 이 판이 화면을 다 쓴다. */}
+        {selectedCategory && (
+        <section className="w-full min-w-0 overflow-hidden rounded-xl border border-border bg-canvas">
           <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
-            <h2 className="min-w-0 truncate text-sm font-semibold">
-              FAQ
-              {selectedCategory && <span className="ml-2 font-normal text-ink-muted">{selectedCategory.name}</span>}
+            {/*
+              돌아가는 길을 **제목 자리에** 둔다. 오른쪽 위 `등록` 옆에 두면 만드는 단추와 나가는
+              단추가 나란히 서서, 급할 때 둘을 헷갈린다.
+            */}
+            <h2 className="flex min-w-0 items-center gap-2 text-sm font-semibold">
+              <button
+                type="button"
+                onClick={() => setSelectedCategoryId(null)}
+                className="flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-ink-muted transition-colors duration-150 hover:bg-surface hover:text-ink"
+              >
+                <ChevronLeft aria-hidden className="size-4" strokeWidth={1.6} />
+                카테고리
+              </button>
+              <span className="shrink-0 text-ink-faint">/</span>
+              <span className="min-w-0 truncate">{selectedCategory.name}</span>
             </h2>
             <button
               type="button"
@@ -328,9 +347,7 @@ export function FaqListView() {
             </button>
           </div>
 
-          {!selectedCategory ? (
-            <p className="px-5 py-16 text-center text-sm text-ink-muted">왼쪽에서 카테고리를 선택하세요.</p>
-          ) : visibleFaqs.length === 0 ? (
+          {visibleFaqs.length === 0 ? (
             <p className="px-5 py-16 text-center text-sm text-ink-muted">
               {selectedCategory.name} 카테고리에 FAQ가 없습니다. 오른쪽 위 등록을 눌러 만드세요.
             </p>
@@ -402,6 +419,7 @@ export function FaqListView() {
             </>
           )}
         </section>
+        )}
       </div>
 
       <FaqCategoryModal

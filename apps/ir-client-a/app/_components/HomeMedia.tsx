@@ -27,8 +27,13 @@ import { IR_ROUTES } from '@/lib/navigation';
  * IR 화면에서 나가면 곤란해진다. 갈래마다 다른 무늬를 깔고 재생 표시만 얹는다 — 자료가 들어오는
  * 날 이 자리에 썸네일을 넣으면 된다.
  *
+ * ## 더 보러 가는 곳
+ * 전에는 IR 자료실(`/library`)로 보냈다. 그런데 거기 있는 것은 사업보고서와 IR 발표자료라,
+ * **영상을 보러 간 사람에게는 다른 창고**다. 지금은 CS CENTER 의 뉴스(`/support/news`)로 간다 —
+ * 이 줄에 선 것들이 거기 전부 있다.
+ *
  * ## 어드민 연동
- * - 영상 목록 ← `lib/data/site.ts` 의 `MEDIA_CLIPS` (아직 어드민에 올리는 화면이 없다)
+ * - 영상 목록 ← `@winpilot/store` 의 `MEDIA_CLIPS` (IR 어드민 홈페이지 > 미디어)
  */
 export function HomeMedia() {
   const rail = useRef<HTMLDivElement | null>(null);
@@ -63,8 +68,8 @@ export function HomeMedia() {
           <div className="flex flex-col gap-6">
             <h2 className="text-3xl font-bold tracking-tight lg:text-4xl">스마트팩토리 Replay</h2>
 
-            <a href={IR_ROUTES.library} className="group flex w-fit items-center gap-3 text-sm font-bold">
-              라이브러리 바로가기
+            <a href={IR_ROUTES.news} className="group flex w-fit items-center gap-3 text-sm font-bold">
+              뉴스 전체보기
               <span className="grid size-6 shrink-0 place-items-center rounded-full bg-ink text-canvas transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
                 <ArrowUpRight aria-hidden className="size-3.5" strokeWidth={2} />
               </span>

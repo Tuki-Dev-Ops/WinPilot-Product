@@ -108,6 +108,7 @@ export const SITE_NAV: readonly SiteNavItem[] = [
         title: '고객지원',
         children: [
           { href: '/support/contact', label: '문의하기', ready: true },
+          { href: '/support/news', label: '뉴스', ready: true },
           { href: '/support/faq', label: 'FAQ', ready: true },
           { href: '/support/directions', label: '오시는 길', ready: true },
         ],
@@ -138,6 +139,7 @@ export const IR_ROUTES = {
   crm: '/solutions/crm',
   products: '/products',
   contact: '/support/contact',
+  news: '/support/news',
   faq: '/support/faq',
   directions: '/support/directions',
   disclosures: '/disclosures',

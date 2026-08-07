@@ -53,8 +53,9 @@ export const pages: PageSpec[] = [
 
   // 60번대 — 고객지원 (CS CENTER)
   { order: 60, id: 'support-contact', name: 'Contact', route: '/support/contact' },
-  { order: 61, id: 'support-faq', name: 'FAQ', route: '/support/faq' },
-  { order: 62, id: 'support-directions', name: 'Directions', route: '/support/directions' },
+  { order: 61, id: 'support-news', name: 'Support News', route: '/support/news' },
+  { order: 62, id: 'support-faq', name: 'FAQ', route: '/support/faq' },
+  { order: 63, id: 'support-directions', name: 'Directions', route: '/support/directions' },
 ];
 
 /** 확정 — 이 3개 너비로만 캡처한다. */

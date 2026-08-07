@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, type MouseEvent } from 'react';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
+import { ChevronLeft } from 'lucide-react';
 import { ALL_VALUE, Badge, ListToolbar, PageHeading, RowActions, RowIconButton, RowSelectCell, SelectAllCell, useToast, type ListFilterField } from '@winpilot/ui';
 import type { CategoryFormInput, CategoryFormMode } from '@/lib/validation/category-record';
 import { CategoryFormModal, type CategoryRecord } from './CategoryFormModal';
@@ -244,7 +245,17 @@ export function CategoryListView() {
         }}
       />
 
-      <div className="flex flex-col gap-6 lg:flex-row">
+      {/*
+        판 **하나만** 선다. 대분류를 고르기 전에는 1Depth, 고르고 나면 2Depth 다.
+
+        전에는 둘을 나란히 놓았다(왼쪽에서 고르고 오른쪽에서 본다). 그런데 목록을 한 줄에 하나씩
+        세우고 나니 두 판이 각각 화면의 절반만 쓰게 됐고, **한 줄에 든 것은 이름과 코드뿐인데
+        폭은 반**이라 오른쪽이 늘 비었다.
+
+        하나씩 갈아 끼우면 그 판이 화면을 다 쓴다. 대신 **어디에 있는지**를 잃으므로 2Depth 머리에
+        돌아가는 길을 둔다 — 나란히 놓을 때는 왼쪽 목록 자체가 그 역할을 했다.
+      */}
+      <div className="flex flex-col gap-6">
         {/*
           1Depth — 누르면 오른쪽에 그 하위가 펼쳐진다.
 
@@ -259,11 +270,10 @@ export function CategoryListView() {
 
           두 판을 반씩 나눈 것도 그래서다(`lg:w-1/2`). 한쪽이 넓을 이유가 없어졌다.
         */}
+        {!selectedRoot && (
         <section
           data-ssot-cid="b2c-admin/category.list#AdminCategoryRootPanel"
-          className={`w-full overflow-hidden rounded-xl border border-border bg-canvas ${
-            selectedRoot ? 'lg:w-1/2' : ''
-          }`}
+          className="w-full overflow-hidden rounded-xl border border-border bg-canvas"
         >
           <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
             <h2 className="text-sm font-semibold">1Depth · 대분류</h2>
@@ -350,23 +360,32 @@ export function CategoryListView() {
             </>
           )}
         </section>
+        )}
 
         {/*
-          2Depth — **대분류를 고른 뒤에만** 선다.
-
-          고르기 전에 "왼쪽에서 대분류를 선택하세요" 라고 적힌 빈 판을 두는 방법도 있다. 그런데
-          그 판은 **자리는 차지하면서 아무것도 하지 않는다** — 왼쪽 목록이 그만큼 좁아지고,
-          읽을 것이 없는 칸이 화면의 절반을 먹는다.
+          2Depth — **대분류를 고른 뒤에만** 선다. 그때는 1Depth 가 사라지고 이 판이 화면을 다 쓴다.
         */}
         {selectedRoot && (
         <section
           data-ssot-cid="b2c-admin/category.list#AdminCategoryChildPanel"
-          className="min-w-0 flex-1 overflow-hidden rounded-xl border border-border bg-canvas lg:w-1/2"
+          className="w-full min-w-0 overflow-hidden rounded-xl border border-border bg-canvas"
         >
           <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
-            <h2 className="min-w-0 truncate text-sm font-semibold">
-              2Depth · 세부 분류
-              {selectedRoot && <span className="ml-2 font-normal text-ink-muted">{selectedRoot.name}</span>}
+            {/*
+              돌아가는 길을 **제목 자리에** 둔다. 오른쪽 위 `추가` 옆에 두면 만드는 단추와 나가는
+              단추가 나란히 서서, 급할 때 둘을 헷갈린다.
+            */}
+            <h2 className="flex min-w-0 items-center gap-2 text-sm font-semibold">
+              <button
+                type="button"
+                onClick={() => setSelectedRootId(null)}
+                className="flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-ink-muted transition-colors duration-150 hover:bg-surface hover:text-ink"
+              >
+                <ChevronLeft aria-hidden className="size-4" strokeWidth={1.6} />
+                대분류
+              </button>
+              <span className="shrink-0 text-ink-faint">/</span>
+              <span className="min-w-0 truncate">{selectedRoot.name}</span>
             </h2>
             <button
               type="button"

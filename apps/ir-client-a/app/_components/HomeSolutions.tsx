@@ -111,13 +111,6 @@ export function HomeSolutions() {
                 <ArrowUpRight aria-hidden className="size-4 shrink-0 transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </a>
 
-              <ul className="flex flex-wrap gap-2">
-                {active.outcomes.map((one) => (
-                  <li key={one} className="rounded-full bg-canvas px-3 py-1.5 text-xs text-ink-muted">
-                    {one}
-                  </li>
-                ))}
-              </ul>
             </div>
           </div>
 
