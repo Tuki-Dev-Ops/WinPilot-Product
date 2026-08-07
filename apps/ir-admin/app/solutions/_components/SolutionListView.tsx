@@ -9,8 +9,9 @@ const COLUMNS = [
   { label: '솔루션', span: 'lg:col-span-2' },
   { label: '문제', span: 'lg:col-span-5' },
   { label: '구성', span: 'lg:col-span-2 lg:text-center' },
-  { label: '업종', span: 'lg:col-span-2 lg:text-center' },
-  { label: '절차', span: 'lg:col-span-1 lg:text-right' },
+  { label: '업종', span: 'lg:col-span-1 lg:text-center' },
+  { label: '절차', span: 'lg:col-span-1 lg:text-center' },
+  { label: '상태', span: 'lg:col-span-2 lg:text-right' },
 ];
 
 /**
@@ -49,8 +50,11 @@ export function SolutionListView() {
           <span key="ind" className="flex min-w-0 justify-center">
             <Badge tone="neutral">{one.industries.length}개</Badge>
           </span>,
-          <span key="steps" className="min-w-0 flex-1 truncate text-right font-mono text-xs tabular-nums text-ink-muted">
-            {`${one.steps.length}단계`}
+          <span key="steps" className="flex min-w-0 justify-center">
+            <Badge tone="neutral">{one.steps.length}단계</Badge>
+          </span>,
+          <span key="state" className="flex min-w-0 flex-1 justify-end">
+            <Badge tone={one.visible ? 'ok' : 'wait'}>{one.visible ? '노출' : '숨김'}</Badge>
           </span>,
         ]}
       />

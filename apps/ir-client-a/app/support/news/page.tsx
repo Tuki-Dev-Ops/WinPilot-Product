@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { IR_COMPANY, MEDIA_CLIPS } from '@winpilot/store';
+import { IR_COMPANY, publicMediaClips } from '@winpilot/store';
 import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
 import { NewsListView } from './_components/NewsListView';
 
@@ -25,7 +25,7 @@ export default function SiteNewsPage() {
     <IrSiteShell>
       <IrPageTitle title="뉴스" description="방송·행사·제품 소개로 남은 것들입니다." />
 
-      <NewsListView clips={MEDIA_CLIPS} />
+      <NewsListView clips={publicMediaClips()} />
     </IrSiteShell>
   );
 }

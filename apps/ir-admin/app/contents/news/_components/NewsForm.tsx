@@ -8,6 +8,7 @@ import {
   IrReadonly,
   IrRecordForm,
   IrTextInput,
+  IrToggle,
   type FormMode,
 } from '@/app/_components/IrRecordForm';
 
@@ -43,6 +44,7 @@ export function NewsForm({
   const [channel, setChannel] = useState(initial?.channel ?? '');
   const [title, setTitle] = useState(initial?.title ?? '');
   const [seed, setSeed] = useState(initial?.seed ?? 0);
+  const [visible, setVisible] = useState(initial?.visible ?? true);
   const [tried, setTried] = useState(false);
 
   const broken = [...(channel.trim() ? [] : ['갈래']), ...(title.trim() ? [] : ['제목'])];
@@ -105,7 +107,7 @@ export function NewsForm({
       </IrPanel>
 
       <IrPanel title="썸네일" description="영상 파일이 아직 없어 도형 무늬로 대신합니다.">
-        <div className="flex flex-wrap gap-3 px-6 py-5">
+        <div className="flex flex-wrap gap-3 border-b border-border px-6 py-5">
           {SEEDS.map((one) => (
             <button
               key={one}
@@ -121,6 +123,16 @@ export function NewsForm({
               </span>
             </button>
           ))}
+        </div>
+
+        <div className="px-6 py-5">
+          <IrToggle
+            id="news-visible"
+            label="사이트에 노출"
+            description="끄면 홈 마지막 칸과 CS CENTER 뉴스에서 함께 사라집니다. 목록에는 남아 다시 켤 수 있습니다."
+            checked={visible}
+            onChange={setVisible}
+          />
         </div>
       </IrPanel>
     </IrRecordForm>

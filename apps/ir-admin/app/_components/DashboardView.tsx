@@ -2,20 +2,40 @@
 
 import { useMemo, useState } from 'react';
 import { PageHeading } from '@winpilot/ui';
-import {
-  DISCLOSURES,
-  SITE_INQUIRIES,
-  SITE_NOTICES,
-  SITE_REGIONS,
-  VISIT_TREND,
-} from '@winpilot/store';
+import { DISCLOSURES, SITE_INQUIRIES, SITE_NOTICES, SITE_REGIONS } from '@winpilot/store';
+import type { KoreaShape } from '@/lib/geo/korea';
 import { TODAY } from '@/lib/today';
 import { IrPanel } from './IrPanel';
 import { KoreaMap } from './KoreaMap';
 
-/** 기간을 고르는 두 갈래. 값은 `기간`(이번 달)과 `누적`(전체) 둘뿐이라 드롭다운을 두지 않는다. */
-const SPANS = ['기간', '누적'] as const;
-type Span = (typeof SPANS)[number];
+/**
+ * 볼 기간 — 오늘 · 최근 7일 · 이번 달.
+ *
+ * 셋으로 둔다. 날짜를 직접 고르는 달력을 두면 **매번 두 번 눌러야** 숫자가 나오고, 이 화면에서
+ * 하는 일은 대개 "어제까지와 견줘 오늘 어떤가" 라 그만한 자유가 필요 없다. 더 잘게 보는 자리는
+ * 통계 갈래에 따로 있다.
+ */
+const SPANS = [
+  { id: 'day', label: '일', note: '오늘' },
+  { id: 'week', label: '주', note: '최근 7일' },
+  { id: 'month', label: '월', note: '이번 달' },
+] as const;
+type SpanId = (typeof SPANS)[number]['id'];
+
+/**
+ * 그 기간이 언제부터인가 — `YYYY-MM-DD`.
+ *
+ * `TODAY` 라는 **고정된 글자**에서 세므로 서버와 브라우저가 같은 답을 낸다. 화면이 `new Date()`
+ * 를 읽으면 그 둘이 갈리고, 자정을 넘기는 순간 한쪽만 날짜가 바뀐다.
+ */
+function since(span: SpanId): string {
+  if (span === 'month') return `${TODAY.slice(0, 7)}-01`;
+  if (span === 'day') return TODAY;
+
+  const day = new Date(`${TODAY}T00:00:00Z`);
+  day.setUTCDate(day.getUTCDate() - 6);
+  return day.toISOString().slice(0, 10);
+}
 
 /** 지역 분포를 무엇으로 셀지. 한 표에 셋을 다 넣으면 어느 숫자를 보는지 흐려진다. */
 const LENSES = [
@@ -34,14 +54,16 @@ type LensId = (typeof LENSES)[number]['id'];
  * 먼저 보이지 않게** 되었다. 셋 다 자기 갈래에 제 화면이 있다(통계 · IR). 대시보드가 그것을
  * 한 번 더 보여 주는 동안 하는 일은 요약이 아니라 되풀이다.
  *
- * ## 기간과 누적을 나란히 적는다
- * 큰 숫자 아래에 작은 `/ 누적` 을 붙인다. 이번 달 문의 12건은 그 자체로는 많은지 적은지
- * 말해 주지 않는다 — **누적 옆에 놓여야** 이번 달이 평소보다 나은지 알 수 있고, 그 판단이
+ * ## 기간과 전체를 나란히 적는다
+ * 큰 숫자 아래에 작은 `/ 전체` 를 붙인다. 이번 달 문의 4건은 그 자체로는 많은지 적은지
+ * 말해 주지 않는다 — **전체 옆에 놓여야** 이번 달이 평소보다 나은지 알 수 있고, 그 판단이
  * 곧 오늘 무엇을 할지를 정한다.
  *
  * ## 지도와 표를 나란히 둔다
  * 지도는 **어디가 비어 있는지**를 한눈에 말하고, 표는 **정확히 몇 건인지**를 말한다. 둘은
  * 다른 물음에 답하므로 위아래로 두면 하나를 볼 때 다른 하나가 화면 밖으로 나간다.
+ *
+ * 경계선은 서버에서 옮겨진 채 `shapes` 로 들어온다 — 이 화면은 좌표를 들고 있지 않다.
  *
  * ## 0건인 지역을 지우지 않는다
  * 지도와 표 모두 시 · 도 열일곱을 전부 세운다. 0 이 지워지면 **한 건도 오지 않은 지역**이
@@ -49,14 +71,24 @@ type LensId = (typeof LENSES)[number]['id'];
  *
  * **프론트엔드 전용** — 값의 원본은 `@winpilot/store` 다.
  */
-export function DashboardView() {
-  const [span, setSpan] = useState<Span>('기간');
+export function DashboardView({
+  shapes,
+  box,
+}: {
+  /** 서버에서 화면 좌표로 옮겨 온 시 · 도 경계선 */
+  shapes: KoreaShape[];
+  box: { width: number; height: number };
+}) {
+  const [span, setSpan] = useState<SpanId>('month');
   const [lens, setLens] = useState<LensId>('all');
   const [picked, setPicked] = useState<string | undefined>(undefined);
 
-  /** 이번 달. 값이 `YYYY-MM-DD` 로 서 있어 앞 일곱 자로 자른다. */
-  const month = TODAY.slice(0, 7);
-  const inPeriod = (at: string) => span === '누적' || at.startsWith(month);
+  /*
+    값이 `2026-08-05` 또는 `2026-08-05 09:41` 로 서 있다. 둘 다 앞 열 자가 날짜이고 사전순
+    비교가 곧 날짜 비교라, 날짜로 되돌리지 않고 글자로 견준다.
+  */
+  const from = since(span);
+  const inPeriod = (at: string) => at.slice(0, 10) >= from && at.slice(0, 10) <= TODAY;
 
   const inquiries = SITE_INQUIRIES.filter((one) => inPeriod(one.receivedAt));
   const deals = inquiries.filter((one) => one.kind === '도입 · 견적');
@@ -64,10 +96,6 @@ export function DashboardView() {
   const waiting = inquiries.filter((one) => one.state !== '답변완료');
   const notices = SITE_NOTICES.filter((one) => one.visible && inPeriod(one.postedAt));
   const draft = DISCLOSURES.filter((one) => one.state === '작성 중' || one.state === '검토 요청');
-
-  const last = VISIT_TREND[VISIT_TREND.length - 1];
-  const visits = span === '누적' ? VISIT_TREND.reduce((sum, one) => sum + one.visits, 0) : (last?.visits ?? 0);
-  const allVisits = VISIT_TREND.reduce((sum, one) => sum + one.visits, 0);
 
   /** 지역별 건수. 고른 잣대에 따라 세는 대상만 바뀌고 표의 뼈대는 그대로다. */
   const byRegion = useMemo(() => {
@@ -83,9 +111,9 @@ export function DashboardView() {
 
   /** 지도가 받는 모양 — 이름 → 건수. */
   const counts = useMemo(() => {
-    const box: Record<string, number> = {};
-    for (const one of byRegion) box[one.region] = one.count;
-    return box;
+    const found: Record<string, number> = {};
+    for (const one of byRegion) found[one.region] = one.count;
+    return found;
   }, [byRegion]);
 
   const shown = picked ? byRegion.filter((one) => one.region === picked) : byRegion;
@@ -95,60 +123,57 @@ export function DashboardView() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <PageHeading title="대시보드" description={`${TODAY} 기준입니다.`} />
 
-        <div className="flex shrink-0 items-center gap-1 rounded-lg border border-border-strong p-1">
-          {SPANS.map((one) => (
-            <button
-              key={one}
-              type="button"
-              onClick={() => setSpan(one)}
-              aria-pressed={one === span}
-              className={`h-8 rounded px-3 text-xs transition-colors duration-150 ${
-                one === span ? 'bg-brand text-white' : 'text-ink-muted hover:text-ink'
-              }`}
-            >
-              {one === '기간' ? '이번 달' : '누적'}
-            </button>
-          ))}
+        {/* 고른 기간이 실제로 언제부터인지 옆에 적는다 — `주` 만으로는 어디서 끊는지 알 수 없다. */}
+        <div className="flex shrink-0 flex-wrap items-center gap-3">
+          <div className="flex shrink-0 items-center gap-1 rounded-lg border border-border-strong p-1">
+            {SPANS.map((one) => (
+              <button
+                key={one.id}
+                type="button"
+                onClick={() => setSpan(one.id)}
+                aria-pressed={one.id === span}
+                title={one.note}
+                className={`h-8 w-10 rounded text-xs transition-colors duration-150 ${
+                  one.id === span ? 'bg-brand text-white' : 'text-ink-muted hover:text-ink'
+                }`}
+              >
+                {one.label}
+              </button>
+            ))}
+          </div>
+          <p className="shrink-0 font-mono text-xs tabular-nums text-ink-faint">
+            {from} ~ {TODAY}
+          </p>
         </div>
       </div>
 
       {/*
-        왼쪽 한 장만 색을 채운다. 전부 칠하면 어느 숫자를 먼저 보라는 것인지 사라지고, 전부
-        비우면 이 화면이 무엇을 재는 곳인지 첫눈에 잡히지 않는다.
-      */}
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-4">
-        <div className="flex flex-col justify-between gap-4 rounded-xl bg-brand px-5 py-5 text-white">
-          <p className="text-sm font-medium">사이트 방문</p>
-          <p className="flex items-baseline gap-1.5">
-            <span className="text-3xl font-semibold tabular-nums">{visits.toLocaleString('ko-KR')}</span>
-            <span className="text-sm">회</span>
-          </p>
-          <p className="font-mono text-xs tabular-nums text-white/70">
-            / 누적 {allVisits.toLocaleString('ko-KR')}회
-          </p>
-        </div>
+        여섯을 **한 줄**에 세운다. 두 줄로 접히면 아랫줄이 윗줄의 곁가지처럼 보여, 문의와
+        공시 원고가 서로 다른 무게로 읽힌다. 여기 있는 여섯은 전부 같은 무게의 숫자다.
 
-        <div className="grid grid-cols-2 gap-3 lg:col-span-3 lg:grid-cols-3">
-          <Stat label="문의" value={inquiries.length} total={SITE_INQUIRIES.length} />
-          <Stat
-            label="도입 · 견적"
-            value={deals.length}
-            total={SITE_INQUIRIES.filter((one) => one.kind === '도입 · 견적').length}
-          />
-          <Stat
-            label="기술 지원"
-            value={support.length}
-            total={SITE_INQUIRIES.filter((one) => one.kind === '기술 지원').length}
-          />
-          <Stat
-            label="답변 대기"
-            value={waiting.length}
-            total={SITE_INQUIRIES.filter((one) => one.state !== '답변완료').length}
-            urgent={waiting.length > 0}
-          />
-          <Stat label="공지" value={notices.length} total={SITE_NOTICES.filter((one) => one.visible).length} />
-          <Stat label="공시 원고" value={draft.length} total={DISCLOSURES.length} urgent={draft.length > 0} />
-        </div>
+        방문 수는 뺐다. 이 화면에서 보는 것은 **손대야 할 일의 수**이고, 방문은 그 일이 아니다 —
+        많이 왔다고 오늘 할 일이 늘지 않는다. 방문은 통계 갈래가 다룬다.
+      */}
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+        <Stat label="문의" value={inquiries.length} total={SITE_INQUIRIES.length} />
+        <Stat
+          label="도입 · 견적"
+          value={deals.length}
+          total={SITE_INQUIRIES.filter((one) => one.kind === '도입 · 견적').length}
+        />
+        <Stat
+          label="기술 지원"
+          value={support.length}
+          total={SITE_INQUIRIES.filter((one) => one.kind === '기술 지원').length}
+        />
+        <Stat
+          label="답변 대기"
+          value={waiting.length}
+          total={SITE_INQUIRIES.filter((one) => one.state !== '답변완료').length}
+          urgent={waiting.length > 0}
+        />
+        <Stat label="공지" value={notices.length} total={SITE_NOTICES.filter((one) => one.visible).length} />
+        <Stat label="공시 원고" value={draft.length} total={DISCLOSURES.length} urgent={draft.length > 0} />
       </div>
 
       <IrPanel
@@ -226,13 +251,15 @@ export function DashboardView() {
           {/* 오른쪽 — 어디가 비어 있는지. */}
           <div className="flex min-w-0 flex-col items-center gap-4 px-6 py-6 text-brand">
             <KoreaMap
+              shapes={shapes}
+              box={box}
               counts={counts}
               {...(picked ? { picked } : {})}
               onPick={(region) => setPicked(region === picked ? undefined : region)}
             />
             <p className="text-center text-xs leading-relaxed text-ink-muted">
-              칸 하나가 시 · 도 하나입니다. 자리는 실제 지리를 따르고, 크기는 숫자를 읽을 수 있게
-              고정했습니다 — 넓이대로 그리면 세종과 광주가 손톱만 해집니다.
+              통계청 2018년 시 · 도 경계입니다. 옅게 깔린 곳은 아직 한 건도 오지 않은 지역이고,
+              마우스를 올리거나 누르면 어디인지 나옵니다.
             </p>
           </div>
         </div>

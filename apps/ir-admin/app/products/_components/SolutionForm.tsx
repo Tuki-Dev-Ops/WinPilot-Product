@@ -10,6 +10,7 @@ import {
   IrRecordForm,
   IrTextArea,
   IrTextInput,
+  IrToggle,
 } from '@/app/_components/IrRecordForm';
 
 /**
@@ -45,6 +46,7 @@ export function SolutionForm({
   const [tagline, setTagline] = useState(solution.tagline);
   const [problem, setProblem] = useState(solution.problem);
   const [approach, setApproach] = useState(solution.approach);
+  const [visible, setVisible] = useState(solution.visible);
   const [tried, setTried] = useState(false);
 
   /* 홈 카드가 이 값을 그대로 싣는다. 세 문장이면 석 줄이 되어 카드 높이가 다른 카드와 어긋난다. */
@@ -135,6 +137,14 @@ export function SolutionForm({
               invalid={tried && !approach.trim()}
             />
           </IrField>
+
+          <IrToggle
+            id="sol-visible"
+            label="사이트에 노출"
+            description="끄면 머리 메뉴 · 홈 카드 · 제품 목록에서 함께 사라집니다. 상세 화면은 주소를 직접 치면 열립니다 — 아직 팔지 않는 제품을 미리 만들어 두고 링크만 감출 때 쓰는 자리입니다."
+            checked={visible}
+            onChange={setVisible}
+          />
         </div>
       </IrPanel>
 

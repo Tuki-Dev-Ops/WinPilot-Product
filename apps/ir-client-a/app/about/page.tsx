@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { ArrowUpRight } from 'lucide-react';
-import { CREDENTIALS, IR_COMPANY, MILESTONES } from '@winpilot/store';
+import { IR_COMPANY, MILESTONES, publicCredentials } from '@winpilot/store';
 import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
 import { IrTable } from '@/app/_components/IrTable';
 import { IR_ROUTES } from '@/lib/navigation';
@@ -44,7 +44,7 @@ export default function SiteAboutPage() {
         <Stat label="설립" value={foundedYear} note="년" />
         <Stat label="상장" value={IR_COMPANY.market} note={IR_COMPANY.ticker} />
         <Stat label="연혁" value={`${visibleMilestones.length}`} note="건" />
-        <Stat label="특허 · 인증" value={`${CREDENTIALS.length}`} note="건" />
+        <Stat label="특허 · 인증" value={`${publicCredentials().length}`} note="건" />
       </section>
 
       <section className="flex flex-col gap-4">

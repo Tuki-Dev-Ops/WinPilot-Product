@@ -3,7 +3,7 @@
 import { CLIP, NIGHT } from '@/lib/palette';
 import { useRef } from 'react';
 import { ArrowLeft, ArrowRight, ArrowUpRight, Play } from 'lucide-react';
-import { IR_COMPANY, MEDIA_CLIPS } from '@winpilot/store';
+import { IR_COMPANY, publicMediaClips } from '@winpilot/store';
 import { IR_ROUTES } from '@/lib/navigation';
 
 /**
@@ -97,7 +97,7 @@ export function HomeMedia() {
             제목이 서로 다른 카드의 줄처럼 떨어져 보였다 — 한 카드 안의 글은 붙어 있어야 한
             덩어리로 읽힌다.
           */}
-          {MEDIA_CLIPS.map((clip) => (
+          {publicMediaClips().map((clip) => (
             <article key={clip.id} className="flex w-72 shrink-0 snap-start flex-col gap-3 lg:w-80">
             <div className="relative aspect-video overflow-hidden rounded-xl bg-night">
               <ClipPattern seed={clip.seed} />

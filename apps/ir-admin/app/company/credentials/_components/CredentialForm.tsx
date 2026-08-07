@@ -9,6 +9,7 @@ import {
   IrRecordForm,
   IrSelect,
   IrTextInput,
+  IrToggle,
   type FormMode,
 } from '@/app/_components/IrRecordForm';
 
@@ -51,6 +52,7 @@ export function CredentialForm({
   const [number, setNumber] = useState(initial?.number ?? '');
   const [issuer, setIssuer] = useState(initial?.issuer ?? '');
   const [acquiredAt, setAcquiredAt] = useState(initial?.acquiredAt ?? '');
+  const [visible, setVisible] = useState(initial?.visible ?? true);
   const [tried, setTried] = useState(false);
 
   const future = Boolean(acquiredAt) && acquiredAt > today;
@@ -156,6 +158,14 @@ export function CredentialForm({
               invalid={tried && (!acquiredAt || future)}
             />
           </IrField>
+
+          <IrToggle
+            id="cred-visible"
+            label="사이트에 노출"
+            description="끄면 사이트의 특허 및 인증 화면에서 사라집니다. 효력이 끝난 인증을 내릴 때 씁니다."
+            checked={visible}
+            onChange={setVisible}
+          />
         </div>
       </IrPanel>
     </IrRecordForm>

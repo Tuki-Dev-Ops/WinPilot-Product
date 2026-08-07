@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { FAQ_GROUPS, IR_COMPANY, SITE_FAQS } from '@winpilot/store';
+import { FAQ_GROUPS, IR_COMPANY, publicSiteFaqs } from '@winpilot/store';
 import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
 import { FaqListView } from './_components/FaqListView';
 
@@ -20,7 +20,7 @@ export default function SiteFaqPage() {
     <IrSiteShell>
       <IrPageTitle title="FAQ" description="자주 받는 물음을 모았습니다. 갈래를 고르거나 검색해 보세요." />
 
-      <FaqListView faqs={SITE_FAQS} groups={FAQ_GROUPS} />
+      <FaqListView faqs={publicSiteFaqs()} groups={FAQ_GROUPS} />
     </IrSiteShell>
   );
 }

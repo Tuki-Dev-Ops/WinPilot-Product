@@ -8,8 +8,9 @@ import { IrRecordTable } from '@/app/_components/IrRecordTable';
 const COLUMNS = [
   { label: '제품', span: 'lg:col-span-3' },
   { label: '한 줄', span: 'lg:col-span-4' },
-  { label: '기능', span: 'lg:col-span-3' },
-  { label: '상세', span: 'lg:col-span-2 lg:text-right' },
+  { label: '기능', span: 'lg:col-span-2' },
+  { label: '상세', span: 'lg:col-span-1 lg:text-center' },
+  { label: '상태', span: 'lg:col-span-2 lg:text-right' },
 ];
 
 /**
@@ -48,8 +49,11 @@ export function ProductListView() {
           <span key="feat" className="min-w-0 truncate text-xs text-ink-muted">
             {one.features.map((f) => f.title).join(' · ')}
           </span>,
-          <span key="href" className="min-w-0 flex-1 truncate text-right font-mono text-xs tabular-nums text-ink-muted">
+          <span key="href" className="flex min-w-0 justify-center font-mono text-xs text-ink-muted">
             {one.href}
+          </span>,
+          <span key="state" className="flex min-w-0 flex-1 justify-end">
+            <Badge tone={one.visible ? 'ok' : 'wait'}>{one.visible ? '노출' : '숨김'}</Badge>
           </span>,
         ]}
       />

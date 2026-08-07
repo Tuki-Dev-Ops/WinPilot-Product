@@ -10,6 +10,7 @@ import {
   IrSelect,
   IrTextArea,
   IrTextInput,
+  IrToggle,
   type FormMode,
 } from '@/app/_components/IrRecordForm';
 
@@ -43,6 +44,7 @@ export function FaqForm({
   const [group, setGroup] = useState<string>(initial?.group ?? FAQ_GROUPS[0] ?? '도입');
   const [question, setQuestion] = useState(initial?.question ?? '');
   const [answer, setAnswer] = useState(initial?.answer ?? '');
+  const [visible, setVisible] = useState(initial?.visible ?? true);
   const [tried, setTried] = useState(false);
 
   const broken = [...(question.trim() ? [] : ['물음']), ...(answer.trim() ? [] : ['답'])];
@@ -105,6 +107,14 @@ export function FaqForm({
               invalid={tried && !answer.trim()}
             />
           </IrField>
+
+          <IrToggle
+            id="faq-visible"
+            label="사이트에 노출"
+            description="끄면 사이트 FAQ 에서 사라집니다. 답을 고치는 동안 잠깐 내려 두는 자리입니다."
+            checked={visible}
+            onChange={setVisible}
+          />
         </div>
       </IrPanel>
 

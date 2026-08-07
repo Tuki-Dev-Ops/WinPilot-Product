@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { IR_COMPANY, SITE_NOTICES } from '@winpilot/store';
+import { IR_COMPANY, publicSiteNotices } from '@winpilot/store';
 import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
 import { NoticeListView } from './_components/NoticeListView';
 
@@ -23,7 +23,7 @@ import { NoticeListView } from './_components/NoticeListView';
 export const metadata: Metadata = { title: `공지사항 — ${IR_COMPANY.name}` };
 
 export default function SiteNoticesPage() {
-  const notices = SITE_NOTICES.filter((one) => one.visible);
+  const notices = publicSiteNotices();
 
   return (
     <IrSiteShell>

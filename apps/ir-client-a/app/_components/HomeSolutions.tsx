@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
-import { SOLUTIONS, type Solution } from '@winpilot/store';
+import { publicSolutions, type Solution } from '@winpilot/store';
 
 /**
  * 카드의 세로 길이.
@@ -37,11 +37,13 @@ const CARD_H = 'h-108';
  */
 export function HomeSolutions() {
   const [index, setIndex] = useState(0);
-  const active = SOLUTIONS[index] ?? SOLUTIONS[0];
+  /* 한 번만 걸러 놓고 아래에서 돌려 쓴다 — 부를 때마다 새 배열이면 차례가 흔들린다. */
+  const rows = publicSolutions();
+  const active = rows[index] ?? rows[0];
   if (!active) return null;
 
   /* 끝에서 다시 처음으로 돈다. 화살표를 눌렀는데 아무 일도 없으면 고장으로 읽힌다. */
-  const step = (delta: number) => setIndex((before) => (before + delta + SOLUTIONS.length) % SOLUTIONS.length);
+  const step = (delta: number) => setIndex((before) => (before + delta + rows.length) % rows.length);
 
   return (
     <section className="overflow-hidden bg-surface py-20 text-ink lg:py-28">
@@ -120,7 +122,7 @@ export function HomeSolutions() {
               밝은 바탕에서 잘 보이지 않는다. 막대는 **길이**가 달라 색을 못 봐도 읽힌다.
             */}
             <div className="flex items-center gap-2">
-              {SOLUTIONS.map((one, position) => (
+              {rows.map((one, position) => (
                   <button
                     key={one.id}
                     type="button"
@@ -160,7 +162,7 @@ export function HomeSolutions() {
           */}
           <div className="hidden lg:block">
             <div className={`-mx-2 flex ${CARD_H}`}>
-              {SOLUTIONS.map((one, position) => {
+              {rows.map((one, position) => {
                 const folded = position === index;
 
                 return (

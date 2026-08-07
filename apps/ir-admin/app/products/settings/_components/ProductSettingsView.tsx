@@ -23,7 +23,10 @@ import { IrPanel } from '@/app/_components/IrPanel';
  */
 export function ProductSettingsView() {
   const [order, setOrder] = useState(SOLUTIONS.map((one) => one.id));
-  const [hidden, setHidden] = useState<string[]>([]);
+  /* 지금 사이트에서 내려 둔 것에서 시작한다 — 빈 배열로 시작하면 목록의 상태와 어긋난다. */
+  const [hidden, setHidden] = useState<string[]>(
+    SOLUTIONS.filter((one) => !one.visible).map((one) => one.id),
+  );
   const [pending, setPending] = useState(false);
   const toast = useToast();
 

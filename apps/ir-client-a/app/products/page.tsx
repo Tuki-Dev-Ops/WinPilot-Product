@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { ArrowUpRight } from 'lucide-react';
-import { IR_COMPANY, SITE_SERVICES, SOLUTIONS } from '@winpilot/store';
+import { IR_COMPANY, SITE_SERVICES, publicSolutions } from '@winpilot/store';
 import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
 import { IR_ROUTES } from '@/lib/navigation';
 
@@ -42,7 +42,7 @@ export default function ProductListPage() {
         <h2 className="text-xs font-bold uppercase tracking-widest text-ink-faint">클라우드 제품</h2>
 
         <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          {SOLUTIONS.map((one) => (
+          {publicSolutions().map((one) => (
             <li key={one.id}>
               <a
                 href={one.href}

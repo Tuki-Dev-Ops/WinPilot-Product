@@ -1,17 +1,18 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { PageHeading } from '@winpilot/ui';
+import { Badge, PageHeading } from '@winpilot/ui';
 import { CREDENTIALS } from '@winpilot/store';
 import { IrCreateLink } from '@/app/_components/IrForm';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const COLUMNS = [
   { label: '구분', span: 'lg:col-span-1' },
-  { label: '이름', span: 'lg:col-span-5' },
+  { label: '이름', span: 'lg:col-span-4' },
   { label: '번호', span: 'lg:col-span-3' },
   { label: '발급', span: 'lg:col-span-2' },
-  { label: '취득일', span: 'lg:col-span-1 lg:text-right' },
+  { label: '취득일', span: 'lg:col-span-1' },
+  { label: '상태', span: 'lg:col-span-2 lg:text-right' },
 ];
 
 /**
@@ -51,8 +52,11 @@ export function CredentialListView() {
           <span key="issuer" className="min-w-0 truncate text-xs text-ink-muted">
             {one.issuer}
           </span>,
-          <span key="at" className="min-w-0 flex-1 truncate text-right font-mono text-xs tabular-nums text-ink-muted">
+          <span key="at" className="min-w-0 truncate font-mono text-xs tabular-nums text-ink-muted">
             {one.acquiredAt}
+          </span>,
+          <span key="state" className="flex min-w-0 justify-end">
+            <Badge tone={one.visible ? 'ok' : 'wait'}>{one.visible ? '노출' : '숨김'}</Badge>
           </span>,
         ]}
       />

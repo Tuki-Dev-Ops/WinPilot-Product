@@ -146,6 +146,15 @@ export type Solution = {
    * 그대로 남는데, 그 물음이 도입 검토에서 가장 먼저 나온다.
    */
   steps: { name: string; period: string; desc: string }[];
+
+  /**
+   * 사이트에 세울지.
+   *
+   * 끄면 메뉴 · 홈 카드 · 제품 목록에서 함께 사라진다. 상세 화면(`/solutions/mes` 같은 주소)은
+   * 코드로 짜여 있어 주소를 직접 치면 열리는데, 그것까지 막지 않는 이유는 **아직 팔지 않는
+   * 제품의 소개 화면을 미리 만들어 두고 링크만 감추는** 일이 실제로 흔하기 때문이다.
+   */
+  visible: boolean;
 };
 
 export const SOLUTIONS: Solution[] = [
@@ -178,6 +187,7 @@ export const SOLUTIONS: Solution[] = [
       { name: '구축 · 이관', period: '6~8주', desc: '기존 데이터를 옮기고 두 달치를 나란히 돌려 숫자를 맞춥니다.' },
       { name: '안정화', period: '4주', desc: '실제 마감을 한 번 함께 돌립니다. 이때 나온 것만 고치고 넘깁니다.' },
     ],
+    visible: true,
   },
   {
     id: 'mes',
@@ -208,6 +218,7 @@ export const SOLUTIONS: Solution[] = [
       { name: '구축 · 연동', period: '8~12주', desc: '설비를 한 대씩 붙입니다. 한 라인이 돌기 시작하면 다음 라인은 빨라집니다.' },
       { name: '안정화', period: '4주', desc: '수집이 끊기는 자리를 찾아 메웁니다. 실적과 실물이 맞을 때까지 봅니다.' },
     ],
+    visible: true,
   },
   {
     id: 'crm',
@@ -238,6 +249,7 @@ export const SOLUTIONS: Solution[] = [
       { name: '구축 · 이관', period: '4~6주', desc: '기존 명단과 이력을 옮깁니다. 중복은 옮기기 전에 합칩니다.' },
       { name: '안정화', period: '3주', desc: '실제 상담을 넣어 보며 빠진 칸을 채웁니다.' },
     ],
+    visible: true,
   },
   {
     id: 'dxp',
@@ -269,6 +281,7 @@ export const SOLUTIONS: Solution[] = [
       { name: '연결 · 검토', period: '2주', desc: '데이터를 묶고 권한을 나눕니다.' },
       { name: '공개', period: '1주', desc: '주소를 열고 이력을 켭니다.' },
     ],
+    visible: true,
   },
 ];
 
@@ -285,6 +298,14 @@ export type MediaClip = {
   title: string;
   /** 썸네일 무늬를 가르는 값. 영상 파일이 아직 없어 무늬로 대신한다 */
   seed: number;
+  /**
+   * 사이트에 세울지.
+   *
+   * 지우기와 따로 두는 이유: 내리는 까닭의 대부분이 **잠깐**이다 — 내용을 고치는 중이거나,
+   * 아직 알릴 때가 아니거나. 지워 버리면 다시 세울 때 처음부터 적어야 하고, 그래서 실제로는
+   * 아무도 지우지 않고 그냥 둔다.
+   */
+  visible: boolean;
 };
 
 /**
@@ -294,11 +315,11 @@ export type MediaClip = {
  * 그것이 IR 화면에 실린 허위 기재가 된다 — 여기 있는 것은 전부 "무엇을 다뤘나" 수준이다.
  */
 export const MEDIA_CLIPS: MediaClip[] = [
-  { id: 'MC-005', channel: '기업 브랜드 영상', title: 'AX로 판단하고 RX로 실행하는 자율 제조', seed: 0 },
-  { id: 'MC-004', channel: '제품 소개', title: 'Cloud MES — 설비 신호가 표준 데이터가 되기까지', seed: 1 },
-  { id: 'MC-003', channel: '도입 사례', title: '수주에서 정산까지, 월 마감을 하루로 줄인 과정', seed: 2 },
-  { id: 'MC-002', channel: '기술 세미나', title: '표준화된 제조 데이터 위에서 AI는 무엇을 판단하는가', seed: 3 },
-  { id: 'MC-001', channel: '제품 소개', title: 'Cloud DXP — 코드 없이 화면을 만드는 자리', seed: 4 },
+  { id: 'MC-005', channel: '기업 브랜드 영상', title: 'AX로 판단하고 RX로 실행하는 자율 제조', seed: 0, visible: true },
+  { id: 'MC-004', channel: '제품 소개', title: 'Cloud MES — 설비 신호가 표준 데이터가 되기까지', seed: 1, visible: true },
+  { id: 'MC-003', channel: '도입 사례', title: '수주에서 정산까지, 월 마감을 하루로 줄인 과정', seed: 2, visible: true },
+  { id: 'MC-002', channel: '기술 세미나', title: '표준화된 제조 데이터 위에서 AI는 무엇을 판단하는가', seed: 3, visible: true },
+  { id: 'MC-001', channel: '제품 소개', title: 'Cloud DXP — 코드 없이 화면을 만드는 자리', seed: 4, visible: true },
 ];
 
 /* ── 법적 고지 ────────────────────────────────────────────────────── */
@@ -337,6 +358,14 @@ export type Credential = {
   number: string;
   issuer: string;
   acquiredAt: string;
+  /**
+   * 사이트에 세울지.
+   *
+   * 지우기와 따로 두는 이유: 내리는 까닭의 대부분이 **잠깐**이다 — 내용을 고치는 중이거나,
+   * 아직 알릴 때가 아니거나. 지워 버리면 다시 세울 때 처음부터 적어야 하고, 그래서 실제로는
+   * 아무도 지우지 않고 그냥 둔다.
+   */
+  visible: boolean;
 };
 
 export const CREDENTIALS: Credential[] = [
@@ -347,6 +376,7 @@ export const CREDENTIALS: Credential[] = [
     number: '10-0000000',
     issuer: '특허청',
     acquiredAt: '2024-08-21',
+    visible: true,
   },
   {
     id: 'C-002',
@@ -355,6 +385,7 @@ export const CREDENTIALS: Credential[] = [
     number: '10-0000001',
     issuer: '특허청',
     acquiredAt: '2025-03-14',
+    visible: true,
   },
   {
     id: 'C-003',
@@ -363,6 +394,7 @@ export const CREDENTIALS: Credential[] = [
     number: 'KR-000000',
     issuer: '한국인정지원센터',
     acquiredAt: '2024-11-05',
+    visible: true,
   },
   {
     id: 'C-004',
@@ -371,6 +403,7 @@ export const CREDENTIALS: Credential[] = [
     number: 'GS-00-0000',
     issuer: '한국정보통신기술협회',
     acquiredAt: '2025-06-30',
+    visible: true,
   },
   {
     id: 'C-005',
@@ -379,6 +412,7 @@ export const CREDENTIALS: Credential[] = [
     number: '-',
     issuer: '중소벤처기업부',
     acquiredAt: '2025-11-20',
+    visible: true,
   },
 ];
 
@@ -389,6 +423,14 @@ export type SiteFaq = {
   group: '도입' | '기술' | '지원';
   question: string;
   answer: string;
+  /**
+   * 사이트에 세울지.
+   *
+   * 지우기와 따로 두는 이유: 내리는 까닭의 대부분이 **잠깐**이다 — 내용을 고치는 중이거나,
+   * 아직 알릴 때가 아니거나. 지워 버리면 다시 세울 때 처음부터 적어야 하고, 그래서 실제로는
+   * 아무도 지우지 않고 그냥 둔다.
+   */
+  visible: boolean;
 };
 
 export const SITE_FAQS: SiteFaq[] = [
@@ -398,6 +440,7 @@ export const SITE_FAQS: SiteFaq[] = [
     question: '도입까지 얼마나 걸리나요?',
     answer:
       '표준 구성은 계약 후 6~8주입니다. 기존 설비와 연동하거나 공정을 새로 정의해야 하면 그만큼 늘어납니다. 첫 상담에서 현장을 보고 기간을 먼저 말씀드립니다.',
+    visible: true,
   },
   {
     id: 'F-02',
@@ -405,6 +448,7 @@ export const SITE_FAQS: SiteFaq[] = [
     question: '쓰던 시스템의 데이터를 옮길 수 있나요?',
     answer:
       '옮깁니다. 다만 옛 데이터의 모양이 표준과 다르면 그대로 넣지 않고 규격을 맞춘 뒤 넣습니다 — 모양이 다른 값을 그냥 넣으면 그때부터 통계가 맞지 않습니다.',
+    visible: true,
   },
   {
     id: 'F-03',
@@ -412,6 +456,7 @@ export const SITE_FAQS: SiteFaq[] = [
     question: '클라우드만 되나요, 자체 서버에도 설치되나요?',
     answer:
       '둘 다 됩니다. 망 분리가 필요한 현장은 자체 서버에 설치하고, 그 경우 갱신 주기와 원격 지원 범위가 달라집니다.',
+    visible: true,
   },
   {
     id: 'F-04',
@@ -419,6 +464,7 @@ export const SITE_FAQS: SiteFaq[] = [
     question: '설비가 오래되어 데이터를 못 내보내는데요?',
     answer:
       '신호를 읽을 수 있으면 게이트웨이를 붙여 받습니다. 아예 못 읽는 설비는 작업자 입력으로 대신하되, 그 값은 자동 수집분과 구분해 표시합니다 — 섞어 두면 어디까지가 실제 측정인지 알 수 없습니다.',
+    visible: true,
   },
   {
     id: 'F-05',
@@ -426,6 +472,7 @@ export const SITE_FAQS: SiteFaq[] = [
     question: '장애가 나면 어떻게 연락하나요?',
     answer:
       '고객 포털의 문의로 접수하시면 급한 것부터 먼저 봅니다. 생산이 멈춘 장애는 전화로도 알려 주세요 — 문의만 남기면 담당자가 확인할 때까지 시간이 걸립니다.',
+    visible: true,
   },
   {
     id: 'F-06',
@@ -433,6 +480,7 @@ export const SITE_FAQS: SiteFaq[] = [
     question: '유지보수 범위가 어떻게 되나요?',
     answer:
       '장애 대응과 정기 갱신이 기본입니다. 새 공정을 추가하거나 화면을 새로 만드는 일은 별도 계약입니다 — 그 경계를 계약서에 적어 두므로 나중에 다투지 않습니다.',
+    visible: true,
   },
 ];
 
@@ -1014,4 +1062,35 @@ export function nextSiteId(prefix: string, ids: readonly string[]): string {
   const sample = ids[0];
   const width = sample === undefined ? 3 : Math.max(3, sample.length - prefix.length - 1);
   return `${prefix}-${String(next).padStart(width, '0')}`;
+}
+
+/* ── 사이트에 나가는 것만 ──────────────────────────────────────────── */
+
+/*
+  `visible` 을 거르는 일을 화면마다 적지 않고 여기 한 벌로 둔다. 화면마다 적으면 새 화면을
+  만드는 날 그 한 줄을 빠뜨리고, 그러면 **내려 둔 것이 그 화면에만 다시 뜬다** — 내린 사람은
+  내린 줄 알고 있으므로 아무도 확인하지 않는다.
+
+  이름을 `public…` 으로 맞춘다(공시의 `publicDisclosures` 와 같은 규칙) — 부를 때 이 값이
+  밖으로 나가는 것임이 이름에서 보여야 한다.
+*/
+
+export function publicSolutions(): Solution[] {
+  return SOLUTIONS.filter((one) => one.visible);
+}
+
+export function publicMediaClips(): MediaClip[] {
+  return MEDIA_CLIPS.filter((one) => one.visible);
+}
+
+export function publicSiteFaqs(): SiteFaq[] {
+  return SITE_FAQS.filter((one) => one.visible);
+}
+
+export function publicCredentials(): Credential[] {
+  return CREDENTIALS.filter((one) => one.visible);
+}
+
+export function publicSiteNotices(): SiteNotice[] {
+  return SITE_NOTICES.filter((one) => one.visible);
 }

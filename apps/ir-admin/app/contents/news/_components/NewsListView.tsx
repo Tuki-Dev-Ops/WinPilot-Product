@@ -1,15 +1,16 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { PageHeading } from '@winpilot/ui';
+import { Badge, PageHeading } from '@winpilot/ui';
 import { MEDIA_CLIPS } from '@winpilot/store';
 import { IrCreateLink } from '@/app/_components/IrForm';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const COLUMNS = [
-  { label: '제목', span: 'lg:col-span-6' },
+  { label: '제목', span: 'lg:col-span-5' },
   { label: '갈래', span: 'lg:col-span-3' },
-  { label: '썸네일', span: 'lg:col-span-1 lg:text-right' },
+  { label: '무늬', span: 'lg:col-span-1' },
+  { label: '상태', span: 'lg:col-span-2 lg:text-right' },
 ];
 
 /**
@@ -45,8 +46,11 @@ export function NewsListView() {
           <span key="channel" className="min-w-0 truncate text-xs text-ink-muted">
             {one.channel}
           </span>,
-          <span key="seed" className="min-w-0 flex-1 truncate text-right font-mono text-xs tabular-nums text-ink-muted">
-            {`무늬 ${one.seed}`}
+          <span key="seed" className="min-w-0 truncate font-mono text-xs tabular-nums text-ink-muted">
+            {one.seed}
+          </span>,
+          <span key="state" className="flex min-w-0 justify-end">
+            <Badge tone={one.visible ? 'ok' : 'wait'}>{one.visible ? '노출' : '숨김'}</Badge>
           </span>,
         ]}
       />

@@ -1,6 +1,6 @@
 'use client';
 
-import { CREDENTIALS, type Credential } from '@winpilot/store';
+import { publicCredentials, type Credential } from '@winpilot/store';
 import { useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
 
@@ -26,15 +26,16 @@ export function CredentialListView() {
 
   /** 갈래마다 몇 개인지. 고르기 전에 보여야 하므로 **거르기 전 전체**를 센다. */
   const counts = useMemo(() => {
-    const box: Record<string, number> = { 전체: CREDENTIALS.length };
-    for (const one of CREDENTIALS) box[one.kind] = (box[one.kind] ?? 0) + 1;
+    const rows = publicCredentials();
+    const box: Record<string, number> = { 전체: rows.length };
+    for (const one of rows) box[one.kind] = (box[one.kind] ?? 0) + 1;
     return box;
   }, []);
 
   const rows = useMemo(() => {
     const word = keyword.trim().toLowerCase();
 
-    return CREDENTIALS.filter((one) => {
+    return publicCredentials().filter((one) => {
       if (kind !== '전체' && one.kind !== kind) return false;
       if (!word) return true;
       /* 이름·번호·발급처 셋을 함께 훑는다 — 어느 것을 들고 왔든 걸리게. */

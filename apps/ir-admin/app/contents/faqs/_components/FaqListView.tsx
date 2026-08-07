@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { PageHeading } from '@winpilot/ui';
+import { Badge, PageHeading } from '@winpilot/ui';
 import { SITE_FAQS } from '@winpilot/store';
 import { IrCreateLink } from '@/app/_components/IrForm';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
@@ -9,7 +9,8 @@ import { IrRecordTable } from '@/app/_components/IrRecordTable';
 const COLUMNS = [
   { label: '갈래', span: 'lg:col-span-2' },
   { label: '물음', span: 'lg:col-span-4' },
-  { label: '답', span: 'lg:col-span-6' },
+  { label: '답', span: 'lg:col-span-4' },
+  { label: '상태', span: 'lg:col-span-2 lg:text-right' },
 ];
 
 /**
@@ -44,8 +45,11 @@ export function FaqListView() {
           <span key="q" className="min-w-0 truncate text-sm font-medium">
             {one.question}
           </span>,
-          <span key="a" className="min-w-0 flex-1 truncate text-xs text-ink-muted">
+          <span key="a" className="min-w-0 truncate text-xs text-ink-muted">
             {one.answer}
+          </span>,
+          <span key="state" className="flex min-w-0 justify-end">
+            <Badge tone={one.visible ? 'ok' : 'wait'}>{one.visible ? '노출' : '숨김'}</Badge>
           </span>,
         ]}
       />

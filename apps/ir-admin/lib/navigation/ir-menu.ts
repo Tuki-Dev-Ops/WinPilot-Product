@@ -20,9 +20,12 @@
  * **회사 홈페이지**였고, 공시 화면들은 만들어 둔 채 거의 열리지 않았다. 지금 메뉴는 그 실제
  * 쓰임을 따른다.
  *
- * 그 화면들은 주소로는 남아 있다(`/disclosures` · `/financials` · `/shareholders` ·
- * `/library`). 지우지 않은 이유: **투자자 화면이 그 값을 읽고 있다** — 사이트의 공시·재무
- * 목록이 지금도 store 의 같은 값을 그린다. 메뉴에 다시 세울지는 IR 담당자가 정할 일이다.
+ * 한때 `IR` 갈래로 묶어 맨 뒤에 세워 두었으나 그것도 뺐다. 메뉴에 있는 것은 **오늘 손대는
+ * 것**이어야 하고, 열 개짜리 갈래가 뒤에 붙어 있으면 그것만으로 콘솔이 무거워 보인다.
+ *
+ * 화면 자체는 주소로 남아 있다(`/disclosures` · `/financials` · `/shareholders` · `/library`,
+ * `pages.manifest.ts` 80번대). 지우지 않은 이유: **투자자 화면이 그 값을 읽고 있다** — 사이트의
+ * 공시·재무 목록이 지금도 store 의 같은 값을 그린다. 메뉴에 다시 세울지는 IR 담당자가 정할 일이다.
  */
 export type IrMenuChild = {
   id: string;
@@ -31,6 +34,13 @@ export type IrMenuChild = {
   ready?: boolean;
 };
 
+/**
+ * 갈래 하나.
+ *
+ * `ready` 를 최상위에도 반드시 적는다. 빠뜨리면 `linkFor` 가 `#none` 을 돌려주어 **사이드바의
+ * 갈래 이름을 눌러도 아무 데도 가지 않는다** — 자식이 다 살아 있어도 그렇다. 화면은 멀쩡해
+ * 보이는데 눌리지만 않아, 눈으로는 잡히지 않는 고장이다.
+ */
 export type IrMenuItem = IrMenuChild & {
   children?: IrMenuChild[];
   /** 성격이 다른 갈래 앞의 선 */
@@ -43,6 +53,7 @@ export const IR_MENU: readonly IrMenuItem[] = [
     id: 'inquiry',
     label: '문의',
     href: '/inquiries',
+    ready: true,
     children: [
       { id: 'inquiry-list', label: '목록', href: '/inquiries', ready: true },
       { id: 'inquiry-settings', label: '설정', href: '/inquiries/settings', ready: true },
@@ -52,6 +63,7 @@ export const IR_MENU: readonly IrMenuItem[] = [
     id: 'content',
     label: '콘텐츠',
     href: '/contents/notices',
+    ready: true,
     children: [
       { id: 'content-notices', label: '공지사항', href: '/contents/notices', ready: true },
       { id: 'content-news', label: '뉴스', href: '/contents/news', ready: true },
@@ -62,6 +74,7 @@ export const IR_MENU: readonly IrMenuItem[] = [
     id: 'product',
     label: '제품',
     href: '/products',
+    ready: true,
     children: [
       { id: 'product-list', label: '목록', href: '/products', ready: true },
       { id: 'product-settings', label: '설정', href: '/products/settings', ready: true },
@@ -71,6 +84,7 @@ export const IR_MENU: readonly IrMenuItem[] = [
     id: 'solution',
     label: '솔루션',
     href: '/solutions',
+    ready: true,
     children: [
       { id: 'solution-list', label: '목록', href: '/solutions', ready: true },
       { id: 'solution-settings', label: '설정', href: '/solutions/settings', ready: true },
@@ -80,6 +94,7 @@ export const IR_MENU: readonly IrMenuItem[] = [
     id: 'company',
     label: '회사',
     href: '/company/about',
+    ready: true,
     children: [
       { id: 'company-about', label: '소개', href: '/company/about', ready: true },
       { id: 'company-history', label: '연혁', href: '/company/history', ready: true },
@@ -90,6 +105,7 @@ export const IR_MENU: readonly IrMenuItem[] = [
     id: 'banner',
     label: '배너',
     href: '/banners',
+    ready: true,
     children: [
       { id: 'banner-hero', label: '메인 비주얼', href: '/banners', ready: true },
       { id: 'banner-popup', label: '팝업', href: '/banners/popups', ready: true },
@@ -103,6 +119,7 @@ export const IR_MENU: readonly IrMenuItem[] = [
     id: 'statistics',
     label: '통계',
     href: '/statistics',
+    ready: true,
     children: [
       { id: 'statistics-home', label: '홈', href: '/statistics', ready: true },
       { id: 'statistics-period', label: '기간별 분석', href: '/statistics/period', ready: true },
@@ -110,34 +127,10 @@ export const IR_MENU: readonly IrMenuItem[] = [
     ],
   },
   {
-    /*
-      받은 메뉴(대시보드~통계)에 없는 갈래다. 그런데도 두는 이유: **투자자 화면이 아직 이
-      값들을 내보내고 있다** — 공시·재무·주주총회·IR 자료실이 사이트 푸터에서 열린다. 화면은
-      살아 있는데 고치는 자리만 메뉴에서 빼면, 공시 하나 올리려고 코드를 고쳐 배포하게 된다.
-
-      회사 홈페이지를 다루는 앞의 여덟과 성격이 달라 뒤로 물리고 줄을 그어 나눈다.
-    */
-    id: 'ir',
-    label: 'IR',
-    href: '/disclosures',
-    separatedBefore: true,
-    children: [
-      { id: 'ir-disclosures', label: '공시', href: '/disclosures', ready: true },
-      { id: 'ir-dart', label: 'DART 연동', href: '/disclosures/dart', ready: true },
-      { id: 'ir-financials', label: '재무', href: '/financials', ready: true },
-      { id: 'ir-stock', label: '주가 연동', href: '/financials/stock', ready: true },
-      { id: 'ir-dividends', label: '배당', href: '/financials/dividends', ready: true },
-      { id: 'ir-meetings', label: '주주총회', href: '/shareholders/meetings', ready: true },
-      { id: 'ir-governance', label: '지배구조', href: '/shareholders/governance', ready: true },
-      { id: 'ir-library', label: 'IR 자료실', href: '/library', ready: true },
-      { id: 'ir-schedules', label: 'IR 일정', href: '/library/schedules', ready: true },
-      { id: 'ir-subscribers', label: '알림 구독자', href: '/library/notifications', ready: true },
-    ],
-  },
-  {
     id: 'settings',
     label: '설정',
     href: '/settings/supplier',
+    ready: true,
     separatedBefore: true,
     children: [
       { id: 'settings-supplier', label: '공급자 정보', href: '/settings/supplier', ready: true },
