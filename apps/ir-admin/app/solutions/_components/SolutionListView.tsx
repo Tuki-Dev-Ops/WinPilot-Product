@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Badge, PageHeading } from '@winpilot/ui';
 import { SOLUTIONS } from '@winpilot/store';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
@@ -21,6 +22,7 @@ const COLUMNS = [
  * **프론트엔드 전용** — 값의 원본은 `@winpilot/store` 다.
  */
 export function SolutionListView() {
+  const router = useRouter();
   return (
     <>
       <PageHeading title="솔루션" description="어떤 문제를 어떻게 푸는지를 관리하세요." />
@@ -30,6 +32,8 @@ export function SolutionListView() {
         description="상세 화면의 문제 · 기능 · 구성 · 업종 · 절차가 여기서 옵니다."
         columns={COLUMNS}
         rows={SOLUTIONS}
+        onOpen={(one) => router.push(`/solutions/${one.id}`)}
+        openLabel="수정"
         labelOf={(one) => one.name}
         empty="등록된 솔루션이 없습니다."
         render={(one) => [

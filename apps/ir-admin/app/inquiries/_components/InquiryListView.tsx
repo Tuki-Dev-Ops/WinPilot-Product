@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Badge, PageHeading } from '@winpilot/ui';
 import { SITE_INQUIRIES } from '@winpilot/store';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
@@ -25,6 +26,7 @@ const STATE_TONE = { 접수: 'wait', 처리중: 'brand', 답변완료: 'ok', 보
  * **프론트엔드 전용** — 값의 원본은 `@winpilot/store` 다.
  */
 export function InquiryListView() {
+  const router = useRouter();
   const waiting = SITE_INQUIRIES.filter((one) => one.state !== '답변완료').length;
 
   return (
@@ -36,6 +38,8 @@ export function InquiryListView() {
         description="사이트의 문의 양식으로 들어온 것입니다."
         columns={COLUMNS}
         rows={SITE_INQUIRIES}
+        onOpen={(one) => router.push(`/inquiries/${one.id}`)}
+        openLabel="답변"
         labelOf={(one) => one.message}
         empty="들어온 문의가 없습니다."
         render={(one) => [

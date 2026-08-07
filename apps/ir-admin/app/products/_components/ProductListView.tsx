@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Badge, PageHeading } from '@winpilot/ui';
 import { SOLUTIONS } from '@winpilot/store';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
@@ -22,6 +23,7 @@ const COLUMNS = [
  * **프론트엔드 전용** — 값의 원본은 `@winpilot/store` 다.
  */
 export function ProductListView() {
+  const router = useRouter();
   return (
     <>
       <PageHeading title="제품" description="사이트의 클라우드 제품 넷입니다." />
@@ -31,6 +33,8 @@ export function ProductListView() {
         description="한 줄과 푸는 방법이 제품 카드에 그대로 실립니다."
         columns={COLUMNS}
         rows={SOLUTIONS}
+        onOpen={(one) => router.push(`/products/${one.id}`)}
+        openLabel="수정"
         labelOf={(one) => one.name}
         empty="등록된 제품이 없습니다."
         render={(one) => [

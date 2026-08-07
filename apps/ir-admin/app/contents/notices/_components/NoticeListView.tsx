@@ -1,7 +1,9 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Badge, PageHeading } from '@winpilot/ui';
 import { SITE_NOTICES } from '@winpilot/store';
+import { IrCreateLink } from '@/app/_components/IrForm';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const COLUMNS = [
@@ -22,15 +24,19 @@ const COLUMNS = [
  * **프론트엔드 전용** — 값의 원본은 `@winpilot/store` 다.
  */
 export function NoticeListView() {
+  const router = useRouter();
   return (
     <>
       <PageHeading title="공지사항" description="사이트에 서는 공지를 관리하세요." />
 
       <IrRecordTable
         title="공지"
+        aside={<IrCreateLink href="/contents/notices/new">공지 등록</IrCreateLink>}
         description="고정한 것이 맨 위에 섭니다."
         columns={COLUMNS}
         rows={SITE_NOTICES}
+        onOpen={(one) => router.push(`/contents/notices/${one.id}`)}
+        openLabel="수정"
         labelOf={(one) => one.title}
         empty="등록된 공지가 없습니다."
         render={(one) => [

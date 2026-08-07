@@ -1,7 +1,9 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Badge, PageHeading } from '@winpilot/ui';
 import { SITE_BANNERS } from '@winpilot/store';
+import { IrCreateLink } from '@/app/_components/IrForm';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const COLUMNS = [
@@ -19,15 +21,19 @@ const COLUMNS = [
  * **프론트엔드 전용** — 값의 원본은 `@winpilot/store` 다.
  */
 export function HeroBannerListView() {
+  const router = useRouter();
   return (
     <>
       <PageHeading title="메인 비주얼" description="첫 화면 위에 기간을 갖고 서는 배너입니다." />
 
       <IrRecordTable
         title="배너"
+        aside={<IrCreateLink href="/banners/new">배너 등록</IrCreateLink>}
         description="기간이 지나면 저절로 내려갑니다."
         columns={COLUMNS}
         rows={SITE_BANNERS.filter((one) => one.slot === '메인 비주얼')}
+        onOpen={(one) => router.push(`/banners/${one.id}`)}
+        openLabel="수정"
         labelOf={(one) => one.title}
         empty="등록된 배너가 없습니다."
         render={(one) => [

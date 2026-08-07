@@ -1,7 +1,9 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Badge, PageHeading } from '@winpilot/ui';
 import { SITE_BANNERS } from '@winpilot/store';
+import { IrCreateLink } from '@/app/_components/IrForm';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const COLUMNS = [
@@ -20,15 +22,19 @@ const COLUMNS = [
  * **프론트엔드 전용** — 값의 원본은 `@winpilot/store` 다.
  */
 export function PopupListView() {
+  const router = useRouter();
   return (
     <>
       <PageHeading title="팝업" description="사이트에 들어오면 뜨는 창입니다." />
 
       <IrRecordTable
         title="팝업"
+        aside={<IrCreateLink href="/banners/popups/new">팝업 등록</IrCreateLink>}
         description="기간이 지나면 저절로 내려갑니다."
         columns={COLUMNS}
         rows={SITE_BANNERS.filter((one) => one.slot === '팝업')}
+        onOpen={(one) => router.push(`/banners/popups/${one.id}`)}
+        openLabel="수정"
         labelOf={(one) => one.title}
         empty="등록된 팝업이 없습니다."
         render={(one) => [

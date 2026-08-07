@@ -962,3 +962,56 @@ export const SITE_INQUIRIES: SiteInquiry[] = [
     receivedAt: '2026-07-13 11:35',
   },
 ];
+
+/* ── 한 줄 찾기 ───────────────────────────────────────────────────── */
+
+/*
+  상세 화면이 주소의 id 로 줄 하나를 찾는다. 화면마다 `find` 를 적으면 **없을 때 무엇을 돌려줄지**가
+  화면마다 갈린다 — 어떤 곳은 `undefined`, 어떤 곳은 첫 줄. 여기 한 벌로 두고 전부 `undefined` 다.
+*/
+
+export function findSiteNotice(id: string): SiteNotice | undefined {
+  return SITE_NOTICES.find((one) => one.id === id);
+}
+
+export function findMediaClip(id: string): MediaClip | undefined {
+  return MEDIA_CLIPS.find((one) => one.id === id);
+}
+
+export function findSiteFaq(id: string): SiteFaq | undefined {
+  return SITE_FAQS.find((one) => one.id === id);
+}
+
+export function findCredential(id: string): Credential | undefined {
+  return CREDENTIALS.find((one) => one.id === id);
+}
+
+export function findSiteBanner(id: string): SiteBanner | undefined {
+  return SITE_BANNERS.find((one) => one.id === id);
+}
+
+export function findSiteInquiry(id: string): SiteInquiry | undefined {
+  return SITE_INQUIRIES.find((one) => one.id === id);
+}
+
+/* `findSolution` 은 `SOLUTIONS` 바로 아래에 이미 있다 — 값과 그것을 찾는 함수는 붙여 둔다. */
+
+/**
+ * 다음 코드 — `N-004` 다음은 `N-005`.
+ *
+ * 등록 화면이 코드를 미리 보여 줘야 하는데, 그 값은 **서버가 정할 일**이다. 서버가 없는 동안
+ * 화면이 대신 세되 규칙은 한 곳에 둔다 — 화면마다 세면 자릿수가 갈리고(`N-5` · `N-005`),
+ * 자릿수가 갈리면 목록에서 코드로 정렬한 차례가 어긋난다.
+ */
+export function nextSiteId(prefix: string, ids: readonly string[]): string {
+  const numbers = ids
+    .filter((id) => id.startsWith(`${prefix}-`))
+    .map((id) => Number(id.slice(prefix.length + 1)))
+    .filter((value) => Number.isFinite(value));
+
+  const next = numbers.length > 0 ? Math.max(...numbers) + 1 : 1;
+  /* 자릿수는 이미 있는 코드에서 배운다 — 손으로 정해 두면 값이 늘어난 날 `N-1000` 이 섞인다. */
+  const sample = ids[0];
+  const width = sample === undefined ? 3 : Math.max(3, sample.length - prefix.length - 1);
+  return `${prefix}-${String(next).padStart(width, '0')}`;
+}

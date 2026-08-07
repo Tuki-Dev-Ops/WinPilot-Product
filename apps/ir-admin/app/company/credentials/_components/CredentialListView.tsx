@@ -1,7 +1,9 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { PageHeading } from '@winpilot/ui';
 import { CREDENTIALS } from '@winpilot/store';
+import { IrCreateLink } from '@/app/_components/IrForm';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const COLUMNS = [
@@ -21,15 +23,19 @@ const COLUMNS = [
  * **프론트엔드 전용** — 값의 원본은 `@winpilot/store` 이고 투자자 화면이 같은 것을 읽는다.
  */
 export function CredentialListView() {
+  const router = useRouter();
   return (
     <>
       <PageHeading title="특허 및 인증" description="사이트의 특허 및 인증 화면에 그대로 섭니다." />
 
       <IrRecordTable
         title="특허 · 인증"
+        aside={<IrCreateLink href="/company/credentials/new">등록</IrCreateLink>}
         description="등록번호로 밖에서 조회할 수 있는 값입니다."
         columns={COLUMNS}
         rows={CREDENTIALS}
+        onOpen={(one) => router.push(`/company/credentials/${one.id}`)}
+        openLabel="수정"
         labelOf={(one) => one.title}
         empty="등록된 특허·인증이 없습니다."
         render={(one) => [

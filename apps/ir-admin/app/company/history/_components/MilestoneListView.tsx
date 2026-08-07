@@ -1,7 +1,9 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Badge, PageHeading } from '@winpilot/ui';
 import { MILESTONES, milestoneDate, sortMilestones } from '@winpilot/store';
+import { IrCreateLink } from '@/app/_components/IrForm';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const COLUMNS = [
@@ -25,6 +27,7 @@ const COLUMNS = [
  * 회사 > 연혁이 같은 것을 고친다.
  */
 export function MilestoneListView() {
+  const router = useRouter();
   const rows = sortMilestones(MILESTONES);
   const shown = rows.filter((one) => one.visible).length;
 
@@ -34,9 +37,12 @@ export function MilestoneListView() {
 
       <IrRecordTable
         title="연혁"
+        aside={<IrCreateLink href="/company/history/new">연혁 등록</IrCreateLink>}
         description="사이트의 연혁 화면에 최신순으로 섭니다."
         columns={COLUMNS}
         rows={rows}
+        onOpen={(one) => router.push(`/company/history/${one.id}`)}
+        openLabel="수정"
         labelOf={(one) => one.title}
         empty="등록된 연혁이 없습니다."
         render={(one) => [

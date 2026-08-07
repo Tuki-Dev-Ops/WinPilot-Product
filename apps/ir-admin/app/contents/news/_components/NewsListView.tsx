@@ -1,7 +1,9 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { PageHeading } from '@winpilot/ui';
 import { MEDIA_CLIPS } from '@winpilot/store';
+import { IrCreateLink } from '@/app/_components/IrForm';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const COLUMNS = [
@@ -20,15 +22,19 @@ const COLUMNS = [
  * **프론트엔드 전용** — 값의 원본은 `@winpilot/store` 이고 투자자 화면이 같은 것을 읽는다.
  */
 export function NewsListView() {
+  const router = useRouter();
   return (
     <>
       <PageHeading title="뉴스" description="방송·행사·제품 소개로 남은 것들입니다." />
 
       <IrRecordTable
         title="뉴스"
+        aside={<IrCreateLink href="/contents/news/new">뉴스 등록</IrCreateLink>}
         description="목록의 차례대로 사이트에 섭니다."
         columns={COLUMNS}
         rows={MEDIA_CLIPS}
+        onOpen={(one) => router.push(`/contents/news/${one.id}`)}
+        openLabel="수정"
         labelOf={(one) => one.title}
         empty="등록된 뉴스가 없습니다."
         render={(one) => [

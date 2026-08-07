@@ -1,7 +1,9 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { PageHeading } from '@winpilot/ui';
 import { SITE_FAQS } from '@winpilot/store';
+import { IrCreateLink } from '@/app/_components/IrForm';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const COLUMNS = [
@@ -20,15 +22,19 @@ const COLUMNS = [
  * **프론트엔드 전용** — 값의 원본은 `@winpilot/store` 이고 투자자 화면이 같은 것을 읽는다.
  */
 export function FaqListView() {
+  const router = useRouter();
   return (
     <>
       <PageHeading title="FAQ" description="자주 받는 물음과 답을 관리하세요." />
 
       <IrRecordTable
         title="물음"
+        aside={<IrCreateLink href="/contents/faqs/new">FAQ 등록</IrCreateLink>}
         description="갈래가 사이트 FAQ 화면의 왼쪽 줄이 됩니다."
         columns={COLUMNS}
         rows={SITE_FAQS}
+        onOpen={(one) => router.push(`/contents/faqs/${one.id}`)}
+        openLabel="수정"
         labelOf={(one) => one.question}
         empty="등록된 FAQ 가 없습니다."
         render={(one) => [
