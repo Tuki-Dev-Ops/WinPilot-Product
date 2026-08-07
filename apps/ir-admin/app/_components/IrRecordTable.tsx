@@ -41,7 +41,12 @@ export type IrColumn = { label: string; span: string };
  *
  * ## 체크박스가 늘 있다
  * 일괄로 할 일이 아직 없는 화면에서도 칸은 둔다. 표마다 맨 왼쪽이 같은 자리여야 눈이 헤매지
- * 않고, 할 일이 정해지면 그때 막대만 잇는다.
+ * 않는다.
+ *
+ * 하나라도 고르면 **머리글 위에 줄이 하나 열린다** — 왼쪽에 고른 건수, 오른쪽에 `선택 해제` 와
+ * `선택 삭제`. 그 줄을 늘 세워 두지 않는 이유: 고른 것이 없을 때 `선택 삭제` 가 회색으로
+ * 앉아 있으면, 누를 수 없다는 것을 **눌러 봐야** 안다. 없다가 생기면 무엇이 켜졌는지가
+ * 나타남으로 드러난다.
  */
 export function IrRecordTable<T extends { id: string }>({
   title,
@@ -82,7 +87,8 @@ export function IrRecordTable<T extends { id: string }>({
   foot?: ReactNode;
 }) {
   const toast = useToast();
-  const [asking, setAsking] = useState<T | null>(null);
+  /* 지울 줄들. 하나를 지우든 골라 지우든 같은 확인 창을 지나게 한다. */
+  const [asking, setAsking] = useState<T[] | null>(null);
   const [picked, setPicked] = useState<string[]>([]);
   const ids = rows.map((row) => row.id);
   const pickedHere = picked.filter((id) => ids.includes(id));
@@ -102,6 +108,34 @@ export function IrRecordTable<T extends { id: string }>({
           />
         }
       />
+
+      {pickedHere.length > 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-surface px-5 py-3">
+          <p className="text-sm text-ink-muted">
+            선택 <span className="font-semibold tabular-nums text-ink">{pickedHere.length}</span>건
+          </p>
+
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setPicked([])}
+              className="h-8 shrink-0 rounded-lg border border-border-strong px-3 text-xs text-ink-muted transition-colors duration-150 hover:border-ink-faint hover:text-ink"
+            >
+              선택 해제
+            </button>
+
+            {onDelete && (
+              <button
+                type="button"
+                onClick={() => setAsking(rows.filter((one) => pickedHere.includes(one.id)))}
+                className="h-8 shrink-0 rounded-lg border border-signal-danger/50 px-3 text-xs font-medium text-signal-danger transition-colors duration-150 hover:border-signal-danger"
+              >
+                선택 삭제
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       {rows.length === 0 ? (
         <IrEmpty>{empty}</IrEmpty>
@@ -186,7 +220,7 @@ export function IrRecordTable<T extends { id: string }>({
                             icon="delete"
                             label={`${labelOf(row)} 삭제`}
                             tone="danger"
-                            onClick={() => setAsking(row)}
+                            onClick={() => setAsking([row])}
                           />
                         )}
                       </RowActions>
@@ -208,17 +242,29 @@ export function IrRecordTable<T extends { id: string }>({
 
       <IrConfirmModal
         open={asking !== null}
-        title="이 줄을 지울까요"
+        title={asking && asking.length > 1 ? `${asking.length}건을 지울까요` : '이 줄을 지울까요'}
         message={deleteNote ?? '되돌릴 수 없습니다.'}
-        detail={asking ? `${asking.id} · ${labelOf(asking)}` : ''}
+        /* 여럿이면 이름을 다 적지 않고 셋까지만 — 스무 줄짜리 문장은 아무도 읽지 않는다. */
+        detail={
+          asking
+            ? asking
+                .slice(0, 3)
+                .map((one) => labelOf(one))
+                .join(' · ') + (asking.length > 3 ? ` 외 ${asking.length - 3}건` : '')
+            : ''
+        }
         confirmLabel="삭제"
         tone="danger"
         onConfirm={() => {
-          const row = asking;
+          const targets = asking;
           setAsking(null);
-          if (!row) return;
-          onDelete?.(row);
-          toast.success({ message: '삭제했습니다.', detail: `${row.id} · ${labelOf(row)}` });
+          if (!targets || targets.length === 0) return;
+          for (const one of targets) onDelete?.(one);
+          setPicked((was) => was.filter((id) => !targets.some((one) => one.id === id)));
+          toast.success({
+            message: `${targets.length}건을 삭제했습니다.`,
+            detail: targets.map((one) => labelOf(one)).slice(0, 3).join(' · '),
+          });
         }}
         onCancel={() => setAsking(null)}
       />

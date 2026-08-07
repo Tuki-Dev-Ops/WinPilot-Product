@@ -1,9 +1,14 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Badge, PageHeading } from '@winpilot/ui';
+import { ALL_VALUE, Badge, ListToolbar, PageHeading, type ListFilterField } from '@winpilot/ui';
 import { SOLUTIONS } from '@winpilot/store';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
+
+const FILTERS: ListFilterField[] = [
+  { id: 'state', label: '상태', options: [{ value: '노출', label: '노출' }, { value: '숨김', label: '숨김' }] },
+];
 
 const COLUMNS = [
   { label: '제품', span: 'lg:col-span-2' },
@@ -25,15 +30,41 @@ const COLUMNS = [
  */
 export function ProductListView() {
   const router = useRouter();
+  const [keyword, setKeyword] = useState('');
+  const [state, setState] = useState<string>(ALL_VALUE);
+  /* 검색어와 거르개를 함께 건다. 하나만 걸어도 나머지는 `전체` 로 남아 방해하지 않는다. */
+  const shown = SOLUTIONS.filter((one) => {
+    if (!((state === ALL_VALUE || (one.visible ? '노출' : '숨김') === state))) return false;
+    const word = keyword.trim().toLowerCase();
+    if (!word) return true;
+    return [one.name, one.tagline].some((value) => String(value).toLowerCase().includes(word));
+  });
+
   return (
     <>
       <PageHeading title="제품" description="사이트의 클라우드 제품 넷입니다." />
+
+      <ListToolbar
+        searchId="product-search"
+        searchLabel="제품명 검색"
+        searchHint="제품명 · 한 줄 소개"
+        searchValue={keyword}
+        onSearchChange={setKeyword}
+        filters={FILTERS}
+        filterValues={{ state }}
+        onFilterChange={(id, value) => {
+          if (id === 'state') setState(value);
+        }}
+        onFilterReset={() => {
+          setState(ALL_VALUE);
+        }}
+      />
 
       <IrRecordTable
         title="제품"
         description="한 줄과 푸는 방법이 제품 카드에 그대로 실립니다."
         columns={COLUMNS}
-        rows={SOLUTIONS}
+        rows={shown}
         onOpen={(one) => router.push(`/products/${one.id}`)}
         labelOf={(one) => one.name}
         empty="등록된 제품이 없습니다."

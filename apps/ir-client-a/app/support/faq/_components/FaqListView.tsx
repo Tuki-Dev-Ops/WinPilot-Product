@@ -1,29 +1,35 @@
 'use client';
 
+import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import type { SiteFaq } from '@winpilot/store';
 import { SupportBrowser } from '@/app/support/_components/SupportBrowser';
 
 /**
- * FAQ — **갈래 · 검색 · 접히는 목록**.
+ * FAQ — **공지사항과 같은 목록**.
  *
- * 공지사항 · 뉴스와 같은 틀이다(`SupportBrowser`) — 왼쪽에 갈래, 오른쪽에 검색과 결과. 전에는
- * 갈래가 위쪽 알약 줄이었는데, 옆 화면들과 고르는 자리가 달라 **화면을 옮길 때마다 눈이 다시
- * 헤맸다.**
+ * 갈래 · 검색은 `SupportBrowser` 가, 결과는 여기가 그린다. 공지사항과 **줄 모양까지 같다** —
+ * 위에 얇은 선, 줄마다 갈래 · 제목 · 화살표, 눌러 펼치면 아래에 본문.
  *
- * ## 답을 접어 두는 이유
- * 물음 스물에 답을 전부 펴 두면 화면이 길어져 **훑는 것 자체가 일**이 된다. 접어 두면 물음만
- * 스무 줄이라 한눈에 지나가고, 걸리는 것 하나만 펴 보게 된다.
+ * ## `<details>` 를 걷어냈다
+ * 브라우저가 주는 접기 요소는 공짜로 얻는 것이 많았다(키보드 · Ctrl+F). 그런데 CS CENTER 안의
+ * 세 목록 가운데 여기만 그것을 써서, **줄 높이와 여백이 공지사항과 미묘하게 달랐다.** 화면을
+ * 옮길 때 눈에 걸리는 것은 그 미묘한 차이다.
  *
- * `<details>` 를 쓴다. 직접 만들면 키보드로 여는 일과 브라우저 안 찾기(Ctrl+F)가 함께 깨지는데,
- * 이 요소는 둘 다 브라우저가 해 준다 — 접힌 답도 찾기에 걸린다. 공지는 한 번에 하나만 펴야
- * 해서 손으로 만들었지만, FAQ 는 둘을 나란히 두고 견주는 일이 있어 여럿이 열려도 된다.
+ * 잃은 것을 대신한다 — 단추에 `aria-expanded` 를 달아 낭독기가 펼침 상태를 읽고, 키보드는
+ * 원래 단추라 그대로 된다. 접힌 답이 Ctrl+F 에 걸리지 않는 것만 남는데, 이 화면에는 **답까지
+ * 훑는 검색창**이 이미 있어 그 자리를 메운다.
  *
- * ## 검색이 답까지 훑는다
- * 물음의 말과 찾는 사람의 말이 다르다. `견적` 을 치는 사람의 물음은 `도입 비용은 어떻게
- * 되나요` 로 적혀 있고, 그 말은 답 안에 있다.
+ * ## 한 번에 하나만 펼친다
+ * 공지사항과 같다. 여럿을 펼쳐 두면 화면이 길어져 다음 물음이 어디 있는지 다시 찾아야 한다.
+ *
+ * ## 첫 줄을 열어 둔다
+ * 전부 접어 두면 제목만 늘어선 줄이 되고, 처음 온 사람은 **펼칠 수 있다는 것조차** 모른 채
+ * 지나간다. 맨 위 하나만 열어 두면 나머지도 같은 것임을 알아본다.
  */
 export function FaqListView({ faqs, groups }: { faqs: SiteFaq[]; groups: SiteFaq['group'][] }) {
+  const [opened, setOpened] = useState<string | null>(faqs[0]?.id ?? null);
+
   return (
     <SupportBrowser
       items={faqs}
@@ -35,27 +41,44 @@ export function FaqListView({ faqs, groups }: { faqs: SiteFaq[]; groups: SiteFaq
       empty="조건에 맞는 물음이 없습니다. 찾으시는 것이 없으면 문의를 남겨 주세요."
     >
       {(rows) => (
-        <div className="overflow-hidden rounded-xl border border-border">
-          {rows.map((one) => (
-            <details key={one.id} className="group border-b border-border last:border-b-0">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 transition-colors duration-150 hover:bg-surface">
-                <span className="flex min-w-0 items-baseline gap-3">
-                  <span className="shrink-0 text-xs text-ink-faint">{one.group}</span>
-                  <span className="min-w-0 text-sm font-medium">{one.question}</span>
-                </span>
-                {/* 열리면 화살표가 돈다 — 접힌 것과 펴진 것을 색만으로 가르면 훑을 때 놓친다. */}
-                <ChevronDown
-                  aria-hidden
-                  className="size-4 shrink-0 text-ink-faint transition-transform duration-200 group-open:rotate-180"
-                  strokeWidth={1.6}
-                />
-              </summary>
-              <p className="border-t border-border bg-surface px-6 py-5 text-sm leading-loose text-ink-muted">
-                {one.answer}
-              </p>
-            </details>
-          ))}
-        </div>
+        <ul className="border-t border-border-strong">
+          {rows.map((one) => {
+            const open = one.id === opened;
+
+            return (
+              <li key={one.id} className="border-b border-border">
+                <h2>
+                  <button
+                    type="button"
+                    onClick={() => setOpened(open ? null : one.id)}
+                    aria-expanded={open}
+                    className="flex w-full items-center gap-4 px-1 py-5 text-left transition-colors duration-150 hover:text-brand"
+                  >
+                    <span className="shrink-0 text-xs text-ink-faint">{one.group}</span>
+
+                    <span className="min-w-0 flex-1 text-base font-medium leading-relaxed">
+                      {one.question}
+                    </span>
+
+                    <ChevronDown
+                      aria-hidden
+                      strokeWidth={1.8}
+                      className={`size-4 shrink-0 text-ink-faint transition-transform duration-200 ${
+                        open ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                </h2>
+
+                {open && (
+                  <div className="flex flex-col gap-4 px-1 pb-7 pt-1">
+                    <p className="text-sm leading-relaxed text-ink-muted">{one.answer}</p>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ul>
       )}
     </SupportBrowser>
   );

@@ -72,10 +72,9 @@ export function SolutionForm({
     >
       <IrPanel title="말" description="홈 카드 · 메뉴 · 상세 화면이 이 값을 함께 읽습니다.">
         <div className="flex flex-col gap-5 px-6 py-5">
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <IrReadonly label="코드" value={solution.id} note="수정 불가" />
-            <IrReadonly label="상세 주소" value={solution.href} note="라우트가 정함" />
-          </div>
+          <IrReadonly label="코드" value={solution.id} note="수정 불가" />
+          <IrReadonly label="상세 주소" value={solution.href} note="라우트가 정함" />
+        
 
           <IrField
             label="이름"

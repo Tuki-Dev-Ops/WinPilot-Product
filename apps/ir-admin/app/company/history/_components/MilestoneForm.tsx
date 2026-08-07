@@ -67,7 +67,7 @@ export function MilestoneForm({
       }}
     >
       <IrPanel title="때" description="사이트 연혁은 최신순으로 섭니다.">
-        <div className="grid grid-cols-1 gap-5 px-6 py-5 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 px-6 py-5">
           <IrReadonly label="코드" value={code} note={mode === 'create' ? '자동 생성' : '수정 불가'} />
 
           <IrField

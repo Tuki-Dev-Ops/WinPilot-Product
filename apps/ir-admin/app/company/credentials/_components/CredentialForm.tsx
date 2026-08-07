@@ -77,68 +77,67 @@ export function CredentialForm({
     >
       <IrPanel title="기본 정보" description="사이트의 특허 및 인증 화면에 이대로 섭니다.">
         <div className="flex flex-col gap-5 px-6 py-5">
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <IrReadonly label="코드" value={code} note={mode === 'create' ? '자동 생성' : '수정 불가'} />
+          <IrReadonly label="코드" value={code} note={mode === 'create' ? '자동 생성' : '수정 불가'} />
 
-            <IrField label="구분" htmlFor="cred-kind" required hint="목록에서 갈래로 쓰입니다.">
-              <IrSelect id="cred-kind" value={kind} onChange={setKind} options={KINDS} />
-            </IrField>
-          </div>
+          <IrField label="구분" htmlFor="cred-kind" required hint="목록에서 갈래로 쓰입니다.">
+            <IrSelect id="cred-kind" value={kind} onChange={setKind} options={KINDS} />
+          </IrField>
+        </div>
 
+        <IrField
+          label="이름"
+          htmlFor="cred-title"
+          required
+          {...(tried && !title.trim()
+            ? { error: '이름을 입력해 주세요.' }
+            : { hint: '등록증에 적힌 이름 그대로 적으세요 — 줄여 적으면 조회되지 않습니다.' })}
+        >
+          <IrTextInput
+            id="cred-title"
+            value={title}
+            onChange={setTitle}
+            placeholder="예: 설비 신호의 표준 데이터 변환 방법"
+            invalid={tried && !title.trim()}
+          />
+        </IrField>
+
+        <div className="grid grid-cols-1 gap-5">
           <IrField
-            label="이름"
-            htmlFor="cred-title"
+            label="등록번호"
+            htmlFor="cred-number"
             required
-            {...(tried && !title.trim()
-              ? { error: '이름을 입력해 주세요.' }
-              : { hint: '등록증에 적힌 이름 그대로 적으세요 — 줄여 적으면 조회되지 않습니다.' })}
+            {...(tried && !number.trim()
+              ? { error: '등록번호를 입력해 주세요.' }
+              : { hint: '밖에서 조회할 수 있는 값입니다. 없으면 세울 수 없습니다.' })}
           >
-            <IrTextInput
-              id="cred-title"
-              value={title}
-              onChange={setTitle}
-              placeholder="예: 설비 신호의 표준 데이터 변환 방법"
-              invalid={tried && !title.trim()}
+            <input
+              id="cred-number"
+              type="text"
+              value={number}
+              onChange={(event) => setNumber(event.target.value)}
+              placeholder="10-0000000"
+              aria-invalid={tried && !number.trim()}
+              className={`h-11 w-full min-w-0 rounded-lg border bg-surface px-3 font-mono text-sm tabular-nums text-ink placeholder:text-ink-faint ${
+                tried && !number.trim() ? 'border-signal-danger' : 'border-border-strong'
+              }`}
             />
           </IrField>
 
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <IrField
-              label="등록번호"
-              htmlFor="cred-number"
-              required
-              {...(tried && !number.trim()
-                ? { error: '등록번호를 입력해 주세요.' }
-                : { hint: '밖에서 조회할 수 있는 값입니다. 없으면 세울 수 없습니다.' })}
-            >
-              <input
-                id="cred-number"
-                type="text"
-                value={number}
-                onChange={(event) => setNumber(event.target.value)}
-                placeholder="10-0000000"
-                aria-invalid={tried && !number.trim()}
-                className={`h-11 w-full min-w-0 rounded-lg border bg-surface px-3 font-mono text-sm tabular-nums text-ink placeholder:text-ink-faint ${
-                  tried && !number.trim() ? 'border-signal-danger' : 'border-border-strong'
-                }`}
-              />
-            </IrField>
-
-            <IrField
-              label="발급 기관"
-              htmlFor="cred-issuer"
-              required
-              {...(tried && !issuer.trim() ? { error: '발급 기관을 입력해 주세요.' } : {})}
-            >
-              <IrTextInput
-                id="cred-issuer"
-                value={issuer}
-                onChange={setIssuer}
-                placeholder="예: 특허청"
-                invalid={tried && !issuer.trim()}
-              />
-            </IrField>
-          </div>
+          <IrField
+            label="발급 기관"
+            htmlFor="cred-issuer"
+            required
+            {...(tried && !issuer.trim() ? { error: '발급 기관을 입력해 주세요.' } : {})}
+          >
+            <IrTextInput
+              id="cred-issuer"
+              value={issuer}
+              onChange={setIssuer}
+              placeholder="예: 특허청"
+              invalid={tried && !issuer.trim()}
+            />
+          </IrField>
+        
 
           <IrField
             label="취득일"

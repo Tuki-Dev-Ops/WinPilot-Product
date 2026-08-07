@@ -96,23 +96,3 @@ export function IrGhostButton({
     </button>
   );
 }
-
-/**
- * 목록 위의 **등록** 단추.
- *
- * 단추가 아니라 링크(`<a>`)다. 등록은 화면을 옮기는 일이라, 새 창으로 열거나 주소를 복사하는
- * 평범한 일이 되어야 한다 — `onClick` 으로 옮기면 그 둘이 다 막힌다.
- *
- * 자리는 카드 제목 오른쪽(`aside`)이다. 목록 아래에 두면 줄이 스무 개일 때 **끝까지 내려가야**
- * 보이고, 화면 위에 따로 띄우면 어느 목록에 더하는 것인지 자리로 드러나지 않는다.
- */
-export function IrCreateLink({ href, children }: { href: string; children: ReactNode }) {
-  return (
-    <a
-      href={href}
-      className="flex h-9 shrink-0 items-center whitespace-nowrap rounded-lg bg-brand-500 px-4 text-sm font-medium text-white transition-colors duration-150 hover:bg-brand-600"
-    >
-      {children}
-    </a>
-  );
-}

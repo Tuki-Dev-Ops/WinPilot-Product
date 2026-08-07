@@ -65,13 +65,12 @@ export function FaqForm({
     >
       <IrPanel title="물음과 답" description="사이트 FAQ 화면에 이대로 섭니다.">
         <div className="flex flex-col gap-5 px-6 py-5">
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <IrReadonly label="FAQ 코드" value={code} note={mode === 'create' ? '자동 생성' : '수정 불가'} />
+          <IrReadonly label="FAQ 코드" value={code} note={mode === 'create' ? '자동 생성' : '수정 불가'} />
 
-            <IrField label="갈래" htmlFor="faq-group" required hint="사이트 FAQ 화면 왼쪽 줄이 됩니다.">
-              <IrSelect id="faq-group" value={group} onChange={setGroup} options={FAQ_GROUPS} />
-            </IrField>
-          </div>
+          <IrField label="갈래" htmlFor="faq-group" required hint="사이트 FAQ 화면 왼쪽 줄이 됩니다.">
+            <IrSelect id="faq-group" value={group} onChange={setGroup} options={FAQ_GROUPS} />
+          </IrField>
+        
 
           <IrField
             label="물음"

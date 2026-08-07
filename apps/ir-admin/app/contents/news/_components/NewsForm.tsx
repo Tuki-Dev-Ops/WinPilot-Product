@@ -68,26 +68,25 @@ export function NewsForm({
             읽힙니다.
           </p>
 
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <IrReadonly label="뉴스 코드" value={code} note={mode === 'create' ? '자동 생성' : '수정 불가'} />
+          <IrReadonly label="뉴스 코드" value={code} note={mode === 'create' ? '자동 생성' : '수정 불가'} />
 
-            <IrField
-              label="갈래"
-              htmlFor="news-channel"
-              required
-              {...(tried && !channel.trim()
-                ? { error: '갈래를 입력해 주세요.' }
-                : { hint: '어디에 실렸는지 — 방송사 · 행사 이름입니다.' })}
-            >
-              <IrTextInput
-                id="news-channel"
-                value={channel}
-                onChange={setChannel}
-                placeholder="예: 기업 브랜드 영상"
-                invalid={tried && !channel.trim()}
-              />
-            </IrField>
-          </div>
+          <IrField
+            label="갈래"
+            htmlFor="news-channel"
+            required
+            {...(tried && !channel.trim()
+              ? { error: '갈래를 입력해 주세요.' }
+              : { hint: '어디에 실렸는지 — 방송사 · 행사 이름입니다.' })}
+          >
+            <IrTextInput
+              id="news-channel"
+              value={channel}
+              onChange={setChannel}
+              placeholder="예: 기업 브랜드 영상"
+              invalid={tried && !channel.trim()}
+            />
+          </IrField>
+        
 
           <IrField
             label="제목"

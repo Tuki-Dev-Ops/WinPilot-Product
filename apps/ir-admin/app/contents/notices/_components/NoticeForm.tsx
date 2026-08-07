@@ -66,13 +66,12 @@ export function NoticeForm({
     >
       <IrPanel title="기본 정보" description="사이트 공지사항 목록에 이대로 섭니다.">
         <div className="flex flex-col gap-5 px-6 py-5">
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <IrReadonly label="공지 코드" value={code} note={mode === 'create' ? '자동 생성' : '수정 불가'} />
+          <IrReadonly label="공지 코드" value={code} note={mode === 'create' ? '자동 생성' : '수정 불가'} />
 
-            <IrField label="갈래" htmlFor="notice-group" required hint="사이트 왼쪽 줄에서 고르는 이름입니다.">
-              <IrSelect id="notice-group" value={group} onChange={setGroup} options={SITE_NOTICE_GROUPS} />
-            </IrField>
-          </div>
+          <IrField label="갈래" htmlFor="notice-group" required hint="사이트 왼쪽 줄에서 고르는 이름입니다.">
+            <IrSelect id="notice-group" value={group} onChange={setGroup} options={SITE_NOTICE_GROUPS} />
+          </IrField>
+        
 
           <IrField
             label="제목"

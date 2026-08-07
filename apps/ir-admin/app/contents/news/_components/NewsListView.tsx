@@ -2,10 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Badge, PageHeading } from '@winpilot/ui';
+import { ALL_VALUE, Badge, ListToolbar, PageHeading, type ListFilterField } from '@winpilot/ui';
 import { MEDIA_CLIPS } from '@winpilot/store';
-import { IrCreateLink } from '@/app/_components/IrForm';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
+
+const FILTERS: ListFilterField[] = [
+  { id: 'state', label: '상태', options: [{ value: '노출', label: '노출' }, { value: '숨김', label: '숨김' }] },
+];
 
 const COLUMNS = [
   { label: '제목', span: 'lg:col-span-4' },
@@ -25,18 +28,45 @@ const COLUMNS = [
  */
 export function NewsListView() {
   const router = useRouter();
+  const [keyword, setKeyword] = useState('');
+  const [state, setState] = useState<string>(ALL_VALUE);
   /* 프론트엔드 전용 — 지운 결과는 이 화면에만 남는다. */
   const [rows, setRows] = useState(MEDIA_CLIPS);
+  /* 검색어와 거르개를 함께 건다. 하나만 걸어도 나머지는 `전체` 로 남아 방해하지 않는다. */
+  const shown = rows.filter((one) => {
+    if (!((state === ALL_VALUE || (one.visible ? '노출' : '숨김') === state))) return false;
+    const word = keyword.trim().toLowerCase();
+    if (!word) return true;
+    return [one.title, one.channel].some((value) => String(value).toLowerCase().includes(word));
+  });
+
   return (
     <>
       <PageHeading title="뉴스" description="방송·행사·제품 소개로 남은 것들입니다." />
 
+      <ListToolbar
+        searchId="news-search"
+        searchLabel="제목 검색"
+        searchHint="제목 · 갈래"
+        searchValue={keyword}
+        onSearchChange={setKeyword}
+        filters={FILTERS}
+        filterValues={{ state }}
+        onFilterChange={(id, value) => {
+          if (id === 'state') setState(value);
+        }}
+        onFilterReset={() => {
+          setState(ALL_VALUE);
+        }}
+        actionLabel="뉴스 등록"
+        onAction={() => router.push('/contents/news/new')}
+      />
+
       <IrRecordTable
         title="뉴스"
-        aside={<IrCreateLink href="/contents/news/new">뉴스 등록</IrCreateLink>}
         description="목록의 차례대로 사이트에 섭니다."
         columns={COLUMNS}
-        rows={rows}
+        rows={shown}
         onOpen={(one) => router.push(`/contents/news/${one.id}`)}
         onDelete={(one) => setRows((was) => was.filter((row) => row.id !== one.id))}
         deleteNote="홈 마지막 칸과 CS CENTER 뉴스에서 함께 사라집니다."

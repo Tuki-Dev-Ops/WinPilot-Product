@@ -74,10 +74,9 @@ export function BannerForm({
     >
       <IrPanel title="기본 정보" description={`${where}로 섭니다.`}>
         <div className="flex flex-col gap-5 px-6 py-5">
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <IrReadonly label="배너 코드" value={code} note={mode === 'create' ? '자동 생성' : '수정 불가'} />
-            <IrReadonly label="서는 자리" value={slot} note="메뉴가 정함" />
-          </div>
+          <IrReadonly label="배너 코드" value={code} note={mode === 'create' ? '자동 생성' : '수정 불가'} />
+          <IrReadonly label="서는 자리" value={slot} note="메뉴가 정함" />
+        
 
           <IrField
             label="제목"
@@ -101,38 +100,37 @@ export function BannerForm({
         description="이 기간에만 섭니다. 끝난 배너가 그대로 걸려 있는 것이 가장 흔한 사고입니다."
       >
         <div className="flex flex-col gap-5 px-6 py-5">
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-            <IrField
-              label="시작일"
-              htmlFor="banner-start"
-              required
-              {...(tried && !startAt ? { error: '시작일을 골라 주세요.' } : {})}
-            >
-              <IrTextInput
-                id="banner-start"
-                type="date"
-                value={startAt}
-                onChange={setStartAt}
-                invalid={tried && !startAt}
-              />
-            </IrField>
+          <IrField
+            label="시작일"
+            htmlFor="banner-start"
+            required
+            {...(tried && !startAt ? { error: '시작일을 골라 주세요.' } : {})}
+          >
+            <IrTextInput
+              id="banner-start"
+              type="date"
+              value={startAt}
+              onChange={setStartAt}
+              invalid={tried && !startAt}
+            />
+          </IrField>
 
-            <IrField
-              label="종료일"
-              htmlFor="banner-end"
-              {...(backwards
-                ? { error: '종료일이 시작일보다 앞섭니다.' }
-                : { hint: '비우면 내릴 때까지 계속 섭니다 — 비운 것은 잊히기 쉽습니다.' })}
-            >
-              <IrTextInput
-                id="banner-end"
-                type="date"
-                value={endAt}
-                onChange={setEndAt}
-                invalid={backwards}
-              />
-            </IrField>
-          </div>
+          <IrField
+            label="종료일"
+            htmlFor="banner-end"
+            {...(backwards
+              ? { error: '종료일이 시작일보다 앞섭니다.' }
+              : { hint: '비우면 내릴 때까지 계속 섭니다 — 비운 것은 잊히기 쉽습니다.' })}
+          >
+            <IrTextInput
+              id="banner-end"
+              type="date"
+              value={endAt}
+              onChange={setEndAt}
+              invalid={backwards}
+            />
+          </IrField>
+        
 
           {over && !backwards && (
             <p className="rounded-lg border border-signal-danger/40 bg-signal-danger/5 px-4 py-3 text-xs leading-relaxed text-ink-muted">
