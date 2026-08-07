@@ -271,8 +271,12 @@ export function DashboardView({
 /**
  * 숫자 한 칸.
  *
- * 큰 숫자 아래 `/ 누적` 을 작게 붙인다. 두 숫자를 같은 크기로 두면 어느 쪽이 이번 달 것인지
- * 매번 읽어야 하고, 누적을 빼면 이번 달 숫자가 많은지 적은지 판단할 기준이 없다.
+ * ## 두 숫자를 한 줄에 둔다
+ * 이 기간의 값과 `/ 전체` 를 나란히 세운다. 위아래로 나누면 **읽는 눈이 두 번 멈추고**, 여섯
+ * 칸이 서면 그 멈춤이 열두 번이 된다. 견주라고 놓은 두 숫자는 견줄 수 있는 자리에 있어야 한다.
+ *
+ * 크기는 다르게 둔다. 같은 크기면 어느 쪽이 이 기간 것인지 매번 읽어야 하고, 전체를 빼면
+ * 이 기간 숫자가 많은지 적은지 판단할 기준이 없다.
  */
 function Stat({
   label,
@@ -287,17 +291,17 @@ function Stat({
   urgent?: boolean;
 }) {
   return (
-    <div className="flex flex-col justify-between gap-3 rounded-xl border border-border bg-canvas px-4 py-4">
-      <p className="text-xs text-ink-muted">{label}</p>
-      <p className="flex items-baseline gap-1">
+    <div className="flex flex-col justify-between gap-2.5 rounded-xl border border-border bg-canvas px-4 py-4">
+      <p className="min-w-0 truncate text-xs text-ink-muted">{label}</p>
+      <p className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
         <span
           className={`text-2xl font-semibold tabular-nums ${urgent && value > 0 ? 'text-signal-danger' : ''}`}
         >
           {value}
         </span>
         <span className="text-xs text-ink-muted">건</span>
+        <span className="font-mono text-xs tabular-nums text-ink-faint">/ {total}건</span>
       </p>
-      <p className="font-mono text-xs tabular-nums text-ink-faint">/ {total}건</p>
     </div>
   );
 }
