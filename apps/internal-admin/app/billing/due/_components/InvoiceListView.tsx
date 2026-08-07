@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { ALL_VALUE, Badge, Dropdown, HintInput, ListToolbar, PageHeading, RowSelectCell, SelectAllCell, useToast, type ListFilterField, type ListToolbarTab } from '@winpilot/ui';
+import { InternalConfirmModal } from '@/app/_components/InternalConfirmModal';
 import { InternalField } from '@/app/_components/InternalForm';
 import { InternalModal } from '@/app/_components/InternalModal';
 import { InternalEmpty, InternalPanel, InternalTableFoot, InternalTableHead } from '@/app/_components/InternalPanel';
@@ -87,6 +88,8 @@ const COLUMNS = [
 export function InvoiceListView({ today }: { today: string }) {
   const toast = useToast();
   const [search, setSearch] = useState('');
+  /** 저장을 누른 뒤 확인을 기다리는 중인가. */
+  const [pending, setPending] = useState(false);
   const [tab, setTab] = useState('all');
   const [filterValues, setFilterValues] = useState<Record<string, string>>({});
   const [rows, setRows] = useState<InvoiceRecord[]>(INVOICES);
@@ -257,7 +260,10 @@ export function InvoiceListView({ today }: { today: string }) {
     setCreating(true);
   };
 
-  const create = () => {
+  /**
+   * 검사만 하고 **확인 창을 연다.** 틀린 값은 여기서 걸려 확인 창까지 가지 않는다.
+   */
+  const askCreate = () => {
     setSubmitted(true);
     const found = validate(spec, draft);
     setErrors(found);
@@ -268,6 +274,13 @@ export function InvoiceListView({ today }: { today: string }) {
       });
       return;
     }
+
+    setPending(true);
+  };
+
+  /** 확인을 지난 뒤 실제로 고치는 자리. */
+  const create = () => {
+    setPending(false);
 
     if (editingId) {
       /* 상태(견적·청구)와 발행일은 이 창에서 바꾸지 않는다 — 회계가 세금계산서를 낼 때 움직이는 값이다. */
@@ -440,7 +453,7 @@ export function InvoiceListView({ today }: { today: string }) {
           setCreating(false);
           setEditingId(null);
         }}
-        onSubmit={create}
+        onSubmit={askCreate}
         submitLabel={editingId ? '저장' : '등록'}
       >
         <InternalField label="고객사" hint={`지금 등급: ${findTenant(draft.tenantId)?.plan ?? '-'}`}>
@@ -538,6 +551,20 @@ export function InvoiceListView({ today }: { today: string }) {
           />
         </InternalField>
       </InternalModal>
+
+      {/*
+        청구는 **돈이 오가는 자리**다. 금액과 날짜가 그대로 고객사에 안내되므로, 무엇을 보내는지 한 번 더
+        보여 주고 누르게 한다.
+      */}
+      <InternalConfirmModal
+        open={pending}
+        title="이 청구를 저장할까요"
+        message="결제 예정일과 금액이 고객사에 안내됩니다. 금액은 선택한 플랜의 값을 그대로 씁니다."
+        detail={`${draft.title} · ${draft.dueAt}`}
+        confirmLabel="저장"
+        onConfirm={create}
+        onCancel={() => setPending(false)}
+      />
     </>
   );
 }

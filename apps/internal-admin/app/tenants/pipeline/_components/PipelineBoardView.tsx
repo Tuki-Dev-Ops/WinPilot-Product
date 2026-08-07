@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { ALL_VALUE, Badge, Dropdown, HintInput, ListToolbar, PageHeading, useToast, type ListFilterField, type ListToolbarTab } from '@winpilot/ui';
+import { InternalConfirmModal } from '@/app/_components/InternalConfirmModal';
 import { InternalField } from '@/app/_components/InternalForm';
 import { InternalDetailModal } from '@/app/_components/InternalDetailModal';
 import { InternalModal } from '@/app/_components/InternalModal';
@@ -98,13 +99,26 @@ export function PipelineBoardView() {
 
   const [errors, setErrors] = useState<FormErrors<DealField>>({});
   const [submitted, setSubmitted] = useState(false);
+  /**
+   * 저장을 누른 뒤 확인을 기다리는 중인가.
+   *
+   * `asking` 이라 부르는 이유: 이 화면에는 이미 `pending`(아직 처리하지 않은 건)이 있고, 그것은
+   * **자료의 상태**다. 화면이 무엇을 묻는 중인지와 이름이 겹치면 읽는 사람이 둘을 섞는다.
+   */
+  const [asking, setAsking] = useState(false);
 
   const commit = (next: typeof draft) => {
     setDraft(next);
     if (submitted) setErrors(validate(DEAL_FORM, next));
   };
 
-  const create = () => {
+  /**
+   * 검사만 하고 **확인 창을 연다.**
+   *
+   * 틀린 값은 여기서 걸려 확인 창까지 가지 않는다 — 물어볼 것이 없는데 한 번 더 누르게 하면
+   * 그 창은 곧 눈에 들어오지 않게 된다.
+   */
+  const askCreate = () => {
     setSubmitted(true);
     const found = validate(DEAL_FORM, draft);
     setErrors(found);
@@ -112,6 +126,13 @@ export function PipelineBoardView() {
       toast.error({ message: '등록하지 못했습니다.', detail: errorSummary(found) });
       return;
     }
+
+    setAsking(true);
+  };
+
+  /** 확인을 지난 뒤 실제로 고치는 자리. */
+  const create = () => {
+    setAsking(false);
 
     // 새 건은 언제나 `문의` 에서 시작한다 — 중간부터 넣으면 어디서 들어왔는지가 남지 않는다.
     const record: PipelineDeal = {
@@ -266,7 +287,7 @@ export function PipelineBoardView() {
         title="파이프라인 건 등록"
         description="새 건은 언제나 문의 단계에서 시작합니다. 중간부터 넣으면 어디서 들어왔는지가 남지 않습니다."
         onClose={() => setCreating(false)}
-        onSubmit={create}
+        onSubmit={askCreate}
         submitLabel="등록"
       >
         <InternalField
@@ -363,6 +384,19 @@ export function PipelineBoardView() {
         }
         note="단계를 옮기는 것은 카드의 화살표로 합니다 — 되돌아오는 길이 함께 있어야 실수를 고칠 수 있습니다."
         onClose={() => setOpened(null)}
+      />
+
+      {/*
+        보드는 **여럿이 함께 보는 자리**다. 올린 카드는 곧 다른 사람의 할 일이 된다.
+      */}
+      <InternalConfirmModal
+        open={asking}
+        title="이 건을 보드에 올릴까요"
+        message="영업 단계 보드에 새 카드가 섭니다. 담당자들이 이 카드를 보고 다음 할 일을 정합니다."
+        detail={`${draft.name.trim()}`}
+        confirmLabel="올리기"
+        onConfirm={create}
+        onCancel={() => setAsking(false)}
       />
     </>
   );

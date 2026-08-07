@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { ALL_VALUE, Badge, Dropdown, HintInput, ListToolbar, PageHeading, RowSelectCell, SelectAllCell, useToast, type ListFilterField, type ListToolbarTab } from '@winpilot/ui';
+import { InternalConfirmModal } from '@/app/_components/InternalConfirmModal';
 import { InternalField } from '@/app/_components/InternalForm';
 import { InternalModal } from '@/app/_components/InternalModal';
 import { InternalEmpty, InternalPanel, InternalTableFoot, InternalTableHead } from '@/app/_components/InternalPanel';
@@ -128,6 +129,8 @@ export function StaffListView() {
 
   const [errors, setErrors] = useState<FormErrors<StaffField>>({});
   const [submitted, setSubmitted] = useState(false);
+  /** 저장을 누른 뒤 확인을 기다리는 중인가. */
+  const [pending, setPending] = useState(false);
 
   /*
     이미 있는 계정인지는 **폼 밖의 사실**(지금 목록)이라 표에 못 박아 둘 수 없다.
@@ -173,7 +176,13 @@ export function StaffListView() {
     setCreating(true);
   };
 
-  const create = () => {
+  /**
+   * 검사만 하고 **확인 창을 연다.**
+   *
+   * 틀린 값은 여기서 걸려 확인 창까지 가지 않는다 — 물어볼 것이 없는데 한 번 더 누르게 하면
+   * 그 창은 곧 눈에 들어오지 않게 된다.
+   */
+  const askCreate = () => {
     setSubmitted(true);
     const found = validate(spec, draft);
     setErrors(found);
@@ -189,6 +198,13 @@ export function StaffListView() {
       });
       return;
     }
+
+    setPending(true);
+  };
+
+  /** 확인을 지난 뒤 실제로 고치는 자리. */
+  const create = () => {
+    setPending(false);
 
     if (editingId) {
       /* 맡은 고객사와 쓰는지 여부는 이 창에서 다루지 않는다 — 있던 값을 지우지 않도록 그대로 둔다. */
@@ -368,7 +384,7 @@ export function StaffListView() {
           setCreating(false);
           setEditingId(null);
         }}
-        onSubmit={create}
+        onSubmit={askCreate}
         submitLabel={editingId ? '저장' : '등록'}
       >
         <InternalField
@@ -435,6 +451,20 @@ export function StaffListView() {
           />
         </InternalField>
       </InternalModal>
+
+      {/*
+        계정은 **콘솔에 들어올 수 있는 사람**을 늘리는 일이다. 직급이 곧 어디까지 만질 수 있는지를
+        정하므로, 무엇을 만드는지 한 줄로 다시 보여 주고 누르게 한다.
+      */}
+      <InternalConfirmModal
+        open={pending}
+        title={editingId ? '이 내용으로 저장할까요' : '이 계정을 만들까요'}
+        message="콘솔에 들어올 수 있는 계정입니다. 직급이 곧 어디까지 만질 수 있는지를 정합니다."
+        detail={`${draft.name.trim()} · ${draft.rank} · ${draft.email.trim()}`}
+        confirmLabel={editingId ? '저장' : '등록'}
+        onConfirm={create}
+        onCancel={() => setPending(false)}
+      />
     </>
   );
 }

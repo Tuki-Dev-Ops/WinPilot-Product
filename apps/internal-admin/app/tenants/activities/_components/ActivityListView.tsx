@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { ALL_VALUE, Badge, Dropdown, HintInput, ListToolbar, PageHeading, RowSelectCell, SelectAllCell, useToast, type ListFilterField, type ListToolbarTab } from '@winpilot/ui';
+import { InternalConfirmModal } from '@/app/_components/InternalConfirmModal';
 import { InternalField } from '@/app/_components/InternalForm';
 import { InternalModal } from '@/app/_components/InternalModal';
 import { InternalEmpty, InternalPanel, InternalTableFoot, InternalTableHead } from '@/app/_components/InternalPanel';
@@ -136,6 +137,13 @@ export function ActivityListView() {
 
   const [errors, setErrors] = useState<FormErrors<ActivityField>>({});
   const [submitted, setSubmitted] = useState(false);
+  /**
+   * 저장을 누른 뒤 확인을 기다리는 중인가.
+   *
+   * `asking` 이라 부르는 이유: 이 화면에는 이미 `pending`(아직 처리하지 않은 건)이 있고, 그것은
+   * **자료의 상태**다. 화면이 무엇을 묻는 중인지와 이름이 겹치면 읽는 사람이 둘을 섞는다.
+   */
+  const [asking, setAsking] = useState(false);
 
   const commit = (next: typeof draft) => {
     setDraft(next);
@@ -171,7 +179,13 @@ export function ActivityListView() {
     setCreating(true);
   };
 
-  const create = () => {
+  /**
+   * 검사만 하고 **확인 창을 연다.**
+   *
+   * 틀린 값은 여기서 걸려 확인 창까지 가지 않는다 — 물어볼 것이 없는데 한 번 더 누르게 하면
+   * 그 창은 곧 눈에 들어오지 않게 된다.
+   */
+  const askCreate = () => {
     setSubmitted(true);
     const found = validate(ACTIVITY_FORM, draft);
     setErrors(found);
@@ -182,6 +196,13 @@ export function ActivityListView() {
       });
       return;
     }
+
+    setAsking(true);
+  };
+
+  /** 확인을 지난 뒤 실제로 고치는 자리. */
+  const create = () => {
+    setAsking(false);
 
     if (editingId) {
       /*
@@ -368,7 +389,7 @@ export function ActivityListView() {
           setCreating(false);
           setEditingId(null);
         }}
-        onSubmit={create}
+        onSubmit={askCreate}
         submitLabel={editingId ? '저장' : '기록'}
       >
         <InternalField label="종류">
@@ -452,6 +473,20 @@ export function ActivityListView() {
           />
         </InternalField>
       </InternalModal>
+
+      {/*
+        이력은 **다음 사람이 읽는 것**이다. 지우고 다시 쓰는 자리가 아니라, 한 줄씩 쌓여 그 자체가
+        고객사와의 관계가 된다.
+      */}
+      <InternalConfirmModal
+        open={asking}
+        title="이 활동을 남길까요"
+        message="고객사 이력에 남습니다. 다음 담당자가 이 줄만 읽고 어디까지 왔는지 판단합니다."
+        detail={`${draft.summary.trim()}`}
+        confirmLabel="남기기"
+        onConfirm={create}
+        onCancel={() => setAsking(false)}
+      />
     </>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { Badge, Button, Checkbox, useToast } from '@winpilot/ui';
+import { InternalConfirmModal } from '@/app/_components/InternalConfirmModal';
 import { InternalPanel } from '@/app/_components/InternalPanel';
 import {
   ACTION_LABEL,
@@ -52,6 +53,8 @@ export function RoleDetailView({ domain, role }: { domain: ConsoleDomain; role: 
     없어지고, 권한은 잘못 켠 것을 알아차리는 데 가장 오래 걸리는 값이다.
   */
   const [granted, setGranted] = useState<string[]>(role.grants);
+  /** 저장을 누른 뒤 확인을 기다리는 중인가. */
+  const [pending, setPending] = useState(false);
   const saved = useMemo(() => new Set(role.grants), [role.grants]);
   const current = new Set(granted);
 
@@ -63,7 +66,10 @@ export function RoleDetailView({ domain, role }: { domain: ConsoleDomain; role: 
   /** 그 도메인에서 켤 수 있는 칸의 총수. 분모가 없으면 `28개` 가 넓은지 좁은지 알 수 없다. */
   const total = resources.reduce((sum, resource) => sum + resource.actions.length, 0);
 
-  const save = () => {
+  /**
+   * 검사만 하고 **확인 창을 연다.** 틀린 값은 여기서 걸려 확인 창까지 가지 않는다.
+   */
+  const askSave = () => {
     if (role.fixed) return;
     /*
       **조회 없이 등록만 켜진 자원**을 막는다. 목록을 보지 못하는 사람에게 등록 단추만 주면
@@ -92,6 +98,13 @@ export function RoleDetailView({ domain, role }: { domain: ConsoleDomain; role: 
       });
       return;
     }
+
+    setPending(true);
+  };
+
+  /** 확인을 지난 뒤 실제로 고치는 자리. */
+  const save = () => {
+    setPending(false);
 
     /* 프론트엔드 전용이라 시드는 그대로다 — 서버가 붙으면 이 자리가 저장 호출이 된다. */
     toast.success({
@@ -186,7 +199,7 @@ export function RoleDetailView({ domain, role }: { domain: ConsoleDomain; role: 
             </p>
           ) : (
             <div className="flex flex-col gap-2">
-              <Button block onClick={save} disabled={!dirty}>
+              <Button block onClick={askSave} disabled={!dirty}>
                 저장
               </Button>
               <Button block tone="secondary" onClick={() => setGranted(role.grants)} disabled={!dirty}>
@@ -217,6 +230,20 @@ export function RoleDetailView({ domain, role }: { domain: ConsoleDomain; role: 
           ))}
         </section>
       </aside>
+
+      {/*
+        권한은 **넓히는 쪽이 위험하다.** 좁히면 못 하겠다는 말이 바로 오지만, 넓힌 것은 사고가 난 뒤에야
+        드러난다.
+      */}
+      <InternalConfirmModal
+        open={pending}
+        title="이 권한으로 저장할까요"
+        message="이 역할을 가진 사람이 만질 수 있는 범위가 바뀝니다."
+        detail={`${granted.length}칸 켬`}
+        confirmLabel="저장"
+        onConfirm={save}
+        onCancel={() => setPending(false)}
+      />
     </div>
   );
 }

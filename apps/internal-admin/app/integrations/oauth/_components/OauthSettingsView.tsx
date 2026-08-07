@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { Badge, useToast } from '@winpilot/ui';
+import { InternalConfirmModal } from '@/app/_components/InternalConfirmModal';
 import { IntegrationTenantList } from '@/app/integrations/_components/IntegrationTenantList';
 import { defaultOauth, findOauthProvider, type OauthSetting } from '@/lib/data/oauth-providers';
 import { findTenant, TENANTS } from '@/lib/data/tenants';
@@ -41,6 +42,8 @@ function clientDomainOf(tenantId: string): string {
 export function OauthSettingsView({ initialTenantId }: { initialTenantId?: string }) {
   const toast = useToast();
   const [tenantId, setTenantId] = useState(initialTenantId ?? '');
+  /** 저장을 누른 뒤 확인을 기다리는 중인가. */
+  const [pending, setPending] = useState(false);
   const tenant = useMemo(() => findTenant(tenantId), [tenantId]);
 
   /*
@@ -120,7 +123,10 @@ export function OauthSettingsView({ initialTenantId }: { initialTenantId?: strin
     });
   };
 
-  const save = () => {
+  /**
+   * 검사만 하고 **확인 창을 연다.** 틀린 값은 여기서 걸려 확인 창까지 가지 않는다.
+   */
+  const askSave = () => {
     if (!editingSetting || !tenant) return;
     const provider = findOauthProvider(editingSetting.id);
     const found = validate(editingSetting);
@@ -138,6 +144,20 @@ export function OauthSettingsView({ initialTenantId }: { initialTenantId?: strin
       return;
     }
 
+    setPending(true);
+  };
+
+  /**
+   * 확인을 지난 뒤 실제로 고치는 자리.
+   *
+   * 값이 있는지 여기서 다시 본다. 묻는 사이에 창을 닫았을 수 있고, 그때 `editingSetting` 은
+   * 비어 있다 — 확인 창만 남아 저장을 누르면 없는 값을 저장하려 든다.
+   */
+  const save = () => {
+    setPending(false);
+    if (!editingSetting || !tenant) return;
+
+    const provider = findOauthProvider(editingSetting.id);
     setEditing(null);
     toast.success({
       message: `${provider.label} 키를 저장했습니다.`,
@@ -213,7 +233,21 @@ export function OauthSettingsView({ initialTenantId }: { initialTenantId?: strin
         elevated
         onClose={() => setEditing(null)}
         onChange={(key, value) => editingSetting && setCredential(editingSetting.id, key, value)}
-        onSubmit={save}
+        onSubmit={askSave}
+      />
+
+      {/*
+        로그인 키가 틀리면 그 고객사의 **로그인 전체가 멈춘다.** 멈춘 사실은 고객이 겪은 뒤에
+        우리에게 온다.
+      */}
+      <InternalConfirmModal
+        open={pending}
+        title="이 키로 저장할까요"
+        message="고객사 사이트의 소셜 로그인이 이 값으로 동작합니다. 키가 틀리면 로그인 자체가 막힙니다."
+        detail={tenant ? tenant.name : ''}
+        confirmLabel="저장"
+        onConfirm={save}
+        onCancel={() => setPending(false)}
       />
     </div>
   );

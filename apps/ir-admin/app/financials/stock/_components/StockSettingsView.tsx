@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Badge, Checkbox, Dropdown, PageHeading, useToast } from '@winpilot/ui';
 import { IR_COMPANY, STOCK } from '@winpilot/store';
+import { IrConfirmModal } from '@/app/_components/IrConfirmModal';
 import { IrField, IrPrimaryButton, IrSaveRow } from '@/app/_components/IrForm';
 import { IrPanel } from '@/app/_components/IrPanel';
 
@@ -22,6 +23,8 @@ import { IrPanel } from '@/app/_components/IrPanel';
  */
 export function StockSettingsView() {
   const toast = useToast();
+  /** 저장을 누른 뒤 확인을 기다리는 중인가. */
+  const [pending, setPending] = useState(false);
   const [source, setSource] = useState('krx');
   const [delayed, setDelayed] = useState(true);
 
@@ -94,12 +97,7 @@ export function StockSettingsView() {
         <IrSaveRow>
           <IrPrimaryButton
             type="button"
-            onClick={() =>
-              toast.success({
-                message: '주가 연동을 저장했습니다.',
-                detail: `${source === 'krx' ? '한국거래소' : '시세 제공사'} · ${delayed ? '지연 표시 켬' : '지연 표시 끔'}`,
-              })
-            }
+            onClick={() => setPending(true)}
           >
             저장
           </IrPrimaryButton>
@@ -110,6 +108,27 @@ export function StockSettingsView() {
         <Badge tone="neutral">알아 둘 것</Badge> 시세 숫자를 손으로 고치는 칸은 두지 않습니다 — 값은 거래소에서
         오고, 여기서 고치면 원본과 다른 값이 사이트에 섭니다.
       </p>
+
+      {/*
+        저장 전에 한 번 묻는다. 이 설정은 **투자자 화면의 숫자가 어디서 오는지**를 정하는 것이라,
+        잘못 바꾸면 화면에 값이 서긴 하는데 출처가 다르다 — 틀린 것이 아니라 다른 것이라 오류로
+        드러나지 않는다.
+      */}
+      <IrConfirmModal
+        open={pending}
+        title="이 설정으로 저장할까요"
+        message="투자자 화면의 주가가 이 출처에서 옵니다. 지연 표시를 끄면 실시간으로 읽히므로, 실제로 실시간 시세일 때만 끄세요."
+        detail={`${source === 'krx' ? '한국거래소' : '시세 제공사'} · ${delayed ? '지연 표시 켬' : '지연 표시 끔'}`}
+        confirmLabel="저장"
+        onConfirm={() => {
+          setPending(false);
+          toast.success({
+            message: '주가 연동을 저장했습니다.',
+            detail: `${source === 'krx' ? '한국거래소' : '시세 제공사'} · ${delayed ? '지연 표시 켬' : '지연 표시 끔'}`,
+          });
+        }}
+        onCancel={() => setPending(false)}
+      />
     </>
   );
 }

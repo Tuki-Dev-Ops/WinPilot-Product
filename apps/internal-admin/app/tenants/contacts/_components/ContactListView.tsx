@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { ALL_VALUE, Badge, Dropdown, HintInput, ListToolbar, PageHeading, RowSelectCell, SelectAllCell, useToast, type ListFilterField, type ListToolbarTab } from '@winpilot/ui';
+import { InternalConfirmModal } from '@/app/_components/InternalConfirmModal';
 import { InternalField } from '@/app/_components/InternalForm';
 import { InternalModal } from '@/app/_components/InternalModal';
 import { InternalEmpty, InternalPanel, InternalTableFoot, InternalTableHead } from '@/app/_components/InternalPanel';
@@ -124,6 +125,8 @@ export function ContactListView() {
 
   const [errors, setErrors] = useState<FormErrors<ContactField>>({});
   const [submitted, setSubmitted] = useState(false);
+  /** 저장을 누른 뒤 확인을 기다리는 중인가. */
+  const [pending, setPending] = useState(false);
 
   const commit = (next: typeof draft) => {
     setDraft(next);
@@ -158,7 +161,13 @@ export function ContactListView() {
     setCreating(true);
   };
 
-  const create = () => {
+  /**
+   * 검사만 하고 **확인 창을 연다.**
+   *
+   * 틀린 값은 여기서 걸려 확인 창까지 가지 않는다 — 물어볼 것이 없는데 한 번 더 누르게 하면
+   * 그 창은 곧 눈에 들어오지 않게 된다.
+   */
+  const askCreate = () => {
     setSubmitted(true);
     const found = validate(CONTACT_FORM, draft);
     setErrors(found);
@@ -170,6 +179,13 @@ export function ContactListView() {
       });
       return;
     }
+
+    setPending(true);
+  };
+
+  /** 확인을 지난 뒤 실제로 고치는 자리. */
+  const create = () => {
+    setPending(false);
 
     if (editingId) {
       /* 대표 여부와 메모는 이 창에서 다루지 않는다 — 있던 값을 지우지 않도록 그대로 둔다. */
@@ -345,7 +361,7 @@ export function ContactListView() {
           setCreating(false);
           setEditingId(null);
         }}
-        onSubmit={create}
+        onSubmit={askCreate}
         submitLabel={editingId ? '저장' : '등록'}
       >
         <InternalField label="고객사">
@@ -432,6 +448,20 @@ export function ContactListView() {
           />
         </InternalField>
       </InternalModal>
+
+      {/*
+        담당자는 **고객사와 이어지는 창구**다. 여기서 잘못 적으면 그 사실은 안내 메일이 반송될 때
+        비로소 드러난다.
+      */}
+      <InternalConfirmModal
+        open={pending}
+        title="이 담당자를 저장할까요"
+        message="고객사와 이어지는 창구입니다. 잘못 적으면 안내와 청구가 엉뚱한 곳으로 갑니다."
+        detail={`${draft.name.trim()} · ${draft.email.trim()}`}
+        confirmLabel="저장"
+        onConfirm={create}
+        onCancel={() => setPending(false)}
+      />
     </>
   );
 }

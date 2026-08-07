@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { ALL_VALUE, Badge, Dropdown, HintInput, ListToolbar, PageHeading, RowActions, RowIconButton, RowSelectCell, RowTextButton, SelectAllCell, useToast, type ListFilterField, type ListToolbarTab } from '@winpilot/ui';
+import { InternalConfirmModal } from '@/app/_components/InternalConfirmModal';
 import { InternalField } from '@/app/_components/InternalForm';
 import { InternalModal } from '@/app/_components/InternalModal';
 import { DEPLOYMENT_TONE, PLAN_TONE, SUPPORT_TONE, supportState, TENANT_PLANS, TENANTS, type TenantPlan, type TenantRecord } from '@/lib/data/tenants';
@@ -105,13 +106,21 @@ export function TenantListView({ today }: { today: string }) {
 
   const [errors, setErrors] = useState<FormErrors<TenantField>>({});
   const [submitted, setSubmitted] = useState(false);
+  /** 저장을 누른 뒤 확인을 기다리는 중인가. */
+  const [pending, setPending] = useState(false);
 
   const commit = (next: typeof draft) => {
     setDraft(next);
     if (submitted) setErrors(validate(TENANT_FORM, next));
   };
 
-  const create = () => {
+  /**
+   * 검사만 하고 **확인 창을 연다.**
+   *
+   * 틀린 값은 여기서 걸려 확인 창까지 가지 않는다 — 물어볼 것이 없는데 한 번 더 누르게 하면
+   * 그 창은 곧 눈에 들어오지 않게 된다.
+   */
+  const askCreate = () => {
     setSubmitted(true);
     const found = validate(TENANT_FORM, draft);
     setErrors(found);
@@ -120,6 +129,13 @@ export function TenantListView({ today }: { today: string }) {
       toast.error({ message: '등록하지 못했습니다.', detail: errorSummary(found) });
       return;
     }
+
+    setPending(true);
+  };
+
+  /** 확인을 지난 뒤 실제로 고치는 자리. */
+  const create = () => {
+    setPending(false);
 
     // 배포·계정은 붙이면서 채운다 — 계약 시점에는 아직 도메인이 정해지지 않는다.
     const record: TenantRecord = {
@@ -278,7 +294,7 @@ export function TenantListView({ today }: { today: string }) {
         title="고객사 등록"
         description="계약 시점에 정해지는 값만 받습니다. 배포·도메인·계정은 붙이면서 채웁니다."
         onClose={() => setCreating(false)}
-        onSubmit={create}
+        onSubmit={askCreate}
         submitLabel="등록"
       >
         <InternalField
@@ -337,6 +353,20 @@ export function TenantListView({ today }: { today: string }) {
           />
         </InternalField>
       </InternalModal>
+
+      {/*
+        고객사는 이 콘솔의 **가장 바깥 단위**다. 한 번 만들면 구독·결제·연동이 그 이름에 묶이므로,
+        이름을 잘못 적으면 그 뒤의 모든 화면에서 그 이름을 보게 된다.
+      */}
+      <InternalConfirmModal
+        open={pending}
+        title="이 고객사를 등록할까요"
+        message="등록하면 구독·결제·연동이 이 고객사 이름으로 묶입니다."
+        detail={`${draft.name.trim()}`}
+        confirmLabel="등록"
+        onConfirm={create}
+        onCancel={() => setPending(false)}
+      />
     </>
   );
 }

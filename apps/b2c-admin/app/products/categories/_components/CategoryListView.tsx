@@ -37,7 +37,17 @@ export function CategoryListView() {
   const [categories, setCategories] = useState<CategoryRecord[]>(INITIAL_CATEGORIES);
   const [activeTabId, setActiveTabId] = useState('all');
   const [search, setSearch] = useState('');
-  const [selectedRootId, setSelectedRootId] = useState<string>('C-01');
+  /**
+   * 지금 펼친 대분류. **처음에는 아무것도 고르지 않았다.**
+   *
+   * 전에는 첫 대분류(`C-01`)를 미리 골라 두고 오른쪽 2Depth 판을 늘 띄웠다. 그러면 들어오자마자
+   * 판 둘이 서고, 그중 하나는 **내가 고른 적 없는 것**의 하위 목록이다 — 무엇을 보고 있는지
+   * 알려면 왼쪽에서 어느 줄이 켜져 있는지 먼저 찾아야 했다.
+   *
+   * 지금은 대분류를 누르기 전까지 2Depth 판이 아예 없다. 화면에 있는 것이 하나뿐이니
+   * **다음에 할 일이 하나로 정해진다** — 대분류를 고르는 것.
+   */
+  const [selectedRootId, setSelectedRootId] = useState<string | null>(null);
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [form, setForm] = useState<FormTarget | null>(null);
   const [pendingDelete, setPendingDelete] = useState<CategoryRecord | null>(null);
@@ -123,12 +133,15 @@ export function CategoryListView() {
     [categories, selectedRootId, activeTabId, search],
   );
 
-  // 필터 때문에 선택한 대분류가 목록에서 사라지면 첫 번째로 옮긴다.
+  /*
+    필터 때문에 고른 대분류가 목록에서 사라지면 **선택을 놓는다.**
+
+    전에는 첫 번째로 옮겼는데, 그러면 거른 결과와 상관없이 2Depth 가 계속 떠 있고 그 안의 값은
+    방금 거른 조건과 무관하다. 놓아 버리면 화면이 다시 "대분류를 고르세요" 로 돌아간다.
+  */
   useEffect(() => {
-    if (visibleRoots.length === 0) return;
-    if (!visibleRoots.some((root) => root.id === selectedRootId)) {
-      setSelectedRootId(visibleRoots[0]?.id ?? '');
-    }
+    if (selectedRootId === null) return;
+    if (!visibleRoots.some((root) => root.id === selectedRootId)) setSelectedRootId(null);
   }, [visibleRoots, selectedRootId]);
 
   const tabs = useMemo(
@@ -248,7 +261,9 @@ export function CategoryListView() {
         */}
         <section
           data-ssot-cid="b2c-admin/category.list#AdminCategoryRootPanel"
-          className="w-full overflow-hidden rounded-xl border border-border bg-canvas lg:w-1/2"
+          className={`w-full overflow-hidden rounded-xl border border-border bg-canvas ${
+            selectedRoot ? 'lg:w-1/2' : ''
+          }`}
         >
           <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
             <h2 className="text-sm font-semibold">1Depth · 대분류</h2>
@@ -336,7 +351,14 @@ export function CategoryListView() {
           )}
         </section>
 
-        {/* 2Depth — 왼쪽에서 고른 대분류의 세부 분류 */}
+        {/*
+          2Depth — **대분류를 고른 뒤에만** 선다.
+
+          고르기 전에 "왼쪽에서 대분류를 선택하세요" 라고 적힌 빈 판을 두는 방법도 있다. 그런데
+          그 판은 **자리는 차지하면서 아무것도 하지 않는다** — 왼쪽 목록이 그만큼 좁아지고,
+          읽을 것이 없는 칸이 화면의 절반을 먹는다.
+        */}
+        {selectedRoot && (
         <section
           data-ssot-cid="b2c-admin/category.list#AdminCategoryChildPanel"
           className="min-w-0 flex-1 overflow-hidden rounded-xl border border-border bg-canvas lg:w-1/2"
@@ -358,9 +380,7 @@ export function CategoryListView() {
             </button>
           </div>
 
-          {!selectedRoot ? (
-            <p className="px-5 py-16 text-center text-sm text-ink-muted">왼쪽에서 대분류를 선택하세요.</p>
-          ) : visibleChildren.length === 0 ? (
+          {visibleChildren.length === 0 ? (
             <p className="px-5 py-16 text-center text-sm text-ink-muted">
               {selectedRoot.name} 아래에 세부 분류가 없습니다. 오른쪽 위 추가를 눌러 만드세요.
             </p>
@@ -422,6 +442,7 @@ export function CategoryListView() {
             </>
           )}
         </section>
+        )}
       </div>
 
       <CategoryFormModal

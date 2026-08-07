@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Badge, HintInput, PageHeading, useToast } from '@winpilot/ui';
 import { LOCALE_PAIRS, missingEnglish, type LocalePair } from '@winpilot/store';
+import { IrConfirmModal } from '@/app/_components/IrConfirmModal';
 import { IrModal } from '@/app/_components/IrModal';
 import { IrField } from '@/app/_components/IrForm';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
@@ -34,6 +35,8 @@ export function LocaleSettingsView() {
   const [editing, setEditing] = useState<string | null>(null);
   const [draft, setDraft] = useState({ ko: '', en: '' });
   const [submitted, setSubmitted] = useState(false);
+  /** 저장을 누른 뒤 확인을 기다리는 중인가. */
+  const [pending, setPending] = useState(false);
 
   const target = rows.find((one) => one.key === editing) ?? null;
   const koError = draft.ko.trim() ? undefined : '국문은 비울 수 없습니다. 비우면 사이트의 그 자리가 사라집니다.';
@@ -44,16 +47,31 @@ export function LocaleSettingsView() {
     setSubmitted(false);
   };
 
-  const save = () => {
+  /**
+   * 저장을 누르면 **바로 고치지 않고 한 번 더 묻는다.**
+   *
+   * 여기서 고치는 것은 사이트의 메뉴 이름이다 — 한 자리를 바꾸면 그 말이 화면 여러 곳에서
+   * 동시에 바뀌고, 무엇이 바뀌었는지는 사이트를 열어 봐야 안다. 확인 창이 **어느 자리를 어떤
+   * 말로** 바꾸는지 한 번 더 보여 주는 자리다.
+   *
+   * 틀린 값(국문 비어 있음)은 확인 창까지 가지 않는다 — 물어봐야 할 것이 없다.
+   */
+  const askSave = () => {
     setSubmitted(true);
     if (!target || koError) {
       toast.error({ message: '저장하지 못했습니다.', detail: koError });
       return;
     }
+    setPending(true);
+  };
+
+  const save = () => {
+    if (!target) return;
 
     setRows((previous) =>
       previous.map((one) => (one.key === target.key ? { ...one, ko: draft.ko.trim(), en: draft.en.trim() } : one)),
     );
+    setPending(false);
     setEditing(null);
     toast.success({
       message: '문구를 저장했습니다.',
@@ -101,7 +119,7 @@ export function LocaleSettingsView() {
         title={target ? `${target.label} 문구` : ''}
         description="영문을 비우면 사이트는 국문을 대신 보여 줍니다. 국문은 비울 수 없습니다."
         onClose={() => setEditing(null)}
-        onSubmit={save}
+        onSubmit={askSave}
         submitLabel="저장"
       >
         <IrField
@@ -130,6 +148,17 @@ export function LocaleSettingsView() {
           />
         </IrField>
       </IrModal>
+
+      {/* 확인 창은 언제나 다른 창 위에서 열린다 — 그 층은 `IrConfirmModal` 이 스스로 갖는다. */}
+      <IrConfirmModal
+        open={pending}
+        title="이 문구로 저장할까요"
+        message="사이트의 이 자리 말이 바뀝니다. 같은 자리를 쓰는 화면이 여럿이면 전부 함께 바뀝니다."
+        detail={target ? `${target.label} · ${draft.ko.trim()}${draft.en.trim() ? ` / ${draft.en.trim()}` : ' (영문 없음)'}` : ''}
+        confirmLabel="저장"
+        onConfirm={save}
+        onCancel={() => setPending(false)}
+      />
     </>
   );
 }
