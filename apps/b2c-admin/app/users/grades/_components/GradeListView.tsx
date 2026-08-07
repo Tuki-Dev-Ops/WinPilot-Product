@@ -4,7 +4,7 @@ import { useMemo, useState, type MouseEvent } from 'react';
 import { AdminBulkBar } from '@/app/_components/AdminBulkBar';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
 import { AdminListPager } from '@/app/_components/AdminListPager';
-import { Button, Checkbox, RowActions, RowIconButton, RowSelectCell, useToast } from '@winpilot/ui';
+import { Button, Checkbox, RowActionGroup, RowSelectCell, useToast } from '@winpilot/ui';
 import { formatAmount, parseAmount, type GradeFormInput, type GradeFormMode } from '@/lib/validation/grade-record';
 import { GradeFormModal, type GradeRecord } from './GradeFormModal';
 
@@ -190,15 +190,12 @@ export function GradeListView() {
                 </div>
 
                 <div className="lg:col-span-2">
-                  <RowActions>
-                    <RowIconButton icon="view" label={`${grade.name} 상세`} onClick={() => openDetail(grade.id)} />
-                    <RowIconButton
-                      icon="delete"
-                      tone="danger"
-                      label={`${grade.name} 삭제`}
-                      onClick={() => setPendingDelete([grade.id])}
-                    />
-                  </RowActions>
+                  <RowActionGroup
+                    label={`${grade.name} 상세`}
+                    onView={() => openDetail(grade.id)}
+                    onEdit={() => openDetail(grade.id)}
+                    onDelete={() => setPendingDelete([grade.id])}
+                  />
                 </div>
               </div>
             ))}

@@ -5,7 +5,7 @@ import { useMemo, useState, type MouseEvent } from 'react';
 import { AdminBulkBar } from '@/app/_components/AdminBulkBar';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
 import { AdminListPager } from '@/app/_components/AdminListPager';
-import { ALL_VALUE, Badge, Checkbox, ListToolbar, PageHeading, RowActions, RowIconButton, RowSelectCell, useToast, type BadgeTone, type ListFilterField } from '@winpilot/ui';
+import { ALL_VALUE, Badge, Checkbox, ListToolbar, PageHeading, RowActionGroup, RowSelectCell, useToast, type BadgeTone, type ListFilterField } from '@winpilot/ui';
 import { CATEGORIES, rootCategories } from '@/lib/data/categories';
 import { productTags } from '@/lib/data/product-tags';
 import { PRODUCTS, type ProductRecord } from '@/lib/data/products';
@@ -275,15 +275,12 @@ export function ProductListView({ today }: { today: string }) {
                 </div>
 
                 <div className="lg:col-span-2">
-                  <RowActions>
-                    <RowIconButton icon="view" label={`${product.name} 조회`} onClick={() => router.push(`/products/${product.id}`)} />
-                    <RowIconButton
-                      icon="delete"
-                      tone="danger"
-                      label={`${product.name} 삭제`}
-                      onClick={() => setPendingDelete([product.id])}
-                    />
-                  </RowActions>
+                  <RowActionGroup
+                    label={product.name}
+                    onView={() => router.push(`/products/${product.id}`)}
+                    onEdit={() => router.push(`/products/${product.id}`)}
+                    onDelete={() => setPendingDelete([product.id])}
+                  />
                 </div>
 
               </div>

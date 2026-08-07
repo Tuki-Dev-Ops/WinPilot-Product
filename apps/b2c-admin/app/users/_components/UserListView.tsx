@@ -5,7 +5,7 @@ import { useMemo, useState, type MouseEvent } from 'react';
 import { AdminBulkBar } from '@/app/_components/AdminBulkBar';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
 import { AdminListPager } from '@/app/_components/AdminListPager';
-import { ALL_VALUE, Badge, Checkbox, ListToolbar, PageHeading, RowActions, RowIconButton, RowSelectCell, useToast, type BadgeTone, type ListFilterField } from '@winpilot/ui';
+import { ALL_VALUE, Badge, Checkbox, ListToolbar, PageHeading, RowActionGroup, RowSelectCell, useToast, type BadgeTone, type ListFilterField } from '@winpilot/ui';
 import type { MemberFormInput, MemberFormMode } from '@/lib/validation/member-record';
 
 /** 프론트엔드 전용 — 서버 없이 이 배열이 목록의 원본이다. */
@@ -327,15 +327,12 @@ export function UserListView() {
                 </div>
 
                 <div className="lg:col-span-2">
-                  <RowActions>
-                    <RowIconButton icon="view" label={`${user.name} 조회`} onClick={() => openDetail(user.id)} />
-                    <RowIconButton
-                      icon="delete"
-                      tone="danger"
-                      label={`${user.name} 삭제`}
-                      onClick={() => setPendingDelete([user.id])}
-                    />
-                  </RowActions>
+                  <RowActionGroup
+                    label={user.name}
+                    onView={() => openDetail(user.id)}
+                    onEdit={() => openDetail(user.id)}
+                    onDelete={() => setPendingDelete([user.id])}
+                  />
                 </div>
               </div>
             ))}

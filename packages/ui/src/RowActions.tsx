@@ -144,3 +144,45 @@ export function RowActions({ children }: { children: ReactNode }) {
     </div>
   );
 }
+
+/**
+ * 행 동작 **한 벌** — 조회 · 수정 · 삭제.
+ *
+ * ## 왜 묶어 두나
+ * 세 콘솔의 목록 서른 곳이 같은 세 단추를 그린다. 낱개로 두면 화면마다 **개수와 차례가
+ * 갈린다** — 어떤 목록은 조회와 삭제만, 어떤 목록은 삭제가 맨 앞. 실제로 그렇게 갈려 있었다.
+ * 차례는 **왼쪽부터 덜 위험한 것**이다. 삭제가 맨 오른쪽 끝이어야 손이 미끄러져도 그것을
+ * 먼저 누르지 않는다.
+ *
+ * ## 조회와 수정이 같은 곳으로 가도 둘을 둔다
+ * 세 콘솔 모두 상세 화면이 곧 고치는 양식이다. 그래도 둘을 남기는 이유: 목록에서 손이 가는
+ * 이유가 둘로 갈린다 — 값을 확인하러 오는 것과 고치러 오는 것. 눌러 보고 나서 "여기서 고칠
+ * 수 있구나" 를 알게 되는 것보다 **고칠 수 있다는 사실이 목록에서 보이는** 편이 낫다.
+ * 읽기 전용 화면이 갈라지는 날 `onEdit` 만 비우면 연필이 사라진다.
+ *
+ * ## 없는 동작은 그리지 않는다
+ * 지울 수 없는 자원(밖에서 들어온 문의 · 코드로 짜인 제품)에는 `onDelete` 를 주지 않는다.
+ * 회색으로 앉혀 두면 누를 수 없다는 것을 **눌러 봐야** 안다.
+ */
+export function RowActionGroup({
+  label,
+  onView,
+  onEdit,
+  onDelete,
+}: {
+  /** 무엇의 동작인지 — `홍길동` 처럼 그 줄의 이름. 낭독기가 `홍길동 조회` 로 읽는다 */
+  label: string;
+  onView: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
+}) {
+  return (
+    <RowActions>
+      <RowIconButton icon="view" label={`${label} 조회`} onClick={onView} />
+      {onEdit && <RowIconButton icon="edit" label={`${label} 수정`} onClick={onEdit} />}
+      {onDelete && (
+        <RowIconButton icon="delete" tone="danger" label={`${label} 삭제`} onClick={onDelete} />
+      )}
+    </RowActions>
+  );
+}

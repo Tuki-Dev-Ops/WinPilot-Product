@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, type MouseEvent } from 'react';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
 import { ChevronLeft } from 'lucide-react';
-import { Badge, ListToolbar, PageHeading, RowActions, RowIconButton, RowSelectCell, SelectAllCell, useToast } from '@winpilot/ui';
+import { Badge, ListSelectionBar, ListToolbar, PageHeading, RowActionGroup, RowSelectCell, SelectAllCell, useToast } from '@winpilot/ui';
 import { FAQ_CATEGORIES, FAQS, nextContentId, type FaqCategoryRecord, type FaqRecord } from '@/lib/data/contents';
 import { todayStamp } from '@/lib/data/product-tags';
 import type { FaqFormInput } from '@/lib/validation/content-record';
@@ -28,7 +28,18 @@ function plainText(html: string): string {
 
 type CategoryTarget = { mode: 'create' | 'edit'; record: FaqCategoryRecord | null };
 type FaqTarget = { mode: FaqFormMode; record: FaqRecord | null };
-type DeleteTarget = { kind: 'category'; record: FaqCategoryRecord } | { kind: 'faq'; record: FaqRecord };
+/*
+  지울 것을 **배열로 든다.** 한 줄을 지우든 골라 지우든 같은 확인 창을 지나게 하려는 것이다 —
+  둘을 따로 두면 한쪽에만 확인이 붙고, 빠진 것을 알아차리는 때는 이미 지워진 뒤다.
+*/
+/** 이름을 셋까지만 잇는다 — 스무 개를 늘어놓은 문장은 아무도 읽지 않는다. */
+function names(list: string[]): string {
+  return list.slice(0, 3).join(' · ') + (list.length > 3 ? ` 외 ${list.length - 3}건` : '');
+}
+
+type DeleteTarget =
+  | { kind: 'category'; records: FaqCategoryRecord[] }
+  | { kind: 'faq'; records: FaqRecord[] };
 
 /**
  * FAQ 관리 — 왼쪽에서 **카테고리**를 고르고 오른쪽에서 그 카테고리의 **항목**을 다룬다.
@@ -74,7 +85,7 @@ export function FaqListView() {
 
   // 카테고리는 자기 자신이 걸리거나 그 안의 FAQ 가 걸리면 남긴다 — 항목을 찾을 때 상위가 사라지면 못 찾는다.
   /*
-    고르는 칸. **일괄로 할 일이 아직 없어 선택 줄(일괄 작업 막대)은 그리지 않는다** — 지우는 일은
+    고르는 칸. 하나라도 고르면 머리글 위에 **선택 줄**이 열린다(`ListSelectionBar`) — 지우는 일은
     줄마다의 휴지통이 이미 맡고 있고, 카테고리를 여럿 한꺼번에 지우면 그 아래 FAQ 가 어디로 가는지
     물어볼 자리가 없다. 그래도 칸은 둔다: 표마다 맨 왼쪽이 같은 자리여야 눈이 헤매지 않는다.
   */
@@ -187,23 +198,33 @@ export function FaqListView() {
     if (!pendingDelete) return;
 
     if (pendingDelete.kind === 'category') {
-      const target = pendingDelete.record;
-      const removedFaqs = faqsOf(target.id).length;
+      const targets = pendingDelete.records;
+      const ids = targets.map((one) => one.id);
+      const removedFaqs = targets.reduce((sum, one) => sum + faqsOf(one.id).length, 0);
       // 카테고리를 지우면 그 안의 FAQ 도 함께 사라진다 — 주인 없는 항목이 남으면 목록이 깨진다.
-      setCategories((previous) => previous.filter((category) => category.id !== target.id));
-      setFaqs((previous) => previous.filter((faq) => faq.categoryId !== target.id));
+      setCategories((previous) => previous.filter((category) => !ids.includes(category.id)));
+      setFaqs((previous) => previous.filter((faq) => !ids.includes(faq.categoryId)));
+      setPickedCategories((previous) => previous.filter((id) => !ids.includes(id)));
       setPendingDelete(null);
       toast.success({
-        message: 'FAQ 카테고리를 삭제했습니다.',
-        detail: removedFaqs > 0 ? `${target.name} · FAQ ${removedFaqs}건도 함께 삭제되었습니다.` : target.name,
+        message: `FAQ 카테고리 ${targets.length}건을 삭제했습니다.`,
+        detail:
+          removedFaqs > 0
+            ? `${names(targets.map((one) => one.name))} · FAQ ${removedFaqs}건도 함께 삭제되었습니다.`
+            : names(targets.map((one) => one.name)),
       });
       return;
     }
 
-    const target = pendingDelete.record;
-    setFaqs((previous) => previous.filter((faq) => faq.id !== target.id));
+    const targets = pendingDelete.records;
+    const ids = targets.map((one) => one.id);
+    setFaqs((previous) => previous.filter((faq) => !ids.includes(faq.id)));
+    setPickedFaqs((previous) => previous.filter((id) => !ids.includes(id)));
     setPendingDelete(null);
-    toast.success({ message: 'FAQ를 삭제했습니다.', detail: target.question });
+    toast.success({
+      message: `FAQ ${targets.length}건을 삭제했습니다.`,
+      detail: names(targets.map((one) => one.question)),
+    });
   };
 
   return (
@@ -247,6 +268,17 @@ export function FaqListView() {
             <p className="px-5 py-12 text-center text-sm text-ink-muted">조건에 맞는 카테고리가 없습니다.</p>
           ) : (
             <>
+              <ListSelectionBar
+                count={pickedCategories.length}
+                onClear={() => setPickedCategories([])}
+                onDelete={() =>
+                  setPendingDelete({
+                    kind: 'category',
+                    records: visibleCategories.filter((one) => pickedCategories.includes(one.id)),
+                  })
+                }
+              />
+
               {/* 머리 줄에는 전체 선택과 이름만 — 오른쪽에 서는 값은 그 자체가 무엇인지 말한다. */}
               <div className="flex items-center gap-3 border-b border-border px-5 py-3 text-xs text-ink-faint">
                 <SelectAllCell
@@ -295,19 +327,12 @@ export function FaqListView() {
 
                       <AdminVisibilityBadge visible={category.visible} />
 
-                      <RowActions>
-                        <RowIconButton
-                          icon="view"
-                          label={`${category.name} 상세`}
-                          onClick={() => setCategoryForm({ mode: 'edit', record: category })}
-                        />
-                        <RowIconButton
-                          icon="delete"
-                          tone="danger"
-                          label={`${category.name} 삭제`}
-                          onClick={() => setPendingDelete({ kind: 'category', record: category })}
-                        />
-                      </RowActions>
+                      <RowActionGroup
+                        label={`${category.name} 상세`}
+                        onView={() => setCategoryForm({ mode: 'edit', record: category })}
+                        onEdit={() => setCategoryForm({ mode: 'edit', record: category })}
+                        onDelete={() => setPendingDelete({ kind: 'category', records: [category] })}
+                      />
                     </div>
                   );
                 })}
@@ -353,6 +378,17 @@ export function FaqListView() {
             </p>
           ) : (
             <>
+              <ListSelectionBar
+                count={pickedFaqs.length}
+                onClear={() => setPickedFaqs([])}
+                onDelete={() =>
+                  setPendingDelete({
+                    kind: 'faq',
+                    records: visibleFaqs.filter((one) => pickedFaqs.includes(one.id)),
+                  })
+                }
+              />
+
               <div className="hidden gap-4 border-b border-border px-5 py-3 text-xs text-ink-faint lg:grid lg:grid-cols-12 lg:items-center">
                 <SelectAllCell
                   checked={visibleFaqs.length > 0 && pickedFaqs.length === visibleFaqs.length}
@@ -399,19 +435,12 @@ export function FaqListView() {
                     </div>
 
                     <div className="lg:col-span-3">
-                      <RowActions>
-                        <RowIconButton
-                          icon="view"
-                          label={`${faq.question} 상세`}
-                          onClick={() => setFaqForm({ mode: 'edit', record: faq })}
-                        />
-                        <RowIconButton
-                          icon="delete"
-                          tone="danger"
-                          label={`${faq.question} 삭제`}
-                          onClick={() => setPendingDelete({ kind: 'faq', record: faq })}
-                        />
-                      </RowActions>
+                      <RowActionGroup
+                        label={`${faq.question} 상세`}
+                        onView={() => setFaqForm({ mode: 'edit', record: faq })}
+                        onEdit={() => setFaqForm({ mode: 'edit', record: faq })}
+                        onDelete={() => setPendingDelete({ kind: 'faq', records: [faq] })}
+                      />
                     </div>
                   </div>
                 ))}
@@ -456,8 +485,8 @@ export function FaqListView() {
         title={pendingDelete?.kind === 'category' ? 'FAQ 카테고리 삭제' : 'FAQ 삭제'}
         description={
           pendingDelete?.kind === 'category'
-            ? `'${pendingDelete.record.name}' 을 삭제합니다. 이 카테고리의 FAQ도 함께 삭제됩니다.`
-            : 'FAQ를 삭제합니다. 되돌릴 수 없습니다.'
+            ? `${names(pendingDelete.records.map((one) => one.name))} 을(를) 삭제합니다. 이 카테고리의 FAQ도 함께 삭제됩니다.`
+            : `${names(pendingDelete?.records.map((one) => one.question) ?? [])} 을(를) 삭제합니다. 되돌릴 수 없습니다.`
         }
         confirmLabel="삭제"
         onConfirm={confirmDelete}

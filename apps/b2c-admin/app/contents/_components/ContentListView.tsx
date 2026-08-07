@@ -4,7 +4,7 @@ import { useMemo, useState, type MouseEvent, type ReactNode } from 'react';
 import { AdminBulkBar } from '@/app/_components/AdminBulkBar';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
 import { AdminListPager } from '@/app/_components/AdminListPager';
-import { ALL_VALUE, Checkbox, ListToolbar, PageHeading, RowActions, RowIconButton, RowSelectCell, useToast, type ListFilterField } from '@winpilot/ui';
+import { ALL_VALUE, Checkbox, ListToolbar, PageHeading, RowActionGroup, RowSelectCell, useToast, type ListFilterField } from '@winpilot/ui';
 
 export type ContentColumn<T> = {
   id: string;
@@ -290,19 +290,12 @@ export function ContentListView<T>({
                   ))}
 
                   <div className="lg:col-span-2">
-                    <RowActions>
-                      <RowIconButton
-                        icon="view"
-                        label={`${nameOf(item)} 조회`}
-                        onClick={() => onOpen(item)}
-                      />
-                      <RowIconButton
-                        icon="delete"
-                        tone="danger"
-                        label={`${nameOf(item)} 삭제`}
-                        onClick={() => setPendingDelete([id])}
-                      />
-                    </RowActions>
+                    <RowActionGroup
+                      label={nameOf(item)}
+                      onView={() => onOpen(item)}
+                      onEdit={() => onOpen(item)}
+                      onDelete={() => setPendingDelete([id])}
+                    />
                   </div>
                 </div>
               );

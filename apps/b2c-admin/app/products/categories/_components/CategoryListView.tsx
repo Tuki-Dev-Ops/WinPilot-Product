@@ -3,10 +3,15 @@
 import { useEffect, useMemo, useState, type MouseEvent } from 'react';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
 import { ChevronLeft } from 'lucide-react';
-import { ALL_VALUE, Badge, ListToolbar, PageHeading, RowActions, RowIconButton, RowSelectCell, SelectAllCell, useToast, type ListFilterField } from '@winpilot/ui';
+import { ALL_VALUE, Badge, ListSelectionBar, ListToolbar, PageHeading, RowActionGroup, RowSelectCell, SelectAllCell, useToast, type ListFilterField } from '@winpilot/ui';
 import type { CategoryFormInput, CategoryFormMode } from '@/lib/validation/category-record';
 import { CategoryFormModal, type CategoryRecord } from './CategoryFormModal';
 import { AdminVisibilityBadge, visibilityLabel } from '@/app/_components/AdminVisibilityBadge';
+
+/** 이름을 셋까지만 잇는다 — 스무 개를 늘어놓은 문장은 아무도 읽지 않는다. */
+function names(list: { name: string }[]): string {
+  return list.slice(0, 3).map((one) => one.name).join(' · ') + (list.length > 3 ? ` 외 ${list.length - 3}건` : '');
+}
 
 /** 프론트엔드 전용 — 서버 없이 이 배열이 목록의 원본이다. */
 const INITIAL_CATEGORIES: CategoryRecord[] = [
@@ -51,7 +56,11 @@ export function CategoryListView() {
   const [selectedRootId, setSelectedRootId] = useState<string | null>(null);
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [form, setForm] = useState<FormTarget | null>(null);
-  const [pendingDelete, setPendingDelete] = useState<CategoryRecord | null>(null);
+  /*
+    지울 것을 **배열로 든다.** 한 줄을 지우든 골라 지우든 같은 확인 창을 지나게 하려는 것이다 —
+    둘을 따로 두면 한쪽에만 확인이 붙고, 빠진 것을 알아차리는 때는 이미 지워진 뒤다.
+  */
+  const [pendingDelete, setPendingDelete] = useState<CategoryRecord[] | null>(null);
   const [pendingSave, setPendingSave] = useState<
     { mode: CategoryFormMode; depth: 1 | 2; name: string; visible: boolean } | null
   >(null);
@@ -110,7 +119,7 @@ export function CategoryListView() {
 
   // 대분류는 자기 자신이 걸리거나 하위 중 하나라도 걸리면 남긴다 — 하위를 찾을 때 상위가 사라지면 못 찾는다.
   /*
-    고르는 칸. **일괄로 할 일이 아직 없어 선택 줄(일괄 작업 막대)은 그리지 않는다** — 지우는 일은
+    고르는 칸. 하나라도 고르면 머리글 위에 **선택 줄**이 열린다(`ListSelectionBar`) — 지우는 일은
     줄마다의 휴지통이 이미 맡고 있고, 대분류를 여럿 한꺼번에 지우면 그 아래 세부 분류와 상품이
     어디로 가는지 물어볼 자리가 없다. 그래도 칸은 둔다: 표마다 맨 왼쪽이 같은 자리여야 한다.
   */
@@ -203,23 +212,28 @@ export function CategoryListView() {
   };
 
   const confirmDelete = () => {
-    if (!pendingDelete) return;
-    const target = pendingDelete.id;
-    const isRoot = !pendingDelete.parentId;
-    const childCount = childrenOf(target).length;
+    if (!pendingDelete || pendingDelete.length === 0) return;
+    const ids = pendingDelete.map((one) => one.id);
+    const isRoot = !pendingDelete[0]?.parentId;
+    const childCount = ids.reduce((sum, id) => sum + childrenOf(id).length, 0);
 
     // 대분류를 지우면 그 하위도 함께 사라진다 — 상위 없는 하위가 남으면 목록이 깨진다.
-    setCategories((previous) => previous.filter((item) => item.id !== target && item.parentId !== target));
+    setCategories((previous) =>
+      previous.filter((item) => !ids.includes(item.id) && !ids.includes(item.parentId ?? '')),
+    );
+    setPickedRoots((previous) => previous.filter((id) => !ids.includes(id)));
+    setPickedChildren((previous) => previous.filter((id) => !ids.includes(id)));
     setPendingDelete(null);
     toast.success({
-      message: `${isRoot ? '대분류' : '세부 분류'}를 삭제했습니다.`,
-      detail: isRoot && childCount > 0
-        ? `${pendingDelete.name} · 세부 분류 ${childCount}개도 함께 삭제되었습니다.`
-        : `${pendingDelete.name} · ${target}`,
+      message: `${isRoot ? '대분류' : '세부 분류'} ${pendingDelete.length}건을 삭제했습니다.`,
+      detail:
+        isRoot && childCount > 0
+          ? `${names(pendingDelete)} · 세부 분류 ${childCount}개도 함께 삭제되었습니다.`
+          : names(pendingDelete),
     });
   };
 
-  const deleteIsRoot = pendingDelete ? !pendingDelete.parentId : false;
+  const deleteIsRoot = pendingDelete?.[0] ? !pendingDelete[0].parentId : false;
 
   return (
     <>
@@ -290,6 +304,12 @@ export function CategoryListView() {
             <p className="px-5 py-12 text-center text-sm text-ink-muted">조건에 맞는 대분류가 없습니다.</p>
           ) : (
             <>
+              <ListSelectionBar
+                count={pickedRoots.length}
+                onClear={() => setPickedRoots([])}
+                onDelete={() => setPendingDelete(visibleRoots.filter((one) => pickedRoots.includes(one.id)))}
+              />
+
               {/*
                 머리 줄에는 **전체 선택과 이름만** 남는다. 오른쪽에 서는 상품 수·상태는 값 자체가
                 무엇인지 말하므로(숫자, `노출`/`숨김`) 머리글이 없어도 읽힌다 — 열이 다섯일 때는
@@ -340,19 +360,12 @@ export function CategoryListView() {
 
                       <AdminVisibilityBadge visible={root.visible} />
 
-                      <RowActions>
-                        <RowIconButton
-                          icon="view"
-                          label={`${root.name} 상세`}
-                          onClick={() => setForm({ mode: 'edit', depth: 1, record: root, parentId: '' })}
-                        />
-                        <RowIconButton
-                          icon="delete"
-                          tone="danger"
-                          label={`${root.name} 삭제`}
-                          onClick={() => setPendingDelete(root)}
-                        />
-                      </RowActions>
+                      <RowActionGroup
+                        label={`${root.name} 상세`}
+                        onView={() => setForm({ mode: 'edit', depth: 1, record: root, parentId: '' })}
+                        onEdit={() => setForm({ mode: 'edit', depth: 1, record: root, parentId: '' })}
+                        onDelete={() => setPendingDelete([root])}
+                      />
                     </div>
                   );
                 })}
@@ -405,6 +418,14 @@ export function CategoryListView() {
             </p>
           ) : (
             <>
+              <ListSelectionBar
+                count={pickedChildren.length}
+                onClear={() => setPickedChildren([])}
+                onDelete={() =>
+                  setPendingDelete(visibleChildren.filter((one) => pickedChildren.includes(one.id)))
+                }
+              />
+
               {/* 1Depth 와 같은 모양이다 — 같은 목록인데 줄 모양이 다르면 읽는 법을 두 번 배워야 한다. */}
               <div className="flex items-center gap-3 border-b border-border px-5 py-3 text-xs text-ink-faint">
                 <SelectAllCell
@@ -442,19 +463,12 @@ export function CategoryListView() {
 
                     <AdminVisibilityBadge visible={child.visible} />
 
-                    <RowActions>
-                      <RowIconButton
-                        icon="view"
-                        label={`${child.name} 상세`}
-                        onClick={() => setForm({ mode: 'edit', depth: 2, record: child, parentId: selectedRoot.id })}
-                      />
-                      <RowIconButton
-                        icon="delete"
-                        tone="danger"
-                        label={`${child.name} 삭제`}
-                        onClick={() => setPendingDelete(child)}
-                      />
-                    </RowActions>
+                    <RowActionGroup
+                      label={`${child.name} 상세`}
+                      onView={() => setForm({ mode: 'edit', depth: 2, record: child, parentId: selectedRoot.id })}
+                      onEdit={() => setForm({ mode: 'edit', depth: 2, record: child, parentId: selectedRoot.id })}
+                      onDelete={() => setPendingDelete([child])}
+                    />
                   </div>
                 ))}
               </div>
@@ -504,8 +518,8 @@ export function CategoryListView() {
         title={deleteIsRoot ? '대분류 삭제' : '세부 분류 삭제'}
         description={
           deleteIsRoot
-            ? `'${pendingDelete?.name}' 을 삭제합니다. 아래 세부 분류도 함께 삭제됩니다.`
-            : `'${pendingDelete?.name}' 을 삭제합니다. 되돌릴 수 없습니다.`
+            ? `${names(pendingDelete ?? [])} 을(를) 삭제합니다. 아래 세부 분류도 함께 삭제됩니다.`
+            : `${names(pendingDelete ?? [])} 을(를) 삭제합니다. 되돌릴 수 없습니다.`
         }
         confirmLabel="삭제"
         onConfirm={confirmDelete}

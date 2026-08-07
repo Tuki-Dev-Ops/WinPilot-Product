@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, type ReactNode } from 'react';
-import { RowActions, RowIconButton, RowSelectCell, SelectAllCell, useToast } from '@winpilot/ui';
+import { ListSelectionBar, RowActionGroup, RowSelectCell, SelectAllCell, useToast } from '@winpilot/ui';
 import { IrConfirmModal } from './IrConfirmModal';
 import { IrEmpty, IrPanel, IrTableFoot, IrTableHead } from './IrPanel';
 
@@ -27,17 +27,10 @@ export type IrColumn = { label: string; span: string };
  * 서로 붙는다. B2C 어드민도 같은 나눔을 쓴다 — 콘솔을 오가는 사람이 같은 자리에서 같은
  * 단추를 찾는다.
  *
- * ## 관리는 아이콘 셋이다 — 조회 · 수정 · 삭제
- * 셋 다 **그림 하나로 뜻이 읽히는 동작**이라 아이콘으로 둔다(`RowIconButton` 머리말의 기준).
- * 글자로 두면 줄마다 `수정` 두 자가 서서, 정작 그 옆의 상태 배지보다 눈에 먼저 든다.
- *
- * **조회와 수정이 같은 화면으로 간다.** 이 콘솔의 상세 화면이 곧 고치는 양식이기 때문이다.
- * 그래도 둘을 남기는 이유: 목록에서 손이 가는 이유가 둘로 갈린다 — 값을 확인하러 오는 것과
- * 고치러 오는 것. 눌러 보고 나서 "여기서 고칠 수 있구나" 를 알게 되는 것보다, **고칠 수 있다는
- * 사실이 목록에서 보이는** 편이 낫다. 화면이 읽기 전용으로 갈리는 날 조회만 그쪽을 가리킨다.
- *
- * 셋은 관리 칸 **가운데**에 선다. 오른쪽 끝에 붙이면 표 너비가 바뀔 때마다 단추 자리가 따라
- * 움직여, 같은 자리를 두 번 누르려던 손이 빗나간다.
+ * ## 관리와 일괄 삭제는 세 콘솔이 함께 쓴다
+ * 아이콘 셋(조회 · 수정 · 삭제)은 `RowActionGroup`, 고른 줄에 대고 할 일은 `ListSelectionBar`.
+ * 둘 다 `@winpilot/ui` 에 있고 B2C · 사내 어드민이 같은 것을 쓴다 — 왜 그 모양인지는 그쪽
+ * 머리말에 적었다. 여기서 하는 일은 **무엇을 넘길지**를 정하는 것뿐이다.
  *
  * ## 체크박스가 늘 있다
  * 일괄로 할 일이 아직 없는 화면에서도 칸은 둔다. 표마다 맨 왼쪽이 같은 자리여야 눈이 헤매지
@@ -109,33 +102,13 @@ export function IrRecordTable<T extends { id: string }>({
         }
       />
 
-      {pickedHere.length > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-surface px-5 py-3">
-          <p className="text-sm text-ink-muted">
-            선택 <span className="font-semibold tabular-nums text-ink">{pickedHere.length}</span>건
-          </p>
-
-          <div className="flex shrink-0 items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setPicked([])}
-              className="h-8 shrink-0 rounded-lg border border-border-strong px-3 text-xs text-ink-muted transition-colors duration-150 hover:border-ink-faint hover:text-ink"
-            >
-              선택 해제
-            </button>
-
-            {onDelete && (
-              <button
-                type="button"
-                onClick={() => setAsking(rows.filter((one) => pickedHere.includes(one.id)))}
-                className="h-8 shrink-0 rounded-lg border border-signal-danger/50 px-3 text-xs font-medium text-signal-danger transition-colors duration-150 hover:border-signal-danger"
-              >
-                선택 삭제
-              </button>
-            )}
-          </div>
-        </div>
-      )}
+      <ListSelectionBar
+        count={pickedHere.length}
+        onClear={() => setPicked([])}
+        {...(onDelete
+          ? { onDelete: () => setAsking(rows.filter((one) => pickedHere.includes(one.id))) }
+          : {})}
+      />
 
       {rows.length === 0 ? (
         <IrEmpty>{empty}</IrEmpty>
@@ -194,37 +167,13 @@ export function IrRecordTable<T extends { id: string }>({
 
                 {onOpen && (
                   <div className="lg:col-span-2">
-                    {/*
-                      단추를 누른 것이 줄을 누른 것으로도 세어지지 않게 막는다. 조회는 결과가
-                      같아 티가 안 나지만, 삭제는 **확인 창이 뜨는 동시에 상세로 넘어간다.**
-                    */}
-                    <div
-                      onClick={(event) => event.stopPropagation()}
-                      onKeyDown={(event) => event.stopPropagation()}
-                      role="presentation"
-                      className="flex justify-center"
-                    >
-                      <RowActions>
-                        <RowIconButton
-                          icon="view"
-                          label={`${labelOf(row)} 조회`}
-                          onClick={() => onOpen(row)}
-                        />
-                        <RowIconButton
-                          icon="edit"
-                          label={`${labelOf(row)} 수정`}
-                          onClick={() => onOpen(row)}
-                        />
-                        {onDelete && (
-                          <RowIconButton
-                            icon="delete"
-                            label={`${labelOf(row)} 삭제`}
-                            tone="danger"
-                            onClick={() => setAsking([row])}
-                          />
-                        )}
-                      </RowActions>
-                    </div>
+                    {/* 이 묶음 안의 누름이 줄까지 번지지 않는 것은 `RowActions` 가 맡는다. */}
+                    <RowActionGroup
+                      label={labelOf(row)}
+                      onView={() => onOpen(row)}
+                      onEdit={() => onOpen(row)}
+                      {...(onDelete ? { onDelete: () => setAsking([row]) } : {})}
+                    />
                   </div>
                 )}
               </div>

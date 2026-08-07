@@ -12,7 +12,7 @@ import {
   type ListFilterField,
   type ListToolbarTab,
 } from '@winpilot/ui';
-import { ALL_VALUE } from '@winpilot/ui';
+import { ALL_VALUE, RowActionGroup } from '@winpilot/ui';
 import {
   SUPPORT_CATEGORIES,
   SUPPORT_REQUESTS,
@@ -250,17 +250,11 @@ export function SupportListView() {
                 </div>
 
                 <div className="lg:col-span-1">
-                  <RowActions>
-                    {/*
-                      삭제가 없다. 보낸 문의를 지우면 우리 쪽 목록에서도 사라져, 답하던 담당자가
-                      무엇을 답하고 있었는지 알 수 없게 된다.
-                    */}
-                    <RowIconButton
-                      icon="view"
-                      label={`${request.title} 상세`}
-                      onClick={() => setOpenId(request.id)}
-                    />
-                  </RowActions>
+                  <RowActionGroup
+                    label={`${request.title} 상세`}
+                    onView={() => setOpenId(request.id)}
+                    onEdit={() => setOpenId(request.id)}
+                  />
                 </div>
               </div>
             ))}

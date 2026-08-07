@@ -6,7 +6,7 @@ import { useMemo, useState, type MouseEvent } from 'react';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
 import { AdminListPager } from '@/app/_components/AdminListPager';
 import { AdminSelectionBar } from '@/app/_components/AdminSelectionBar';
-import { ALL_VALUE, Badge, Checkbox, ListToolbar, PageHeading, RowActions, RowIconButton, RowSelectCell, useToast, type ListFilterField } from '@winpilot/ui';
+import { ALL_VALUE, Badge, Checkbox, ListToolbar, PageHeading, RowActionGroup, RowSelectCell, useToast, type ListFilterField } from '@winpilot/ui';
 import { COURIERS, ORDERS, PAY_TONE, SHIP_TONE, type OrderRecord } from '@/lib/data/orders';
 import { canExchange, findOption, optionLabelOf } from '@/lib/data/product-options';
 import { formatAmount } from '@/lib/validation/product-record';
@@ -368,13 +368,11 @@ export function OrderListView() {
                 </div>
 
                 <div className="lg:col-span-2">
-                  <RowActions>
-                    <RowIconButton
-                      icon="view"
-                      label={`주문 ${order.id} 상세`}
-                      onClick={() => router.push(`/products/sales/${order.id}`)}
-                    />
-                  </RowActions>
+                  <RowActionGroup
+                    label={`주문 ${order.id} 상세`}
+                    onView={() => router.push(`/products/sales/${order.id}`)}
+                    onEdit={() => router.push(`/products/sales/${order.id}`)}
+                  />
                 </div>
               </div>
             ))}

@@ -53,7 +53,9 @@ export {
 } from './ListToolbar';
 export { Modal, type ModalProps } from './Modal';
 export { PageHeading } from './PageHeading';
+export { ListSelectionBar } from './ListSelectionBar';
 export {
+  RowActionGroup,
   RowActions,
   RowIconButton,
   RowTextButton,

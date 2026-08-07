@@ -5,7 +5,7 @@ import { useMemo, useState, type MouseEvent } from 'react';
 import { AdminBulkBar } from '@/app/_components/AdminBulkBar';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
 import { AdminListPager } from '@/app/_components/AdminListPager';
-import { ALL_VALUE, Badge, Checkbox, ListToolbar, PageHeading, RowActions, RowIconButton, RowSelectCell, useToast, type BadgeTone, type ListFilterField } from '@winpilot/ui';
+import { ALL_VALUE, Badge, Checkbox, ListToolbar, PageHeading, RowActionGroup, RowSelectCell, useToast, type BadgeTone, type ListFilterField } from '@winpilot/ui';
 import type { MemberFormInput, MemberFormMode } from '@/lib/validation/member-record';
 import { TENANT_ROLES } from '@winpilot/store';
 import { AdminRoleGuide } from '@/app/_components/AdminRoleGuide';
@@ -323,15 +323,12 @@ export function StaffListView() {
                 </div>
 
                 <div className="lg:col-span-2">
-                  <RowActions>
-                    <RowIconButton icon="view" label={`${member.name} 조회`} onClick={() => openDetail(member.id)} />
-                    <RowIconButton
-                      icon="delete"
-                      tone="danger"
-                      label={`${member.name} 삭제`}
-                      onClick={() => setPendingDelete([member.id])}
-                    />
-                  </RowActions>
+                  <RowActionGroup
+                    label={member.name}
+                    onView={() => openDetail(member.id)}
+                    onEdit={() => openDetail(member.id)}
+                    onDelete={() => setPendingDelete([member.id])}
+                  />
                 </div>
               </div>
             ))}
