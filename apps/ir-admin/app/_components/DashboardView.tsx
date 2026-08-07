@@ -6,6 +6,7 @@ import { DISCLOSURES, SITE_INQUIRIES, SITE_NOTICES, SITE_REGIONS } from '@winpil
 import type { KoreaShape } from '@/lib/geo/korea';
 import { TODAY } from '@/lib/today';
 import { IrPanel } from './IrPanel';
+import { IrSegmented } from './IrSegmented';
 import { KoreaMap } from './KoreaMap';
 
 /**
@@ -120,32 +121,19 @@ export function DashboardView({
 
   return (
     <>
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <PageHeading title="대시보드" description={`${TODAY} 기준입니다.`} />
-
-        {/* 고른 기간이 실제로 언제부터인지 옆에 적는다 — `주` 만으로는 어디서 끊는지 알 수 없다. */}
-        <div className="flex shrink-0 flex-wrap items-center gap-3">
-          <div className="flex shrink-0 items-center gap-1 rounded-lg border border-border-strong p-1">
-            {SPANS.map((one) => (
-              <button
-                key={one.id}
-                type="button"
-                onClick={() => setSpan(one.id)}
-                aria-pressed={one.id === span}
-                title={one.note}
-                className={`h-8 w-10 rounded text-xs transition-colors duration-150 ${
-                  one.id === span ? 'bg-brand text-white' : 'text-ink-muted hover:text-ink'
-                }`}
-              >
-                {one.label}
-              </button>
-            ))}
+      <PageHeading
+        title="대시보드"
+        description={`${TODAY} 기준입니다.`}
+        aside={
+          /* 고른 기간이 실제로 언제부터인지 아래에 적는다 — `주` 만으로는 어디서 끊는지 알 수 없다. */
+          <div className="flex shrink-0 flex-col items-start gap-1.5 sm:items-end">
+            <IrSegmented label="볼 기간" options={SPANS} value={span} onChange={setSpan} />
+            <p className="font-mono text-xs tabular-nums text-ink-faint">
+              {from} <span className="text-ink-faint/70">~</span> {TODAY}
+            </p>
           </div>
-          <p className="shrink-0 font-mono text-xs tabular-nums text-ink-faint">
-            {from} ~ {TODAY}
-          </p>
-        </div>
-      </div>
+        }
+      />
 
       {/*
         여섯을 **한 줄**에 세운다. 두 줄로 접히면 아랫줄이 윗줄의 곁가지처럼 보여, 문의와
@@ -179,23 +167,7 @@ export function DashboardView({
       <IrPanel
         title="지역 분포"
         description="문의를 보낸 회사가 있는 시 · 도입니다. 방문 일정을 잡는 데 씁니다."
-        aside={
-          <div className="flex shrink-0 items-center gap-1 rounded-lg border border-border-strong p-1">
-            {LENSES.map((one) => (
-              <button
-                key={one.id}
-                type="button"
-                onClick={() => setLens(one.id)}
-                aria-pressed={one.id === lens}
-                className={`h-8 rounded px-3 text-xs transition-colors duration-150 ${
-                  one.id === lens ? 'bg-surface font-medium text-ink' : 'text-ink-muted hover:text-ink'
-                }`}
-              >
-                {one.label}
-              </button>
-            ))}
-          </div>
-        }
+        aside={<IrSegmented label="무엇을 셀지" options={LENSES} value={lens} onChange={setLens} />}
       >
         <div className="grid grid-cols-1 xl:grid-cols-2">
           {/* 왼쪽 — 정확히 몇 건인지. */}

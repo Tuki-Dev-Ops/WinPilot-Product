@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 /**
  * 화면 머리 — 이름 한 마디와 설명 한 줄. **두 어드민이 같은 것을 쓴다.**
  *
@@ -26,11 +28,32 @@
  * 이 주석이 `~한다` 체인 것은 반대 이유에서다. 만드는 사람끼리 규칙을 못 박는 글이라
  * 건네는 말투로 쓰면 근거가 권유처럼 읽힌다.
  */
-export function PageHeading({ title, description }: { title: string; description: string }) {
+export function PageHeading({
+  title,
+  description,
+  aside,
+}: {
+  title: string;
+  description: string;
+  /**
+   * 제목 오른쪽에 서는 것 — 기간 고르개처럼 **이 화면 전체에 걸리는** 조작.
+   *
+   * 이 자리를 여기 둔 이유: 전에는 화면이 머리와 조작을 나란히 놓고 싶을 때 바깥에 줄을 하나
+   * 더 만들어 감쌌는데, 그러면 **아래 선이 제목 밑에서만 그어지다 만다** — 선은 이 조각 안에
+   * 있고 조각은 제목 너비만큼만 차지하기 때문이다. 화면마다 그 어긋남을 따로 고치느니
+   * 여기서 한 줄로 받는다.
+   *
+   * 목록 위 툴바(검색 · 등록)는 여기 오지 않는다. 그것은 **표에 걸리는** 조작이라 표 옆에 선다.
+   */
+  aside?: ReactNode;
+}) {
   return (
-    <div className="flex flex-col gap-1 border-b border-border pb-4">
-      <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
-      <p className="text-sm leading-relaxed text-ink-muted">{description}</p>
+    <div className="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-4">
+      <div className="flex min-w-0 flex-col gap-1">
+        <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
+        <p className="text-sm leading-relaxed text-ink-muted">{description}</p>
+      </div>
+      {aside}
     </div>
   );
 }
