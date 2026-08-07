@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
-import { IR_COMPANY } from '@winpilot/store';
+import { FAQ_GROUPS, IR_COMPANY, SITE_FAQS } from '@winpilot/store';
 import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
-import { FAQ_GROUPS, SITE_FAQS } from '@/lib/data/site';
 import { FaqListView } from './_components/FaqListView';
 
 /**

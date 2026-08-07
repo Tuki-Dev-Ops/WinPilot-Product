@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function IrDisclosureListPage() {
   return (
-    <IrShell sectionId="disclosure" trail={['공시', '공시 관리']} activeChildId="disclosure-list">
+    <IrShell sectionId="ir" trail={['IR', '공시']} activeChildId="ir-disclosures">
       <DisclosureListView />
     </IrShell>
   );

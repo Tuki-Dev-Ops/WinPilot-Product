@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import { Clock, Mail, Paperclip, Phone, X } from 'lucide-react';
 import { Button, Field, HintInput, HintTextarea, RequiredLegend, useToast } from '@winpilot/ui';
-import { IR_COMPANY } from '@winpilot/store';
+import { IR_COMPANY, SITE_REGIONS } from '@winpilot/store';
 
 /**
  * 문의 갈래. 받는 사람이 달라 **먼저 고른다.**
@@ -28,7 +28,12 @@ const MAX_MB = 20;
  * 다른 배치를 다시 익히지 않아도 된다.
  *
  * ## 무엇을 묻는가
- * 회사명 · 담당자명 · 휴대폰 · 이메일 · 내용 · 첨부.
+ * 회사명 · 지역 · 담당자명 · 휴대폰 · 이메일 · 내용 · 첨부.
+ *
+ * **지역을 묻는 이유는 통계가 아니라 일정이다.** 스마트공장 구축은 현장을 봐야 하는 일이고,
+ * 강원에서 온 문의와 성동구에서 온 문의는 첫 방문까지 걸리는 시간이 다르다. 답장에 적을
+ * 일정이 달라지므로 받을 때 함께 받는다. 시·도 열일곱을 빠짐없이 두는 것도 그 때문이다 —
+ * 목록에 없는 지역은 고를 수 없고, 고르지 못한 문의는 어느 담당 구역에도 들지 않는다.
  *
  * **회사명이 첫 칸인 이유**: 이 사이트로 오는 문의는 개인이 아니라 회사가 보낸다. 답하는 쪽도
  * 회사 이름으로 기존 상담 이력을 먼저 찾고, 그 이름이 없으면 같은 회사에서 온 두 문의를 서로
@@ -53,6 +58,7 @@ export function ContactForm() {
 
   const [kind, setKind] = useState<string>(KINDS[0]);
   const [company, setCompany] = useState('');
+  const [region, setRegion] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -62,6 +68,7 @@ export function ContactForm() {
 
   const errors = {
     company: company.trim() ? undefined : '회사명을 입력해 주세요.',
+    region: region ? undefined : '지역을 골라 주세요.',
     name: name.trim() ? undefined : '담당자명을 입력해 주세요.',
     email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ? undefined : '답을 받으실 메일 주소를 정확히 적어 주세요.',
     /* 비었는지와 형식이 맞는지를 나눠 알린다 — `번호 형식이 아닙니다` 는 빈 칸에 대한 답이 아니다. */
@@ -105,6 +112,7 @@ export function ContactForm() {
 
     toast.success({ message: '문의를 보냈습니다.', detail: `${kind} · ${email.trim()} 으로 답변드립니다.` });
     setCompany('');
+    setRegion('');
     setName('');
     setPhone('');
     setEmail('');
@@ -167,6 +175,33 @@ export function ContactForm() {
             onChange={(event) => setCompany(event.target.value)}
             invalid={submitted && Boolean(errors.company)}
           />
+        </Field>
+
+        <Field
+          label="지역"
+          htmlFor="contact-region"
+          required
+          {...(submitted && errors.region
+            ? { error: errors.region }
+            : { hint: '현장이 있는 시 · 도를 골라 주세요. 방문 일정을 함께 안내드립니다.' })}
+        >
+          <select
+            id="contact-region"
+            value={region}
+            onChange={(event) => setRegion(event.target.value)}
+            aria-invalid={submitted && Boolean(errors.region)}
+            className={`h-11 w-full min-w-0 rounded-lg border bg-canvas px-3 text-sm transition-colors duration-150 ${
+              submitted && errors.region ? 'border-signal-danger' : 'border-border-strong'
+            } ${region ? 'text-ink' : 'text-ink-faint'}`}
+          >
+            {/* 처음 값을 비워 둔다 — 서울이 미리 골라져 있으면 고르지 않은 사람의 문의가 전부 서울로 쌓인다. */}
+            <option value="">고르지 않음</option>
+            {SITE_REGIONS.map((one) => (
+              <option key={one} value={one}>
+                {one}
+              </option>
+            ))}
+          </select>
         </Field>
 
         <Field

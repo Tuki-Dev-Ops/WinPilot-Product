@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function IrScheduleListPage() {
   return (
-    <IrShell sectionId="library" trail={['자료', 'IR 일정']} activeChildId="library-schedule">
+    <IrShell sectionId="ir" trail={['IR', 'IR 일정']} activeChildId="ir-schedules">
       <ScheduleListView />
     </IrShell>
   );

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function IrDividendListPage() {
   return (
-    <IrShell sectionId="financial" trail={['재무', '배당 정보']} activeChildId="financial-dividend">
+    <IrShell sectionId="ir" trail={['IR', '배당']} activeChildId="ir-dividends">
       <DividendListView />
     </IrShell>
   );

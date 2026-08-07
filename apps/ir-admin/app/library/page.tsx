@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function IrLibraryListPage() {
   return (
-    <IrShell sectionId="library" trail={['자료', 'IR 자료실']} activeChildId="library-list">
+    <IrShell sectionId="ir" trail={['IR', 'IR 자료실']} activeChildId="ir-library">
       <LibraryListView />
     </IrShell>
   );

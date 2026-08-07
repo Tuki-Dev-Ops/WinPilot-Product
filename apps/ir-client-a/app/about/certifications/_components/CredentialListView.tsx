@@ -1,8 +1,8 @@
 'use client';
 
+import { CREDENTIALS, type Credential } from '@winpilot/store';
 import { useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
-import { CREDENTIALS, type Credential } from '@/lib/data/site';
 
 /**
  * 특허 및 인증 — **왼쪽에 갈래, 위에 검색, 아래에 표**.

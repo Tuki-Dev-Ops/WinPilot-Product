@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import { Bus, Car, MapPin, Phone, TrainFront } from 'lucide-react';
-import { IR_COMPANY } from '@winpilot/store';
+import { DIRECTIONS, IR_COMPANY } from '@winpilot/store';
 import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
-import { DIRECTIONS } from '@/lib/data/site';
 
 /**
  * Feature: `direction.detail` · IR Client (템플릿 A) · route `/support/directions`

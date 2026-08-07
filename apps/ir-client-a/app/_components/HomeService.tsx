@@ -347,10 +347,26 @@ function IsoScene({
   );
 }
 
-/** 가운데에서 각도 `angle` 로 `r` 만큼 나간 자리 — `<line>` 이 받는 모양으로. */
+/**
+ * 가운데에서 각도 `angle` 로 `r` 만큼 나간 자리 — `<line>` 이 받는 모양으로.
+ *
+ * ## 왜 반올림하는가
+ * `Math.sin`·`Math.cos` 는 **서버(Node)와 브라우저가 마지막 한 자리에서 다른 값**을 낸다.
+ * 명세가 정확한 값을 요구하지 않아 각 엔진이 자기 근사식을 쓰기 때문이다. 그 차이가
+ * `-372.39092362730855` 와 `-372.3909236273085` 로 갈리면 React 가 서버가 그린 것과 브라우저가
+ * 그린 것이 다르다고 보고 **하이드레이션 경고**를 띄운다.
+ *
+ * 세 자리에서 자른다. 이 무대는 좌표 폭이 1000 을 넘는 그림이라 0.001 은 눈에 보이지 않고,
+ * 두 엔진의 차이는 열두 자리 아래에서 나므로 세 자리면 언제나 같은 값이 된다.
+ */
 function endOf(angle: number, r: number): { x2: number; y2: number } {
   const rad = (angle * Math.PI) / 180;
-  return { x2: r * Math.cos(rad), y2: r * Math.sin(rad) };
+  return { x2: round3(r * Math.cos(rad)), y2: round3(r * Math.sin(rad)) };
+}
+
+/** 소수 세 자리까지. `toFixed` 가 아니라 숫자로 돌려준다 — 속성값이 문자열이면 또 다른 차이가 된다. */
+function round3(value: number): number {
+  return Math.round(value * 1000) / 1000;
 }
 
 /** 얼마나 앞에 있는가. 클수록 앞. */

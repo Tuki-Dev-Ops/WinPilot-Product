@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function IrStockSettingsPage() {
   return (
-    <IrShell sectionId="financial" trail={['재무', '주가 연동']} activeChildId="financial-stock">
+    <IrShell sectionId="ir" trail={['IR', '주가 연동']} activeChildId="ir-stock">
       <StockSettingsView />
     </IrShell>
   );

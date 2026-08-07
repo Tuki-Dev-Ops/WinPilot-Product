@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function IrSubscriberListPage() {
   return (
-    <IrShell sectionId="library" trail={['자료', '알림 발송']} activeChildId="library-notify">
+    <IrShell sectionId="ir" trail={['IR', '알림 구독자']} activeChildId="ir-subscribers">
       <SubscriberListView />
     </IrShell>
   );

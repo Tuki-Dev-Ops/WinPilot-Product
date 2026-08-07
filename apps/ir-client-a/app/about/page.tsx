@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import { ArrowUpRight } from 'lucide-react';
-import { IR_COMPANY, MILESTONES } from '@winpilot/store';
+import { CREDENTIALS, IR_COMPANY, MILESTONES } from '@winpilot/store';
 import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
 import { IrTable } from '@/app/_components/IrTable';
-import { CREDENTIALS } from '@/lib/data/site';
 import { IR_ROUTES } from '@/lib/navigation';
 
 /**

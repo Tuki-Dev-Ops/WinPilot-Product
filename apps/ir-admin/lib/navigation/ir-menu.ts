@@ -4,12 +4,25 @@
  * 규칙은 다른 콘솔과 같다 — **사이드바는 최상위만**, 세부는 본문 왼쪽 보조 메뉴에 둔다
  * (`docs/spec/04-ia.md` §4.4). 다르게 두면 콘솔을 오가는 사람이 구조를 두 번 배운다.
  *
- * ## 차례가 곧 IR 담당자의 일 순서다
- * 공시가 먼저다 — 기한이 있고 늦으면 제재를 받는 유일한 갈래다. 그다음이 숫자(재무·주가·배당),
- * 그다음이 사람(주주), 마지막이 밖으로 내보내는 것(자료실·일정·알림).
+ * ## 차례가 곧 운영자의 하루다
+ * 문의가 먼저다 — **밖에서 들어온 것**이고, 늦으면 그 사실이 고객 쪽에 남는다. 그다음이
+ * 콘텐츠(공지·뉴스·FAQ)처럼 자주 손대는 것, 그다음이 제품·솔루션·회사처럼 한 번 정해 두고
+ * 가끔 고치는 것, 그다음이 배너, 마지막이 통계다.
  *
- * 설정 앞에 선을 하나 긋는다. 위쪽은 **투자자에게 나가는 값**이고 설정부터는 사이트 자체의
+ * 통계를 맨 뒤에 두는 이유: **읽기만 하는 화면**이다. 앞에 두면 들어올 때마다 숫자를 먼저 보게
+ * 되는데, 정작 오늘 해야 할 일은 문의함에 있다.
+ *
+ * 설정 앞에 선을 하나 긋는다. 위쪽은 **사이트에 나가는 값**이고 설정부터는 사이트 자체의
  * 값이다(다른 두 콘솔과 같은 규칙).
+ *
+ * ## 공시·재무·주주·자료는 어디로 갔나
+ * 이 콘솔이 처음에는 공시 중심이었다(공시 · 재무 · 주주 · 자료). 그런데 실제로 손대는 것은
+ * **회사 홈페이지**였고, 공시 화면들은 만들어 둔 채 거의 열리지 않았다. 지금 메뉴는 그 실제
+ * 쓰임을 따른다.
+ *
+ * 그 화면들은 주소로는 남아 있다(`/disclosures` · `/financials` · `/shareholders` ·
+ * `/library`). 지우지 않은 이유: **투자자 화면이 그 값을 읽고 있다** — 사이트의 공시·재무
+ * 목록이 지금도 store 의 같은 값을 그린다. 메뉴에 다시 세울지는 IR 담당자가 정할 일이다.
  */
 export type IrMenuChild = {
   id: string;
@@ -27,72 +40,112 @@ export type IrMenuItem = IrMenuChild & {
 export const IR_MENU: readonly IrMenuItem[] = [
   { id: 'dashboard', label: '대시보드', href: '/', ready: true },
   {
+    id: 'inquiry',
+    label: '문의',
+    href: '/inquiries',
+    children: [
+      { id: 'inquiry-list', label: '목록', href: '/inquiries', ready: true },
+      { id: 'inquiry-settings', label: '설정', href: '/inquiries/settings', ready: true },
+    ],
+  },
+  {
+    id: 'content',
+    label: '콘텐츠',
+    href: '/contents/notices',
+    children: [
+      { id: 'content-notices', label: '공지사항', href: '/contents/notices', ready: true },
+      { id: 'content-news', label: '뉴스', href: '/contents/news', ready: true },
+      { id: 'content-faqs', label: 'FAQ', href: '/contents/faqs', ready: true },
+    ],
+  },
+  {
+    id: 'product',
+    label: '제품',
+    href: '/products',
+    children: [
+      { id: 'product-list', label: '목록', href: '/products', ready: true },
+      { id: 'product-settings', label: '설정', href: '/products/settings', ready: true },
+    ],
+  },
+  {
+    id: 'solution',
+    label: '솔루션',
+    href: '/solutions',
+    children: [
+      { id: 'solution-list', label: '목록', href: '/solutions', ready: true },
+      { id: 'solution-settings', label: '설정', href: '/solutions/settings', ready: true },
+    ],
+  },
+  {
+    id: 'company',
+    label: '회사',
+    href: '/company/about',
+    children: [
+      { id: 'company-about', label: '소개', href: '/company/about', ready: true },
+      { id: 'company-history', label: '연혁', href: '/company/history', ready: true },
+      { id: 'company-credentials', label: '특허 및 인증', href: '/company/credentials', ready: true },
+    ],
+  },
+  {
+    id: 'banner',
+    label: '배너',
+    href: '/banners',
+    children: [
+      { id: 'banner-hero', label: '메인 비주얼', href: '/banners', ready: true },
+      { id: 'banner-popup', label: '팝업', href: '/banners/popups', ready: true },
+    ],
+  },
+  {
     /*
-      홈페이지 — **투자자 화면이 아니라 회사 홈페이지**를 고치는 자리다.
-
-      공시·재무 위에 두는 이유: 처음 온 사람이 보는 것이 홈페이지이고, 그것을 고치는 일이 가장
-      잦다. 아래 갈래들은 정해진 서식이 있어 **때가 되면** 올리는 것(분기 실적, 주주총회)이라
-      찾아 들어가는 일이 드물지 않다.
+      읽기만 하는 갈래라 맨 뒤다. 앞에 두면 들어올 때마다 숫자를 먼저 보게 되는데, 정작 오늘
+      해야 할 일은 문의함에 있다.
     */
-    id: 'site',
-    label: '홈페이지',
-    href: '/site/services',
+    id: 'statistics',
+    label: '통계',
+    href: '/statistics',
     children: [
-      { id: 'site-services', label: '서비스', href: '/site/services', ready: true },
-      { id: 'site-solutions', label: '솔루션', href: '/site/solutions', ready: true },
-      { id: 'site-media', label: '미디어', href: '/site/media', ready: true },
-      { id: 'site-legal', label: '약관 · 방침', href: '/site/legal', ready: true },
+      { id: 'statistics-home', label: '홈', href: '/statistics', ready: true },
+      { id: 'statistics-period', label: '기간별 분석', href: '/statistics/period', ready: true },
+      { id: 'statistics-pages', label: '많이 방문한 페이지', href: '/statistics/pages', ready: true },
     ],
   },
   {
-    id: 'disclosure',
-    label: '공시',
+    /*
+      받은 메뉴(대시보드~통계)에 없는 갈래다. 그런데도 두는 이유: **투자자 화면이 아직 이
+      값들을 내보내고 있다** — 공시·재무·주주총회·IR 자료실이 사이트 푸터에서 열린다. 화면은
+      살아 있는데 고치는 자리만 메뉴에서 빼면, 공시 하나 올리려고 코드를 고쳐 배포하게 된다.
+
+      회사 홈페이지를 다루는 앞의 여덟과 성격이 달라 뒤로 물리고 줄을 그어 나눈다.
+    */
+    id: 'ir',
+    label: 'IR',
     href: '/disclosures',
-    ready: true,
+    separatedBefore: true,
     children: [
-      { id: 'disclosure-list', label: '공시 관리', href: '/disclosures', ready: true },
-      { id: 'disclosure-dart', label: 'DART 연동', href: '/disclosures/dart', ready: true },
-    ],
-  },
-  {
-    id: 'financial',
-    label: '재무',
-    href: '/financials',
-    ready: true,
-    children: [
-      { id: 'financial-list', label: '재무 정보', href: '/financials', ready: true },
-      { id: 'financial-stock', label: '주가 연동', href: '/financials/stock', ready: true },
-      { id: 'financial-dividend', label: '배당 정보', href: '/financials/dividends', ready: true },
-    ],
-  },
-  {
-    id: 'shareholder',
-    label: '주주',
-    href: '/shareholders/meetings',
-    ready: true,
-    children: [
-      { id: 'shareholder-meeting', label: '주주총회', href: '/shareholders/meetings', ready: true },
-      { id: 'shareholder-governance', label: '지배구조', href: '/shareholders/governance', ready: true },
-    ],
-  },
-  {
-    id: 'library',
-    label: '자료',
-    href: '/library',
-    ready: true,
-    children: [
-      { id: 'library-list', label: 'IR 자료실', href: '/library', ready: true },
-      { id: 'library-schedule', label: 'IR 일정', href: '/library/schedules', ready: true },
-      { id: 'library-notify', label: '알림 발송', href: '/library/notifications', ready: true },
+      { id: 'ir-disclosures', label: '공시', href: '/disclosures', ready: true },
+      { id: 'ir-dart', label: 'DART 연동', href: '/disclosures/dart', ready: true },
+      { id: 'ir-financials', label: '재무', href: '/financials', ready: true },
+      { id: 'ir-stock', label: '주가 연동', href: '/financials/stock', ready: true },
+      { id: 'ir-dividends', label: '배당', href: '/financials/dividends', ready: true },
+      { id: 'ir-meetings', label: '주주총회', href: '/shareholders/meetings', ready: true },
+      { id: 'ir-governance', label: '지배구조', href: '/shareholders/governance', ready: true },
+      { id: 'ir-library', label: 'IR 자료실', href: '/library', ready: true },
+      { id: 'ir-schedules', label: 'IR 일정', href: '/library/schedules', ready: true },
+      { id: 'ir-subscribers', label: '알림 구독자', href: '/library/notifications', ready: true },
     ],
   },
   {
     id: 'settings',
     label: '설정',
-    href: '/settings/locales',
-    ready: true,
+    href: '/settings/supplier',
     separatedBefore: true,
-    children: [{ id: 'settings-locale', label: '국문 · 영문', href: '/settings/locales', ready: true }],
+    children: [
+      { id: 'settings-supplier', label: '공급자 정보', href: '/settings/supplier', ready: true },
+      { id: 'settings-seo', label: 'SEO 정보', href: '/settings/seo', ready: true },
+      { id: 'settings-terms', label: '서비스 이용약관', href: '/settings/terms', ready: true },
+      { id: 'settings-privacy', label: '개인정보 처리방침', href: '/settings/privacy', ready: true },
+      { id: 'settings-locales', label: '국문 · 영문', href: '/settings/locales', ready: true },
+    ],
   },
 ];
 
