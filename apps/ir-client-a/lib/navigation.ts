@@ -98,10 +98,6 @@ export const SITE_NAV: readonly SiteNavItem[] = [
           { href: '/products', label: 'Cloud DXP', ready: true },
         ],
       },
-      {
-        title: '전체',
-        children: [{ href: '/products', label: '제품 한눈에 보기', ready: true }],
-      },
     ],
   },
   {
