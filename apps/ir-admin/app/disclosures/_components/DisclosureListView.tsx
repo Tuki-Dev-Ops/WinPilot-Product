@@ -15,7 +15,7 @@ const STATE_TONE = {
 } as const;
 
 const COLUMNS = [
-  { label: '제목', span: 'lg:col-span-5' },
+  { label: '제목', span: 'lg:col-span-4' },
   { label: '구분', span: 'lg:col-span-1 lg:text-center' },
   { label: '공시일', span: 'lg:col-span-2' },
   { label: '상태', span: 'lg:col-span-2 lg:text-center' },

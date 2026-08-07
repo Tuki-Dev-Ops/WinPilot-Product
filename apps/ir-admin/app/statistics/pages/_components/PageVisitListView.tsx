@@ -6,7 +6,7 @@ import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const COLUMNS = [
   { label: '화면', span: 'lg:col-span-4' },
-  { label: '주소', span: 'lg:col-span-4' },
+  { label: '주소', span: 'lg:col-span-3' },
   { label: '방문', span: 'lg:col-span-2 lg:text-right' },
   { label: '머문 시간', span: 'lg:col-span-2 lg:text-right' },
 ];

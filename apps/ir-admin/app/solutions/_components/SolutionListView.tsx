@@ -7,11 +7,11 @@ import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const COLUMNS = [
   { label: '솔루션', span: 'lg:col-span-2' },
-  { label: '문제', span: 'lg:col-span-5' },
-  { label: '구성', span: 'lg:col-span-2 lg:text-center' },
+  { label: '문제', span: 'lg:col-span-3' },
+  { label: '구성', span: 'lg:col-span-1 lg:text-center' },
   { label: '업종', span: 'lg:col-span-1 lg:text-center' },
   { label: '절차', span: 'lg:col-span-1 lg:text-center' },
-  { label: '상태', span: 'lg:col-span-2 lg:text-right' },
+  { label: '상태', span: 'lg:col-span-1 lg:text-center' },
 ];
 
 /**
@@ -34,7 +34,6 @@ export function SolutionListView() {
         columns={COLUMNS}
         rows={SOLUTIONS}
         onOpen={(one) => router.push(`/solutions/${one.id}`)}
-        openLabel="수정"
         labelOf={(one) => one.name}
         empty="등록된 솔루션이 없습니다."
         render={(one) => [
@@ -53,7 +52,7 @@ export function SolutionListView() {
           <span key="steps" className="flex min-w-0 justify-center">
             <Badge tone="neutral">{one.steps.length}단계</Badge>
           </span>,
-          <span key="state" className="flex min-w-0 flex-1 justify-end">
+          <span key="state" className="flex min-w-0 justify-center">
             <Badge tone={one.visible ? 'ok' : 'wait'}>{one.visible ? '노출' : '숨김'}</Badge>
           </span>,
         ]}

@@ -8,7 +8,7 @@ const COLUMNS = [
   { label: '자료', span: 'lg:col-span-5' },
   { label: '구분', span: 'lg:col-span-2' },
   { label: '올린 날', span: 'lg:col-span-2' },
-  { label: '크기', span: 'lg:col-span-1 lg:text-right' },
+  { label: '크기', span: 'lg:col-span-2 lg:text-right' },
 ];
 
 /**

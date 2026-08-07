@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Badge, PageHeading } from '@winpilot/ui';
 import { CREDENTIALS } from '@winpilot/store';
@@ -8,11 +9,11 @@ import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const COLUMNS = [
   { label: '구분', span: 'lg:col-span-1' },
-  { label: '이름', span: 'lg:col-span-4' },
-  { label: '번호', span: 'lg:col-span-3' },
-  { label: '발급', span: 'lg:col-span-2' },
+  { label: '이름', span: 'lg:col-span-3' },
+  { label: '번호', span: 'lg:col-span-2' },
+  { label: '발급', span: 'lg:col-span-1' },
   { label: '취득일', span: 'lg:col-span-1' },
-  { label: '상태', span: 'lg:col-span-2 lg:text-right' },
+  { label: '상태', span: 'lg:col-span-1 lg:text-center' },
 ];
 
 /**
@@ -25,6 +26,8 @@ const COLUMNS = [
  */
 export function CredentialListView() {
   const router = useRouter();
+  /* 프론트엔드 전용 — 지운 결과는 이 화면에만 남는다. */
+  const [rows, setRows] = useState(CREDENTIALS);
   return (
     <>
       <PageHeading title="특허 및 인증" description="사이트의 특허 및 인증 화면에 그대로 섭니다." />
@@ -34,9 +37,10 @@ export function CredentialListView() {
         aside={<IrCreateLink href="/company/credentials/new">등록</IrCreateLink>}
         description="등록번호로 밖에서 조회할 수 있는 값입니다."
         columns={COLUMNS}
-        rows={CREDENTIALS}
+        rows={rows}
         onOpen={(one) => router.push(`/company/credentials/${one.id}`)}
-        openLabel="수정"
+        onDelete={(one) => setRows((was) => was.filter((row) => row.id !== one.id))}
+        deleteNote="사이트의 특허 및 인증 화면에서 사라집니다."
         labelOf={(one) => one.title}
         empty="등록된 특허·인증이 없습니다."
         render={(one) => [

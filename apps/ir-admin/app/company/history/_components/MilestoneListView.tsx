@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Badge, PageHeading } from '@winpilot/ui';
 import { MILESTONES, milestoneDate, sortMilestones } from '@winpilot/store';
@@ -8,8 +9,8 @@ import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const COLUMNS = [
   { label: '때', span: 'lg:col-span-2' },
-  { label: '한 일', span: 'lg:col-span-8' },
-  { label: '상태', span: 'lg:col-span-2 lg:text-right' },
+  { label: '한 일', span: 'lg:col-span-6' },
+  { label: '상태', span: 'lg:col-span-1 lg:text-center' },
 ];
 
 /**
@@ -28,7 +29,8 @@ const COLUMNS = [
  */
 export function MilestoneListView() {
   const router = useRouter();
-  const rows = sortMilestones(MILESTONES);
+  /* 프론트엔드 전용 — 지운 결과는 이 화면에만 남는다. */
+  const [rows, setRows] = useState(sortMilestones(MILESTONES));
   const shown = rows.filter((one) => one.visible).length;
 
   return (
@@ -42,7 +44,8 @@ export function MilestoneListView() {
         columns={COLUMNS}
         rows={rows}
         onOpen={(one) => router.push(`/company/history/${one.id}`)}
-        openLabel="수정"
+        onDelete={(one) => setRows((was) => was.filter((row) => row.id !== one.id))}
+        deleteNote="사이트 연혁에서 사라집니다. B2C 쇼핑몰의 회사 소개에서도 함께 사라집니다."
         labelOf={(one) => one.title}
         empty="등록된 연혁이 없습니다."
         render={(one) => [
@@ -55,7 +58,7 @@ export function MilestoneListView() {
               <span className="block min-w-0 truncate text-xs text-ink-faint">{one.description}</span>
             )}
           </span>,
-          <span key="state" className="flex min-w-0 flex-1 justify-end">
+          <span key="state" className="flex min-w-0 justify-center">
             <Badge tone={one.visible ? 'ok' : 'wait'}>{one.visible ? '노출' : '숨김'}</Badge>
           </span>,
         ]}

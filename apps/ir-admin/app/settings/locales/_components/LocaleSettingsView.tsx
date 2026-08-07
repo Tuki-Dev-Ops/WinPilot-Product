@@ -9,8 +9,8 @@ import { IrField } from '@/app/_components/IrForm';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const COLUMNS = [
-  { label: '자리', span: 'lg:col-span-3' },
-  { label: '국문', span: 'lg:col-span-4' },
+  { label: '자리', span: 'lg:col-span-2' },
+  { label: '국문', span: 'lg:col-span-3' },
   { label: '영문', span: 'lg:col-span-3' },
   { label: '상태', span: 'lg:col-span-1 lg:text-center' },
 ];
@@ -90,7 +90,6 @@ export function LocaleSettingsView() {
         rows={rows.map((one) => ({ ...one, id: one.key }))}
         labelOf={(one) => one.label}
         onOpen={open}
-        openLabel="수정"
         empty="등록된 문구가 없습니다."
         foot={
           <p className={missingEnglish(rows).length > 0 ? 'text-signal-danger' : ''}>

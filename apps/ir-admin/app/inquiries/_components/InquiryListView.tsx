@@ -6,10 +6,10 @@ import { SITE_INQUIRIES } from '@winpilot/store';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const COLUMNS = [
-  { label: '문의', span: 'lg:col-span-5' },
-  { label: '보낸 곳', span: 'lg:col-span-3' },
+  { label: '문의', span: 'lg:col-span-4' },
+  { label: '보낸 곳', span: 'lg:col-span-2' },
   { label: '받은 때', span: 'lg:col-span-2' },
-  { label: '상태', span: 'lg:col-span-2 lg:text-right' },
+  { label: '상태', span: 'lg:col-span-1 lg:text-center' },
 ];
 
 /** 상태마다 다른 톤. 색만으로 알리지 않도록 글자도 함께 바뀐다. */
@@ -39,7 +39,6 @@ export function InquiryListView() {
         columns={COLUMNS}
         rows={SITE_INQUIRIES}
         onOpen={(one) => router.push(`/inquiries/${one.id}`)}
-        openLabel="답변"
         labelOf={(one) => one.message}
         empty="들어온 문의가 없습니다."
         render={(one) => [
@@ -59,7 +58,7 @@ export function InquiryListView() {
           <span key="at" className="min-w-0 truncate font-mono text-xs tabular-nums text-ink-muted">
             {one.receivedAt}
           </span>,
-          <span key="state" className="flex min-w-0 flex-1 justify-end">
+          <span key="state" className="flex min-w-0 justify-center">
             <Badge tone={STATE_TONE[one.state]}>{one.state}</Badge>
           </span>,
         ]}

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Badge, PageHeading } from '@winpilot/ui';
 import { SITE_NOTICES } from '@winpilot/store';
@@ -7,11 +8,11 @@ import { IrCreateLink } from '@/app/_components/IrForm';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const COLUMNS = [
-  { label: '제목', span: 'lg:col-span-5' },
+  { label: '제목', span: 'lg:col-span-4' },
   { label: '갈래', span: 'lg:col-span-1' },
   { label: '올린 날', span: 'lg:col-span-2' },
-  { label: '고정', span: 'lg:col-span-2 lg:text-center' },
-  { label: '상태', span: 'lg:col-span-2 lg:text-right' },
+  { label: '고정', span: 'lg:col-span-1 lg:text-center' },
+  { label: '상태', span: 'lg:col-span-1 lg:text-center' },
 ];
 
 /**
@@ -25,6 +26,8 @@ const COLUMNS = [
  */
 export function NoticeListView() {
   const router = useRouter();
+  /* 프론트엔드 전용 — 지운 결과는 이 화면에만 남는다. */
+  const [rows, setRows] = useState(SITE_NOTICES);
   return (
     <>
       <PageHeading title="공지사항" description="사이트에 서는 공지를 관리하세요." />
@@ -34,9 +37,10 @@ export function NoticeListView() {
         aside={<IrCreateLink href="/contents/notices/new">공지 등록</IrCreateLink>}
         description="고정한 것이 맨 위에 섭니다."
         columns={COLUMNS}
-        rows={SITE_NOTICES}
+        rows={rows}
         onOpen={(one) => router.push(`/contents/notices/${one.id}`)}
-        openLabel="수정"
+        onDelete={(one) => setRows((was) => was.filter((row) => row.id !== one.id))}
+        deleteNote="사이트 공지사항 목록에서 사라집니다. 되돌릴 수 없습니다."
         labelOf={(one) => one.title}
         empty="등록된 공지가 없습니다."
         render={(one) => [
@@ -53,7 +57,7 @@ export function NoticeListView() {
           <span key="pin" className="flex min-w-0 justify-center">
             {one.pinned ? <Badge tone="brand">고정</Badge> : <span className="text-xs text-ink-faint">—</span>}
           </span>,
-          <span key="state" className="flex min-w-0 flex-1 justify-end">
+          <span key="state" className="flex min-w-0 justify-center">
             <Badge tone={one.visible ? 'ok' : 'wait'}>{one.visible ? '노출' : '숨김'}</Badge>
           </span>,
         ]}

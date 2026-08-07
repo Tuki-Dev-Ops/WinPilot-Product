@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Badge, PageHeading } from '@winpilot/ui';
 import { SITE_BANNERS } from '@winpilot/store';
@@ -7,9 +8,9 @@ import { IrCreateLink } from '@/app/_components/IrForm';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const COLUMNS = [
-  { label: '제목', span: 'lg:col-span-5' },
-  { label: '기간', span: 'lg:col-span-5' },
-  { label: '상태', span: 'lg:col-span-2 lg:text-right' },
+  { label: '제목', span: 'lg:col-span-4' },
+  { label: '기간', span: 'lg:col-span-4' },
+  { label: '상태', span: 'lg:col-span-1 lg:text-center' },
 ];
 
 /**
@@ -22,6 +23,8 @@ const COLUMNS = [
  */
 export function HeroBannerListView() {
   const router = useRouter();
+  /* 프론트엔드 전용 — 지운 결과는 이 화면에만 남는다. */
+  const [rows, setRows] = useState(SITE_BANNERS.filter((one) => one.slot === '메인 비주얼'));
   return (
     <>
       <PageHeading title="메인 비주얼" description="첫 화면 위에 기간을 갖고 서는 배너입니다." />
@@ -31,9 +34,10 @@ export function HeroBannerListView() {
         aside={<IrCreateLink href="/banners/new">배너 등록</IrCreateLink>}
         description="기간이 지나면 저절로 내려갑니다."
         columns={COLUMNS}
-        rows={SITE_BANNERS.filter((one) => one.slot === '메인 비주얼')}
+        rows={rows}
         onOpen={(one) => router.push(`/banners/${one.id}`)}
-        openLabel="수정"
+        onDelete={(one) => setRows((was) => was.filter((row) => row.id !== one.id))}
+        deleteNote="첫 화면에서 사라집니다."
         labelOf={(one) => one.title}
         empty="등록된 배너가 없습니다."
         render={(one) => [
@@ -44,7 +48,7 @@ export function HeroBannerListView() {
           <span key="range" className="min-w-0 truncate font-mono text-xs tabular-nums text-ink-muted">
             {`${one.startAt} ~ ${one.endAt}`}
           </span>,
-          <span key="state" className="flex min-w-0 flex-1 justify-end">
+          <span key="state" className="flex min-w-0 justify-center">
             <Badge tone={one.visible ? 'ok' : 'wait'}>{one.visible ? '노출' : '숨김'}</Badge>
           </span>,
         ]}

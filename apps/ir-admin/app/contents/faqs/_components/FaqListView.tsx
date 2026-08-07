@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Badge, PageHeading } from '@winpilot/ui';
 import { SITE_FAQS } from '@winpilot/store';
@@ -7,10 +8,10 @@ import { IrCreateLink } from '@/app/_components/IrForm';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const COLUMNS = [
-  { label: '갈래', span: 'lg:col-span-2' },
-  { label: '물음', span: 'lg:col-span-4' },
+  { label: '갈래', span: 'lg:col-span-1' },
+  { label: '물음', span: 'lg:col-span-3' },
   { label: '답', span: 'lg:col-span-4' },
-  { label: '상태', span: 'lg:col-span-2 lg:text-right' },
+  { label: '상태', span: 'lg:col-span-1 lg:text-center' },
 ];
 
 /**
@@ -24,6 +25,8 @@ const COLUMNS = [
  */
 export function FaqListView() {
   const router = useRouter();
+  /* 프론트엔드 전용 — 지운 결과는 이 화면에만 남는다. */
+  const [rows, setRows] = useState(SITE_FAQS);
   return (
     <>
       <PageHeading title="FAQ" description="자주 받는 물음과 답을 관리하세요." />
@@ -33,9 +36,10 @@ export function FaqListView() {
         aside={<IrCreateLink href="/contents/faqs/new">FAQ 등록</IrCreateLink>}
         description="갈래가 사이트 FAQ 화면의 왼쪽 줄이 됩니다."
         columns={COLUMNS}
-        rows={SITE_FAQS}
+        rows={rows}
         onOpen={(one) => router.push(`/contents/faqs/${one.id}`)}
-        openLabel="수정"
+        onDelete={(one) => setRows((was) => was.filter((row) => row.id !== one.id))}
+        deleteNote="사이트 FAQ 에서 사라집니다. 잠깐 내리는 것이라면 상태를 숨김으로 두세요."
         labelOf={(one) => one.question}
         empty="등록된 FAQ 가 없습니다."
         render={(one) => [

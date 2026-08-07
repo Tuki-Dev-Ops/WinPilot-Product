@@ -5,7 +5,7 @@ import { VISIT_TREND } from '@winpilot/store';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const COLUMNS = [
-  { label: '달', span: 'lg:col-span-4' },
+  { label: '달', span: 'lg:col-span-3' },
   { label: '방문', span: 'lg:col-span-3 lg:text-right' },
   { label: '문의', span: 'lg:col-span-3 lg:text-right' },
   { label: '문의율', span: 'lg:col-span-2 lg:text-right' },
