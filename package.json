@@ -19,6 +19,7 @@
     "dev:internal": "pnpm --filter @winpilot/internal-admin dev",
     "sync:check": "tsx tools/check-component-sync.ts",
     "docs:check": "tsx tools/check-docs-coverage.ts",
+    "overflow:check": "tsx tools/check-overflow.ts",
     "docs:build": "tsx tools/build-docs.ts",
     "docs:capture": "tsx tools/capture-page-views.ts",
     "docs:capture:admin": "tsx tools/capture-page-views.ts --app=admin",

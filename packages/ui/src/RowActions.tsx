@@ -1,5 +1,6 @@
 'use client';
 
+import { Eye, Pencil, Trash2, type LucideIcon } from 'lucide-react';
 import type { MouseEvent, ReactNode } from 'react';
 
 /**
@@ -13,8 +14,9 @@ import type { MouseEvent, ReactNode } from 'react';
  * 아무 말도 하지 않는다 (`docs/NFS/accessibility/`). `title` 도 함께 두어 마우스를 올린
  * 사람에게도 같은 말이 보이게 한다 — 둘은 읽는 사람이 다르므로 하나로 줄이지 않는다.
  *
- * 아이콘은 **인라인 SVG** 다. 아이콘 폰트나 비트맵은 글리프·그림이라 Figma 에서 벡터로
- * 복원되지 않고, 바깥 CDN 은 배포가 끊기면 화면에서 사라진다.
+ * 아이콘은 **SVG 컴포넌트**(`lucide-react`)다. 아이콘 폰트나 비트맵은 글리프·그림이라 Figma
+ * 에서 벡터로 복원되지 않고, 바깥 CDN 은 배포가 끊기면 화면에서 사라진다 — 라이브러리는 번들에
+ * 함께 들어가므로 그 둘 다 아니다.
  *
  * ## 아이콘으로 바꾸지 않는 것
  * 뜻이 한 번에 읽히는 동작만 아이콘으로 둔다. `연동 설정`·`답변`처럼 그림 하나로 옮기면
@@ -22,44 +24,41 @@ import type { MouseEvent, ReactNode } from 'react';
  */
 export type RowActionIcon = 'view' | 'delete' | 'edit';
 
-const ICONS: Record<RowActionIcon, ReactNode> = {
-  // 눈 — 열어서 본다
-  view: (
-    <>
-      <path d="M1.5 8s2.4-4 6.5-4 6.5 4 6.5 4-2.4 4-6.5 4S1.5 8 1.5 8Z" />
-      <circle cx="8" cy="8" r="1.8" />
-    </>
-  ),
-  // 휴지통 — 지운다
-  delete: (
-    <>
-      <path d="M2.5 4h11" strokeLinecap="round" />
-      <path d="M6.5 4V2.5h3V4" />
-      <path d="M4 4l.7 8.2a1 1 0 0 0 1 .8h4.6a1 1 0 0 0 1-.8L12 4" />
-    </>
-  ),
-  // 연필 — 고친다
-  edit: (
-    <>
-      <path d="M11.2 2.8a1.5 1.5 0 0 1 2 2L6 12H4v-2Z" strokeLinejoin="round" />
-      <path d="M10 4l2 2" strokeLinecap="round" />
-    </>
-  ),
+/** 눈은 **열어서 본다**, 휴지통은 지운다, 연필은 고친다. 셋 다 설명 없이 읽히는 그림이다. */
+const ICONS: Record<RowActionIcon, LucideIcon> = {
+  view: Eye,
+  delete: Trash2,
+  edit: Pencil,
 };
 
 /**
- * 아이콘 단추와 글자 단추가 나눠 갖는 것 — 높이(32px) · 테두리 · 전환 속도.
+ * 아이콘 단추와 글자 단추가 나눠 갖는 것 — 높이(32px) · 테두리 자리 · 전환 속도.
  *
  * 둘이 같은 줄에 나란히 서기 때문에 이 셋이 어긋나면 눈에 바로 띈다. 실제로 어긋나 있었다:
  * 화면 아홉 곳이 `ACTION_BUTTON` 이라는 같은 이름의 상수를 각자 선언해 두고 있었고, 그중
  * 넷은 아이콘 단추로 옮긴 뒤 **쓰이지 않는 채로 남아** 있었다.
+ *
+ * ## 테두리는 자리만 잡고 평소에는 보이지 않는다
+ * 목록 한 화면에 행이 스물이면 **테두리 상자가 마흔 개**가 선다. 눈에 먼저 드는 것이 값이
+ * 아니라 그 상자들이고, 정작 알려야 하는 배지(연체·만료)가 그 사이에 묻힌다.
+ *
+ * 그래서 평소에는 투명한 테두리를 두고 — 자리는 그대로라 마우스를 올려도 글자가 밀리지
+ * 않는다 — **행이나 단추에 마우스가 닿을 때** 드러낸다. 없애지 않고 흐리게만 두는 이유:
+ * 완전히 감추면 터치 화면에서 누를 것이 있는지조차 알 수 없다.
  */
-const SHAPE = 'h-8 shrink-0 rounded-lg border transition-colors duration-150';
+const SHAPE = 'h-8 shrink-0 rounded-lg border border-transparent transition-colors duration-150';
 
-/** 색은 톤이 정한다. 테두리 색이 같고 글자 색만 갈리는 이유는 아래 `RowTextButton` 주석에 있다. */
+/**
+ * 색은 톤이 정한다. 테두리 색이 같고 글자 색만 갈리는 이유는 아래 `RowTextButton` 주석에 있다.
+ *
+ * `group-hover:` 는 **행 전체**에 마우스가 닿을 때다(목록 행이 `group` 을 갖는다). 단추에 직접
+ * 닿기 전에 먼저 드러나야, 어디를 눌러야 하는지 찾는 시간이 없다.
+ */
 const TONE_CLASS = {
-  default: 'border-border-strong text-ink-muted hover:border-ink-faint',
-  danger: 'border-border-strong text-signal-danger hover:border-signal-danger',
+  default:
+    'text-ink-muted group-hover:border-border-strong hover:!border-ink-faint focus-visible:border-ink-faint',
+  danger:
+    'text-signal-danger group-hover:border-border-strong hover:!border-signal-danger focus-visible:border-signal-danger',
 } as const;
 
 export type RowActionTone = keyof typeof TONE_CLASS;
@@ -74,6 +73,8 @@ export type RowIconButtonProps = {
 };
 
 export function RowIconButton({ icon, label, tone = 'default', onClick }: RowIconButtonProps) {
+  const Icon = ICONS[icon];
+
   return (
     <button
       type="button"
@@ -82,17 +83,7 @@ export function RowIconButton({ icon, label, tone = 'default', onClick }: RowIco
       onClick={onClick}
       className={`${SHAPE} grid size-8 place-items-center ${TONE_CLASS[tone]}`}
     >
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 16 16"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        aria-hidden="true"
-      >
-        {ICONS[icon]}
-      </svg>
+      <Icon aria-hidden className="size-4" strokeWidth={1.5} />
     </button>
   );
 }
@@ -115,6 +106,8 @@ export type RowTextButtonProps = {
  * **테두리는 톤과 무관하게 회색이다.** 삭제 단추까지 붉은 테두리를 두르면 행마다 붉은 상자가
  * 하나씩 서서 정작 위험한 상태(연체·만료)를 알리는 배지가 묻힌다. 글자만 붉게 두고, 마우스를
  * 올렸을 때 테두리가 따라 붉어진다 — 누르기 직전에 한 번 더 알리는 셈이다.
+ *
+ * 그 테두리조차 **행에 마우스가 닿기 전에는 투명하다**(`SHAPE` 머리말).
  *
  * `whitespace-nowrap` 을 여기서 건다. `조회` 두 자는 안 접히지만 `연동 설정` 은 좁은 폭에서
  * 접힌다 — 접히는 것만 골라 붙이면 붙이는 것을 잊은 자리가 생긴다.

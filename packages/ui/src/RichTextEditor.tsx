@@ -1,5 +1,6 @@
 'use client';
 
+import { Image, Link } from 'lucide-react';
 import { useEffect, useRef, useState, type ChangeEvent, type ClipboardEvent } from 'react';
 
 export type RichTextEditorProps = {
@@ -32,21 +33,13 @@ const EDITOR_STYLE = [
 
 function ImageIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-      <rect x="2" y="3" width="12" height="10" rx="1.5" />
-      <circle cx="5.75" cy="6.25" r="1" />
-      <path d="M2.5 11.5 L6 8.5 L8.5 10.5 L10.75 8.75 L13.5 11" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
+    <Image aria-hidden className="size-4" strokeWidth={1.5} />
   );
 }
 
 function LinkIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4">
-      <path d="M6.5 9.5 L9.5 6.5" strokeLinecap="round" />
-      <path d="M7.25 4.75 L9 3 a2.5 2.5 0 0 1 3.5 3.5 L10.75 8.25" strokeLinecap="round" />
-      <path d="M8.75 11.25 L7 13 a2.5 2.5 0 0 1 -3.5 -3.5 L5.25 7.75" strokeLinecap="round" />
-    </svg>
+    <Link aria-hidden className="size-4" strokeWidth={1.5} />
   );
 }
 

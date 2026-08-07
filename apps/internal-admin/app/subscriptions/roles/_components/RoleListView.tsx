@@ -145,7 +145,7 @@ export function RoleListView() {
                       open(role.id);
                     }
                   }}
-                  className="grid cursor-pointer grid-cols-1 gap-x-4 gap-y-2 border-b border-border px-5 py-4 text-left transition-colors duration-150 last:border-b-0 hover:bg-surface focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-500 lg:grid-cols-12 lg:items-center lg:gap-y-0"
+                  className="group grid cursor-pointer grid-cols-1 gap-x-4 gap-y-2 border-b border-border px-5 py-4 text-left transition-colors duration-150 last:border-b-0 hover:bg-surface focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-500 lg:grid-cols-12 lg:items-center lg:gap-y-0"
                 >
                   {/* 체크박스와 아래 `조회` 는 자기 안에서 클릭을 끊는다 — 고를 때마다 화면이 넘어가지 않는다. */}
                   <RowSelectCell

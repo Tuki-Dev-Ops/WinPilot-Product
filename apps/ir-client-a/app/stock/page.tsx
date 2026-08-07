@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { IR_COMPANY, STOCK } from '@winpilot/store';
 import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IR_ROUTES } from '@/lib/navigation';
+import { IrSubNav } from '@/app/_components/IrSubNav';
 import { IrTable } from '@/app/_components/IrTable';
 
 /**
@@ -18,6 +20,8 @@ export default function IrStockDetailPage() {
         title="주가 정보"
         description={`${IR_COMPANY.market} ${IR_COMPANY.ticker} · 지연 시세이며 실시간과 다를 수 있습니다.`}
       />
+
+      <IrSubNav current={IR_ROUTES.stock} />
 
       <section className="flex flex-wrap items-baseline gap-x-10 gap-y-4 rounded-xl border border-border px-6 py-6">
         <div>

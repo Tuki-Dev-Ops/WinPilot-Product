@@ -102,7 +102,7 @@ export default function InternalDocsOverviewPage() {
           {pages.map((page) => (
             <div
               key={page.id}
-              className="grid grid-cols-12 gap-4 border-b border-border px-5 py-3 text-sm last:border-b-0 hover:bg-surface"
+              className="group grid grid-cols-12 gap-4 border-b border-border px-5 py-3 text-sm last:border-b-0 hover:bg-surface"
             >
               <span className="col-span-1 font-mono text-xs tabular-nums text-ink-faint">{page.order}</span>
               <span className="col-span-4 min-w-0 truncate">{page.name}</span>

@@ -1,5 +1,6 @@
 'use client';
 
+import { Upload } from 'lucide-react';
 import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'react';
 import { useToast } from './Toast';
 import {
@@ -29,10 +30,7 @@ export type ImageUploaderProps = {
 
 function UploadIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M10 13.5 V4.5 M6.5 8 L10 4.5 L13.5 8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M3.5 13 v2 a1.5 1.5 0 0 0 1.5 1.5 h10 a1.5 1.5 0 0 0 1.5 -1.5 v-2" strokeLinecap="round" />
-    </svg>
+    <Upload aria-hidden className="size-5" strokeWidth={1.5} />
   );
 }
 

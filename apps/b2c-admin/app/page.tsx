@@ -117,7 +117,7 @@ export default function AdminSiteDashboardPage() {
                 <a
                   key={order.id}
                   href={`/products/sales/${order.id}`}
-                  className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border px-5 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface"
+                  className="group flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border px-5 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface"
                 >
                   <span className="shrink-0 font-mono text-sm text-ink-muted">{order.id}</span>
                   <span className="min-w-0 flex-1 truncate text-sm font-medium">

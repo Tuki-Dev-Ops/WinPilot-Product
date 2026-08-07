@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { IR_COMPANY } from '@winpilot/store';
 import { OFFICERS, SHAREHOLDERS } from '@winpilot/store';
 import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IR_ROUTES } from '@/lib/navigation';
+import { IrSubNav } from '@/app/_components/IrSubNav';
 import { IrTable } from '@/app/_components/IrTable';
 
 /**
@@ -16,6 +18,8 @@ export default function IrGovernanceListPage() {
   return (
     <IrSiteShell>
       <IrPageTitle title="지배구조" description="이사회 구성과 주주 현황입니다." />
+
+      <IrSubNav current={IR_ROUTES.governance} />
 
       <IrTable
         columns={[{ label: '이름' }, { label: '직위' }, { label: '구분' }, { label: '주요 경력' }]}

@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { IR_COMPANY } from '@winpilot/store';
 import { DIVIDENDS } from '@winpilot/store';
 import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IR_ROUTES } from '@/lib/navigation';
+import { IrSubNav } from '@/app/_components/IrSubNav';
 import { IrTable } from '@/app/_components/IrTable';
 
 /**
@@ -16,6 +18,8 @@ export default function IrDividendListPage() {
   return (
     <IrSiteShell>
       <IrPageTitle title="배당 정보" description="기준일까지 보유하신 주주에게 지급됩니다." />
+
+      <IrSubNav current={IR_ROUTES.dividends} />
 
       <IrTable
         columns={[{ label: '사업연도' }, { label: '주당 배당금', align: 'right' }, { label: '배당성향', align: 'right' }, { label: '시가배당률', align: 'right' }, { label: '기준일' }, { label: '지급일' }]}

@@ -19,6 +19,11 @@ export type PlanMatrixProps = {
 
 /** 켜짐/꺼짐을 색만으로 알리지 않는다 — 아이콘 옆에 낭독기가 읽는 말을 둔다. */
 function Cell({ on }: { on: boolean }) {
+/*
+    `min-w-0` 이 함께 있어야 한다. 아래 상자는 세로 `flex` 안에 들어가는데, flex 자식의 최소
+    폭은 기본이 `auto` — **안에 든 것보다 좁아지지 않는다.** 그래서 `overflow-x-auto` 를 주어도
+    상자 자체가 `min-w-160` 만큼 벌어져, 스크롤 막대 대신 **페이지가 통째로 밀린다.**
+  */
   return (
     <span className="flex items-center justify-center">
       {on ? (
@@ -66,7 +71,7 @@ export function PlanMatrix({ plans, features, groups }: PlanMatrixProps) {
   const surfaces: FeatureSurface[] = ['어드민', '웹페이지'];
 
   return (
-    <div className="overflow-x-auto">
+    <div className="min-w-0 overflow-x-auto">
       <div className="min-w-160">
         {/* 머리줄 — 플랜 이름과 요금. 스크롤해도 무엇을 보는지 알아야 한다. */}
         <div className={`grid ${cols} items-end gap-x-2 border-b border-border px-6 py-4`}>

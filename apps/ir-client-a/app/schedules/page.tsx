@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { IR_COMPANY } from '@winpilot/store';
 import { upcomingSchedules } from '@winpilot/store';
 import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IR_ROUTES } from '@/lib/navigation';
+import { IrSubNav } from '@/app/_components/IrSubNav';
 import { IrTable } from '@/app/_components/IrTable';
 
 /**
@@ -16,6 +18,8 @@ export default function IrScheduleListPage() {
   return (
     <IrSiteShell>
       <IrPageTitle title="IR 일정" description="앞으로 예정된 일정입니다. 지난 일정은 표시하지 않습니다." />
+
+      <IrSubNav current={IR_ROUTES.schedules} />
 
       <IrTable
         columns={[{ label: '일자' }, { label: '구분' }, { label: '일정' }, { label: '메모' }]}

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Badge } from '@winpilot/ui';
 import { IR_COMPANY, MEETINGS } from '@winpilot/store';
 import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrSubNav } from '@/app/_components/IrSubNav';
 import { IR_ROUTES } from '@/lib/navigation';
 
 /**
@@ -16,6 +17,8 @@ export default function IrMeetingListPage() {
   return (
     <IrSiteShell>
       <IrPageTitle title="주주총회" description="소집 공고와 안건입니다." />
+
+      <IrSubNav current={IR_ROUTES.meetings} />
 
       <div className="flex flex-col gap-4">
         {MEETINGS.map((one) => (

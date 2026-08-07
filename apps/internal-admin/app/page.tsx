@@ -88,7 +88,7 @@ export default function InternalTenantDashboardPage() {
                 <a
                   key={tenant.id}
                   href={`/tenants/${tenant.id}`}
-                  className="flex items-center justify-between gap-4 border-b border-border px-6 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface"
+                  className="group flex items-center justify-between gap-4 border-b border-border px-6 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface"
                 >
                   <div className="min-w-0">
                     <p className="min-w-0 truncate text-sm font-medium">{tenant.name}</p>
@@ -119,7 +119,7 @@ export default function InternalTenantDashboardPage() {
                 <a
                   key={invoice.id}
                   href="/billing/overdue"
-                  className="flex items-center justify-between gap-4 border-b border-border px-6 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface"
+                  className="group flex items-center justify-between gap-4 border-b border-border px-6 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface"
                 >
                   <div className="min-w-0">
                     <p className="min-w-0 truncate text-sm font-medium">{findTenant(invoice.tenantId)?.name ?? '-'}</p>
@@ -150,7 +150,7 @@ export default function InternalTenantDashboardPage() {
                 <a
                   key={inquiry.id}
                   href="/inquiries"
-                  className="flex items-center justify-between gap-4 border-b border-border px-6 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface"
+                  className="group flex items-center justify-between gap-4 border-b border-border px-6 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface"
                 >
                   <div className="min-w-0">
                     <p className="min-w-0 truncate text-sm font-medium">

@@ -170,7 +170,7 @@ export function InquiryListView() {
                         setOpened(inquiry.id);
                       }
                     }}
-                    className="grid w-full cursor-pointer grid-cols-1 gap-x-4 gap-y-2 px-5 py-4 text-left transition-colors duration-150 hover:bg-surface focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-500 lg:grid-cols-12 lg:items-center lg:gap-y-0"
+                    className="group grid w-full cursor-pointer grid-cols-1 gap-x-4 gap-y-2 px-5 py-4 text-left transition-colors duration-150 hover:bg-surface focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-500 lg:grid-cols-12 lg:items-center lg:gap-y-0"
                   >
                     <RowSelectCell
                       checked={selectedIds.includes(inquiry.id)}

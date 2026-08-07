@@ -283,7 +283,7 @@ export function StaffListView() {
               <div
                 key={member.id}
                 onClick={() => openDetail(member.id)}
-                className="grid cursor-pointer grid-cols-1 gap-x-4 gap-y-2 border-b border-border px-5 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface lg:grid-cols-12 lg:items-center lg:gap-y-0"
+                className="group grid cursor-pointer grid-cols-1 gap-x-4 gap-y-2 border-b border-border px-5 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface lg:grid-cols-12 lg:items-center lg:gap-y-0"
               >
                 <RowSelectCell
                   checked={selectedIds.includes(member.id)}

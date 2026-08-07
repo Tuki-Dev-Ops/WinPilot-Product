@@ -19,8 +19,6 @@
 export type SiteNavChild = {
   href: string;
   label: string;
-  /** 이름만으로 무엇인지 모를 때 붙이는 한 줄. 이름이 이미 다 말하면 두지 않는다 */
-  desc?: string;
   /** 화면이 있는가. 없으면 링크를 걸지 않고 `준비중` 으로 적는다 */
   ready?: boolean;
 };
@@ -28,9 +26,8 @@ export type SiteNavChild = {
 /**
  * 펼침 안의 한 칸.
  *
- * 항목을 묶음으로 나누는 이유: SOLUTION 아래에 여섯이 한 줄로 서면 **컨설팅과 Cloud MES 가
- * 같은 종류로** 보인다. 하나는 사람이 하는 일이고 하나는 파는 물건이다. 묶어 두면 그 차이가
- * 제목 한 줄로 드러난다.
+ * 항목을 묶음으로 나누는 이유: 한 갈래 아래에 여섯이 한 줄로 서면 **성격이 다른 것이 같은
+ * 종류로** 보인다. 묶어 두면 그 차이가 제목 한 줄로 드러난다.
  */
 export type SiteNavGroup = {
   title: string;
@@ -45,6 +42,19 @@ export type SiteNavItem = {
   groups: SiteNavGroup[];
 };
 
+/**
+ * 갈래 넷과 그 아래 항목.
+ *
+ * ## 항목에 설명을 달지 않는다
+ * 한때 항목마다 한 줄 설명을 붙여 두었다(`Cloud MES — 설비 데이터 표준화·실시간 추적`).
+ * 그러면 펼침이 **읽는 화면**이 되어, 고르러 온 사람이 여섯 문장을 지나야 자기 자리를 찾는다.
+ * 메뉴에서 필요한 것은 이름뿐이고, 설명은 눌러서 들어간 화면이 한다.
+ *
+ * ## 파는 것은 PRODUCT 에 있다
+ * Cloud MES·ERP·CRM·DXP 는 **제품**이다. 한때 SOLUTION 아래에 두었는데, 그러면 PRODUCT 갈래가
+ * 비고 SOLUTION 이 둘로 갈린다(사람이 하는 일 + 파는 물건). 지금은 갈라 두었다 —
+ * SOLUTION 은 사람이 붙어서 하는 일, PRODUCT 는 계약하면 그날부터 쓰는 것.
+ */
 export const SITE_NAV: readonly SiteNavItem[] = [
   {
     label: 'ABOUT',
@@ -53,40 +63,23 @@ export const SITE_NAV: readonly SiteNavItem[] = [
       {
         title: '회사',
         children: [
-          { href: '/about', label: '회사 소개', desc: '무엇을 하는 회사인가', ready: true },
-          { href: '/about/history', label: '연혁', desc: '지나온 자리', ready: true },
-          { href: '/about/certifications', label: '특허 및 인증', desc: '가지고 있는 것', ready: true },
+          { href: '/about', label: '회사 소개', ready: true },
+          { href: '/about/history', label: '연혁', ready: true },
+          { href: '/about/certifications', label: '특허 및 인증', ready: true },
         ],
       },
     ],
   },
   {
     label: 'SOLUTION',
-    href: '/solutions/erp',
+    href: '/support/contact',
     groups: [
       {
         title: '서비스',
         children: [
-          {
-            href: '/support/contact',
-            label: '스마트 컨설팅',
-            desc: '현장 진단부터 도입 순서까지',
-            ready: true,
-          },
-          /*
-            인프라와 DXP 는 아직 자기 화면이 없어 제품 소개로 보낸다. `준비중` 으로 두지 않는
-            이유: 파는 것을 준비 중이라고 적으면 팔지 않는 것으로 읽힌다.
-          */
-          { href: '/products', label: '인프라 서비스', desc: '서버·네트워크·백업 운영 대행', ready: true },
-        ],
-      },
-      {
-        title: '클라우드 솔루션',
-        children: [
-          { href: '/solutions/mes', label: 'Cloud MES', desc: '설비 데이터 표준화·실시간 추적', ready: true },
-          { href: '/solutions/erp', label: 'Cloud ERP', desc: '수주에서 정산까지 하나의 흐름', ready: true },
-          { href: '/solutions/crm', label: 'Cloud CRM', desc: '문의부터 유지보수까지 한 줄 기록', ready: true },
-          { href: '/products', label: 'Cloud DXP', desc: '코드 없이 화면을 만드는 로우코드 빌더', ready: true },
+          { href: '/support/contact', label: '스마트 컨설팅', ready: true },
+          /* 인프라는 아직 자기 화면이 없어 제품 소개로 보낸다. */
+          { href: '/products', label: '인프라 서비스', ready: true },
         ],
       },
     ],
@@ -96,8 +89,18 @@ export const SITE_NAV: readonly SiteNavItem[] = [
     href: '/products',
     groups: [
       {
-        title: '제품',
-        children: [{ href: '/products', label: '제품명', desc: '규격과 도입 사례', ready: true }],
+        title: '클라우드 제품',
+        children: [
+          { href: '/solutions/mes', label: 'Cloud MES', ready: true },
+          { href: '/solutions/erp', label: 'Cloud ERP', ready: true },
+          { href: '/solutions/crm', label: 'Cloud CRM', ready: true },
+          /* `/solutions/dxp` 는 아직 없다. 없는 길로 보내면 눌러 본 사람이 404 를 만난다. */
+          { href: '/products', label: 'Cloud DXP', ready: true },
+        ],
+      },
+      {
+        title: '전체',
+        children: [{ href: '/products', label: '제품 한눈에 보기', ready: true }],
       },
     ],
   },
@@ -108,9 +111,9 @@ export const SITE_NAV: readonly SiteNavItem[] = [
       {
         title: '고객지원',
         children: [
-          { href: '/support/contact', label: '문의하기', desc: '도입·견적 상담', ready: true },
-          { href: '/support/faq', label: 'FAQ', desc: '자주 묻는 것', ready: true },
-          { href: '/support/directions', label: '오시는 길', desc: '찾아오는 방법', ready: true },
+          { href: '/support/contact', label: '문의하기', ready: true },
+          { href: '/support/faq', label: 'FAQ', ready: true },
+          { href: '/support/directions', label: '오시는 길', ready: true },
         ],
       },
     ],

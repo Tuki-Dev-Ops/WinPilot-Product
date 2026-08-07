@@ -200,7 +200,7 @@ export function PipelineBoardView() {
                             setOpened(deal.id);
                           }
                         }}
-                        className="flex cursor-pointer flex-col gap-2 rounded-lg border border-border px-3 py-3 text-left transition-colors duration-150 hover:bg-surface focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-500"
+                        className="group flex cursor-pointer flex-col gap-2 rounded-lg border border-border px-3 py-3 text-left transition-colors duration-150 hover:bg-surface focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-500"
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">

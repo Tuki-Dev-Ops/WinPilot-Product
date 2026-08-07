@@ -37,7 +37,12 @@ function Cell({ role, resource }: { role: RoleTemplate; resource: PermissionReso
   const on = resource.actions.filter((action) => hasPermission(role, resource.key, action));
 
   if (on.length === 0) {
-    return (
+  /*
+    `min-w-0` 이 함께 있어야 한다. 아래 상자는 세로 `flex` 안에 들어가는데, flex 자식의 최소
+    폭은 기본이 `auto` — **안에 든 것보다 좁아지지 않는다.** 그래서 `overflow-x-auto` 를 주어도
+    상자 자체가 `min-w-180` 만큼 벌어져, 스크롤 막대 대신 **페이지가 통째로 밀린다.**
+  */
+  return (
       <span className="flex items-center justify-center">
         <span aria-hidden className="text-ink-faint">
           —
@@ -83,7 +88,7 @@ export function PermissionMatrix({ roles, resources, groups }: PermissionMatrixP
   const cols = GRID[roles.length] ?? GRID[4];
 
   return (
-    <div className="overflow-x-auto">
+    <div className="min-w-0 overflow-x-auto">
       <div className="min-w-180">
         <div className={`grid ${cols} items-end gap-x-2 border-b border-border px-6 py-4`}>
           <span className="text-xs uppercase tracking-widest text-ink-faint">자원</span>

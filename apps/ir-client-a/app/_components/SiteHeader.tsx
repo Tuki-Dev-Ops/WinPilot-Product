@@ -13,8 +13,8 @@ import { SITE_NAV, type SiteNavChild, type SiteNavItem } from '@/lib/navigation'
  * 되면서 **긴 목록 하나**가 되었고, 그러면 컨설팅과 Cloud MES 가 같은 종류로 보인다. 하나는
  * 사람이 하는 일이고 하나는 파는 물건이다.
  *
- * 판을 화면 폭으로 넓히면 묶음을 **칸으로 나눠** 세울 수 있고, 항목마다 한 줄 설명을 붙일
- * 자리도 생긴다 — 이름만 늘어놓으면 `DXP` 같은 줄임말 앞에서 아무도 누르지 못한다.
+ * 판을 화면 폭으로 넓히면 묶음을 **칸으로 나눠** 세울 수 있다 — `서비스` 와 `클라우드 제품`이
+ * 각각 제 칸에 서면, 사람이 하는 일과 파는 물건이 한 줄에 섞이지 않는다.
  *
  * ## 뒤는 어둡게 덮지 않는다
  * 한때 판 아래를 검은 막으로 덮었다. 그런데 판 자체가 검고 화면 폭을 다 쓰므로 **어디까지가
@@ -137,7 +137,7 @@ function MegaPanel({ item, onClose }: { item: SiteNavItem; onClose: () => void }
           {item.groups.map((group) => (
             <div key={group.title} className="flex flex-col gap-4">
               <p className="text-xs font-medium tracking-wide text-white/40">{group.title}</p>
-              <ul className="flex flex-col gap-4">
+              <ul className="flex flex-col gap-3">
                 {group.children.map((child) => (
                   <li key={child.href + child.label}>
                     <PanelItem child={child} />
@@ -152,29 +152,23 @@ function MegaPanel({ item, onClose }: { item: SiteNavItem; onClose: () => void }
   );
 }
 
+/** 펼침 안의 한 줄. **이름만** 둔다 — 설명을 달면 펼침이 읽는 화면이 된다(`navigation.ts` 머리말). */
 function PanelItem({ child }: { child: SiteNavChild }) {
   if (!child.ready) {
     return (
-      <span className="flex flex-col gap-1">
-        <span className="flex items-center gap-2 text-sm font-semibold text-white/35">
-          {child.label}
-          <span className="shrink-0 rounded-full bg-white/10 px-2 py-0.5 text-3xs">준비중</span>
-        </span>
-        {child.desc && <span className="text-xs text-white/25">{child.desc}</span>}
+      <span className="flex items-center gap-2 text-sm font-semibold text-white/35">
+        {child.label}
+        <span className="shrink-0 rounded-full bg-white/10 px-2 py-0.5 text-3xs">준비중</span>
       </span>
     );
   }
 
   return (
-    <a href={child.href} className="group flex flex-col gap-1">
-      <span className="text-sm font-semibold text-white/85 transition-colors duration-150 group-hover:text-white">
-        {child.label}
-      </span>
-      {child.desc && (
-        <span className="text-xs leading-relaxed text-white/45 transition-colors duration-150 group-hover:text-white/70">
-          {child.desc}
-        </span>
-      )}
+    <a
+      href={child.href}
+      className="block text-sm font-semibold text-white/85 transition-colors duration-150 hover:text-white"
+    >
+      {child.label}
     </a>
   );
 }

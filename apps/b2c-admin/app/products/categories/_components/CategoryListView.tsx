@@ -233,19 +233,22 @@ export function CategoryListView() {
 
       <div className="flex flex-col gap-6 lg:flex-row">
         {/*
-          1Depth — 클릭하면 오른쪽에 그 하위가 펼쳐진다.
+          1Depth — 누르면 오른쪽에 그 하위가 펼쳐진다.
 
-          한 줄에 **여섯 칸**이 든다: 체크·순번 · 이름과 코드 · 상품 수 · 상태 · 관리 단추 둘.
-          28rem 에서는 이름이 서너 글자만 지나면 잘렸고, 코드(`C-01 · 하위 3`)가 그 아래로
-          접혀 두 줄이 되었다. 32rem(넓은 화면 40rem)이면 이름이 온전히 서고 관리 단추가
-          가운데에 남는다.
+          ## 열두 칸 격자를 걷어냈다
+          전에는 두 판이 각각 `순번 · 이름 · 상품 · 상태 · 관리` 다섯 열짜리 표였다. 그런데 이
+          화면은 **표 둘을 나란히 놓은 화면**이고, 열이 다섯이면 판 하나가 32rem 을 넘게 먹는다.
+          이름이 잘리거나 코드가 아래로 접혔고, 무엇보다 **왼쪽에서 고르고 오른쪽에서 본다**는
+          이 화면의 뼈대가 열에 파묻혔다.
 
-          오른쪽 2Depth 는 `flex-1` 이라 여기서 가져간 만큼 줄어든다 — 그쪽은 칸이 적어
-          좁아져도 잘리는 것이 없다.
+          지금은 한 줄에 하나씩만 선다 — 이름과 코드가 한 덩어리, 오른쪽 끝에 상품 수와 상태.
+          고르는 일이 먼저인 목록에서 필요한 것은 그것뿐이고, 나머지는 눌러서 연 상세에 있다.
+
+          두 판을 반씩 나눈 것도 그래서다(`lg:w-1/2`). 한쪽이 넓을 이유가 없어졌다.
         */}
         <section
           data-ssot-cid="b2c-admin/category.list#AdminCategoryRootPanel"
-          className="w-full shrink-0 overflow-hidden rounded-xl border border-border bg-canvas lg:w-128 xl:w-160"
+          className="w-full overflow-hidden rounded-xl border border-border bg-canvas lg:w-1/2"
         >
           <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
             <h2 className="text-sm font-semibold">1Depth · 대분류</h2>
@@ -262,17 +265,18 @@ export function CategoryListView() {
             <p className="px-5 py-12 text-center text-sm text-ink-muted">조건에 맞는 대분류가 없습니다.</p>
           ) : (
             <>
-              {/* 열 구성은 2Depth 와 같아야 한다 — 같은 목록인데 열이 다르면 읽는 법을 두 번 배워야 한다. */}
-              <div className="hidden gap-4 border-b border-border px-5 py-3 text-xs text-ink-faint lg:grid lg:grid-cols-12 lg:items-center">
+              {/*
+                머리 줄에는 **전체 선택과 이름만** 남는다. 오른쪽에 서는 상품 수·상태는 값 자체가
+                무엇인지 말하므로(숫자, `노출`/`숨김`) 머리글이 없어도 읽힌다 — 열이 다섯일 때는
+                자리를 맞추려고 필요했지만, 한 줄에 하나씩 서는 지금은 줄만 늘린다.
+              */}
+              <div className="flex items-center gap-3 border-b border-border px-5 py-3 text-xs text-ink-faint">
                 <SelectAllCell
                   checked={visibleRoots.length > 0 && pickedRoots.length === visibleRoots.length}
                   indeterminate={pickedRoots.length > 0}
                   onChange={(checked) => setPickedRoots(checked ? visibleRoots.map((one) => one.id) : [])}
                 />
-                <span className="lg:col-span-4">카테고리명</span>
-                <span className="lg:col-span-2">상품</span>
-                <span className="lg:col-span-2 lg:text-center">상태</span>
-                <span className="lg:col-span-3 lg:text-center">관리</span>
+                <span>카테고리명</span>
               </div>
 
               <div className="flex flex-col">
@@ -282,7 +286,7 @@ export function CategoryListView() {
                     <div
                       key={root.id}
                       onClick={() => setSelectedRootId(root.id)}
-                      className={`grid cursor-pointer grid-cols-1 gap-x-4 gap-y-2 border-b border-border px-5 py-4 transition-colors duration-100 last:border-b-0 lg:grid-cols-12 lg:items-center lg:gap-y-0 ${
+                      className={`group flex cursor-pointer items-center gap-3 border-b border-border px-5 py-3.5 transition-colors duration-100 last:border-b-0 ${
                         active ? 'bg-brand-50 dark:bg-brand-900' : 'hover:bg-surface'
                       }`}
                     >
@@ -297,42 +301,33 @@ export function CategoryListView() {
                         index={index}
                       />
 
-                      <div className="min-w-0 lg:col-span-4">
+                      {/* 이름이 먼저, 코드와 하위 수가 그 아래 한 줄. 둘은 같은 것에 딸린 값이라 붙여 둔다. */}
+                      <div className="min-w-0 flex-1">
                         <p
                           className={`truncate text-sm font-medium ${active ? 'text-brand-700 dark:text-brand-200' : ''}`}
                         >
                           {root.name}
                         </p>
-                        <p className="font-mono text-xs text-ink-faint">
-                          {root.id} · 하위 {childrenOf(root.id).length}
+                        <p className="truncate font-mono text-xs text-ink-faint">
+                          {root.id} · 하위 {childrenOf(root.id).length} · 상품 {root.productCount}
                         </p>
                       </div>
 
-                      <div className="flex items-baseline gap-2 lg:col-span-2">
-                        <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">상품</span>
-                        <span className="text-sm tabular-nums text-ink-muted">{root.productCount}</span>
-                      </div>
+                      <AdminVisibilityBadge visible={root.visible} />
 
-                      <div className="flex items-center gap-2 lg:col-span-2 lg:justify-center">
-                        <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">상태</span>
-                        <AdminVisibilityBadge visible={root.visible} />
-                      </div>
-
-                      <div className="lg:col-span-3">
-                        <RowActions>
-                          <RowIconButton
-                            icon="view"
-                            label={`${root.name} 상세`}
-                            onClick={() => setForm({ mode: 'edit', depth: 1, record: root, parentId: '' })}
-                          />
-                          <RowIconButton
-                            icon="delete"
-                            tone="danger"
-                            label={`${root.name} 삭제`}
-                            onClick={() => setPendingDelete(root)}
-                          />
-                        </RowActions>
-                      </div>
+                      <RowActions>
+                        <RowIconButton
+                          icon="view"
+                          label={`${root.name} 상세`}
+                          onClick={() => setForm({ mode: 'edit', depth: 1, record: root, parentId: '' })}
+                        />
+                        <RowIconButton
+                          icon="delete"
+                          tone="danger"
+                          label={`${root.name} 삭제`}
+                          onClick={() => setPendingDelete(root)}
+                        />
+                      </RowActions>
                     </div>
                   );
                 })}
@@ -344,7 +339,7 @@ export function CategoryListView() {
         {/* 2Depth — 왼쪽에서 고른 대분류의 세부 분류 */}
         <section
           data-ssot-cid="b2c-admin/category.list#AdminCategoryChildPanel"
-          className="min-w-0 flex-1 overflow-hidden rounded-xl border border-border bg-canvas"
+          className="min-w-0 flex-1 overflow-hidden rounded-xl border border-border bg-canvas lg:w-1/2"
         >
           <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
             <h2 className="min-w-0 truncate text-sm font-semibold">
@@ -371,16 +366,14 @@ export function CategoryListView() {
             </p>
           ) : (
             <>
-              <div className="hidden gap-4 border-b border-border px-5 py-3 text-xs text-ink-faint lg:grid lg:grid-cols-12 lg:items-center">
+              {/* 1Depth 와 같은 모양이다 — 같은 목록인데 줄 모양이 다르면 읽는 법을 두 번 배워야 한다. */}
+              <div className="flex items-center gap-3 border-b border-border px-5 py-3 text-xs text-ink-faint">
                 <SelectAllCell
                   checked={visibleChildren.length > 0 && pickedChildren.length === visibleChildren.length}
                   indeterminate={pickedChildren.length > 0}
                   onChange={(checked) => setPickedChildren(checked ? visibleChildren.map((one) => one.id) : [])}
                 />
-                <span className="lg:col-span-4">카테고리명</span>
-                <span className="lg:col-span-2">상품</span>
-                <span className="lg:col-span-2 lg:text-center">상태</span>
-                <span className="lg:col-span-3 lg:text-center">관리</span>
+                <span>카테고리명</span>
               </div>
 
               <div className="flex flex-col">
@@ -388,7 +381,7 @@ export function CategoryListView() {
                   <div
                     key={child.id}
                     onClick={() => setForm({ mode: 'edit', depth: 2, record: child, parentId: selectedRoot.id })}
-                    className="grid cursor-pointer grid-cols-1 gap-x-4 gap-y-2 border-b border-border px-5 py-4 transition-colors duration-100 last:border-b-0 hover:bg-surface lg:grid-cols-12 lg:items-center lg:gap-y-0"
+                    className="group flex cursor-pointer items-center gap-3 border-b border-border px-5 py-3.5 transition-colors duration-100 last:border-b-0 hover:bg-surface"
                   >
                     <RowSelectCell
                       checked={pickedChildren.includes(child.id)}
@@ -401,36 +394,28 @@ export function CategoryListView() {
                       index={index}
                     />
 
-                    <div className="lg:col-span-4">
-                      <p className="text-sm font-medium">{child.name}</p>
-                      <p className="font-mono text-xs text-ink-faint">{child.id}</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium">{child.name}</p>
+                      <p className="truncate font-mono text-xs text-ink-faint">
+                        {child.id} · 상품 {child.productCount}
+                      </p>
                     </div>
 
-                    <div className="flex items-baseline gap-2 lg:col-span-2">
-                      <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">상품</span>
-                      <span className="text-sm tabular-nums text-ink-muted">{child.productCount}</span>
-                    </div>
+                    <AdminVisibilityBadge visible={child.visible} />
 
-                    <div className="flex items-center gap-2 lg:col-span-2 lg:justify-center">
-                      <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">상태</span>
-                      <AdminVisibilityBadge visible={child.visible} />
-                    </div>
-
-                    <div className="lg:col-span-3">
-                      <RowActions>
-                        <RowIconButton
-                          icon="view"
-                          label={`${child.name} 상세`}
-                          onClick={() => setForm({ mode: 'edit', depth: 2, record: child, parentId: selectedRoot.id })}
-                        />
-                        <RowIconButton
-                          icon="delete"
-                          tone="danger"
-                          label={`${child.name} 삭제`}
-                          onClick={() => setPendingDelete(child)}
-                        />
-                      </RowActions>
-                    </div>
+                    <RowActions>
+                      <RowIconButton
+                        icon="view"
+                        label={`${child.name} 상세`}
+                        onClick={() => setForm({ mode: 'edit', depth: 2, record: child, parentId: selectedRoot.id })}
+                      />
+                      <RowIconButton
+                        icon="delete"
+                        tone="danger"
+                        label={`${child.name} 삭제`}
+                        onClick={() => setPendingDelete(child)}
+                      />
+                    </RowActions>
                   </div>
                 ))}
               </div>
