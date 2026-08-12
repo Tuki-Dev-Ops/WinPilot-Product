@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { listSection } from '@winpilot/docs';
-import { DocHeader } from './_components/DocHeader';
+import { DocHeader } from '@winpilot/docs/ui';
 import { IA_GROUPS } from '@/lib/ia-groups';
 import { pages } from '@/pages.manifest';
 

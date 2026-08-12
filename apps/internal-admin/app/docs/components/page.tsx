@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { readDoc } from '@winpilot/docs';
 import { Markdown } from '@winpilot/docs/ui';
-import { DocHeader } from '../_components/DocHeader';
+import { DocHeader } from '@winpilot/docs/ui';
 
 /** Components — 원본은 `docs/component.md`. */
 export const metadata: Metadata = { title: 'Components' };

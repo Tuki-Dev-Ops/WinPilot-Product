@@ -108,145 +108,16 @@ export function IrRecordForm({
 }
 
 /**
- * 고칠 수 없는 값 — 코드 · 등록일처럼 화면이 정하는 것.
+ * 입력 원시 조각 다섯 — 이제 `@winpilot/ui` 가 갖는다.
  *
- * 입력 칸처럼 보이게 두지 않는다. 눌러 봐야 안 되는 것을 아는 자리는 **누른 뒤**가 아니라
- * 그 전이어야 한다.
+ * F&B 어드민이 같은 것을 **문자 단위로 같게** 들고 있어서 올렸다. 옮긴 것은 모양뿐이고 이름은
+ * 그대로 둔다 — 이 콘솔의 화면 마흔둘이 `Ir*` 로 부르고 있고, 그 겹을 남기는 이유는
+ * `IrPanel` 과 같다(이 콘솔만의 칸이 생기는 날 고칠 자리를 하나로 유지).
  */
-export function IrReadonly({ label, value, note }: { label: string; value: string; note?: string }) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <span className="text-sm font-medium text-ink">{label}</span>
-      <span className="flex h-11 items-center gap-2 rounded-lg border border-border bg-surface px-3">
-        <span className="min-w-0 truncate font-mono text-sm text-ink-muted">{value}</span>
-        {note && <span className="shrink-0 text-xs text-ink-faint">{note}</span>}
-      </span>
-    </div>
-  );
-}
-
-/** 글 한 줄 입력. 이 콘솔의 폼이 전부 같은 높이·같은 테두리를 쓰게 한다. */
-export function IrTextInput({
-  id,
-  value,
-  onChange,
-  placeholder,
-  type = 'text',
-  invalid,
-}: {
-  id: string;
-  value: string;
-  onChange: (next: string) => void;
-  placeholder?: string;
-  type?: 'text' | 'date' | 'url' | 'number';
-  invalid?: boolean;
-}) {
-  return (
-    <input
-      id={id}
-      type={type}
-      value={value}
-      onChange={(event) => onChange(event.target.value)}
-      placeholder={placeholder ?? ''}
-      aria-invalid={invalid ?? false}
-      className={`h-11 w-full min-w-0 rounded-lg border bg-surface px-3 text-sm text-ink placeholder:text-ink-faint ${
-        invalid ? 'border-signal-danger' : 'border-border-strong'
-      }`}
-    />
-  );
-}
-
-/** 여러 줄 입력. 줄 수를 받는 이유는 본문과 한 문단짜리 설명이 필요한 높이가 다르기 때문이다. */
-export function IrTextArea({
-  id,
-  value,
-  onChange,
-  rows = 6,
-  placeholder,
-  invalid,
-}: {
-  id: string;
-  value: string;
-  onChange: (next: string) => void;
-  rows?: number;
-  placeholder?: string;
-  invalid?: boolean;
-}) {
-  return (
-    <textarea
-      id={id}
-      rows={rows}
-      value={value}
-      onChange={(event) => onChange(event.target.value)}
-      placeholder={placeholder ?? ''}
-      aria-invalid={invalid ?? false}
-      className={`w-full min-w-0 resize-y rounded-lg border bg-surface px-3 py-2.5 text-sm leading-relaxed text-ink placeholder:text-ink-faint ${
-        invalid ? 'border-signal-danger' : 'border-border-strong'
-      }`}
-    />
-  );
-}
-
-/** 몇 안 되는 것 중 하나 고르기. 갈래처럼 값이 코드로 정해진 칸에 쓴다. */
-export function IrSelect({
-  id,
-  value,
-  onChange,
-  options,
-}: {
-  id: string;
-  value: string;
-  onChange: (next: string) => void;
-  options: readonly string[];
-}) {
-  return (
-    <select
-      id={id}
-      value={value}
-      onChange={(event) => onChange(event.target.value)}
-      className="h-11 w-full min-w-0 rounded-lg border border-border-strong bg-surface px-3 text-sm text-ink"
-    >
-      {options.map((one) => (
-        <option key={one} value={one}>
-          {one}
-        </option>
-      ))}
-    </select>
-  );
-}
-
-/**
- * 켜고 끄는 한 줄.
- *
- * 설명을 함께 받는다. `노출` 이라는 말만으로는 **끄면 어떻게 되는지**를 알 수 없고, 그것을
- * 모른 채 끈 것은 사이트에서 사라진 뒤에야 발견된다.
- */
-export function IrToggle({
-  id,
-  label,
-  description,
-  checked,
-  onChange,
-}: {
-  id: string;
-  label: string;
-  description: string;
-  checked: boolean;
-  onChange: (next: boolean) => void;
-}) {
-  return (
-    <label htmlFor={id} className="flex items-start gap-3">
-      <input
-        id={id}
-        type="checkbox"
-        checked={checked}
-        onChange={(event) => onChange(event.target.checked)}
-        className="mt-1 size-4 shrink-0 accent-brand"
-      />
-      <span className="min-w-0">
-        <span className="block text-sm font-medium">{label}</span>
-        <span className="block text-xs leading-relaxed text-ink-muted">{description}</span>
-      </span>
-    </label>
-  );
-}
+export {
+  Readonly as IrReadonly,
+  TextInput as IrTextInput,
+  TextArea as IrTextArea,
+  Select as IrSelect,
+  Toggle as IrToggle,
+} from '@winpilot/ui';

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function PopupCreatePage() {
+export default function IrPopupCreatePage() {
   return (
     <IrShell
       sectionId="banner"

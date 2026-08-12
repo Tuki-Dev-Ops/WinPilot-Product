@@ -131,6 +131,110 @@ importers:
         specifier: ^5.7.3
         version: 5.9.3
 
+  apps/fnb-admin:
+    dependencies:
+      '@winpilot/docs':
+        specifier: workspace:^
+        version: link:../../packages/docs
+      '@winpilot/store':
+        specifier: workspace:*
+        version: link:../../packages/store
+      '@winpilot/tokens':
+        specifier: workspace:*
+        version: link:../../packages/tokens
+      '@winpilot/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@winpilot/uir':
+        specifier: workspace:*
+        version: link:../../packages/uir
+      lucide-react:
+        specifier: ^1.28.0
+        version: 1.28.0(react@19.2.8)
+      mermaid:
+        specifier: ^11.16.0
+        version: 11.16.0
+      next:
+        specifier: ^16.2.12
+        version: 16.2.12(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      react:
+        specifier: ^19.2.0
+        version: 19.2.8
+      react-dom:
+        specifier: ^19.2.0
+        version: 19.2.8(react@19.2.8)
+    devDependencies:
+      '@tailwindcss/postcss':
+        specifier: ^4.3.3
+        version: 4.3.3
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.20.1
+      '@types/react':
+        specifier: ^19.0.7
+        version: 19.2.18
+      '@types/react-dom':
+        specifier: ^19.0.3
+        version: 19.2.4(@types/react@19.2.18)
+      tailwindcss:
+        specifier: ^4.3.3
+        version: 4.3.3
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+
+  apps/fnb-client-a:
+    dependencies:
+      '@winpilot/docs':
+        specifier: workspace:^
+        version: link:../../packages/docs
+      '@winpilot/store':
+        specifier: workspace:*
+        version: link:../../packages/store
+      '@winpilot/tokens':
+        specifier: workspace:*
+        version: link:../../packages/tokens
+      '@winpilot/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      '@winpilot/uir':
+        specifier: workspace:*
+        version: link:../../packages/uir
+      lucide-react:
+        specifier: ^1.28.0
+        version: 1.28.0(react@19.2.8)
+      mermaid:
+        specifier: ^11.16.0
+        version: 11.16.0
+      next:
+        specifier: ^16.2.12
+        version: 16.2.12(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      react:
+        specifier: ^19.2.0
+        version: 19.2.8
+      react-dom:
+        specifier: ^19.2.0
+        version: 19.2.8(react@19.2.8)
+    devDependencies:
+      '@tailwindcss/postcss':
+        specifier: ^4.3.3
+        version: 4.3.3
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.20.1
+      '@types/react':
+        specifier: ^19.0.7
+        version: 19.2.18
+      '@types/react-dom':
+        specifier: ^19.0.3
+        version: 19.2.4(@types/react@19.2.18)
+      tailwindcss:
+        specifier: ^4.3.3
+        version: 4.3.3
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+
   apps/internal-admin:
     dependencies:
       '@winpilot/docs':
@@ -191,6 +295,9 @@ importers:
       '@winpilot/docs':
         specifier: workspace:^
         version: link:../../packages/docs
+      '@winpilot/geo':
+        specifier: workspace:*
+        version: link:../../packages/geo
       '@winpilot/store':
         specifier: workspace:*
         version: link:../../packages/store
@@ -203,9 +310,6 @@ importers:
       '@winpilot/uir':
         specifier: workspace:*
         version: link:../../packages/uir
-      d3-geo:
-        specifier: ^3.1.1
-        version: 3.1.1
       lucide-react:
         specifier: ^1.28.0
         version: 1.28.0(react@19.2.8)
@@ -224,16 +328,10 @@ importers:
       react-dom:
         specifier: ^19.2.0
         version: 19.2.8(react@19.2.8)
-      topojson-client:
-        specifier: ^3.1.0
-        version: 3.1.0
     devDependencies:
       '@tailwindcss/postcss':
         specifier: ^4.3.3
         version: 4.3.3
-      '@types/d3-geo':
-        specifier: ^3.1.1
-        version: 3.1.1
       '@types/node':
         specifier: ^22.10.5
         version: 22.20.1
@@ -243,9 +341,6 @@ importers:
       '@types/react-dom':
         specifier: ^19.0.3
         version: 19.2.4(@types/react@19.2.18)
-      '@types/topojson-client':
-        specifier: ^3.1.5
-        version: 3.1.5
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3
@@ -355,6 +450,25 @@ importers:
       mermaid:
         specifier: ^11.16.0
         version: 11.16.0
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+
+  packages/geo:
+    dependencies:
+      d3-geo:
+        specifier: ^3.1.1
+        version: 3.1.1
+      topojson-client:
+        specifier: ^3.1.0
+        version: 3.1.0
+    devDependencies:
+      '@types/d3-geo':
+        specifier: ^3.1.1
+        version: 3.1.1
+      '@types/topojson-client':
+        specifier: ^3.1.5
+        version: 3.1.5
       typescript:
         specifier: ^5.7.3
         version: 5.9.3

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function HeroBannerListPage() {
+export default function IrBannerListPage() {
   return (
     <IrShell sectionId="banner" trail={['배너', '메인 비주얼']} activeChildId="banner-hero">
       <HeroBannerListView />

@@ -18,7 +18,7 @@ export function generateStaticParams() {
   return publicDisclosures().map((one) => ({ disclosureId: one.id }));
 }
 
-export default async function IrDisclosureDetailPage({
+export default async function DisclosureDetailPage({
   params,
 }: {
   params: Promise<{ disclosureId: string }>;

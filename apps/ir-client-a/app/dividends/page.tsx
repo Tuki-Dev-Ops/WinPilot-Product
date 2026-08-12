@@ -14,7 +14,7 @@ import { IrTable } from '@/app/_components/IrTable';
  */
 export const metadata: Metadata = { title: `배당 정보 — ${IR_COMPANY.name}` };
 
-export default function IrDividendListPage() {
+export default function DividendListPage() {
   return (
     <IrSiteShell>
       <IrPageTitle title="배당 정보" description="기준일까지 보유하신 주주에게 지급됩니다." />

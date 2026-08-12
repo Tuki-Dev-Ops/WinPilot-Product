@@ -40,10 +40,24 @@ export type SiteNavItem = {
   /** 갈래를 눌렀을 때 가는 곳 — 첫 하위 화면이다 */
   href: string;
   groups: SiteNavGroup[];
+  /**
+   * 헤더에서 **감춘다.** 화면과 주소는 그대로 남는다.
+   *
+   * ## 왜 목록에서 지우지 않나
+   * 지우면 **왜 없는지가 코드에서 사라진다.** 다음 사람이 `PRODUCT 갈래가 왜 없지` 하고
+   * 물으면 답할 것이 git 이력밖에 없고, 그러다 같은 갈래를 새로 만들어 붙인다.
+   *
+   * 화면도 지우지 않는다. `/products` 와 제품 상세 넷은 그대로 열린다 — 홈의 제품 칸과 푸터가
+   * 그 주소로 가고 있고, 감춘 것은 **헤더의 갈래 하나**일 뿐이다.
+   */
+  hidden?: boolean;
 };
 
 /**
  * 갈래 넷과 그 아래 항목.
+ *
+ * ## 지금 헤더에 서는 것은 셋이다
+ * `PRODUCT` 를 감췄다(`hidden`). 목록에서 지우지 않은 이유는 그 필드의 머리말에 있다.
  *
  * ## 항목에 설명을 달지 않는다
  * 한때 항목마다 한 줄 설명을 붙여 두었다(`Cloud MES — 설비 데이터 표준화·실시간 추적`).
@@ -72,14 +86,13 @@ export const SITE_NAV: readonly SiteNavItem[] = [
   },
   {
     label: 'SOLUTION',
-    href: '/support/contact',
+    href: '/solutions/consulting',
     groups: [
       {
         title: '서비스',
         children: [
-          { href: '/support/contact', label: '스마트 컨설팅', ready: true },
-          /* 인프라는 아직 자기 화면이 없어 제품 소개로 보낸다. */
-          { href: '/products', label: '인프라 서비스', ready: true },
+          { href: '/solutions/consulting', label: '스마트 컨설팅', ready: true },
+          { href: '/solutions/infra', label: '인프라 서비스', ready: true },
         ],
       },
     ],
@@ -87,6 +100,11 @@ export const SITE_NAV: readonly SiteNavItem[] = [
   {
     label: 'PRODUCT',
     href: '/products',
+    /*
+      지금은 헤더에서 감춘다. 제품 넷의 화면은 그대로 있고 홈·푸터에서 갈 수 있다 —
+      다시 세우려면 이 줄만 지운다.
+    */
+    hidden: true,
     groups: [
       {
         title: '클라우드 제품',
@@ -124,6 +142,18 @@ export const SITE_NAV: readonly SiteNavItem[] = [
  * 같은 목록에 섞으면 ABOUT·SOLUTION 옆에 `개인정보 처리방침` 이 서게 되고, 그러면 둘 다
  * 눈에 덜 든다.
  */
+/**
+ * 헤더에 세울 갈래 — 감춘 것을 뺀다.
+ *
+ * 헤더만 거른다. **푸터는 `SITE_NAV` 를 그대로 읽는다** — 감춘 갈래의 화면은 여전히 열리고,
+ * 거기로 가는 길이 사이트에서 통째로 사라지면 그 화면은 주소를 아는 사람만 볼 수 있게 된다.
+ *
+ * 헤더에서 뺀 까닭은 **맨 위에 서는 갈래를 줄이는 것**이지 화면을 없애는 것이 아니다.
+ */
+export function headerNav(): SiteNavItem[] {
+  return SITE_NAV.filter((one) => !one.hidden);
+}
+
 export const LEGAL_NAV: readonly { href: string; label: string }[] = [
   { href: '/terms', label: '서비스 이용약관' },
   { href: '/privacy', label: '개인정보 처리방침' },
@@ -139,6 +169,8 @@ export const IR_ROUTES = {
   crm: '/solutions/crm',
   products: '/products',
   dxp: '/solutions/dxp',
+  consulting: '/solutions/consulting',
+  infra: '/solutions/infra',
   contact: '/support/contact',
   notices: '/support/notices',
   news: '/support/news',

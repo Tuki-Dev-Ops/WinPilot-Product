@@ -14,7 +14,7 @@ import { IrTable } from '@/app/_components/IrTable';
  */
 export const metadata: Metadata = { title: `IR 자료실 — ${IR_COMPANY.name}` };
 
-export default function IrLibraryListPage() {
+export default function DocumentListPage() {
   return (
     <IrSiteShell>
       <IrPageTitle title="IR 자료실" description="실적발표와 사업보고서를 내려받으실 수 있습니다." />

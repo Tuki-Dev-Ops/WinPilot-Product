@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 /**
  * 로고 그림 + 그 오른쪽의 회사 이름.
  *
@@ -27,12 +29,28 @@
  *
  * 다크 모드도 같은 문제라 `dark:` 로 함께 처리한다. 밝은 바탕에서는 받은 색 그대로다.
  *
+ * ## 받은 파일이 없는 브랜드는 `mark` 로 자기 그림을 넘긴다
+ * 위의 판단은 **로고 파일을 받았을 때** 이야기다. 아직 파일이 없는 브랜드는 이 자리에 남의
+ * 로고가 서게 되는데, 그것이 눈으로 다시 그린 로고보다 나쁘다.
+ *
+ * 그래서 그림 자리를 열어 둔다. 넘기지 않으면 지금까지처럼 파일을 쓴다.
+ *
+ * 넘긴 그림은 **임시**라는 것을 부르는 쪽이 알고 있어야 한다 — 원본 파일을 받는 날 `mark` 를
+ * 빼면 그대로 되돌아간다.
+ *
  * ## `next/image` 가 아니라 `img`
  * 이 패키지는 Next 를 의존하지 않는다. 여기서 `next/image` 를 들이면 UI 조각이 프레임워크를
  * 알게 되어, 문서 화면이나 테스트처럼 Next 밖에서 그리는 자리에서 깨진다. 로고는 1.4KB 라
  * 최적화로 얻을 것도 없다.
  */
 export type BrandMarkProps = {
+  /**
+   * 로고 자리에 세울 그림. 없으면 받은 로고 파일을 쓴다.
+   *
+   * 크기는 넘기는 쪽이 정한다 — `size` 는 파일 로고의 높이를 재는 값이라, 넘긴 그림에까지
+   * 걸면 그 그림이 정사각인지 가로로 긴지를 이 조각이 알아야 한다.
+   */
+  mark?: ReactNode;
   /** 로고 오른쪽에 적히는 이름. 없으면 그림만 선다 */
   name?: string;
   /** 이름 아래 한 줄 — 종목 코드처럼 이름에 딸린 것 */
@@ -46,6 +64,7 @@ export type BrandMarkProps = {
 };
 
 export function BrandMark({
+  mark,
   name,
   note,
   size = 28,
@@ -59,13 +78,15 @@ export function BrandMark({
         `width` 를 두지 않고 높이만 정한다. 원본이 118 × 64 라 가로를 함께 못 박으면 비가
         틀어지고, 로고가 눌린 것은 다른 무엇보다 먼저 눈에 띈다.
       */}
-      <img
-        src="/brand/sp-logo.png"
-        alt=""
-        aria-hidden
-        style={{ height: size }}
-        className={`w-auto shrink-0 ${tone === 'light' ? 'brightness-0 invert' : 'dark:brightness-0 dark:invert'}`}
-      />
+      {mark ?? (
+        <img
+          src="/brand/sp-logo.png"
+          alt=""
+          aria-hidden
+          style={{ height: size }}
+          className={`w-auto shrink-0 ${tone === 'light' ? 'brightness-0 invert' : 'dark:brightness-0 dark:invert'}`}
+        />
+      )}
 
       {name && (
         <span className="leading-tight">

@@ -20,7 +20,7 @@ export function generateStaticParams() {
   return SITE_INQUIRIES.map((one) => ({ inquiryId: one.id }));
 }
 
-export default async function InquiryDetailPage({ params }: { params: Promise<{ inquiryId: string }> }) {
+export default async function IrInquiryDetailPage({ params }: { params: Promise<{ inquiryId: string }> }) {
   const { inquiryId } = await params;
   const inquiry = findSiteInquiry(inquiryId);
   if (!inquiry) notFound();

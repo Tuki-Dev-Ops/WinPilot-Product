@@ -30,7 +30,7 @@ import { IrSiteShell } from '@/app/_components/IrSiteShell';
  */
 export const metadata: Metadata = { title: `${IR_COMPANY.name} — 스마트 자동화 ERP` };
 
-export default function IrSiteHomePage() {
+export default function SiteHomePage() {
   return (
     <IrSiteShell
       overlay

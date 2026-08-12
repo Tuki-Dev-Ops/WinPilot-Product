@@ -1,12 +1,12 @@
 'use client';
 
-import type { KoreaShape } from '@/lib/geo/korea';
+import type { KoreaShape } from '@winpilot/geo';
 
 /**
  * 시 · 도별 문의를 **실제 경계선 위에** 얹은 지도.
  *
  * ## 좌표를 들고 있지 않다
- * 경계선은 서버에서 이미 화면 좌표로 옮겨진 채 온다(`lib/geo/korea.ts`). 이 파일이 하는 일은
+ * 경계선은 서버에서 이미 화면 좌표로 옮겨진 채 온다(`@winpilot/geo`). 이 파일이 하는 일은
  * 받은 경로에 색을 입히고 이름을 얹는 것뿐이다 — 그래서 214KB 의 좌표와 `d3-geo` 가 브라우저로
  * 내려가지 않는다.
  *
@@ -42,7 +42,7 @@ import type { KoreaShape } from '@/lib/geo/korea';
 /**
  * 시 · 도마다 자기 색 — 밝은 쪽 · 바탕 · 짙은 쪽.
  *
- * 통계청 시 · 도 코드로 키를 잡는다 — 이름은 바뀌고 코드는 남는다(`lib/geo/korea.ts`).
+ * 통계청 시 · 도 코드로 키를 잡는다 — 이름은 바뀌고 코드는 남는다(`@winpilot/geo`).
  * 광역시는 자기를 품은 도와 확실히 갈리는 색을 받는다(서울은 경기 안, 대구는 경북 안,
  * 광주는 전남 안).
  */

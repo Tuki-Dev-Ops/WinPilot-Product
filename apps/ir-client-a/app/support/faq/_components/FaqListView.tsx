@@ -52,7 +52,7 @@ export function FaqListView({ faqs, groups }: { faqs: SiteFaq[]; groups: SiteFaq
                     type="button"
                     onClick={() => setOpened(open ? null : one.id)}
                     aria-expanded={open}
-                    className="flex w-full items-center gap-4 px-1 py-5 text-left transition-colors duration-150 hover:text-brand"
+                    className="flex w-full items-center gap-4 px-1 py-5 text-left transition-colors duration-150 hover:text-brand-700"
                   >
                     <span className="shrink-0 text-xs text-ink-faint">{one.group}</span>
 

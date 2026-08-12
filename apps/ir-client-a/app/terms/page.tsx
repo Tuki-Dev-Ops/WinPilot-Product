@@ -15,7 +15,7 @@ import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
  */
 export const metadata: Metadata = { title: `서비스 이용약관 — ${IR_COMPANY.name}` };
 
-export default function TermsPage() {
+export default function TermsSettingsPage() {
   return (
     <IrSiteShell back={{ href: '/', label: '홈' }}>
       <IrPageTitle

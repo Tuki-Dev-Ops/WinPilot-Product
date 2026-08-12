@@ -61,7 +61,7 @@ export function PrivacySettingsView() {
               type="checkbox"
               checked={published}
               onChange={(event) => setPublished(event.target.checked)}
-              className="mt-1 size-4 shrink-0 accent-brand"
+              className="mt-1 size-4 shrink-0 accent-brand-600"
             />
             <span className="min-w-0">
               <span className="block text-sm font-medium">사이트에 건다</span>

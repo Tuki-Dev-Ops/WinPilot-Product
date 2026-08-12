@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from 'react';
 import { PageHeading } from '@winpilot/ui';
-import { DISCLOSURES, SITE_INQUIRIES, SITE_NOTICES, SITE_REGIONS } from '@winpilot/store';
-import type { KoreaShape } from '@/lib/geo/korea';
+import { SITE_INQUIRIES, SITE_NOTICES, SITE_REGIONS } from '@winpilot/store';
+import type { KoreaShape } from '@winpilot/geo';
 import { TODAY } from '@/lib/today';
 import { IrPanel } from './IrPanel';
 import { IrSegmented } from './IrSegmented';
@@ -96,7 +96,6 @@ export function DashboardView({
   const support = inquiries.filter((one) => one.kind === '기술 지원');
   const waiting = inquiries.filter((one) => one.state !== '답변완료');
   const notices = SITE_NOTICES.filter((one) => one.visible && inPeriod(one.postedAt));
-  const draft = DISCLOSURES.filter((one) => one.state === '작성 중' || one.state === '검토 요청');
 
   /** 지역별 건수. 고른 잣대에 따라 세는 대상만 바뀌고 표의 뼈대는 그대로다. */
   const byRegion = useMemo(() => {
@@ -136,13 +135,16 @@ export function DashboardView({
       />
 
       {/*
-        여섯을 **한 줄**에 세운다. 두 줄로 접히면 아랫줄이 윗줄의 곁가지처럼 보여, 문의와
-        공시 원고가 서로 다른 무게로 읽힌다. 여기 있는 여섯은 전부 같은 무게의 숫자다.
+        다섯을 **한 줄**에 세운다. 두 줄로 접히면 아랫줄이 윗줄의 곁가지처럼 보여, 문의와 공지가
+        서로 다른 무게로 읽힌다. 여기 있는 다섯은 전부 같은 무게의 숫자다.
 
         방문 수는 뺐다. 이 화면에서 보는 것은 **손대야 할 일의 수**이고, 방문은 그 일이 아니다 —
         많이 왔다고 오늘 할 일이 늘지 않는다. 방문은 통계 갈래가 다룬다.
+
+        `공시 원고` 도 뺐다. 세는 것 자체는 되지만 **눌러 갈 화면이 없어졌다** — 셀 수만 있고
+        손댈 수 없는 숫자는 대시보드에서 가장 나쁜 칸이다.
       */}
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
         <Stat label="문의" value={inquiries.length} total={SITE_INQUIRIES.length} />
         <Stat
           label="도입 · 견적"
@@ -161,7 +163,6 @@ export function DashboardView({
           urgent={waiting.length > 0}
         />
         <Stat label="공지" value={notices.length} total={SITE_NOTICES.filter((one) => one.visible).length} />
-        <Stat label="공시 원고" value={draft.length} total={DISCLOSURES.length} urgent={draft.length > 0} />
       </div>
 
       <IrPanel
@@ -221,7 +222,7 @@ export function DashboardView({
           </div>
 
           {/* 오른쪽 — 어디가 비어 있는지. */}
-          <div className="flex min-w-0 flex-col items-center gap-4 px-6 py-6 text-brand">
+          <div className="flex min-w-0 flex-col items-center gap-4 px-6 py-6 text-brand-600">
             <KoreaMap
               shapes={shapes}
               box={box}

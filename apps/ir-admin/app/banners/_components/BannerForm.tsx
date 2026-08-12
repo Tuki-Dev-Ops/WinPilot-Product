@@ -7,6 +7,7 @@ import { IrPanel } from '@/app/_components/IrPanel';
 import {
   IrReadonly,
   IrRecordForm,
+  IrTextArea,
   IrTextInput,
   IrToggle,
   type FormMode,
@@ -28,6 +29,15 @@ import {
  * 상시 배너가 실제로 있다. 다만 비워 두면 **잊힌다** — 그래서 비운 것이 실수가 아니라 뜻이라는
  * 것을 적어 두게 안내 문구를 남긴다.
  *
+ * ## 본문과 링크는 팝업에만 뜬다
+ * 메인 비주얼은 큰 글씨 한 줄이 서는 자리라 본문이 설 데가 없다. 팝업은 반대로 **본문이
+ * 전부**다 — 한때 이 칸이 없어서 팝업이 제목 하나만 갖고 있었고, 그 제목에 휴무 기간과
+ * 안내를 다 적으려니 제목이 문단이 되어 목록의 한 칸을 무너뜨렸다.
+ *
+ * 자리(왼쪽 위 · 가운데 · 오른쪽 아래) 칸은 두지 않는다. 여기 뜨는 팝업은 휴무 · 처리방침
+ * 개정처럼 **읽히지 않으면 뜻이 없는 고지**뿐이고, 모서리에 조용히 서는 자리를 만들면 그
+ * 자리에 놓인 팝업은 안 읽힌다.
+ *
  * **프론트엔드 전용** — 저장 결과는 이 화면에만 반영된다.
  */
 export function BannerForm({
@@ -45,21 +55,29 @@ export function BannerForm({
   initial?: SiteBanner;
 }) {
   const [title, setTitle] = useState(initial?.title ?? '');
+  const [body, setBody] = useState(initial?.body ?? '');
+  const [linkUrl, setLinkUrl] = useState(initial?.linkUrl ?? '');
   const [startAt, setStartAt] = useState(initial?.startAt ?? '');
   const [endAt, setEndAt] = useState(initial?.endAt ?? '');
   const [visible, setVisible] = useState(initial?.visible ?? true);
   const [tried, setTried] = useState(false);
 
+  const popup = slot === '팝업';
   const backwards = Boolean(startAt) && Boolean(endAt) && endAt < startAt;
   const over = Boolean(endAt) && endAt < today;
   const broken = [
     ...(title.trim() ? [] : ['제목']),
+    /*
+      팝업의 본문은 필수다. 제목만 뜬 팝업은 읽는 사람에게 "무슨 일이 있는데 뭔지는 안 알려
+      주는" 상자로 보이고, 그 상태는 올린 사람 화면에서는 멀쩡해 보인다.
+    */
+    ...(popup && !body.trim() ? ['본문'] : []),
     ...(startAt ? [] : ['시작일']),
     ...(backwards ? ['종료일'] : []),
   ];
 
-  const listHref = slot === '팝업' ? '/banners/popups' : '/banners';
-  const where = slot === '팝업' ? '사이트에 뜨는 팝업' : '첫 화면의 배너';
+  const listHref = popup ? '/banners/popups' : '/banners';
+  const where = popup ? '사이트에 뜨는 팝업' : '첫 화면의 배너';
 
   return (
     <IrRecordForm
@@ -92,6 +110,41 @@ export function BannerForm({
               invalid={tried && !title.trim()}
             />
           </IrField>
+
+          {popup && (
+            <>
+              <IrField
+                label="본문"
+                htmlFor="banner-body"
+                required
+                {...(tried && !body.trim()
+                  ? { error: '본문을 입력해 주세요.' }
+                  : { hint: '무엇이 언제부터 어떻게 되는지 한 문단으로 적습니다. 기간은 아래 값이 저절로 붙습니다.' })}
+              >
+                <IrTextArea
+                  id="banner-body"
+                  value={body}
+                  onChange={setBody}
+                  rows={4}
+                  placeholder="예: 8월 3일(월)부터 8월 7일(금)까지 하계 휴무입니다."
+                  invalid={tried && !body.trim()}
+                />
+              </IrField>
+
+              <IrField
+                label="자세히 보기 주소"
+                htmlFor="banner-link"
+                hint="비우면 단추가 서지 않습니다. 사이트 안의 주소를 적습니다 — 예: /support/notices"
+              >
+                <IrTextInput
+                  id="banner-link"
+                  value={linkUrl}
+                  onChange={setLinkUrl}
+                  placeholder="/support/notices"
+                />
+              </IrField>
+            </>
+          )}
         </div>
       </IrPanel>
 

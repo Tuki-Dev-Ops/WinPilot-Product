@@ -14,7 +14,7 @@ import { IrTable } from '@/app/_components/IrTable';
  */
 export const metadata: Metadata = { title: `지배구조 — ${IR_COMPANY.name}` };
 
-export default function IrGovernanceListPage() {
+export default function GovernanceListPage() {
   return (
     <IrSiteShell>
       <IrPageTitle title="지배구조" description="이사회 구성과 주주 현황입니다." />

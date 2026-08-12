@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import { SITE_SERVICES, type SiteService } from '@winpilot/store';
+import { SITE_SERVICES, siteServiceHref, type SiteService } from '@winpilot/store';
 import { ConsultingScene, CrmScene, DxpScene, ErpScene, InfraScene, MesScene } from './IsoEquipment';
 import { IsoPlatform, IsoWalls } from './IsoMap';
 import { DIM, LIT, NIGHT, SPARK, STAGE, type IsoTone } from '@/lib/palette';
@@ -31,7 +31,9 @@ import { DIM, LIT, NIGHT, SPARK, STAGE, type IsoTone } from '@/lib/palette';
  * "사각형, 사각형, 사각형" 이 되고, 뜻은 이미 글자로 전해졌다.
  *
  * ## 어드민 연동
- * - 솔루션 상세 ← `/solutions/{erp,mes,crm}`. 인프라·DXP 는 아직 그 화면이 없어 `/products` 로 보낸다
+ * - 카드의 말 ← `@winpilot/store` 의 `SITE_SERVICES` (IR 어드민 홈 무대 차례)
+ * - 가는 곳 ← 같은 곳의 `siteServiceHref` — 여섯 다 자기 상세 화면을 가지므로 **그 화면이
+ *   정한다.** 카드가 주소를 따로 들고 있던 때 어긋난 적이 있어 그쪽 머리말에 적어 두었다.
  */
 
 /**
@@ -175,7 +177,7 @@ export function HomeService() {
 
             {/* 바로가기 — 읽던 자리 바로 아래(`HomeSolutions` 와 같은 자리·같은 모양). */}
             <a
-              href={active.href}
+              href={siteServiceHref(active)}
               className="group mt-1 flex w-fit items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-night transition-opacity duration-150 hover:opacity-85"
             >
               {active.name} 자세히 보기

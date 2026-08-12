@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Mermaid } from '@winpilot/docs/ui';
-import { DocHeader } from '../_components/DocHeader';
-import { ScreenNav } from '../_components/ScreenNav';
+import { DocHeader } from '@winpilot/docs/ui';
+import { ScreenNav } from '@winpilot/docs/ui';
 import { screenNavItems } from '@/lib/ia-groups';
 import { COMMON_FLOWS, JOURNEYS, type NamedFlow } from '@/lib/flow-specs';
 import { flowChart } from '@/lib/flow-diagram';

@@ -14,7 +14,7 @@ import { IrTable } from '@/app/_components/IrTable';
  */
 export const metadata: Metadata = { title: `IR 일정 — ${IR_COMPANY.name}` };
 
-export default function IrScheduleListPage() {
+export default function ScheduleListPage() {
   return (
     <IrSiteShell>
       <IrPageTitle title="IR 일정" description="앞으로 예정된 일정입니다. 지난 일정은 표시하지 않습니다." />

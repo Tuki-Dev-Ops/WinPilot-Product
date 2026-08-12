@@ -15,7 +15,7 @@ import { FaqListView } from './_components/FaqListView';
  */
 export const metadata: Metadata = { title: `FAQ — ${IR_COMPANY.name}` };
 
-export default function SiteFaqPage() {
+export default function FaqListPage() {
   return (
     <IrSiteShell>
       <IrPageTitle title="FAQ" description="자주 받는 물음을 모았습니다. 갈래를 고르거나 검색해 보세요." />

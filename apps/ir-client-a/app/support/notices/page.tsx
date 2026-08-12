@@ -22,7 +22,7 @@ import { NoticeListView } from './_components/NoticeListView';
  */
 export const metadata: Metadata = { title: `공지사항 — ${IR_COMPANY.name}` };
 
-export default function SiteNoticesPage() {
+export default function NoticeListPage() {
   const notices = publicSiteNotices();
 
   return (

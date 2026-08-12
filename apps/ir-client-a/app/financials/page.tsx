@@ -14,7 +14,7 @@ import { IrTable } from '@/app/_components/IrTable';
  */
 export const metadata: Metadata = { title: `재무 정보 — ${IR_COMPANY.name}` };
 
-export default function IrFinancialListPage() {
+export default function FinancialListPage() {
   return (
     <IrSiteShell>
       <IrPageTitle title="재무 정보" description="단위는 백만 원입니다. 감사 전 수치가 포함될 수 있습니다." />

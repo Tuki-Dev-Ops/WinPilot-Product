@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function MilestoneCreatePage() {
+export default function IrMilestoneCreatePage() {
   return (
     <IrShell
       sectionId="company"

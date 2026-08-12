@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function BannerCreatePage() {
+export default function IrBannerCreatePage() {
   return (
     <IrShell
       sectionId="banner"

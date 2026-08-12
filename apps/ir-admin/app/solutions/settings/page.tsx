@@ -8,13 +8,13 @@ import { SolutionSettingsView } from './_components/SolutionSettingsView';
  * 홈 화면의 회전 무대에 서는 여섯 서비스의 차례를 정한다.
  */
 export const metadata: Metadata = {
-  title: '솔루션 | 설정 — Spaceplanning IR Admin',
+  title: '문제 · 해법 | 설정 — Spaceplanning IR Admin',
   robots: { index: false, follow: false },
 };
 
-export default function SolutionSettingsPage() {
+export default function IrSolutionSettingsPage() {
   return (
-    <IrShell sectionId="solution" trail={['솔루션', '설정']} activeChildId="solution-settings">
+    <IrShell sectionId="solution" trail={['문제 · 해법', '설정']} activeChildId="solution-settings">
       <SolutionSettingsView />
     </IrShell>
   );

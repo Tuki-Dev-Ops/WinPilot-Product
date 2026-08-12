@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Mermaid } from '@winpilot/docs/ui';
-import { DocHeader } from '../../_components/DocHeader';
-import { ScreenNav } from '../../_components/ScreenNav';
+import { DocHeader } from '@winpilot/docs/ui';
+import { ScreenNav } from '@winpilot/docs/ui';
 import { koOf, screenNavItems } from '@/lib/ia-groups';
 import { findFlow } from '@/lib/flow-specs';
 import { flowChart } from '@/lib/flow-diagram';

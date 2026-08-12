@@ -13,7 +13,7 @@ import { SubscribeForm } from './_components/SubscribeForm';
  */
 export const metadata: Metadata = { title: `공시 구독 — ${IR_COMPANY.name}` };
 
-export default function IrSubscriberCreatePage() {
+export default function SubscriberSignupPage() {
   return (
     <IrSiteShell>
       <IrPageTitle

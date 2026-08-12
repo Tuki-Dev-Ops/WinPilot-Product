@@ -18,7 +18,7 @@ export function generateStaticParams() {
   return SITE_BANNERS.filter((one) => one.slot === '팝업').map((one) => ({ popupId: one.id }));
 }
 
-export default async function PopupDetailPage({ params }: { params: Promise<{ popupId: string }> }) {
+export default async function IrPopupDetailPage({ params }: { params: Promise<{ popupId: string }> }) {
   const { popupId } = await params;
   const banner = findSiteBanner(popupId);
   if (!banner) notFound();

@@ -13,7 +13,7 @@ import { IrTable } from '@/app/_components/IrTable';
  */
 export const metadata: Metadata = { title: `주가 정보 — ${IR_COMPANY.name}` };
 
-export default function IrStockDetailPage() {
+export default function StockListPage() {
   return (
     <IrSiteShell>
       <IrPageTitle

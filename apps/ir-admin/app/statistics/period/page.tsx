@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function PeriodStatsPage() {
+export default function IrAnalyticsListPage() {
   return (
     <IrShell sectionId="statistics" trail={['통계', '기간별 분석']} activeChildId="statistics-period">
       <PeriodStatsView />

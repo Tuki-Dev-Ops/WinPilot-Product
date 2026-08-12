@@ -2,19 +2,37 @@
 
 import { useMemo, useState, type MouseEvent } from 'react';
 import { AdminBulkBar } from '@/app/_components/AdminBulkBar';
+import { GRADES } from '@winpilot/store';
 import { AdminConfirmModal } from '@/app/_components/AdminConfirmModal';
 import { AdminListPager } from '@/app/_components/AdminListPager';
 import { Button, Checkbox, RowActionGroup, RowSelectCell, useToast } from '@winpilot/ui';
 import { formatAmount, parseAmount, type GradeFormInput, type GradeFormMode } from '@/lib/validation/grade-record';
 import { GradeFormModal, type GradeRecord } from './GradeFormModal';
 
-/** 프론트엔드 전용 — 서버 없이 이 배열이 목록의 원본이다. */
-const INITIAL_GRADES: GradeRecord[] = [
-  { id: 'G-01', name: '신규', threshold: 0, discountRate: 0, memberCount: 214 },
-  { id: 'G-02', name: '일반', threshold: 100000, discountRate: 3, memberCount: 712 },
-  { id: 'G-03', name: 'VIP', threshold: 1000000, discountRate: 7, memberCount: 318 },
-  { id: 'G-04', name: 'VVIP', threshold: 5000000, discountRate: 12, memberCount: 40 },
-];
+/**
+ * 등급별 회원 수 — **여기서만 아는 값.**
+ *
+ * 등급 규칙(경계 금액 · 할인율)은 `@winpilot/store` 의 `GRADES` 가 갖는다. 고객 화면의 결제
+ * 계산이 그 표를 읽기 때문이다 — 두 벌로 두면 어드민에서 VIP 를 7% 로 고쳐도 결제에서는 옛
+ * 값이 걸리고, 그 어긋남은 **고객이 결제하고 나서** 드러난다.
+ *
+ * 회원 수만 여기 남는다. 사이트에 나가지 않고 이 목록에서만 보여 주는 값이라, 규칙과 함께
+ * 올리면 store 가 어드민 화면의 사정을 알게 된다.
+ */
+const MEMBER_COUNT: Record<string, number> = {
+  'G-01': 214,
+  'G-02': 712,
+  'G-03': 318,
+  'G-04': 40,
+};
+
+const INITIAL_GRADES: GradeRecord[] = GRADES.map((one) => ({
+  id: one.id,
+  name: one.name,
+  threshold: one.threshold,
+  discountRate: one.discountRate,
+  memberCount: MEMBER_COUNT[one.id] ?? 0,
+}));
 
 
 function nextGradeId(grades: GradeRecord[]): string {

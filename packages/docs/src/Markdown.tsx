@@ -19,8 +19,14 @@ import { Mermaid } from './Mermaid';
  */
 function inline(text: string, keyPrefix: string): ReactNode[] {
   const nodes: ReactNode[] = [];
-  // `코드` · **굵게** · _흐리게_ · ![그림](주소) · [링크](주소) 다섯 가지만 본다.
-  const pattern = /(`[^`]+`)|(\*\*[^*]+\*\*)|(_[^_\n]+_)|(!\[[^\]]*\]\([^)]+\))|(\[[^\]]+\]\([^)]+\))/g;
+  /*
+    `코드` · **굵게** · _흐리게_ · ![그림](주소) · [링크](주소) 다섯 가지만 본다.
+
+    굵게가 `[^*]+` 였다. 그러면 **안에 별표가 든 굵게**를 못 잡는다 — 토큰 이름을 적는 문서라
+    `**brand-* 가 아니라 octo-***` 같은 자리가 실제로 있고, 그때 별표 넷이 글자 그대로 찍혀
+    문장이 읽히지 않았다. 닫는 `**` 가 나오기 전까지로 바꾼다.
+  */
+  const pattern = /(`[^`]+`)|(\*\*(?:(?!\*\*)[\s\S])+\*\*)|(_[^_\n]+_)|(!\[[^\]]*\]\([^)]+\))|(\[[^\]]+\]\([^)]+\))/g;
   let last = 0;
   let match: RegExpExecArray | null;
   let index = 0;
@@ -37,9 +43,16 @@ function inline(text: string, keyPrefix: string): ReactNode[] {
         </code>,
       );
     } else if (token.startsWith('**')) {
+      /*
+        굵게 안을 **다시 훑는다.** 그러지 않으면 `**\`octo-*\` 를 쓴다**` 처럼 굵게 안에 든
+        코드 조각의 백틱이 글자 그대로 보인다 — 토큰 이름을 굵게 적는 자리가 흔해서 실제로
+        눈에 띄었다.
+
+        무한히 돌지 않는다: 여는 `**` 와 닫는 `**` 사이에는 `**` 가 없다(패턴이 그렇게 잡는다).
+      */
       nodes.push(
         <strong key={key} className="font-semibold">
-          {token.slice(2, -2)}
+          {inline(token.slice(2, -2), `${key}-b`)}
         </strong>,
       );
     } else if (token.startsWith('_')) {
@@ -127,6 +140,22 @@ export function Markdown({ source }: { source: string }) {
   let listBuffer: string[] = [];
   let codeBuffer: string[] = [];
   let tableBuffer: string[] = [];
+  /**
+   * 아직 안 닫힌 문단의 줄들.
+   *
+   * ## 줄 하나가 문단 하나였다
+   * 한때 비어 있지 않은 줄마다 `<p>` 를 하나씩 냈다. 그런데 이 저장소의 문서는 백 자 언저리에서
+   * **손으로 줄을 접어** 쓴다 — 한 문단이 서너 줄이다. 그래서 문단마다 `<p>` 가 서넛씩 서고,
+   * 줄 사이가 문단 사이만큼 벌어져 **어디까지가 한 문단인지 읽히지 않았다.**
+   *
+   * 더 나쁜 것은 굵게가 깨지는 것이었다. `inline()` 이 줄 단위로 도니까
+   * `**같은 모듈을\n읽기**` 처럼 표기가 줄바꿈을 넘으면 짝을 못 찾고 `**` 가 글자 그대로 찍힌다.
+   * 강조하려던 자리가 오타처럼 보인다 — 일곱 앱 문서에 그런 자리가 실제로 있었다.
+   *
+   * 빈 줄이나 다른 갈래(제목·목록·표·인용·울타리·구분선)를 만나면 닫는다. 마크다운이 원래
+   * 그렇게 읽는다.
+   */
+  let textBuffer: string[] = [];
   let inCode = false;
   /** ```mermaid 처럼 울타리 뒤에 붙은 말 */
   let codeLang = '';
@@ -209,10 +238,23 @@ export function Markdown({ source }: { source: string }) {
     tableBuffer = [];
   };
 
+  /** 모아 둔 줄을 한 문단으로 낸다. 줄을 이을 때 사이에 빈칸을 둔다 — 접은 자리가 곧 띄어쓰기다. */
+  const flushText = (key: string) => {
+    if (textBuffer.length === 0) return;
+    const text = textBuffer.join(' ');
+    textBuffer = [];
+    blocks.push(
+      <p key={key} className={`${FLOW} text-sm leading-relaxed`}>
+        {inline(text, key)}
+      </p>,
+    );
+  };
+
   lines.forEach((line, index) => {
     const key = `block-${index}`;
 
     if (line.startsWith('```')) {
+      flushText(`${key}-p`);
       if (inCode) {
         const code = codeBuffer.join('\n');
         blocks.push(
@@ -236,6 +278,7 @@ export function Markdown({ source }: { source: string }) {
     }
 
     if (line.trim().startsWith('|')) {
+      flushText(`${key}-p`);
       flushList(`${key}-l`);
       tableBuffer.push(line);
       return;
@@ -243,13 +286,25 @@ export function Markdown({ source }: { source: string }) {
     flushTable(`${key}-t`);
 
     if (/^\s*[-*]\s+/.test(line)) {
+      flushText(`${key}-p`);
       listBuffer.push(line.replace(/^\s*[-*]\s+/, ''));
       return;
     }
     flushList(`${key}-l`);
 
+    /*
+      구분선. 한때 다루지 않아 `---` 이 **글자 그대로 한 문단**으로 찍혔다 — 절과 절을 가르려고
+      그은 선이 오히려 본문에 낀 부스러기로 보인다. 이 저장소의 문서는 절마다 이 선을 긋는다.
+    */
+    if (/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(line)) {
+      flushText(`${key}-p`);
+      blocks.push(<hr key={key} className={`${FLOW} border-t border-border`} />);
+      return;
+    }
+
     const heading = line.match(/^(#{1,4})\s+(.*)$/);
     if (heading) {
+      flushText(`${key}-p`);
       const level = heading[1]?.length ?? 1;
       const text = heading[2] ?? '';
       lastHeading = text;
@@ -263,6 +318,7 @@ export function Markdown({ source }: { source: string }) {
     }
 
     if (line.startsWith('> ')) {
+      flushText(`${key}-p`);
       blocks.push(
         <blockquote key={key} className={`${FLOW} border-l-2 border-border-strong pl-3 text-sm text-ink-muted`}>
           {inline(line.slice(2), key)}
@@ -271,15 +327,16 @@ export function Markdown({ source }: { source: string }) {
       return;
     }
 
-    if (line.trim() === '') return;
+    // 빈 줄이 문단을 닫는다. 마크다운이 원래 그렇게 읽는다.
+    if (line.trim() === '') {
+      flushText(`${key}-p`);
+      return;
+    }
 
-    blocks.push(
-      <p key={key} className={`${FLOW} text-sm leading-relaxed`}>
-        {inline(line, key)}
-      </p>,
-    );
+    textBuffer.push(line.trim());
   });
 
+  flushText('tail-p');
   flushList('tail-l');
   flushTable('tail-t');
 

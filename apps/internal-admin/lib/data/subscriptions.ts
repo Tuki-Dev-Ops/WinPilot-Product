@@ -161,6 +161,52 @@ export const PLANS: PlanRecord[] = [
     sellable: false,
     note: '국문·영문을 나란히 내는 공시 사이트입니다.',
   },
+
+  /*
+    F&B — 외식 프랜차이즈.
+
+    회원 상한이 IR 과 같은 `0` 이다. **뜻도 같다** — 사이트가 가입을 받지 않는다. 손님은 매장에
+    와서 먹고, 밖에서 들어오는 것은 창업 문의뿐이다.
+
+    값이 B2C 보다 낮은 것은 파는 화면이 적어서다. B2C 는 상품 · 주문 · 회원 · 쿠폰 · 리뷰까지
+    다섯 갈래를 갖는데 여기는 그 다섯이 통째로 없다.
+
+    `sellable` 이 켜져 있다 — B2B·IR 과 달리 **화면이 이미 다 있다.** 팔 수 있는 것을 못 팔게
+    두면 목록에서만 안 보일 뿐 계약은 다른 경로로 맺어지고, 그때 청구가 걸리지 않는다.
+  */
+  {
+    id: 'P-FNB-BASIC',
+    domain: 'F&B',
+    name: '베이직',
+    monthly: 350_000,
+    deployments: 2,
+    memberLimit: 0,
+    tenants: 1,
+    sellable: true,
+    note: '메뉴판 · 매장 찾기 · 창업 안내. 매장 하나로 시작하는 브랜드가 씁니다.',
+  },
+  {
+    id: 'P-FNB-STANDARD',
+    domain: 'F&B',
+    name: '스탠다드',
+    monthly: 550_000,
+    deployments: 4,
+    memberLimit: 0,
+    tenants: 0,
+    sellable: true,
+    note: '배너 · 마케팅 · 인테리어 안내가 열립니다. 가맹을 늘리는 단계입니다.',
+  },
+  {
+    id: 'P-FNB-ENTERPRISE',
+    domain: 'F&B',
+    name: '엔터프라이즈',
+    monthly: 850_000,
+    deployments: 8,
+    memberLimit: 0,
+    tenants: 0,
+    sellable: true,
+    note: '역할 권한과 다국어. 가맹점이 스물을 넘고 본사에 운영 인력이 생긴 뒤에 씁니다.',
+  },
 ];
 
 export function findPlan(id: string): PlanRecord | undefined {
@@ -190,6 +236,12 @@ export function formatCount(value: number): string {
  * B2C 안에서만 찾는다 — 이름(`베이직`·`스탠다드`·`엔터프라이즈`)이 도메인마다 겹치는데,
  * 고객사 레코드의 `plan` 은 B2C 등급을 가리키는 값이다.
  */
-export function planOfTenant(planName: string): PlanRecord | undefined {
-  return PLANS.find((plan) => plan.domain === 'B2C' && plan.name === planName);
+/**
+ * 고객사가 쓰는 플랜.
+ *
+ * **제품과 등급 이름 둘 다** 있어야 정해진다. 등급 이름은 제품마다 되풀이되므로, 한때처럼
+ * `B2C` 를 가정하고 이름만 맞추면 IR·F&B 고객사에 B2C 금액이 붙는다.
+ */
+export function planOfTenant(domain: PlanDomain, planName: string): PlanRecord | undefined {
+  return PLANS.find((plan) => plan.domain === domain && plan.name === planName);
 }

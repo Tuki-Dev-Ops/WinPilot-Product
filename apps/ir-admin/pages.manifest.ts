@@ -8,13 +8,13 @@ import type { BreakpointSpec, PageSpec } from '@winpilot/uir';
  * 그대로를 열어 404 를 찍는다.
  *
  * 대역 순서는 사이드바 메뉴 순서와 같다 — 대시보드(1) · 문의(10) · 콘텐츠(20) · 제품(30) ·
- * 솔루션(40) · 회사(50) · 배너(60) · 통계(70) · IR(80) · 설정(90). 대역을 띄우는 이유는 중간에
- * 화면을 하나 끼울 때 전체 번호를 다시 매기지 않기 위해서다.
+ * 문제·해법(40) · 서비스(45) · 회사(50) · 배너(60) · 통계(70) · IR(80) · 설정(90). 대역을
+ * 띄우는 이유는 중간에 화면을 하나 끼울 때 전체 번호를 다시 매기지 않기 위해서다.
  *
  * ## 5번대(홈페이지)가 사라진 이유
  * `/site/services` · `/site/solutions` · `/site/media` · `/site/legal` 넷은 메뉴를 새로 세우면서
- * 갈음되었다 — 각각 솔루션 설정 · 솔루션 목록 · 콘텐츠 뉴스 · 설정 약관/처리방침이 **같은 값을**
- * 다룬다. 두 자리를 남겨 두면 한쪽에서 고친 것이 다른 쪽에 없는 것으로 보인다.
+ * 갈음되었다 — 각각 홈 무대 차례 · 문제·해법 목록 · 콘텐츠 뉴스 · 설정 약관/처리방침이 **같은
+ * 값을** 다룬다. 두 자리를 남겨 두면 한쪽에서 고친 것이 다른 쪽에 없는 것으로 보인다.
  */
 export const pages: PageSpec[] = [
   { order: 1, id: 'dashboard', name: 'Dashboard', route: '/' },
@@ -70,16 +70,38 @@ export const pages: PageSpec[] = [
   },
   { order: 32, id: 'products-settings', name: 'Product Settings', route: '/products/settings' },
 
-  // 40번대 — 솔루션
-  { order: 40, id: 'solutions', name: 'Solutions', route: '/solutions' },
+  /*
+    40번대 — 문제 · 해법. 갈래 이름은 `솔루션` 에서 바뀌었지만 주소와 id 는 그대로다 —
+    이 파일의 id 는 캡처한 그림이 붙는 자리라, 바꾸면 지난 캡처가 전부 새 그림으로 갈린다.
+  */
+  { order: 40, id: 'solutions', name: 'Problem & Approach', route: '/solutions' },
   {
     order: 41,
     id: 'solutions-detail',
-    name: 'Solution Detail',
+    name: 'Problem & Approach Detail',
     route: '/solutions/[solutionId]',
     sampleUrl: '/solutions/erp',
   },
-  { order: 42, id: 'solutions-settings', name: 'Solution Settings', route: '/solutions/settings' },
+  {
+    order: 42,
+    id: 'solutions-settings',
+    name: 'Home Stage Order',
+    route: '/solutions/settings',
+  },
+
+  /*
+    45번대 — 서비스. 40번대 안에 두는 것은 솔루션과 **같은 값의 모양**을 다루기 때문이고,
+    번호를 띄운 것은 솔루션 쪽에 화면이 하나 늘어도 여기를 다시 매기지 않기 위해서다.
+  */
+  { order: 45, id: 'services', name: 'Services', route: '/services' },
+  {
+    order: 46,
+    id: 'services-detail',
+    name: 'Service Detail',
+    route: '/services/[serviceId]',
+    sampleUrl: '/services/consulting',
+  },
+  { order: 47, id: 'services-settings', name: 'Service Settings', route: '/services/settings' },
 
   // 50번대 — 회사
   { order: 50, id: 'company-about', name: 'Company Profile', route: '/company/about' },
@@ -132,17 +154,19 @@ export const pages: PageSpec[] = [
   { order: 71, id: 'statistics-period', name: 'Period Analysis', route: '/statistics/period' },
   { order: 72, id: 'statistics-pages', name: 'Page Visits', route: '/statistics/pages' },
 
-  // 80번대 — IR (투자자 화면이 아직 이 값들을 내보낸다)
-  { order: 80, id: 'disclosures', name: 'Disclosures', route: '/disclosures' },
-  { order: 81, id: 'disclosures-dart', name: 'DART Integration', route: '/disclosures/dart' },
-  { order: 82, id: 'financials', name: 'Financials', route: '/financials' },
-  { order: 83, id: 'financials-stock', name: 'Stock Integration', route: '/financials/stock' },
-  { order: 84, id: 'financials-dividends', name: 'Dividends', route: '/financials/dividends' },
-  { order: 85, id: 'shareholders-meetings', name: 'Meetings', route: '/shareholders/meetings' },
-  { order: 86, id: 'shareholders-governance', name: 'Governance', route: '/shareholders/governance' },
-  { order: 87, id: 'library', name: 'IR Library', route: '/library' },
-  { order: 88, id: 'library-schedules', name: 'IR Schedules', route: '/library/schedules' },
-  { order: 89, id: 'library-notifications', name: 'Subscribers', route: '/library/notifications' },
+  /*
+    80번대는 비어 있다 — 공시 · 재무 · 주주 · 자료 열 화면이 있던 자리다.
+
+    이 콘솔이 처음에는 공시 중심이었는데 실제로 손대는 것은 회사 홈페이지였다. 사이드바에서
+    뺐다가 되돌렸다가, 결국 화면째 지웠다.
+
+    **투자자 사이트(`apps/ir-client-a`)의 열한 화면은 그대로다.** 그쪽은 `@winpilot/store` 의
+    `ir.ts` 를 직접 읽으므로 이 콘솔이 없어도 계속 그린다 — 다만 **고칠 자리가 저장소에 없다.**
+    그 사실은 `apps/ir-client-a/docs/admin-mapping.md` §2 에 적혀 있다.
+
+    번호를 90번대로 당기지 않는다. 비워 두면 여기 무엇이 있었는지가 번호로 남고, 되살리는 날
+    같은 자리에 들어간다.
+  */
 
   // 90번대 — 설정
   { order: 90, id: 'settings-supplier', name: 'Supplier Info', route: '/settings/supplier' },

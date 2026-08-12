@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { IrShell } from '@/app/_components/IrShell';
-import { KOREA_BOX, KOREA_SHAPES } from '@/lib/geo/korea';
+import { KOREA_BOX, KOREA_SHAPES } from '@winpilot/geo';
 import { DashboardView } from './_components/DashboardView';
 
 /**

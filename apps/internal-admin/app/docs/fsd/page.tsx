@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Markdown } from '@winpilot/docs/ui';
 import { readSectionDoc } from '@winpilot/docs';
-import { DocHeader } from '../_components/DocHeader';
-import { SectionList } from '../_components/SectionList';
+import { DocHeader } from '@winpilot/docs/ui';
+import { SectionList } from '@winpilot/docs';
 
 /**
  * 기능 명세서 목차 — 어느 화면의 명세가 있고 어디가 비었는지.

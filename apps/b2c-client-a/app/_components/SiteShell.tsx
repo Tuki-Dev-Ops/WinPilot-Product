@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { BackLink } from '@winpilot/ui';
 import { CONTENT, COPY, ROUTES, SLOT, cid } from '@winpilot/client-content';
+import { PopupLayer } from './PopupLayer';
 import { SiteHeader } from './SiteHeader';
 
 /**
@@ -15,12 +16,21 @@ import { SiteHeader } from './SiteHeader';
  * - 약관 · 개인정보 링크 ← 설정 > 약관 정보
  */
 
-export function SiteShell({ children }: { children: ReactNode }) {
+export function SiteShell({ children, popup = true }: { children: ReactNode; popup?: boolean }) {
   const { supplier } = CONTENT;
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas text-ink">
       <SiteHeader />
+
+      {/*
+        팝업은 껍데기가 띄운다 — 화면마다 붙이면 새 화면을 만드는 날 빠뜨리고, 그러면 그
+        화면에서만 안 뜬다. 어느 화면으로 들어오든 같아야 하는 것이라 여기가 제자리다.
+
+        결제처럼 **끊기면 안 되는 자리**에서는 끈다(`popup={false}`). 금액을 확인하는 도중에
+        앱 설치 안내가 화면을 덮으면, 닫는 동안 무엇을 보고 있었는지 잃는다.
+      */}
+      {popup && <PopupLayer popups={CONTENT.popups} />}
 
       <main className="mx-auto flex w-full max-w-320 flex-1 flex-col gap-12 px-6 py-10">{children}</main>
 

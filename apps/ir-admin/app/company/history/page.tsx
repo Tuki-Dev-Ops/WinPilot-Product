@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function MilestoneListPage() {
+export default function IrMilestoneListPage() {
   return (
     <IrShell sectionId="company" trail={['회사', '연혁']} activeChildId="company-history">
       <MilestoneListView />

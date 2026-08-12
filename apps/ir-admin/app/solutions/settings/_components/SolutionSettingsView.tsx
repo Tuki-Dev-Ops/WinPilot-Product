@@ -1,11 +1,11 @@
 'use client';
 
 import { Badge, PageHeading } from '@winpilot/ui';
-import { SITE_SERVICES } from '@winpilot/store';
+import { SITE_SERVICES, siteServiceHref } from '@winpilot/store';
 import { IrPanel } from '@/app/_components/IrPanel';
 
 /**
- * 솔루션 > 설정.
+ * 문제 · 해법 > 설정.
  *
  * ## 차례를 여기서 바꾸지 못하게 둔 이유
  * 이 여섯은 홈 화면의 회전 무대에 **시계 방향으로** 놓이고, 그 순서가 곧 공정의 차례다 —
@@ -20,7 +20,7 @@ import { IrPanel } from '@/app/_components/IrPanel';
 export function SolutionSettingsView() {
   return (
     <>
-      <PageHeading title="솔루션 설정" description="홈 화면 무대에 서는 여섯의 차례입니다." />
+      <PageHeading title="홈 무대 차례" description="홈 화면 무대에 서는 여섯의 차례입니다." />
 
       <IrPanel title="공정의 차례" description="홈 무대에 시계 방향으로 이 순서대로 놓입니다.">
         <ol className="flex flex-col">
@@ -40,7 +40,8 @@ export function SolutionSettingsView() {
                 </span>
               </span>
 
-              <span className="shrink-0 font-mono text-xs text-ink-faint">{one.href}</span>
+              {/* 카드가 아니라 상세 화면이 정하는 주소다 — 여기 적는 것은 확인용이다. */}
+              <span className="shrink-0 font-mono text-xs text-ink-faint">{siteServiceHref(one)}</span>
             </li>
           ))}
         </ol>

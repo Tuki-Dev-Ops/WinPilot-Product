@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function FaqPage() {
+export default function IrFaqListPage() {
   return (
     <IrShell sectionId="content" trail={['콘텐츠', 'FAQ']} activeChildId="content-faqs">
       <FaqListView />

@@ -7,7 +7,15 @@
  *
  * B2B 는 아직 화면이 없다. 필요해지는 시점에 아래 두 줄을 열고 레포를 추가한다.
  */
-export const VIEWS = ['b2c-client', 'b2c-admin', 'internal-admin'] as const;
+export const VIEWS = [
+  'b2c-client',
+  'b2c-admin',
+  'ir-client',
+  'ir-admin',
+  'fnb-client',
+  'fnb-admin',
+  'internal-admin',
+] as const;
 export type ViewId = (typeof VIEWS)[number];
 
 export type ViewMeta = {
@@ -26,8 +34,17 @@ export type ViewMeta = {
    * 같은 묶음 안에서는 한쪽에만 있는 기능을 누락으로 의심한다(고객 화면과 운영 화면은 짝이다).
    * 묶음이 다르면 서로 다른 제품이므로 비교하지 않는다.
    */
-  pairGroup: 'b2c' | 'internal';
+  pairGroup: PairGroup;
 };
+
+/**
+ * 짝 묶음.
+ *
+ * 같은 묶음 안에 **뷰가 둘 있을 때만** 누락을 따진다 — `internal` 처럼 혼자인 묶음은
+ * 견줄 상대가 없으므로 검사가 저절로 비껴간다. 묶음 이름을 여기 모아 두는 이유는
+ * `pairGroup: 'b2c'` 라고 적힌 오타가 `'b2b'` 로 조용히 지나가지 않게 하기 위해서다.
+ */
+export type PairGroup = 'b2c' | 'ir' | 'fnb' | 'internal';
 
 export const VIEW_META: Readonly<Record<ViewId, ViewMeta>> = {
   'b2c-client': {
@@ -47,6 +64,47 @@ export const VIEW_META: Readonly<Record<ViewId, ViewMeta>> = {
     app: 'b2c-admin',
     port: 3301,
     pairGroup: 'b2c',
+  },
+  /*
+    IR 한 쌍 — 상장사의 회사 홈페이지와 그 운영 콘솔.
+
+    B2C 와 짝 구조는 같은데 **읽는 사람이 다르다.** 저쪽은 사는 사람이 오고 여기는 투자자와
+    주주가 온다. 그 차이가 검사에도 남는다 — IR 사이트에만 있고 콘솔에 없는 기능은 `누락`이
+    아니라 **고칠 자리가 없는 값**이라는 뜻이고, 그것이 이 한 쌍의 가장 큰 사실이다.
+  */
+  'ir-client': {
+    label: 'IR Client',
+    routePrefix: '',
+    componentPrefix: '',
+    // B2C 와 같은 이유로 기준 템플릿(A)을 대표 구현으로 둔다.
+    app: 'ir-client-a',
+    port: 3304,
+    pairGroup: 'ir',
+  },
+  'ir-admin': {
+    label: 'IR Admin',
+    routePrefix: '',
+    componentPrefix: 'Ir',
+    app: 'ir-admin',
+    port: 3303,
+    pairGroup: 'ir',
+  },
+  // F&B 한 쌍 — 외식 프랜차이즈 브랜드 사이트와 그 운영 콘솔.
+  'fnb-client': {
+    label: 'F&B Client',
+    routePrefix: '',
+    componentPrefix: '',
+    app: 'fnb-client-a',
+    port: 3305,
+    pairGroup: 'fnb',
+  },
+  'fnb-admin': {
+    label: 'F&B Admin',
+    routePrefix: '',
+    componentPrefix: 'Fnb',
+    app: 'fnb-admin',
+    port: 3306,
+    pairGroup: 'fnb',
   },
   // 사내 전용 — 고객사의 계정·도메인·연동·요금을 우리가 대신 관리한다. 고객사에는 열리지 않는다.
   'internal-admin': {

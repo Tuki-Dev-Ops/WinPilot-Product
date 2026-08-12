@@ -611,35 +611,191 @@ export const IR_ROLES: RoleTemplate[] = [
 
 export const IR_GROUPS = ['공시', '재무', '주주', '자료', '운영', '설정'] as const;
 
+
+/* ── F&B ──────────────────────────────────────────────────────────── */
+
+/**
+ * 외식 프랜차이즈 콘솔의 자원.
+ *
+ * ## 다른 갈래와 갈리는 자리
+ * 파는 것이 **매장에서 팔린다.** 사이트는 주문을 받지 않으므로 `order` 도 `member` 도 없다 —
+ * B2C 에서 가장 민감했던 두 자원이 여기서는 아예 없는 개념이다.
+ *
+ * 대신 밖에서 들어오는 것이 하나 있다. **창업 문의**다. 늦으면 표가 나고(사이트가 하루 안에
+ * 연락한다고 적어 두었다), 그 문의에 딸린 연락처는 개인정보다.
+ *
+ * ## 되돌릴 수 없는 것을 한 칸 위에 둔다
+ * `banner.live` 를 따로 뺀 것은 B2C 의 `order.refund` 와 같은 판단이다 — 배너와 팝업은
+ * **사이트 첫 화면을 덮는다.** 메뉴 값을 고치는 사람에게 그 힘까지 함께 주면, 잘못 올린 팝업이
+ * 손님 전부의 첫 화면을 막는다.
+ *
+ * ## 왜 F&B 만 자체 권한 체계를 갖고 있었나
+ * `apps/fnb-admin` 은 `ADMIN_ROLES = ['대표','운영','조회']` 라는 자체 목록을 쓰고 있었다.
+ * 그 셋은 **한 줄로 설명되는 것**이 장점이었지만, 사내 어드민이 `자원:동작` 으로 관리하는 다른
+ * 갈래와 모양이 달라 **사내에서 F&B 고객사의 권한을 볼 수 없었다.** 여기 카탈로그를 두어
+ * 그 자리를 만든다 — 콘솔의 세 역할은 아래 템플릿 셋과 뜻이 같다.
+ */
+export const FNB_RESOURCES: PermissionResource[] = [
+  {
+    key: 'menu',
+    label: '메뉴',
+    group: '등록',
+    actions: ['read', 'write', 'delete'],
+    note: '메뉴판에 서는 것과 값·알레르기를 만집니다.',
+  },
+  {
+    key: 'store',
+    label: '가맹점',
+    group: '등록',
+    actions: ['read', 'write', 'delete'],
+    note: '매장 찾기에 서는 주소·영업시간·상태를 만집니다.',
+  },
+  {
+    key: 'marketing',
+    label: '마케팅 글',
+    group: '등록',
+    actions: ['read', 'write', 'delete'],
+    note: '창구에 올린 글을 사이트에 옮겨 겁니다.',
+  },
+  {
+    key: 'inquiry',
+    label: '창업 문의',
+    group: '창업',
+    actions: ['read', 'write'],
+    note: '들어온 문의를 읽고 처리 상태를 바꿉니다.',
+  },
+  {
+    key: 'inquiry.privacy',
+    label: '문의자 연락처',
+    group: '창업',
+    actions: ['read'],
+    note: '이름·전화번호를 가리지 않고 봅니다. 개인정보입니다.',
+  },
+  {
+    key: 'franchise',
+    label: '창업 비용 · 절차',
+    group: '창업',
+    actions: ['read', 'manage'],
+    note: '창업 안내에 적히는 금액과 기간을 바꿉니다. 계약 조건과 어긋나면 분쟁이 됩니다.',
+  },
+  {
+    key: 'content',
+    label: '공지 · FAQ',
+    group: '고객센터',
+    actions: ['read', 'write', 'delete'],
+    note: '손님과 점주 후보가 읽는 글을 씁니다.',
+  },
+  {
+    key: 'banner',
+    label: '배너 · 팝업',
+    group: '배너',
+    actions: ['read', 'write', 'delete'],
+    note: '거는 것을 만들고 기간을 정합니다.',
+  },
+  {
+    key: 'banner.live',
+    label: '배너 노출 전환',
+    group: '배너',
+    actions: ['manage'],
+    note: '지금 첫 화면에 걸거나 내립니다. 손님 전부가 곧바로 봅니다.',
+  },
+  {
+    key: 'brand',
+    label: '브랜드 정보',
+    group: '설정',
+    actions: ['read', 'manage'],
+    note: '상호·창구 번호·사업자 정보를 바꿉니다. 푸터의 법적 고지가 이 값입니다.',
+  },
+  {
+    key: 'staff',
+    label: '운영자 계정',
+    group: '설정',
+    actions: ['read', 'manage'],
+    note: '이 콘솔에 들어올 사람을 늘리고 막습니다.',
+  },
+];
+
+/**
+ * F&B 역할 템플릿 셋.
+ *
+ * 콘솔이 쓰던 `대표 · 운영 · 조회` 와 뜻을 맞춘다 — 이름이 갈리면 사내에서 본 권한과 고객사가
+ * 콘솔에서 보는 권한이 다른 것처럼 읽힌다.
+ */
+export const FNB_ROLES: RoleTemplate[] = [
+  {
+    id: 'fnb-owner',
+    label: '대표',
+    note: '전부 할 수 있습니다. 운영자를 늘리고 막을 수 있는 유일한 역할입니다.',
+    fixed: true,
+    grants: all(
+      FNB_RESOURCES,
+      FNB_RESOURCES.map((one) => one.key),
+    ),
+  },
+  {
+    id: 'fnb-ops',
+    label: '운영',
+    note: '메뉴 · 가맹점 · 마케팅 · 공지 · 배너까지 매일 쓰는 것 전부. 운영자 추가와 브랜드 정보는 못 만집니다.',
+    grants: [
+      ...all(FNB_RESOURCES, ['menu', 'store', 'marketing', 'content', 'banner']),
+      permissionKey('inquiry', 'read'),
+      permissionKey('inquiry', 'write'),
+      permissionKey('inquiry.privacy', 'read'),
+      permissionKey('banner.live', 'manage'),
+      permissionKey('franchise', 'read'),
+      permissionKey('brand', 'read'),
+      permissionKey('staff', 'read'),
+    ],
+  },
+  {
+    id: 'fnb-viewer',
+    label: '조회',
+    note: '보기만 합니다. 가맹점주나 외부 대행사에 줍니다 — 문의자 연락처는 빠집니다.',
+    grants: readOnly(FNB_RESOURCES).filter((key) => key !== permissionKey('inquiry.privacy', 'read')),
+  },
+];
+
+export const FNB_GROUPS = ['등록', '창업', '고객센터', '배너', '설정'] as const;
+
 /* ── 도메인으로 묶기 ──────────────────────────────────────────────── */
 
-/** 고객사가 계약한 콘솔 갈래. 플랜의 `PlanDomain` 과 같은 셋이다. */
-export type ConsoleDomain = 'B2C' | 'B2B' | 'IR';
+/**
+ * 고객사가 계약한 콘솔 갈래. 플랜의 `PlanDomain` 과 같은 넷이다.
+ *
+ * `F&B` 가 뒤늦게 들어왔다. 그 전에는 `apps/fnb-admin` 이 자체 역할 목록을 쓰고 있어, 사내
+ * 어드민에서 **F&B 고객사의 권한을 볼 수 있는 자리가 아예 없었다** — 고객사가 "이 사람은 왜
+ * 못 들어가나" 하고 물으면 코드를 열어야 답할 수 있었다.
+ */
+export type ConsoleDomain = 'B2C' | 'B2B' | 'IR' | 'F&B';
 
-export const CONSOLE_DOMAINS: readonly ConsoleDomain[] = ['B2C', 'B2B', 'IR'] as const;
+export const CONSOLE_DOMAINS: readonly ConsoleDomain[] = ['B2C', 'B2B', 'IR', 'F&B'] as const;
 
 export const CONSOLE_NOTE: Record<ConsoleDomain, string> = {
   B2C: '일반 소비자에게 파는 쇼핑몰입니다. 상품·주문·회원을 누가 만지는지 정합니다.',
   B2B: '사업자 간 거래입니다. 단가와 여신을 누가 만지는지가 가장 민감합니다.',
   IR: '투자자 대상 공시 사이트입니다. 자료를 만드는 사람과 내보내는 사람을 가릅니다.',
+  'F&B': '외식 프랜차이즈 브랜드 사이트입니다. 사이트가 주문을 받지 않아 회원도 결제도 없고, 밖에서 들어오는 것은 창업 문의뿐입니다.',
 };
 
 export const CONSOLE_RESOURCES: Record<ConsoleDomain, PermissionResource[]> = {
   B2C: TENANT_RESOURCES,
   B2B: B2B_RESOURCES,
   IR: IR_RESOURCES,
+  'F&B': FNB_RESOURCES,
 };
 
 export const CONSOLE_ROLES: Record<ConsoleDomain, RoleTemplate[]> = {
   B2C: TENANT_ROLES,
   B2B: B2B_ROLES,
   IR: IR_ROLES,
+  'F&B': FNB_ROLES,
 };
 
 export const CONSOLE_GROUPS: Record<ConsoleDomain, readonly string[]> = {
   B2C: TENANT_GROUPS,
   B2B: B2B_GROUPS,
   IR: IR_GROUPS,
+  'F&B': FNB_GROUPS,
 };
 
 /**

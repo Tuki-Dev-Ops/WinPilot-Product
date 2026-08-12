@@ -17,7 +17,7 @@ export function generateStaticParams() {
   return SITE_NOTICES.map((one) => ({ noticeId: one.id }));
 }
 
-export default async function NoticeDetailPage({ params }: { params: Promise<{ noticeId: string }> }) {
+export default async function IrNoticeDetailPage({ params }: { params: Promise<{ noticeId: string }> }) {
   const { noticeId } = await params;
   const notice = findSiteNotice(noticeId);
   if (!notice) notFound();

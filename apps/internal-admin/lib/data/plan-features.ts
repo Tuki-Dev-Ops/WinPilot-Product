@@ -23,14 +23,22 @@
  * 팔면 계약서에 적힌 것이 제품에 없는 일이 생긴다.
  */
 
-export type PlanDomain = 'B2C' | 'B2B' | 'IR';
+/**
+ * 파는 제품의 갈래.
+ *
+ * `F&B` 가 뒤늦게 들어왔다. 그 전에는 `apps/fnb-admin` 과 `apps/fnb-client-a` 가 이미 있는데도
+ * 여기 없어서, **F&B 고객사에게 무엇을 파는지 사내에서 답할 수 없었다** — 플랜도 없고 기능
+ * 비교표도 없었다.
+ */
+export type PlanDomain = 'B2C' | 'B2B' | 'IR' | 'F&B';
 
-export const PLAN_DOMAINS: readonly PlanDomain[] = ['B2C', 'B2B', 'IR'] as const;
+export const PLAN_DOMAINS: readonly PlanDomain[] = ['B2C', 'B2B', 'IR', 'F&B'] as const;
 
 export const DOMAIN_NOTE: Record<PlanDomain, string> = {
   B2C: '일반 소비자에게 파는 쇼핑몰입니다. 상품·주문·회원이 중심입니다.',
   B2B: '사업자 간 거래입니다. 견적·여신·거래처 단가가 중심입니다.',
   IR: '투자자 대상 공시 사이트입니다. 공시·재무·주가 정보가 중심입니다.',
+  'F&B': '외식 프랜차이즈 브랜드 사이트입니다. 사이트가 주문을 받지 않아 회원·결제가 없고, 창업 문의가 밖에서 들어오는 유일한 것입니다.',
 };
 
 /** 기능이 어느 쪽 화면에 나타나는가 */
@@ -727,6 +735,38 @@ export const PLAN_FEATURES: Record<PlanDomain, PlanFeature[]> = {
   B2C: [...B2C_ADMIN, ...B2C_WEB],
   B2B: [...B2B_ADMIN, ...B2B_WEB],
   IR: [...IR_ADMIN, ...IR_WEB],
+  'F&B': [
+    /*
+      어드민 — 매일 손대는 것부터.
+
+      B2C 와 견주면 **없는 것이 눈에 띈다**: 주문·회원·쿠폰·리뷰가 없다. 사이트가 주문을 받지
+      않기 때문이고, 그래서 베이직에서도 줄 수 있는 것이 상대적으로 많다.
+    */
+    { id: 'fnb-menu', label: '메뉴 관리', surface: '어드민', group: '등록', from: 'P-FNB-BASIC', note: '메뉴판에 서는 것과 값·알레르기·매운 정도를 만집니다.' },
+    { id: 'fnb-store', label: '가맹점 관리', surface: '어드민', group: '등록', from: 'P-FNB-BASIC', note: '매장 찾기에 서는 주소·영업시간·상태를 만집니다.' },
+    { id: 'fnb-inquiry', label: '창업 문의 관리', surface: '어드민', group: '창업', from: 'P-FNB-BASIC', note: '들어온 문의를 읽고 처리 상태를 바꿉니다.' },
+    { id: 'fnb-content', label: '공지 · FAQ 관리', surface: '어드민', group: '고객센터', from: 'P-FNB-BASIC', note: '손님과 점주 후보가 읽는 글을 씁니다.' },
+    { id: 'fnb-franchise', label: '창업 비용 · 절차 관리', surface: '어드민', group: '창업', from: 'P-FNB-BASIC', note: '창업 안내에 적히는 금액과 기간을 바꿉니다.' },
+    { id: 'fnb-brand', label: '브랜드 정보 관리', surface: '어드민', group: '설정', from: 'P-FNB-BASIC', note: '상호·창구 번호·사업자 정보. 푸터의 법적 고지가 이 값입니다.' },
+    { id: 'fnb-marketing', label: '마케팅 글 관리', surface: '어드민', group: '등록', from: 'P-FNB-STANDARD', note: '창구에 올린 글을 사이트에 옮겨 겁니다.' },
+    { id: 'fnb-banner', label: '배너 · 팝업 관리', surface: '어드민', group: '배너', from: 'P-FNB-STANDARD', note: '첫 화면에 거는 것을 만들고 기간을 정합니다.' },
+    { id: 'fnb-staff', label: '운영자 계정', surface: '어드민', group: '설정', from: 'P-FNB-STANDARD', note: '콘솔에 들어올 사람을 늘리고 막습니다. 베이직은 계정 하나로 씁니다.' },
+    { id: 'fnb-role', label: '역할 권한 나누기', surface: '어드민', group: '설정', from: 'P-FNB-ENTERPRISE', note: '대표 · 운영 · 조회 셋으로 갈라 줍니다.' },
+
+    /* 웹페이지 — 손님이 보는 것과 차리려는 사람이 보는 것. */
+    { id: 'fnb-web-menu', label: '메뉴판', surface: '웹페이지', group: '손님', from: 'P-FNB-BASIC', note: '묶음별로 나눠 세운 메뉴와 상세.' },
+    { id: 'fnb-web-store', label: '매장 찾기', surface: '웹페이지', group: '손님', from: 'P-FNB-BASIC', note: '지도와 지역 · 이름으로 찾기.' },
+    { id: 'fnb-web-brand', label: '브랜드 소개', surface: '웹페이지', group: '손님', from: 'P-FNB-BASIC', note: '무엇을 지키는 집인지 적는 화면.' },
+    { id: 'fnb-web-support', label: '고객센터', surface: '웹페이지', group: '손님', from: 'P-FNB-BASIC', note: '공지사항과 자주 묻는 질문.' },
+    { id: 'fnb-web-franchise', label: '창업 안내', surface: '웹페이지', group: '창업', from: 'P-FNB-BASIC', note: '비용 · 절차와 가맹 문의.' },
+    { id: 'fnb-web-apply', label: '창업 상담 신청', surface: '웹페이지', group: '창업', from: 'P-FNB-BASIC', note: '번호를 남기면 어드민 문의 목록으로 들어옵니다.' },
+    { id: 'fnb-web-interior', label: '인테리어 안내', surface: '웹페이지', group: '창업', from: 'P-FNB-STANDARD', note: '평형별 안과 완성 매장 사진.' },
+    { id: 'fnb-web-marketing', label: '마케팅 소개', surface: '웹페이지', group: '창업', from: 'P-FNB-STANDARD', note: '창구에 올린 것을 그대로 겁니다.' },
+    { id: 'fnb-web-map', label: '지도 연동', surface: '웹페이지', group: '손님', from: 'P-FNB-STANDARD', note: '카카오 지도. 열쇠는 배포마다 따로 넣습니다.' },
+    { id: 'fnb-web-domain', label: '커스텀 도메인', surface: '웹페이지', group: '운영', from: 'P-FNB-STANDARD', note: '브랜드 도메인으로 엽니다.' },
+    { id: 'fnb-web-seo', label: 'SEO 설정', surface: '웹페이지', group: '운영', from: 'P-FNB-STANDARD', note: '검색에 걸리는 제목과 설명.' },
+    { id: 'fnb-web-multi', label: '다국어', surface: '웹페이지', group: '운영', from: 'P-FNB-ENTERPRISE', note: '메뉴판과 매장 안내를 두 언어로.' },
+  ],
 };
 
 /**
@@ -739,6 +779,8 @@ export const FEATURE_GROUPS: Record<PlanDomain, readonly string[]> = {
   B2C: ['판매', '고객', '콘텐츠', '마케팅', '분석', '운영'],
   B2B: ['거래처', '가격', '거래', '정산', '연동'],
   IR: ['공시', '재무', '주주', '자료', '운영'],
+  /* F&B 는 파는 자리가 매장이라 '판매' 갈래가 없다. 대신 '창업' 이 그 무게를 갖는다. */
+  'F&B': ['등록', '창업', '고객센터', '배너', '설정', '손님', '운영'],
 };
 
 /**

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function InquiryListPage() {
+export default function IrInquiryListPage() {
   return (
     <IrShell sectionId="inquiry" trail={['문의', '목록']} activeChildId="inquiry-list">
       <InquiryListView />

@@ -1,12 +1,29 @@
 /**
  * 고객사 시드 데이터 — **프론트엔드 전용**.
  *
- * 고객사 하나가 보통 **B2C Client 와 B2C Admin 두 배포**를 쓴다. 도메인과 계정이
- * 각각 따로 있으므로 한 줄로 합치지 않고 배포 단위로 나눠 둔다.
+ * 고객사 하나가 보통 **사이트와 콘솔 두 배포**를 쓴다. 도메인과 계정이 각각 따로 있으므로 한
+ * 줄로 합치지 않고 배포 단위로 나눠 둔다.
  */
 import type { BadgeTone } from '@winpilot/ui';
+import type { PlanDomain } from './plan-features';
 
-export type DeploymentKind = 'B2C Client' | 'B2C Admin';
+/**
+ * 배포 종류 — **제품마다 사이트 하나 · 콘솔 하나.**
+ *
+ * 한때 `B2C Client` 와 `B2C Admin` 둘뿐이었다. 그때 이미 IR 과 F&B 제품이 있었는데도 그랬고,
+ * 그래서 **IR·F&B 고객사를 등록할 자리가 아예 없었다** — 목록에 올릴 수 없으니 유지보수 기한도
+ * 청구도 걸리지 않았다.
+ *
+ * 제품이 늘 때마다 여기 둘씩 는다. 한 줄로 합치지 않는 이유는 위 머리말과 같다: 사이트와
+ * 콘솔은 도메인도 계정도 따로다.
+ */
+export type DeploymentKind =
+  | 'B2C Client'
+  | 'B2C Admin'
+  | 'IR Client'
+  | 'IR Admin'
+  | 'F&B Client'
+  | 'F&B Admin';
 
 export type Deployment = {
   kind: DeploymentKind;
@@ -21,6 +38,17 @@ export type TenantPlan = '베이직' | '스탠다드' | '엔터프라이즈';
 export type TenantRecord = {
   id: string;
   name: string;
+  /**
+   * 어느 제품을 계약했는가.
+   *
+   * 한때 이 칸이 없었다. 그래서 요금제를 찾을 때 **B2C 라고 가정**하고 이름만 맞췄고
+   * (`planOfTenant`), IR·F&B 고객사를 등록하면 `스탠다드` 라는 이름이 B2C 스탠다드로 읽혀
+   * **엉뚱한 금액이 청구 화면에 채워졌다.**
+   *
+   * 등급 이름(`베이직`·`스탠다드`·`엔터프라이즈`)은 제품마다 되풀이되므로 이름만으로는 어느
+   * 플랜인지 정해지지 않는다.
+   */
+  domain: PlanDomain;
   /** 고객사 담당자 */
   manager: string;
   managerEmail: string;
@@ -39,6 +67,7 @@ export const TENANTS: TenantRecord[] = [
   {
     id: 'T-101',
     name: '무드하우스',
+    domain: 'B2C',
     manager: '김서연',
     managerEmail: 'seoyeon.kim@moodhouse.example',
     managerPhone: '01043215678',
@@ -54,6 +83,7 @@ export const TENANTS: TenantRecord[] = [
   {
     id: 'T-102',
     name: '트레일노트',
+    domain: 'B2C',
     manager: '박지훈',
     managerEmail: 'jihoon.park@trailnote.example',
     managerPhone: '01088776655',
@@ -69,6 +99,7 @@ export const TENANTS: TenantRecord[] = [
   {
     id: 'T-103',
     name: '베이커스랩',
+    domain: 'B2C',
     manager: '이하늘',
     managerEmail: 'haneul.lee@bakerslab.example',
     managerPhone: '01033334444',
@@ -79,6 +110,30 @@ export const TENANTS: TenantRecord[] = [
       { kind: 'B2C Client', domain: 'bakerslab.example', account: 'ops@bakerslab.example', status: '중지' },
     ],
     memo: '유지보수 종료가 한 달 남았습니다.',
+  },
+
+  /*
+    F&B 고객사. 이 줄이 생기기 전까지 **어드민과 사이트가 다 만들어져 있는데 사내 목록에는
+    없는 상태**였다 — 배포 종류에 `F&B` 가 없었기 때문이다.
+
+    그 상태의 값은 목록에서 안 보이는 것으로 끝나지 않는다. 유지보수 기한이 안 걸리고
+    (`supportState`), 청구가 안 잡히며(`/billing/due`), 이탈해도 남지 않는다.
+  */
+  {
+    id: 'T-104',
+    name: '어쭈구리왕문어',
+    domain: 'F&B',
+    manager: '정현우',
+    managerEmail: 'ceo@eojjuguri.example',
+    managerPhone: '01055556666',
+    plan: '베이직',
+    contractedAt: '2026-06-01',
+    supportUntil: '2027-05-31',
+    deployments: [
+      { kind: 'F&B Client', domain: 'eojjuguri.example', account: 'ops@eojjuguri.example', status: '운영중' },
+      { kind: 'F&B Admin', domain: 'admin.eojjuguri.example', account: 'ceo@eojjuguri.example', status: '운영중' },
+    ],
+    memo: '군산 본점에서 시작해 가맹 여덟 곳. 개점 주마다 팝업을 올린다.',
   },
 ];
 

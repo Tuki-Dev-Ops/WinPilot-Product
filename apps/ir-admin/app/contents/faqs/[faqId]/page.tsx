@@ -17,7 +17,7 @@ export function generateStaticParams() {
   return SITE_FAQS.map((one) => ({ faqId: one.id }));
 }
 
-export default async function FaqDetailPage({ params }: { params: Promise<{ faqId: string }> }) {
+export default async function IrFaqDetailPage({ params }: { params: Promise<{ faqId: string }> }) {
   const { faqId } = await params;
   const faq = findSiteFaq(faqId);
   if (!faq) notFound();

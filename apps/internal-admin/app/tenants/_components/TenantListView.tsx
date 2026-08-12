@@ -141,6 +141,11 @@ export function TenantListView({ today }: { today: string }) {
     const record: TenantRecord = {
       id: `T-${100 + rows.length + 1}`,
       name: draft.name.trim(),
+      /*
+        새 고객사는 B2C 로 연다. 계약의 대부분이 그쪽이고, 다른 제품이면 상세에서 바꾼다 —
+        등록 창에 제품 고르개를 하나 더 두면 이름만 적어 두려는 자리가 무거워진다.
+      */
+      domain: 'B2C',
       manager: draft.manager.trim(),
       managerEmail: '',
       managerPhone: '',

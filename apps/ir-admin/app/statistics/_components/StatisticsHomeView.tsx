@@ -45,7 +45,7 @@ export function StatisticsHomeView() {
                 {one.visits.toLocaleString()}
               </span>
               <span
-                className="w-full rounded-t bg-brand/80"
+                className="w-full rounded-t bg-brand-500"
                 style={{ height: `${Math.round((one.visits / top) * 140)}px` }}
                 aria-hidden
               />

@@ -73,21 +73,28 @@ export function validateSpec({ features, manifest, view: manifestView, devOnlyRo
       B2C Client 와 B2C Admin 은 같은 자원을 양쪽에서 다루므로 한쪽만 있으면 의심스럽다.
       반면 사내 어드민은 고객사를 관리하는 **다른 제품**이라, 상품·로그인 같은 기능이
       없는 것이 정상이다. 여기까지 짝을 맞추라고 경고하면 진짜 누락이 그 안에 묻힌다.
+
+      한때 이 줄이 `pairGroup === 'b2c'` 로 박혀 있었다. 그때는 짝이 하나뿐이라 맞는 글이었는데,
+      IR 과 F&B 한 쌍씩이 열리면서 **그 둘의 누락은 아무도 안 보게 되었다.** 지금은 이 기능이
+      걸린 묶음에서 짝을 찾는다 — 묶음에 뷰가 하나뿐인 `internal` 은 견줄 상대가 없어 저절로
+      비껴간다.
     */
-    const pairedViews = VIEWS.filter((view) => VIEW_META[view].pairGroup === 'b2c');
-    const boundPaired = pairedViews.filter((view) => feature.views[view]);
-    const isPairedFeature = boundPaired.length > 0;
+    const groups = new Set(boundViews.map((view) => VIEW_META[view].pairGroup));
 
     if (boundViews.length === 0) {
       push('error', 'VIEW_EMPTY', at, '뷰 바인딩이 하나도 없음');
-    } else if (isPairedFeature && boundPaired.length < pairedViews.length && !feature.singleViewByDesign) {
-      const missing = pairedViews.filter((view) => !feature.views[view]);
-      push(
-        'warn',
-        'VIEW_PARTIAL',
-        at,
-        `${missing.join(', ')} 뷰에 바인딩 없음 — 설계상 맞다면 singleViewByDesign: true 를 붙일 것`,
-      );
+    } else if (!feature.singleViewByDesign) {
+      for (const group of groups) {
+        const pairedViews = VIEWS.filter((view) => VIEW_META[view].pairGroup === group);
+        const missing = pairedViews.filter((view) => !feature.views[view]);
+        if (missing.length === 0 || missing.length === pairedViews.length) continue;
+        push(
+          'warn',
+          'VIEW_PARTIAL',
+          at,
+          `${missing.join(', ')} 뷰에 바인딩 없음 — 설계상 맞다면 singleViewByDesign: true 를 붙일 것`,
+        );
+      }
     }
 
     for (const view of VIEWS) {

@@ -62,14 +62,26 @@ async function main(): Promise<void> {
 
   let errors = 0;
   let warnings = 0;
-  // 기능 자체에 대한 검사(이름·용어 등)는 뷰와 무관해 앱마다 똑같이 나온다. 한 번만 보고한다.
+  /*
+    기능 자체에 대한 검사(이름·용어 등)는 뷰와 무관해 앱마다 똑같이 나온다. 한 번만 보고한다.
+
+    ## 열쇠에 뷰를 넣는 이유
+    한때 열쇠가 `code|where|message` 였다. 그런데 `MANIFEST_ORPHAN` 의 `where` 는
+    `manifest 'home'` 처럼 **매니페스트 안에서만 고유한 값**이라, 앱이 넷 늘자 `ir-client` 의
+    `home` 이 `fnb-client` 의 같은 이름을 가렸다 — 열네 건이 아홉 건으로 보였다.
+
+    그 상태가 나쁜 것은 숫자가 틀려서가 아니라, **가려진 쪽을 고쳐도 숫자가 안 줄어서**다.
+    고치는 사람이 자기가 헛짚었다고 여긴다.
+  */
   const reported = new Set<string>();
 
   // 뷰(=레포)마다 자기 매니페스트로 따로 검사한다.
   for (const view of VIEWS) {
     const { manifest, devOnlyRoutes } = await loadManifest(view);
     const issues = validateSpec({ features: FEATURES, manifest, view, devOnlyRoutes }).filter((issue) => {
-      const key = `${issue.code}|${issue.where}|${issue.message}`;
+      // 뷰가 자기 매니페스트를 두고 내는 소리는 뷰마다 따로 센다. 나머지는 한 번만 알린다.
+      const perView = issue.code === 'MANIFEST_ORPHAN' || issue.code === 'MANIFEST_MISSING';
+      const key = `${perView ? view : ''}|${issue.code}|${issue.where}|${issue.message}`;
       if (reported.has(key)) return false;
       reported.add(key);
       return true;

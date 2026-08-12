@@ -28,6 +28,8 @@ export * from './permissions';
 export * from './support';
 export * from './ir';
 export * from './site';
+export * from './fnb';
+export * from './grades';
 export * from './product-art';
 export * from './reviews';
 export * from './nickname';

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function NoticeListPage() {
+export default function IrNoticeListPage() {
   return (
     <IrShell sectionId="content" trail={['콘텐츠', '공지사항']} activeChildId="content-notices">
       <NoticeListView />

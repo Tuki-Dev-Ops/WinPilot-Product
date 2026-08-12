@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { SOLUTIONS, findSolution } from '@winpilot/store';
 import { IrShell } from '@/app/_components/IrShell';
-import { SolutionForm } from '@/app/products/_components/SolutionForm';
+import { OfferingForm } from '@/app/_components/OfferingForm';
 
 /**
  * Feature: `product.detail` · IR Admin · route `/products/{productId}`
@@ -20,7 +20,7 @@ export function generateStaticParams() {
   return SOLUTIONS.map((one) => ({ productId: one.id }));
 }
 
-export default async function ProductDetailPage({ params }: { params: Promise<{ productId: string }> }) {
+export default async function IrProductDetailPage({ params }: { params: Promise<{ productId: string }> }) {
   const { productId } = await params;
   const solution = findSolution(productId);
   if (!solution) notFound();
@@ -32,7 +32,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       activeChildId="product-list"
       back={{ href: '/products', label: '제품 목록' }}
     >
-      <SolutionForm solution={solution} listHref="/products" resource="제품" />
+      <OfferingForm offering={solution} listHref="/products" resource="제품" />
     </IrShell>
   );
 }

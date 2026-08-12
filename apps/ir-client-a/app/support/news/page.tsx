@@ -20,7 +20,7 @@ import { NewsListView } from './_components/NewsListView';
  */
 export const metadata: Metadata = { title: `뉴스 — ${IR_COMPANY.name}` };
 
-export default function SiteNewsPage() {
+export default function NewsListPage() {
   return (
     <IrSiteShell>
       <IrPageTitle title="뉴스" description="방송·행사·제품 소개로 남은 것들입니다." />

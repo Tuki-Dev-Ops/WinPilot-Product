@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { BrandMark } from '@winpilot/ui';
 import { IR_COMPANY } from '@winpilot/store';
-import { SITE_NAV, type SiteNavChild, type SiteNavItem } from '@/lib/navigation';
+import { headerNav, type SiteNavChild, type SiteNavItem } from '@/lib/navigation';
 
 /**
  * 상단 내비 — **갈래 넷과, 그 아래로 화면 폭만큼 펼쳐지는 판**.
@@ -52,7 +52,9 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
 
-  const opened = SITE_NAV.find((one) => one.label === open);
+  /* 감춘 갈래는 헤더에 서지 않는다(`headerNav`). 푸터는 전부를 그대로 읽는다. */
+  const items = headerNav();
+  const opened = items.find((one) => one.label === open);
 
   /*
     검은 띠를 까는가.
@@ -83,7 +85,7 @@ export function SiteHeader({ overlay = false }: { overlay?: boolean }) {
         <BrandMark href="/" name={IR_COMPANY.name} tone="light" size={30} />
 
         <nav className="flex flex-wrap items-center gap-x-8 gap-y-2">
-          {SITE_NAV.map((item) => (
+          {items.map((item) => (
             <div key={item.label} onMouseEnter={() => setOpen(item.label)} onFocus={() => setOpen(item.label)}>
               <a
                 href={item.href}

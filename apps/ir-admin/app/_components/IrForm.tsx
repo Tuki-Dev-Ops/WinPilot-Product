@@ -47,15 +47,8 @@ export function IrField({
   );
 }
 
-/**
- * 저장 줄 — 카드 맨 아래 오른쪽.
- *
- * 저장을 **화면 아래가 아니라 카드 아래**에 두는 이유: 카드가 여럿인 화면에서 어느 카드의
- * 값을 저장하는지가 자리로 드러나야 한다. 화면 하나에 저장이 하나뿐이면 카드도 하나다.
- */
-export function IrSaveRow({ children }: { children: ReactNode }) {
-  return <div className="flex flex-wrap justify-end gap-2 border-t border-border px-6 py-4">{children}</div>;
-}
+/** 저장 줄 — 이제 `@winpilot/ui` 의 `SaveRow` 다. 왜 올렸는지는 그쪽 머리말에 있다. */
+export { SaveRow as IrSaveRow } from '@winpilot/ui';
 
 /** 주된 동작 한 개. 한 줄에 두 개 이상 두지 않는다 — 무엇이 주된 것인지 흐려진다. */
 export function IrPrimaryButton({

@@ -10,10 +10,12 @@ import {
   couponAmountText,
   couponState,
   findProduct,
+  findShippingTerms,
   formatMoney,
   myCoupons,
   type CartLine,
 } from '@winpilot/client-content';
+import { findGrade, gradeDiscount, orderShippingFee } from '@winpilot/store';
 import { Checkbox, Dropdown, useToast } from '@winpilot/ui';
 import { ConfirmDialog } from '@/app/_components/ConfirmDialog';
 import { ProductArt } from '@/app/_components/ProductArt';
@@ -124,18 +126,45 @@ export function CheckoutView({ initialLines }: { initialLines: Line[] }) {
   const coupons = useMemo(() => myCoupons().filter((coupon) => couponState(coupon, TODAY) === '사용 가능'), []);
 
   const goods = lines.reduce((sum, line) => sum + line.price * line.quantity, 0);
-  // 배송비는 상품마다 다르지만, 한 번의 주문에는 한 번만 붙는다 — 가장 비싼 조건을 따른다.
-  const shipping = goods === 0 || goods >= 50_000 ? 0 : 3_000;
+
+  /*
+    배송비를 **어드민이 정한 상품별 정책에서** 계산한다.
+
+    한때 이 자리에 `5만원 이상 무료, 미만 3,000원` 이 글자로 박혀 있었다. 그런데 어드민은
+    상품마다 배송 정책을 따로 받고 있었고 상품 상세는 그 값으로 문구를 그렸다 — 그래서
+    **상세에서 `3만원 이상 무료배송` 을 보고 담은 사람이 결제에서 5만원 기준에 걸렸다.**
+
+    계산 규칙은 store 가 갖는다(`orderShippingFee`). 화면마다 적으면 같은 어긋남이 다시 난다.
+  */
+  const shippingTerms = useMemo(
+    () => lines.map((line) => findShippingTerms(line.productId)).filter((one) => one !== undefined),
+    [lines],
+  );
+  const shipping = orderShippingFee(shippingTerms, goods);
+
+  /*
+    등급 할인. 어드민의 등급 화면이 `이 조건에 해당하는 사용자에게 곧바로 적용됩니다` 라고
+    적어 두었는데 이 계산에는 등급 항목이 아예 없었다 — 적어 둔 것이 지켜지지 않았다.
+
+    등급표에 없는 이름이면 0% 다. 지어내지 않는 이유는 `findGrade` 머리말에 있다.
+  */
+  const grade = findGrade(ACCOUNT.grade);
+  const gradeCut = gradeDiscount(goods, grade?.discountRate ?? 0);
 
   const coupon = coupons.find((item) => item.id === couponId);
+  /*
+    쿠폰은 **등급 할인을 뺀 금액**에 걸린다. 등급은 늘 걸리는 것이고 쿠폰은 이번 주문에만
+    쓰는 것이라, 늘 걸리는 것을 먼저 적용해야 쿠폰의 최대 할인 한도가 같은 기준으로 잡힌다.
+  */
+  const afterGrade = Math.max(goods - gradeCut, 0);
   const couponCut = !coupon
     ? 0
     : coupon.kind === '정률'
-      ? Math.min(Math.floor((goods * coupon.value) / 100), coupon.maxDiscount || Infinity)
-      : coupon.value;
+      ? Math.min(Math.floor((afterGrade * coupon.value) / 100), coupon.maxDiscount || Infinity)
+      : Math.min(coupon.value, afterGrade);
 
-  const point = usePoint ? Math.min(ACCOUNT.reward, Math.max(goods - couponCut, 0)) : 0;
-  const total = Math.max(goods - couponCut - point, 0) + shipping;
+  const point = usePoint ? Math.min(ACCOUNT.reward, Math.max(afterGrade - couponCut, 0)) : 0;
+  const total = Math.max(afterGrade - couponCut - point, 0) + shipping;
 
   const blocked = (): string => {
     if (lines.length === 0) return '주문할 상품이 없습니다.';
@@ -174,6 +203,10 @@ export function CheckoutView({ initialLines }: { initialLines: Line[] }) {
   const rows = [
     { label: '상품 금액', value: `${formatMoney(goods)}${COPY.product.priceUnit}` },
     { label: '배송비', value: shipping === 0 ? '무료' : `${formatMoney(shipping)}${COPY.product.priceUnit}` },
+    /* 등급 할인은 0원이면 줄을 세우지 않는다 — `신규` 등급인 사람에게 `-0원` 이 서면 왜 있는지 묻는다. */
+    ...(gradeCut > 0
+      ? [{ label: `등급 할인 (${grade?.name})`, value: `-${formatMoney(gradeCut)}${COPY.product.priceUnit}` }]
+      : []),
     ...(couponCut > 0 ? [{ label: '쿠폰 할인', value: `-${formatMoney(couponCut)}${COPY.product.priceUnit}` }] : []),
     ...(point > 0 ? [{ label: '적립금 사용', value: `-${formatMoney(point)}${COPY.product.priceUnit}` }] : []),
   ];

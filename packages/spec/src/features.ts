@@ -1,3 +1,5 @@
+import { FNB_FEATURES } from './features-fnb';
+import { IR_FEATURES } from './features-ir';
 import type { FeatureSpec } from './types';
 
 /**
@@ -10,7 +12,7 @@ import type { FeatureSpec } from './types';
  * 새 기능은 여기 먼저 등록하고 구현한다 — 라우트·컴포넌트명·i18n 키·테스트 ID·
  * Figma 프레임명이 전부 여기서 파생되므로, 이 파일을 거치지 않은 이름은 `pnpm spec:check` 에서 걸린다.
  */
-export const FEATURES: readonly FeatureSpec[] = [
+const CORE_FEATURES: readonly FeatureSpec[] = [
   {
     id: 'site.home',
     label: { ko: '서비스 소개', en: 'Home' },
@@ -1007,3 +1009,12 @@ export const FEATURES: readonly FeatureSpec[] = [
     singleViewByDesign: true,
   },
 ];
+
+/**
+ * 전 제품의 기능 — 검사기와 매트릭스가 읽는 하나의 목록.
+ *
+ * 제품별 파일을 여기서 잇는다. **차례는 뜻이 없다** — `id` 로만 찾으므로 어느 제품을 먼저
+ * 붙이든 결과가 같다. 다만 붙이는 것을 빠뜨리면 그 제품의 화면이 통째로 `MANIFEST_ORPHAN`
+ * 으로 뜨므로, 파일을 새로 만드는 날 이 줄을 함께 고쳐야 한다.
+ */
+export const FEATURES: readonly FeatureSpec[] = [...CORE_FEATURES, ...IR_FEATURES, ...FNB_FEATURES];

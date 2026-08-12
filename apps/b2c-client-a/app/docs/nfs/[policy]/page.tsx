@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Markdown } from '@winpilot/docs/ui';
 import { listSection, readSectionDoc } from '@winpilot/docs';
-import { SectionNav } from '../../_components/SectionNav';
+import { SectionNav } from '@winpilot/docs';
 
 export async function generateMetadata({ params }: { params: Promise<{ policy: string }> }): Promise<Metadata> {
   const { policy } = await params;

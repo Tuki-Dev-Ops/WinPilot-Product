@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function FaqCreatePage() {
+export default function IrFaqCreatePage() {
   return (
     <IrShell
       sectionId="content"

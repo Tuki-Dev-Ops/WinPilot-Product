@@ -17,7 +17,7 @@ export function generateStaticParams() {
   return MILESTONES.map((one) => ({ milestoneId: one.id }));
 }
 
-export default async function MilestoneDetailPage({
+export default async function IrMilestoneDetailPage({
   params,
 }: {
   params: Promise<{ milestoneId: string }>;

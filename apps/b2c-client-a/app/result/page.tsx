@@ -55,7 +55,8 @@ export default async function StatusResultPage({
   const shape = KIND[(kind as keyof typeof KIND) ?? "order"] ?? KIND.order;
 
   return (
-    <SiteShell>
+    /* 결과를 알리는 화면이다. 그 위에 다른 알림이 겹치면 무엇이 끝났는지가 흐려진다. */
+    <SiteShell popup={false}>
       <StatusScreen
         title={failed ? shape.failed : shape.done}
         description={

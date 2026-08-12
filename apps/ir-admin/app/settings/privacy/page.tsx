@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function PrivacySettingsPage() {
+export default function IrPrivacySettingsPage() {
   return (
     <IrShell sectionId="settings" trail={['설정', '개인정보 처리방침']} activeChildId="settings-privacy">
       <PrivacySettingsView />

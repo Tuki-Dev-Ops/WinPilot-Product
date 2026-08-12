@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function SupplierSettingsPage() {
+export default function IrSupplierSettingsPage() {
   return (
     <IrShell sectionId="settings" trail={['설정', '공급자 정보']} activeChildId="settings-supplier">
       <SupplierSettingsView />

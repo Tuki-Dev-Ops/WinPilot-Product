@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function PageVisitListPage() {
+export default function IrPageviewListPage() {
   return (
     <IrShell sectionId="statistics" trail={['통계', '많이 방문한 페이지']} activeChildId="statistics-pages">
       <PageVisitListView />

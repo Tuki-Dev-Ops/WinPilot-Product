@@ -12,7 +12,7 @@ import { IR_ROUTES } from '@/lib/navigation';
  */
 export const metadata: Metadata = { title: `전자투표 안내 — ${IR_COMPANY.name}` };
 
-export default function IrMeetingSettingsPage() {
+export default function VoteHomePage() {
   const next = MEETINGS.find((one) => one.state === '예정' && one.electronicVote);
 
   return (

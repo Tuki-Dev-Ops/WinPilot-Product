@@ -190,3 +190,68 @@ export function estimateReward(input: ProductFormInput): number {
   if (input.rewardKind === '정액') return value;
   return Math.floor((parseAmount(input.price) * value) / 100);
 }
+
+/**
+ * 한 주문의 배송비 — **상품마다 다른 정책을 한 값으로 모은다.**
+ *
+ * ## 왜 store 가 계산하나
+ * 한때 결제 화면이 `5만원 이상 무료, 미만 3,000원` 을 **글자로 박아** 두고 있었다. 그런데
+ * 어드민은 상품마다 배송 정책을 따로 받고 있었고, 상품 상세는 그 값으로 문구를 그렸다
+ * (`3만원 이상 무료배송`). 그래서 **상세에서 본 조건과 결제에서 걸리는 조건이 달랐다.**
+ *
+ * 규칙이 두 벌이면 어느 쪽이 맞는지 코드를 열어야 안다. 적립금 계산을 여기 둔 것과 같은
+ * 판단이다(`estimateReward`).
+ *
+ * ## 한 주문에 한 번만 붙인다
+ * 상품마다 배송비를 더하면 세 벌을 산 사람이 배송비를 세 번 낸다. 실제로는 한 상자로 가므로
+ * **가장 비싼 조건 하나**를 따른다 — 무료 상품과 유료 상품을 함께 담으면 유료 쪽이 이긴다.
+ *
+ * ## 조건부 무료는 **주문 전체 금액**으로 판단한다
+ * 그 상품 하나의 값이 아니다. `3만원 이상 무료` 인 상품을 만 원짜리로 세 개 담으면 무료여야
+ * 한다 — 장바구니에서 합계를 보고 담는 사람의 셈이 그렇다.
+ *
+ * ## 지역 추가비는 여기서 더하지 않는다
+ * 배송지를 받기 전에는 어느 지역인지 모른다. 주소를 다 적기 전에 금액이 바뀌면 그 변화가
+ * 무엇 때문인지 읽히지 않는다. 지역 추가비를 붙일 자리가 생기면 이 함수에 인자가 하나 는다.
+ *
+ * ## 상품 전체가 아니라 **배송에 관한 세 칸만** 받는다
+ * `ProductRecord` 를 받으면 이 모듈이 `products.ts` 를 알아야 하는데, 그쪽이 이미 이 모듈을
+ * 읽고 있어 서로 물게 된다. 계산에 실제로 쓰는 것은 세 칸뿐이다.
+ */
+export type ShippingTerms = Pick<ProductFormInput, 'shippingPolicy' | 'shippingFee' | 'freeThreshold'>;
+
+export function orderShippingFee(products: ShippingTerms[], goodsTotal: number): number {
+  if (products.length === 0 || goodsTotal === 0) return 0;
+
+  return products.reduce((worst, product) => {
+    if (product.shippingPolicy === '무료') return worst;
+
+    if (product.shippingPolicy === '조건부 무료') {
+      const threshold = parseAmount(product.freeThreshold);
+      /* 문턱이 안 적혀 있으면 조건이 없는 것이라 무료로 본다 — 값이 빈 것을 0 으로 읽으면 늘 무료가 된다. */
+      if (threshold === 0 || goodsTotal >= threshold) return worst;
+    }
+
+    return Math.max(worst, parseAmount(product.shippingFee));
+  }, 0);
+}
+
+/**
+ * 회원 등급이 깎아 주는 금액.
+ *
+ * ## 왜 여기 있나
+ * 어드민의 등급 화면이 `VIP 7%` 를 정하고 그 자리에 **"이 조건에 해당하는 사용자에게 곧바로
+ * 적용됩니다"** 라고 적혀 있었는데, 결제 계산에는 등급 항목이 아예 없었다. 적어 둔 것이
+ * 지켜지지 않는 상태였다.
+ *
+ * ## 쿠폰보다 먼저 깎는다
+ * 등급은 **그 사람에게 늘 걸리는 것**이고 쿠폰은 이번 주문에만 쓰는 것이다. 늘 걸리는 것을
+ * 먼저 적용해야 쿠폰의 최대 할인 한도가 `등급 할인 뒤 금액` 을 기준으로 잡힌다 — 반대로 두면
+ * 같은 쿠폰이 등급에 따라 다르게 깎인다.
+ *
+ * 내림으로 계산한다. 원 단위 아래를 올리면 합계가 한 원씩 어긋난다.
+ */
+export function gradeDiscount(goodsTotal: number, ratePercent: number): number {
+  if (ratePercent <= 0) return 0;
+  return Math.floor((goodsTotal * ratePercent) / 100);
+}

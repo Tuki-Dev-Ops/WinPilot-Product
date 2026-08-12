@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function SeoSettingsPage() {
+export default function IrSeoSettingsPage() {
   return (
     <IrShell sectionId="settings" trail={['설정', 'SEO 정보']} activeChildId="settings-seo">
       <SeoSettingsView />

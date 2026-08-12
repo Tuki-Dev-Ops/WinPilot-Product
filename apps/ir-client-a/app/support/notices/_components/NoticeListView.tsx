@@ -57,10 +57,10 @@ export function NoticeListView({ notices }: { notices: SiteNotice[] }) {
                     type="button"
                     onClick={() => setOpened(open ? null : one.id)}
                     aria-expanded={open}
-                    className="flex w-full items-center gap-4 px-1 py-5 text-left transition-colors duration-150 hover:text-brand"
+                    className="flex w-full items-center gap-4 px-1 py-5 text-left transition-colors duration-150 hover:text-brand-700"
                   >
                     {one.pinned && (
-                      <span className="flex shrink-0 items-center gap-1 rounded bg-brand/10 px-2 py-1 text-xs font-medium text-brand">
+                      <span className="flex shrink-0 items-center gap-1 rounded bg-brand-50 px-2 py-1 text-xs font-medium text-brand-700">
                         <Pin aria-hidden className="size-3" strokeWidth={2} />
                         고정
                       </span>

@@ -16,6 +16,12 @@
  * `블록을 놓아 구성합니다` 가 서게 된다.
  */
 
+/*
+  기간 판정은 B2C 배너의 것을 그대로 쓴다. 같은 물음("지금 걸려 있는가")에 두 벌의 답이 있으면
+  갈래마다 자정 언저리의 셈이 달라지고, 그 차이는 아무도 재현하지 못한다.
+*/
+import { scheduleState } from './banners';
+
 /* ── 서비스 ───────────────────────────────────────────────────────── */
 
 export type SiteService = {
@@ -30,8 +36,6 @@ export type SiteService = {
    * 간격보다 좁다. 한 문자열에 `\n` 을 넣으면 그 간격을 화면이 정할 수 없다.
    */
   body: string[];
-  /** 더 읽으러 가는 곳. 자기 화면이 없는 것은 제품 소개로 보낸다 */
-  href: string;
 };
 
 /**
@@ -50,7 +54,6 @@ export const SITE_SERVICES: SiteService[] = [
       '제조 현장을 먼저 진단합니다. 무엇을 도입할지가 아니라 어디부터 손대야 하는지를 정합니다.',
       '설비·공정·인력의 지금을 데이터로 확인하고, 효과가 큰 순서대로 단계를 나눠 제안드립니다.',
     ],
-    href: '/support/contact',
   },
   {
     id: 'infra',
@@ -60,7 +63,6 @@ export const SITE_SERVICES: SiteService[] = [
       '서버·네트워크·백업을 클라우드에서 운영합니다. 공장 안에 서버실을 두지 않아도 됩니다.',
       '증설과 이중화, 장애 대응까지 맡으므로 현장은 생산에만 집중할 수 있습니다.',
     ],
-    href: '/products',
   },
   {
     id: 'mes',
@@ -70,7 +72,6 @@ export const SITE_SERVICES: SiteService[] = [
       '설비·작업자·자재의 기록을 실시간으로 모아 하나의 규격으로 표준화합니다.',
       '비가동과 불량이 어느 공정에서 났는지 추적되어, 관리의 사각지대가 사라집니다.',
     ],
-    href: '/solutions/mes',
   },
   {
     id: 'erp',
@@ -80,7 +81,6 @@ export const SITE_SERVICES: SiteService[] = [
       '수주에서 매입·생산·출하·정산까지를 하나의 자원으로 잇습니다.',
       '한 번 입력한 값이 다음 단계로 그대로 흐르므로, 부서마다 옮겨 적는 일이 사라집니다.',
     ],
-    href: '/solutions/erp',
   },
   {
     id: 'crm',
@@ -90,7 +90,6 @@ export const SITE_SERVICES: SiteService[] = [
       '문의부터 상담·계약·유지보수까지 고객과의 모든 접점을 한 줄로 기록합니다.',
       '담당자가 바뀌어도 관계가 남고, 고객은 같은 설명을 두 번 하지 않습니다.',
     ],
-    href: '/products',
   },
   {
     id: 'dxp',
@@ -100,19 +99,65 @@ export const SITE_SERVICES: SiteService[] = [
       '고객이 만나는 화면을 블록을 놓아 구성합니다. 개발 없이 담당자가 직접 만듭니다.',
       'ERP·MES·CRM 의 데이터를 그대로 끌어다 쓰므로, 화면과 데이터가 따로 놀지 않습니다.',
     ],
-    href: '/solutions/dxp',
   },
 ];
 
-/* ── 솔루션 ───────────────────────────────────────────────────────── */
+/**
+ * 홈 카드에서 **더 읽으러 가는 곳** — 상세 화면이 정한다.
+ *
+ * ## 카드가 주소를 따로 갖고 있었다
+ * 전에는 `SiteService` 에 `href` 가 있었다. 여섯이 각자 자기 화면을 갖기 전, 화면이 없는 것을
+ * `/products` 로 보내야 했기 때문이다. 그런데 화면이 하나씩 생길 때마다 **두 곳을 함께 고쳐야**
+ * 했고 — 상세 화면의 `href` 와 카드의 `href` — 실제로 Cloud CRM 하나가 뒤처져, 자기 화면이
+ * 있는데도 홈에서 누르면 제품 목록으로 갔다. 그 어긋남은 홈을 눌러 봐야만 보인다.
+ *
+ * 지금은 카드가 주소를 갖지 않고 파는 것에게 물어본다. 고칠 자리가 하나면 뒤처질 자리도 없다.
+ *
+ * 못 찾았을 때 `/products` 로 보내는 것은 **닿을 수 없는 길**이다(여섯 다 `SOLUTIONS` 아니면
+ * `SERVICE_DETAILS` 에 있다). 그래도 던지지 않는 이유: 값이 어긋나는 날 홈 화면 전체가 죽는
+ * 것보다, 파는 것을 다 모아 둔 목록으로 보내는 편이 낫다.
+ */
+export function siteServiceHref(one: SiteService): string {
+  return findOffering(one.id)?.href ?? '/products';
+}
 
-export type Solution = {
-  id: 'erp' | 'mes' | 'crm' | 'dxp';
-  name: string;
-  /** 더 읽으러 가는 곳. 넷 다 자기 화면을 갖는다 */
+/* ── 파는 것 한 벌 ────────────────────────────────────────────────── */
+
+/**
+ * 상세 화면 하나가 다루는 값 — **제품이든 서비스든 같은 모양이다.**
+ *
+ * ## 왜 한 모양으로 묶었나
+ * 처음에는 클라우드 제품 넷만 상세 화면을 가졌고, 그 값의 이름이 `Solution` 이었다. 그런데
+ * 스마트 컨설팅과 인프라 서비스에도 같은 화면이 필요해지자 길이 둘로 갈렸다 — 값의 모양을
+ * 하나 더 만들고 화면도 하나 더 만드는 길, 아니면 **모양을 같게 두고 화면을 나눠 쓰는 길.**
+ *
+ * 뒤를 택했다. 읽는 사람이 묻는 것이 여섯 다 같기 때문이다 — 무엇이 불편한가 · 어떻게
+ * 푸는가 · 어디서 붙는가 · 무엇이 달라지는가 · 우리 업종인가 · 얼마나 걸리는가. 파는 것이
+ * 제품인지 사람이 붙는 일인지는 **파는 쪽의 사정**이지 읽는 쪽의 물음이 아니다.
+ *
+ * 화면을 나눠 쓰면 덤도 따라온다: 한 화면에만 칸을 더하는 일이 생기지 않는다. 여섯을 나란히
+ * 열어 놓고 견주는 사람에게는 그 차이가 가장 먼저 보인다.
+ */
+export type Offering = {
+  id: string;
+  /**
+   * 화면에 서는 이름 **그대로** — `Cloud MES` · `스마트 컨설팅`.
+   *
+   * `name` 과 따로 두는 이유: 제품은 목록에서 `MES` 로, 화면에서는 `Cloud MES` 로 선다.
+   * 화면이 `Cloud ${name}` 을 만들어 쓰면 **`Cloud 스마트 컨설팅`** 같은 말이 생긴다.
+   */
+  title: string;
+  /** 더 읽으러 가는 곳. 여섯 다 자기 화면을 갖는다 */
   href: string;
   tagline: string;
-  /** 무엇을 푸는가 — 기능 목록이 아니라 문제를 적는다 */
+  /**
+   * 무엇을 푸는가 — 기능 목록이 아니라 문제를 적는다.
+   *
+   * 여기 있는 글은 **글자 그대로** 화면에 선다. 한때 `**왜 그만큼밖에**` 처럼 마크다운으로
+   * 힘을 준 문장이 하나 있었고, 그 별표는 사이트와 어드민 양쪽에서 그대로 보였다. 어드민에서
+   * 이 칸을 직접 고칠 수 있게 된 지금은 더 생기기 쉬운 실수라 여기 적어 둔다 — 힘을 주고
+   * 싶으면 문장을 나누지, 기호를 넣지 않는다.
+   */
   problem: string;
   /** 어떻게 푸는가. **두 문장까지** — 홈 카드가 이 값을 그대로 싣는데 세 문장이면 석 줄이 된다 */
   approach: string;
@@ -147,6 +192,21 @@ export type Solution = {
    */
   steps: { name: string; period: string; desc: string }[];
 
+};
+
+/* ── 솔루션(클라우드 제품 넷) ─────────────────────────────────────── */
+
+/**
+ * 클라우드 제품 — `Offering` 에 **파는 쪽 사정**을 얹은 것.
+ *
+ * `name` 은 목록에서 쓰는 짧은 이름(`MES`), `visible` 은 메뉴에 세울지다. 서비스 둘에는 없는
+ * 값이라 여기에만 둔다 — 공통 모양에 넣으면 서비스 쪽이 쓰지도 않는 칸을 채우게 된다.
+ */
+export type Solution = Offering & {
+  id: 'erp' | 'mes' | 'crm' | 'dxp';
+  /** 목록에서 쓰는 짧은 이름. 화면에 서는 이름은 `title` 이다 */
+  name: string;
+
   /**
    * 사이트에 세울지.
    *
@@ -161,6 +221,7 @@ export const SOLUTIONS: Solution[] = [
   {
     id: 'erp',
     name: 'ERP',
+    title: 'Cloud ERP',
     href: '/solutions/erp',
     tagline: '흩어진 장부를 하나의 흐름으로',
     problem:
@@ -192,10 +253,11 @@ export const SOLUTIONS: Solution[] = [
   {
     id: 'mes',
     name: 'MES',
+    title: 'Cloud MES',
     href: '/solutions/mes',
     tagline: '현장의 데이터를 표준으로',
     problem:
-      '설비마다 데이터 모양이 다릅니다. 어제 몇 개를 만들었는지는 알아도 **왜 그만큼밖에 못 만들었는지**는 사람에게 물어야 알 수 있습니다.',
+      '설비마다 데이터 모양이 다릅니다. 어제 몇 개를 만들었는지는 알아도 왜 그만큼밖에 못 만들었는지는 사람에게 물어야 알 수 있습니다.',
     approach:
       '설비·작업자·자재의 기록을 실시간으로 모아 하나의 규격으로 표준화합니다. 관리의 사각지대가 사라집니다.',
     outcomes: ['비가동 원인이 숫자로 남음', '불량이 난 공정을 바로 추적', 'AI 판단(AX)의 입력이 되는 데이터'],
@@ -223,6 +285,7 @@ export const SOLUTIONS: Solution[] = [
   {
     id: 'crm',
     name: 'CRM',
+    title: 'Cloud CRM',
     href: '/solutions/crm',
     tagline: '사람 머릿속의 관계를 기록으로',
     problem:
@@ -254,6 +317,7 @@ export const SOLUTIONS: Solution[] = [
   {
     id: 'dxp',
     name: 'DXP',
+    title: 'Cloud DXP',
     href: '/solutions/dxp',
     tagline: '화면을 코드가 아니라 블록으로',
     problem:
@@ -286,6 +350,17 @@ export const SOLUTIONS: Solution[] = [
 
 export function findSolution(id: string): Solution | undefined {
   return SOLUTIONS.find((one) => one.id === id);
+}
+
+/**
+ * 이 값이 클라우드 제품인가 — **제품에만 있는 칸을 그릴지**를 정한다.
+ *
+ * 제품과 서비스가 `Offering` 한 벌을 나눠 쓰는데 제품에만 있는 칸이 둘이다(`name` · `visible`).
+ * 그 둘을 그릴지를 화면마다 `'visible' in one` 으로 판단하게 두면 판단하는 곳이 늘 때마다
+ * **한 곳이 빠진다** — 빠진 화면에서는 숨겨 둔 제품이 노출로 보인다.
+ */
+export function isSolution(one: Offering): one is Solution {
+  return 'visible' in one;
 }
 
 /* ── 미디어 ───────────────────────────────────────────────────────── */
@@ -781,6 +856,18 @@ export type SiteBanner = {
   /** 어디에 서는가 — 첫 화면의 장인지, 띄우는 팝업인지 */
   slot: '메인 비주얼' | '팝업';
   title: string;
+  /**
+   * 팝업 안에 서는 본문 — **팝업에만 쓴다.**
+   *
+   * 한때 이 줄이 없어서 팝업이 `title` 하나만 갖고 있었다. 그런데 팝업이 뜨는 까닭은 늘
+   * "언제부터 언제까지 무엇이 어떻게 된다" 를 알리기 위해서다 — 제목 한 줄로 그것을 담으면
+   * 제목이 문단이 되고, 그 문단이 목록의 한 칸에 그대로 들어가 표가 무너진다.
+   *
+   * 메인 비주얼에는 없다. 그쪽은 큰 글씨 한 줄이 서는 자리라 본문이 설 데가 없다.
+   */
+  body?: string;
+  /** 더 읽을 곳 — 비우면 단추가 서지 않는다 */
+  linkUrl?: string;
   /** 언제부터 언제까지. 끝을 비우면 계속 선다 */
   startAt: string;
   endAt: string;
@@ -796,9 +883,51 @@ export type SiteBanner = {
  */
 export const SITE_BANNERS: SiteBanner[] = [
   { id: 'B-003', slot: '메인 비주얼', title: '2026 스마트팩토리 솔루션 페어', startAt: '2026-08-01', endAt: '2026-09-30', visible: true },
-  { id: 'B-002', slot: '팝업', title: '하계 휴무 안내', startAt: '2026-07-25', endAt: '2026-08-05', visible: true },
-  { id: 'B-001', slot: '팝업', title: '개인정보 처리방침 개정 예고', startAt: '2026-04-15', endAt: '2026-05-15', visible: false },
+  {
+    id: 'B-002',
+    slot: '팝업',
+    title: '하계 휴무 안내',
+    body: '8월 3일(월)부터 8월 7일(금)까지 하계 휴무입니다. 이 기간에 들어온 문의는 8월 10일(월)부터 차례로 답해 드립니다.',
+    linkUrl: '/support/notices',
+    startAt: '2026-07-25',
+    endAt: '2026-08-31',
+    visible: true,
+  },
+  {
+    id: 'B-001',
+    slot: '팝업',
+    title: '개인정보 처리방침 개정 예고',
+    body: '문의 양식이 받는 항목이 바뀌면서 개인정보 처리방침을 함께 고칩니다. 바뀌는 것은 수집 항목과 보관 기간 두 가지입니다.',
+    linkUrl: '/privacy',
+    startAt: '2026-04-15',
+    endAt: '2026-05-15',
+    visible: false,
+  },
 ];
+
+/**
+ * 지금 걸린 배너 · 팝업.
+ *
+ * ## 화면마다 기간을 다시 재지 않는다
+ * `scheduleState()` 한 벌이 판정하고, 사이트는 그 결과만 받는다. 화면에
+ * `visible && today >= startAt` 을 적어 두면 새 화면을 만드는 날 그 한 줄을 빠뜨리고,
+ * 그러면 **끝난 배너가 그 화면에만 다시 뜬다.**
+ *
+ * ## 이름에 `Site` 가 붙는 까닭
+ * F&B 쪽에 같은 뜻의 `liveBanners` · `livePopups` 가 이미 있고, 두 파일이 같은 꾸러미에서
+ * 함께 내보내진다. 이름이 겹치면 한쪽이 조용히 덮인다.
+ *
+ * @param today 오늘 — 서버가 없으므로 화면 밖에서 받는다(`lib/today.ts`)
+ */
+export function liveSiteBanners(today: string): SiteBanner[] {
+  return SITE_BANNERS.filter(
+    (one) => one.slot === '메인 비주얼' && scheduleState(one, today) === '노출 중',
+  );
+}
+
+export function liveSitePopups(today: string): SiteBanner[] {
+  return SITE_BANNERS.filter((one) => one.slot === '팝업' && scheduleState(one, today) === '노출 중');
+}
 
 /* ── 방문 통계 ────────────────────────────────────────────────────── */
 
@@ -1154,4 +1283,112 @@ export function publicCredentials(): Credential[] {
 
 export function publicSiteNotices(): SiteNotice[] {
   return SITE_NOTICES.filter((one) => one.visible);
+}
+
+/* ── 서비스 상세(컨설팅 · 인프라) ─────────────────────────────────── */
+
+/**
+ * 사람이 붙어서 하는 일 둘 — 스마트 컨설팅 · 인프라 서비스.
+ *
+ * ## 왜 `SOLUTIONS` 와 나눠 두나
+ * 모양(`Offering`)은 같지만 **성격이 다르다.** 클라우드 제품 넷은 계약하면 그날부터 쓰는
+ * 것이고, 이 둘은 사람이 현장에 가서 하는 일이다. 그래서 PRODUCT 가 아니라 SOLUTION 메뉴에
+ * 서고, 어드민에서 켜고 끄는 값(`visible`)도 갖지 않는다 — 서비스는 내리는 것이 아니라
+ * 안 파는 것이다.
+ *
+ * ## 성과에 숫자를 적지 않는다
+ * 제품 넷의 성과는 `월 마감이 며칠에서 하루로` 처럼 적혀 있다. 그것은 **그 제품이 하는 일**의
+ * 결과라 값이 정해져 있다. 컨설팅의 성과는 현장마다 달라, 여기에 숫자를 적으면 그것이 약속이
+ * 된다 — 지키지 못할 약속을 소개 화면에 적는 것은 파는 사람에게도 손해다.
+ */
+export const SERVICE_DETAILS: Offering[] = [
+  {
+    id: 'consulting',
+    title: '스마트 컨설팅',
+    href: '/solutions/consulting',
+    tagline: '무엇을 도입할지가 아니라 어디부터 손댈지',
+    problem:
+      '스마트공장을 해야 한다는 것은 아는데, 무엇부터 해야 할지가 정해지지 않습니다. 설비를 사자는 이야기와 시스템을 넣자는 이야기가 같이 나오고, 어느 쪽이 먼저인지는 결정할 근거가 없습니다.',
+    approach:
+      '현장을 먼저 봅니다. 설비 · 공정 · 인력의 지금을 데이터로 확인하고, 효과가 큰 순서대로 단계를 나눠 제안드립니다.',
+    outcomes: [
+      '무엇을 언제 할지가 문서로 남음',
+      '지원사업 신청에 쓸 수 있는 근거',
+      '도입 전에 기대 효과를 먼저 확인',
+    ],
+    features: [
+      { title: '현장 진단', desc: '설비가 무엇을 내보내는지, 지금 무엇을 손으로 적는지 하나씩 확인합니다.' },
+      { title: '공정 표준화', desc: '사람마다 다르게 하던 순서를 하나로 정리합니다. 시스템은 그다음입니다.' },
+      { title: '단계 설계', desc: '한 번에 다 바꾸지 않습니다. 효과가 큰 것부터 나눠 순서를 정합니다.' },
+      { title: '지원사업 안내', desc: '스마트공장 보급사업 등 쓸 수 있는 제도를 함께 검토합니다.' },
+    ],
+    layers: [
+      { name: '현장', desc: '설비와 작업자가 실제로 하는 일을 그대로 받아 적습니다.' },
+      { name: '진단', desc: '어디서 시간과 값이 새는지 데이터로 짚습니다.' },
+      { name: '설계', desc: '고칠 것의 순서와 기간을 정합니다. 이것이 곧 제안서입니다.' },
+      { name: '이행', desc: '정한 순서대로 제품을 넣습니다. 넣지 않기로 한 것도 문서에 남습니다.' },
+    ],
+    industries: ['기계 · 부품', '전기 · 전자', '자동차 부품', '화학 · 소재', '식음료 · 제약'],
+    steps: [
+      { name: '사전 협의', period: '1주', desc: '무엇이 가장 불편한지 듣습니다. 여기서 진단 범위가 정해집니다.' },
+      { name: '현장 방문', period: '1~2주', desc: '라인을 직접 봅니다. 설비 신호와 손으로 적는 기록을 함께 확인합니다.' },
+      { name: '진단 보고', period: '2주', desc: '어디서 새는지와 그 크기를 숫자로 정리해 드립니다.' },
+      { name: '로드맵', period: '1주', desc: '단계와 기간을 정합니다. 도입하지 않기로 한 것도 이유와 함께 적습니다.' },
+    ],
+  },
+  {
+    id: 'infra',
+    title: '인프라 서비스',
+    href: '/solutions/infra',
+    tagline: '공장 안에 서버실을 두지 않아도 됩니다',
+    problem:
+      '시스템은 넣었는데 그것이 도는 서버를 공장 안에서 관리하게 됩니다. 밤에 멈추면 아침까지 아무도 모르고, 담당자가 그만두면 접속 정보부터 찾아야 합니다.',
+    approach:
+      '서버 · 네트워크 · 백업을 클라우드에서 운영합니다. 증설과 이중화, 장애 대응까지 맡으므로 현장은 생산에만 집중할 수 있습니다.',
+    outcomes: [
+      '멈춘 것을 우리가 먼저 안다',
+      '담당자가 바뀌어도 운영이 이어짐',
+      '늘어난 라인만큼만 늘리는 비용',
+    ],
+    features: [
+      { title: '서버 운영', desc: '설치 · 증설 · 이중화를 맡습니다. 라인이 늘면 그만큼만 늘립니다.' },
+      { title: '네트워크', desc: '공장과 클라우드를 잇습니다. 설비망과 사무망을 나눠 둡니다.' },
+      { title: '백업 · 복구', desc: '날마다 받고 되살리는 것까지 정기적으로 확인합니다.' },
+      { title: '장애 대응', desc: '멈춘 것을 감시가 먼저 알립니다. 연락을 받고 시작하지 않습니다.' },
+    ],
+    layers: [
+      { name: '현장망', desc: '설비와 게이트웨이가 붙는 자리. 사무망과 나눠 둡니다.' },
+      { name: '연결', desc: '공장에서 클라우드까지의 길. 끊겼을 때 쓸 두 번째 길을 함께 둡니다.' },
+      { name: '서버', desc: '제품이 도는 자리. 늘리고 줄이는 일이 여기서 일어납니다.' },
+      { name: '감시 · 백업', desc: '멈춤과 되살림. 이 층이 있어야 나머지 셋이 사고가 아니라 일이 됩니다.' },
+    ],
+    industries: ['기계 · 부품', '전기 · 전자', '자동차 부품', '화학 · 소재', '식음료 · 제약'],
+    steps: [
+      { name: '현황 확인', period: '1주', desc: '지금 무엇이 어디서 도는지, 누가 관리하는지 확인합니다.' },
+      { name: '구성 설계', period: '2주', desc: '망을 나누고 이중화할 곳을 정합니다. 비용이 여기서 정해집니다.' },
+      { name: '구축 · 이전', period: '3~6주', desc: '옮깁니다. 옮기는 동안 기존 것을 함께 돌려 멈추지 않게 합니다.' },
+      { name: '운영 인계', period: '2주', desc: '감시와 연락 체계를 켭니다. 이때부터 멈춤을 우리가 먼저 압니다.' },
+    ],
+  },
+];
+
+/**
+ * 주소의 id 로 **서비스만** 찾는다. 어드민의 서비스 상세가 쓴다.
+ *
+ * `findOffering` 을 대신 쓰지 않는 이유: 그러면 `/services/mes` 가 열린다. 제품을 서비스
+ * 갈래에서 고칠 수 있게 되면 **같은 값을 고치는 자리가 셋**이 되고, 셋 중 어느 화면에서
+ * 고쳤는지에 따라 보이는 칸이 달라진다.
+ */
+export function findService(id: string): Offering | undefined {
+  return SERVICE_DETAILS.find((one) => one.id === id);
+}
+
+/**
+ * 주소의 id 로 **제품이든 서비스든** 하나를 찾는다.
+ *
+ * 상세 화면이 여섯인데 찾는 곳이 둘이면 화면마다 `제품에서 먼저 찾고 없으면 서비스에서`
+ * 를 적게 된다. 그 두 줄이 여섯 벌이 되면 그중 하나는 순서가 뒤집힌다.
+ */
+export function findOffering(id: string): Offering | undefined {
+  return SOLUTIONS.find((one) => one.id === id) ?? SERVICE_DETAILS.find((one) => one.id === id);
 }

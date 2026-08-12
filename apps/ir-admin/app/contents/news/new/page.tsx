@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function NewsCreatePage() {
+export default function IrNewsCreatePage() {
   return (
     <IrShell
       sectionId="content"

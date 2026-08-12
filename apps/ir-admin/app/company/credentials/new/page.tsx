@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function CredentialCreatePage() {
+export default function IrCredentialCreatePage() {
   return (
     <IrShell
       sectionId="company"

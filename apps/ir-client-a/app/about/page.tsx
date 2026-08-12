@@ -1,9 +1,7 @@
 import type { Metadata } from 'next';
-import { ArrowUpRight } from 'lucide-react';
 import { IR_COMPANY, MILESTONES, publicCredentials } from '@winpilot/store';
 import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
 import { IrTable } from '@/app/_components/IrTable';
-import { IR_ROUTES } from '@/lib/navigation';
 
 /**
  * Feature: `site.about` · IR Client (템플릿 A) · route `/about`
@@ -19,13 +17,18 @@ import { IR_ROUTES } from '@/lib/navigation';
  * 홈 화면이 이미 무엇을 하는 회사인지 말했다. 여기서 그것을 다시 길게 쓰면 **같은 말이 두 곳에
  * 있고**, 고칠 때 한쪽만 고쳐진다. 여기는 확인하러 온 사람의 자리다.
  *
+ * ## 끝에 두었던 바로가기 둘을 뺐다
+ * 표 아래에 `연혁` 과 `특허 및 인증` 으로 가는 칸이 있었다. 뺀 이유: 그 둘은 **헤더의 회사 소개
+ * 아래에 이미 서 있다.** 같은 길을 화면 안에 한 번 더 두면, 화면이 끝났다는 신호가 있어야 할
+ * 자리에 링크 두 개가 서서 아래가 더 있는 것처럼 읽힌다.
+ *
  * ## 어드민 연동
  * - 회사 정보 ← `@winpilot/store` 의 `IR_COMPANY`
  * - 연혁 수 ← 같은 store 의 `MILESTONES` (B2C Admin 의 회사 > 연혁이 고친다)
  */
 export const metadata: Metadata = { title: `회사 소개 — ${IR_COMPANY.name}` };
 
-export default function SiteAboutPage() {
+export default function ProfileSettingsPage() {
   const visibleMilestones = MILESTONES.filter((one) => one.visible);
 
   /* 설립 연도만 잘라 쓴다. `2019-04-01` 을 그대로 두면 넉 줄 중 이 칸만 길어져 줄이 어긋난다. */
@@ -65,14 +68,6 @@ export default function SiteAboutPage() {
         />
       </section>
 
-      {/*
-        다음으로 갈 곳을 **끝에 둔다.** 표를 다 읽은 사람이 그 다음에 묻는 것은 대개 둘이다 —
-        어떻게 여기까지 왔나(연혁), 무엇을 가지고 있나(특허). 그 둘만 두고 나머지는 두지 않는다.
-      */}
-      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <NextLink href={IR_ROUTES.history} title="연혁" desc="회사가 지나온 자리" />
-        <NextLink href={IR_ROUTES.certifications} title="특허 및 인증" desc="등록번호로 확인하실 수 있습니다" />
-      </section>
     </IrSiteShell>
   );
 }
@@ -90,21 +85,3 @@ function Stat({ label, value, note }: { label: string; value: string; note: stri
   );
 }
 
-function NextLink({ href, title, desc }: { href: string; title: string; desc: string }) {
-  return (
-    <a
-      href={href}
-      className="group flex items-center justify-between gap-4 rounded-xl border border-border px-6 py-5 transition-colors duration-150 hover:bg-surface"
-    >
-      <span className="min-w-0">
-        <span className="block text-sm font-semibold">{title}</span>
-        <span className="mt-1 block text-xs text-ink-muted">{desc}</span>
-      </span>
-      <ArrowUpRight
-        aria-hidden
-        className="size-5 shrink-0 text-ink-faint transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-        strokeWidth={1.8}
-      />
-    </a>
-  );
-}

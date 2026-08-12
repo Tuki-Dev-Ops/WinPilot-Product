@@ -212,7 +212,9 @@ export function InvoiceListView({ today }: { today: string }) {
 
   const changeTenant = (tenantId: string) => {
     /* 고객사를 바꾸면 그 고객사가 지금 쓰는 등급으로 되돌린다 — 앞 고객사의 등급이 남으면 엉뚱한 금액이 청구된다. */
-    const plan = planOfTenant(findTenant(tenantId)?.plan ?? '');
+    /* 제품과 등급 이름 둘 다 넘긴다 — 등급 이름은 제품마다 되풀이된다. */
+    const tenant = findTenant(tenantId);
+    const plan = tenant ? planOfTenant(tenant.domain, tenant.plan) : undefined;
     applyPlan({ ...draft, tenantId, planId: plan?.id ?? '' });
   };
 
@@ -226,7 +228,7 @@ export function InvoiceListView({ today }: { today: string }) {
 
     /* 새 청구는 **첫 고객사의 지금 등급**에서 시작한다 — 빈 칸으로 두면 금액을 손으로 적게 된다. */
     const first = TENANTS[0];
-    const plan = planOfTenant(first?.plan ?? '');
+    const plan = first ? planOfTenant(first.domain, first.plan) : undefined;
     const filled = plan ? fromPlan(plan.id, today) : null;
 
     setDraft({
@@ -250,7 +252,10 @@ export function InvoiceListView({ today }: { today: string }) {
     setDraft({
       tenantId: invoice.tenantId,
       kind: invoice.kind,
-      planId: planOfTenant(findTenant(invoice.tenantId)?.plan ?? '')?.id ?? '',
+      planId: (() => {
+        const owner = findTenant(invoice.tenantId);
+        return owner ? (planOfTenant(owner.domain, owner.plan)?.id ?? '') : '';
+      })(),
       title: invoice.title,
       amount: String(invoice.amount),
       dueAt: invoice.dueAt,

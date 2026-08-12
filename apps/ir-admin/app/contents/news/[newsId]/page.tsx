@@ -17,7 +17,7 @@ export function generateStaticParams() {
   return MEDIA_CLIPS.map((one) => ({ newsId: one.id }));
 }
 
-export default async function NewsDetailPage({ params }: { params: Promise<{ newsId: string }> }) {
+export default async function IrNewsDetailPage({ params }: { params: Promise<{ newsId: string }> }) {
   const { newsId } = await params;
   const clip = findMediaClip(newsId);
   if (!clip) notFound();

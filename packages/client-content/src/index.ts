@@ -33,6 +33,7 @@ export {
   findNews,
   findFaq,
   findProduct,
+  findShippingTerms,
   formatMoney,
   productsInCategory,
   productsWithTag,

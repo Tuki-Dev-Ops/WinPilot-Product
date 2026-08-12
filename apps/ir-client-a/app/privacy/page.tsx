@@ -15,7 +15,7 @@ import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
  */
 export const metadata: Metadata = { title: `개인정보 처리방침 — ${IR_COMPANY.name}` };
 
-export default function PrivacyPage() {
+export default function PrivacySettingsPage() {
   return (
     <IrSiteShell back={{ href: '/', label: '홈' }}>
       <IrPageTitle

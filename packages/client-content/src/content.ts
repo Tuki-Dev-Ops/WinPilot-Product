@@ -14,7 +14,9 @@ import {
   NOTICES,
   PORTFOLIOS,
   PRIVACY,
+  POPUPS,
   PRODUCTS,
+  type ShippingTerms,
   PRODUCT_OPTIONS,
   productArt,
   TERMS,
@@ -154,6 +156,24 @@ export const CONTENT: SiteContent = {
       linkUrl: banner.linkUrl,
       order: banner.order,
     })),
+
+  /*
+    팝업도 배너와 같은 판정을 쓴다 — 기간이 지났거나 내려 둔 것은 여기서 걸러진다. 화면이
+    다시 판단하지 않는다.
+
+    차례는 목록 순서 그대로다. 기간이 겹치면 위에 있는 것이 이긴다 — 그때는 사람이 정한
+    차례가 답이다.
+  */
+  popups: POPUPS.filter((popup) => scheduleState(popup, TODAY) === '노출 중').map((popup) => ({
+    id: popup.id,
+    title: popup.title,
+    body: popup.body,
+    linkUrl: popup.linkUrl,
+    position: popup.position,
+    /* 폭은 어드민이 글자로 받는다(`'360'`). 화면이 매번 되돌리지 않게 여기서 숫자로 바꾼다. */
+    width: parseAmount(popup.width) || 360,
+    todayClose: popup.todayClose,
+  })),
 
   categories: CATEGORIES.filter((category) => category.visible).map((category) => ({
     id: category.id,
@@ -317,6 +337,30 @@ export function productsInCategory(categoryId: string, content: SiteContent = CO
 
 export function findProduct(id: string) {
   return CONTENT.products.find((product) => product.id === id);
+}
+
+/**
+ * 그 상품의 **배송 조건 세 칸.**
+ *
+ * ## 왜 투영본에 없고 여기서 원본을 다시 읽나
+ * 고객 화면에 나가는 상품(`ProductItem`)은 배송을 **문구로** 갖는다(`3만원 이상 무료배송`).
+ * 읽는 사람에게는 그것이 맞지만 **계산에는 쓸 수 없다** — 글자를 되돌려 숫자로 바꾸는 코드가
+ * 생기고, 그 코드는 문구를 고치는 날 조용히 깨진다.
+ *
+ * 그래서 계산이 필요한 자리(결제)만 원본의 세 칸을 그대로 가져간다. 계산 자체는 store 가
+ * 한다(`orderShippingFee`).
+ *
+ * 숨긴 상품도 찾는다. 장바구니에 담은 뒤 어드민이 내린 상품이 **배송비 계산에서만 빠지면**
+ * 합계가 조용히 달라진다 — 담긴 것은 담긴 대로 셈해야 한다.
+ */
+export function findShippingTerms(id: string): ShippingTerms | undefined {
+  const found = PRODUCTS.find((product) => product.id === id);
+  if (!found) return undefined;
+  return {
+    shippingPolicy: found.shippingPolicy,
+    shippingFee: found.shippingFee,
+    freeThreshold: found.freeThreshold,
+  };
 }
 
 export function findNotice(id: string) {

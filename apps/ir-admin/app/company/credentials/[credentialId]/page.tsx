@@ -18,7 +18,7 @@ export function generateStaticParams() {
   return CREDENTIALS.map((one) => ({ credentialId: one.id }));
 }
 
-export default async function CredentialDetailPage({
+export default async function IrCredentialDetailPage({
   params,
 }: {
   params: Promise<{ credentialId: string }>;

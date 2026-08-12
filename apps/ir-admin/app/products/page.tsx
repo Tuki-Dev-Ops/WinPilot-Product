@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function ProductListPage() {
+export default function IrProductListPage() {
   return (
     <IrShell sectionId="product" trail={['제품', '목록']} activeChildId="product-list">
       <ProductListView />

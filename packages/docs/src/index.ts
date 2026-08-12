@@ -120,3 +120,84 @@ export function readDoc(name: string): string | null {
   if (!/^[a-zA-Z0-9-]+$/.test(name)) return null;
   return read(join(docsRoot(), `${name}.md`));
 }
+
+/**
+ * 이 문서 묶음을 **다시 만들 때** 쓰는 지시문.
+ *
+ * ## 왜 공유 패키지에 있나
+ * 일곱 앱의 `/docs/prompt` 가 이 글을 그린다. 한때 앱마다 한 벌씩, **여든한 줄이 일곱 벌**
+ * 들어 있었다. 그 상태에서 라우트가 셋 늘었는데(`/docs/path` · `/docs/coding-conventions` ·
+ * `/docs/admin-mapping`) 일곱 벌 중 **한 벌도 고쳐지지 않았다** — 고칠 곳이 일곱이면 아무도
+ * 고치지 않는다.
+ *
+ * 프롬프트 자체가 "특정 도메인에 묶이지 않는 문서 체계여야 한다" 고 말하고 있으므로,
+ * 제품마다 다를 이유도 없다.
+ */
+export const DOCS_GENERATION_PROMPT = `# 역할
+이 웹 애플리케이션의 시니어 프론트엔드 엔지니어이자 15년차 서비스 기획자로서,
+문서(/docs)를 앱 안의 **진짜 라우트**로 만든다. 특정 도메인에 묶이지 않는 문서 체계여야 한다.
+
+# 원칙
+- 문서는 외부 산출물이 아니라 App Router 안의 페이지다. 서버 컴포넌트 우선 + generateMetadata.
+- 문서 layout 에 robots noindex 를 건다. 사내 문서다.
+- **없는 화면을 적지 않는다.** 있을 법한데 없는 것은 "가정" 절에 적는다.
+- 서버·DB·권한·로그·구현 세부는 적지 않는다. 기획자가 읽는 문서다.
+
+# 라우트
+/docs                    개요
+/docs/ia                 정보 구조
+/docs/flow-chart         흐름도
+/docs/fsd                기능 명세서 (화면 하나가 문서 하나)
+/docs/nfs                비기능 명세서 (정책 하나가 문서 하나)
+/docs/page-view          화면 캡처
+/docs/components         컴포넌트 미리보기
+/docs/design-system      디자인 시스템
+/docs/path               주소 정의서
+/docs/coding-conventions 명명규칙 정의서
+/docs/admin-mapping      어드민 연동 (사내 콘솔은 /docs/deployment-mapping)
+/docs/prompt             이 프롬프트
+
+# 도면 규칙
+- Mermaid 로 그리고 선은 전부 직각으로 돌린다:
+  %%{init:{'flowchart':{'curve':'step','nodeSpacing':32,'rankSpacing':46},'theme':'neutral'}}%%
+- 간선 라벨에 따옴표를 쓰지 않는다: -->|yes| (O), -->|"yes"| (X)
+- 실선 = 정상, 점선(-.->) = 예외, 마름모({}) = 갈림길, 원통([( )]) = 값이 오는 곳.
+- Mermaid 는 브라우저 전용이므로 클라이언트 컴포넌트의 useEffect 안에서 동적 import 한다.
+- 카드마다 원본을 <details> 로 접어 두고, 누르면 전체 화면으로 확대한다
+  (100% = 원래 크기 · +/−/리셋 · X·ESC·배경 클릭으로 닫기 · 여는 동안 body 스크롤 잠금).
+- **카드 폭에 맞춰 줄이지 않는다.** 줄인 도면은 글자가 뭉개져 아무것도 읽히지 않는다.
+
+# 기능 명세(FSD) — 화면마다 14절
+1 문서 정보 · 2 목적과 배경 · 3 화면 구성 · 4 데이터 항목 · 5 기능 명세 · 6 버튼과 이벤트
+7 사용자 시나리오 · 8 예외 처리 · 9 검증 규칙 · 10 화면 상태 · 11 UX 정책 · 12 화면 정책
+13 인수 조건(Given/When/Then) · 14 향후 확장
+해당 없는 절은 비워 두지 말고 **N/A 라고 적는다** — 빈 절은 "아직 안 정했다" 로도 읽힌다.
+
+# 비기능 명세(NFS) — 정책마다 6절
+목적 · 적용 범위 · 정책 · 세부 기준(표) · 예외 · 점검 항목
+접근성 · 브라우저 · 반응형 · UX · 검증 · 오류 문구 · 업로드 · 검색 · 정렬 · 페이징 · 알림 ·
+개인정보 · 날짜 · 언어 · 용어 · 유지보수 · 공통 정책
+아직 쓰지 않는 것도 "현재 미사용" 이라 적고 기준은 정해 둔다.
+
+# 가장 중요한 것
+명세는 **생성물**이어야 한다. 원본을 코드 안(lib/screen-specs.ts) 한 곳에 두고 스크립트가
+문서를 펼친다. 손으로 적으면 화면을 고칠 때 문서가 남고, 남은 문서는 곧 거짓말이 된다.
+
+원본이 화면을 따라가는지는 \`pnpm docs:check\` 가 세고, 문서를 펼치는 것은
+\`pnpm docs:build\` 다. 생성물은 커밋한다 — 받는 사람이 스크립트를 돌리지 않아도 읽혀야 한다.
+
+# 제출
+빌드 · 타입검사 · 이름 검사(\`pnpm spec:check\`) · 컴포넌트 싱크(\`pnpm sync:check\`) ·
+문서 커버리지(\`pnpm docs:check\`) 가 모두 통과해야 한다.
+`;
+
+/*
+  파일을 읽어서 그리는 조각 둘.
+
+  `./ui` 가 아니라 여기 있는 이유: 이 둘은 `listSection()` 을 부르므로 `node:fs` 에 묶인다.
+  받은 값만 그리는 `DocHeader` 셋과 진입점을 갈라 두어야, 브라우저로 가는 번들에 파일 읽기가
+  섞이지 않는다.
+*/
+export { SectionList } from './SectionList';
+export { SectionNav } from './SectionNav';
+export type { NavGroup, NavLink } from './nav';

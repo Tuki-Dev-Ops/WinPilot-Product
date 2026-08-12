@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { listSection } from '@winpilot/docs';
-import { DocHeader } from './_components/DocHeader';
+import { DocHeader } from '@winpilot/docs/ui';
 import { ADMIN_MENU } from '@/lib/navigation/admin-menu';
 import { pages } from '@/pages.manifest';
 

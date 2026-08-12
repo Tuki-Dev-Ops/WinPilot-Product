@@ -18,7 +18,7 @@ import { IR_ROUTES } from '@/lib/navigation';
  */
 export const metadata: Metadata = { title: `공시 정보 — ${IR_COMPANY.name}` };
 
-export default function IrDisclosureListPage() {
+export default function DisclosureListPage() {
   const rows = publicDisclosures();
 
   return (

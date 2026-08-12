@@ -1,8 +1,11 @@
 import { chromium, type Page } from 'playwright';
+import { pages as b2cClientPages } from '../apps/b2c-client-a/pages.manifest';
 import { pages as b2cAdminPages } from '../apps/b2c-admin/pages.manifest';
 import { pages as internalPages } from '../apps/internal-admin/pages.manifest';
 import { pages as irAdminPages } from '../apps/ir-admin/pages.manifest';
 import { pages as irClientPages } from '../apps/ir-client-a/pages.manifest';
+import { pages as fnbAdminPages } from '../apps/fnb-admin/pages.manifest';
+import { pages as fnbClientPages } from '../apps/fnb-client-a/pages.manifest';
 
 /**
  * 화면이 **가로로 넘치는지** 실제로 띄워 보고 재는 검사.
@@ -20,7 +23,7 @@ import { pages as irClientPages } from '../apps/ir-client-a/pages.manifest';
  * 그 폭에서 목록의 칸이 하나 접히면서 넘치는 일이 잦다.
  *
  * ```
- * pnpm overflow:check            # 다섯 앱 전부
+ * pnpm overflow:check            # 일곱 앱 전부
  * pnpm overflow:check -- --app=b2c-admin
  * ```
  *
@@ -45,6 +48,13 @@ const TARGETS: Target[] = [
   { app: 'internal-admin', port: 3302, routes: internalPages.map((one) => one.sampleUrl ?? one.route) },
   { app: 'ir-admin', port: 3303, routes: irAdminPages.map((one) => one.sampleUrl ?? one.route) },
   { app: 'ir-client-a', port: 3304, routes: irClientPages.map((one) => one.sampleUrl ?? one.route) },
+  { app: 'fnb-client-a', port: 3305, routes: fnbClientPages.map((one) => one.sampleUrl ?? one.route) },
+  { app: 'fnb-admin', port: 3306, routes: fnbAdminPages.map((one) => one.sampleUrl ?? one.route) },
+  /*
+    쇼핑몰만 빠져 있었다. 어드민 넷과 사이트 둘은 재면서 정작 손님이 가장 오래 머무는 화면을
+    안 재고 있었고, 그 사실은 목록에 이름이 없다는 것으로만 드러났다.
+  */
+  { app: 'b2c-client-a', port: 3310, routes: b2cClientPages.map((one) => one.sampleUrl ?? one.route) },
 ];
 
 /**

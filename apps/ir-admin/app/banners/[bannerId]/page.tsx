@@ -20,7 +20,7 @@ export function generateStaticParams() {
   return SITE_BANNERS.filter((one) => one.slot === '메인 비주얼').map((one) => ({ bannerId: one.id }));
 }
 
-export default async function BannerDetailPage({ params }: { params: Promise<{ bannerId: string }> }) {
+export default async function IrBannerDetailPage({ params }: { params: Promise<{ bannerId: string }> }) {
   const { bannerId } = await params;
   const banner = findSiteBanner(bannerId);
   if (!banner) notFound();

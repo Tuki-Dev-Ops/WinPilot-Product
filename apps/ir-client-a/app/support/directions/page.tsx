@@ -23,7 +23,7 @@ const KIND_ICON = {
   자가용: Car,
 } as const;
 
-export default function SiteDirectionsPage() {
+export default function DirectionListPage() {
   return (
     <IrSiteShell>
       <IrPageTitle title="오시는 길" description="본사 위치와 찾아오시는 방법입니다." />

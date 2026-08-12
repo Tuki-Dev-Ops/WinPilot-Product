@@ -42,6 +42,7 @@ export { Button, type ButtonProps, type ButtonTone } from './Button';
 export { Checkbox, type CheckboxProps } from './Checkbox';
 export { Dropdown, type DropdownOption, type DropdownProps } from './Dropdown';
 export { Field, RequiredLegend, type FieldProps } from './Field';
+export { Readonly, Select, TextArea, TextInput, Toggle, SaveRow } from './FormFields';
 export { HintInput, type HintInputProps } from './HintInput';
 export { HintTextarea, type HintTextareaProps } from './HintTextarea';
 export {
@@ -51,8 +52,18 @@ export {
   type ListToolbarTab,
   type ListFilterField,
 } from './ListToolbar';
+export { ConfirmModal } from './ConfirmModal';
 export { Modal, type ModalProps } from './Modal';
 export { PageHeading } from './PageHeading';
+export {
+  Panel,
+  PanelEmpty,
+  PanelSummary,
+  TableFoot,
+  TableHead,
+  type SummaryCard,
+} from './Panel';
+export { RecordTable, type RecordColumn } from './RecordTable';
 export { ListSelectionBar } from './ListSelectionBar';
 export {
   RowActionGroup,

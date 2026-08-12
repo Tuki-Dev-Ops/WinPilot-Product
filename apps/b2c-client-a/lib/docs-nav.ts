@@ -11,8 +11,15 @@
  * ## 어드민 연동
  * - **없다.** 저장소의 문서를 보여 주는 개발 도구라 어드민이 고치는 값이 없다.
  */
-export type NavLink = { href: string; label: string; hint?: string };
-export type NavGroup = { title: string; items: NavLink[] };
+/*
+  모양은 `@winpilot/docs` 가 갖는다 — 사이드바를 그리는 조각이 거기 있어서다. 여기서 따로
+  적으면 같은 뜻의 타입이 여덟 벌이 되고, 그중 하나만 늘어나도 그 앱에서만 조용히 안 맞는다.
+
+  다시 내보내는 이유: 이 파일을 읽는 화면들이 `@/lib/docs-nav` 한 곳만 보면 되게 둔다.
+*/
+import type { NavGroup } from '@winpilot/docs/ui';
+
+export type { NavGroup, NavLink } from '@winpilot/docs/ui';
 
 export const DOCS_ROOT = '/docs';
 

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function CredentialPage() {
+export default function IrCredentialListPage() {
   return (
     <IrShell sectionId="company" trail={['회사', '특허 및 인증']} activeChildId="company-credentials">
       <CredentialListView />

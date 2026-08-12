@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Markdown } from '@winpilot/docs/ui';
 import { listSection, readSectionDoc } from '@winpilot/docs';
-import { SectionNav } from '../../_components/SectionNav';
+import { SectionNav } from '@winpilot/docs';
 
 /** 화면 하나의 기능 명세. 왼쪽에 같은 갈래의 다른 화면을 세워 옆 화면으로 바로 넘어가게 한다. */
 export async function generateMetadata({

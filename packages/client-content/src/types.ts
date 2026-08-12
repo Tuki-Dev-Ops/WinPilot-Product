@@ -43,6 +43,26 @@ export type SeoInfo = {
   ogDescription: string;
 };
 
+/**
+ * 사이트에 뜨는 팝업 한 장.
+ *
+ * 어드민이 정한 것 중 **화면이 실제로 쓰는 것만** 옮긴다. `createdAt` 처럼 목록을 정렬하는 데만
+ * 쓰는 값은 넘기지 않는다 — 고객 화면이 쓰지 않는 값을 넘기면 그 값이 왜 있는지 묻게 된다.
+ */
+export type PopupItem = {
+  id: string;
+  title: string;
+  /** HTML — 어드민 편집기가 만든 것이라 그대로 믿고 그린다 */
+  body: string;
+  /** 누르면 가는 곳. 비면 누를 수 없는 팝업이다 */
+  linkUrl: string;
+  position: '왼쪽 위' | '가운데' | '오른쪽 아래';
+  /** 가로 폭(px) */
+  width: number;
+  /** `오늘 하루 보지 않기` 를 보여 줄지 */
+  todayClose: boolean;
+};
+
 export type BannerItem = {
   id: string;
   title: string;
@@ -164,6 +184,7 @@ export type SiteContent = {
   supplier: SupplierInfo;
   seo: SeoInfo;
   banners: BannerItem[];
+  popups: PopupItem[];
   categories: CategoryNode[];
   products: ProductItem[];
   notices: ArticleItem[];

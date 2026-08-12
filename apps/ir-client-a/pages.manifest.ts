@@ -18,17 +18,23 @@ export const pages: PageSpec[] = [
   { order: 3, id: 'about-history', name: 'History', route: '/about/history' },
   { order: 4, id: 'about-certifications', name: 'Certifications', route: '/about/certifications' },
 
-  // 5번대 — 솔루션 · 제품
-  { order: 5, id: 'solutions-erp', name: 'Cloud ERP', route: '/solutions/erp' },
-  { order: 6, id: 'solutions-mes', name: 'Cloud MES', route: '/solutions/mes' },
-  { order: 7, id: 'solutions-crm', name: 'Cloud CRM', route: '/solutions/crm' },
-  { order: 8, id: 'solutions-dxp', name: 'Cloud DXP', route: '/solutions/dxp' },
-  { order: 9, id: 'products', name: 'Products', route: '/products' },
+  /*
+    5번대 — 파는 것 여섯과 그 목록.
+    메뉴에 선 차례를 그대로 따른다(SOLUTION 둘 · PRODUCT 넷). 상세 화면이 여섯이므로
+    5번대를 온전히 쓰고, 공시는 아래 10번대에서 시작한다.
+  */
+  { order: 5, id: 'solutions-consulting', name: 'Smart Consulting', route: '/solutions/consulting' },
+  { order: 6, id: 'solutions-infra', name: 'Infra Service', route: '/solutions/infra' },
+  { order: 7, id: 'solutions-mes', name: 'Cloud MES', route: '/solutions/mes' },
+  { order: 8, id: 'solutions-erp', name: 'Cloud ERP', route: '/solutions/erp' },
+  { order: 9, id: 'solutions-crm', name: 'Cloud CRM', route: '/solutions/crm' },
+  { order: 10, id: 'solutions-dxp', name: 'Cloud DXP', route: '/solutions/dxp' },
+  { order: 11, id: 'products', name: 'Products', route: '/products' },
 
-  // 10번대 — 공시
-  { order: 10, id: 'disclosures', name: 'Disclosures', route: '/disclosures' },
+  // 12번대 — 공시
+  { order: 12, id: 'disclosures', name: 'Disclosures', route: '/disclosures' },
   {
-    order: 11,
+    order: 13,
     id: 'disclosures-detail',
     name: 'Disclosure Detail',
     route: '/disclosures/[disclosureId]',
@@ -58,6 +64,10 @@ export const pages: PageSpec[] = [
   { order: 62, id: 'support-news', name: 'Support News', route: '/support/news' },
   { order: 63, id: 'support-faq', name: 'FAQ', route: '/support/faq' },
   { order: 64, id: 'support-directions', name: 'Directions', route: '/support/directions' },
+
+  // 70번대 — 법적 고지. 푸터에서만 열리는 자리라 메뉴에는 없다.
+  { order: 70, id: 'terms', name: 'Terms', route: '/terms' },
+  { order: 71, id: 'privacy', name: 'Privacy', route: '/privacy' },
 ];
 
 /** 확정 — 이 3개 너비로만 캡처한다. */

@@ -1,6 +1,12 @@
 import type { Metadata } from 'next';
 import { ArrowUpRight } from 'lucide-react';
-import { IR_COMPANY, SITE_SERVICES, publicSolutions } from '@winpilot/store';
+import {
+  IR_COMPANY,
+  SERVICE_DETAILS,
+  SITE_SERVICES,
+  publicSolutions,
+  siteServiceHref,
+} from '@winpilot/store';
 import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
 import { IR_ROUTES } from '@/lib/navigation';
 
@@ -9,8 +15,9 @@ import { IR_ROUTES } from '@/lib/navigation';
  *
  * ## `준비중` 한 장이었다
  * 전에는 이 화면에 "제품별 소개는 준비 중" 한 줄과 솔루션으로 보내는 단추만 있었다. 그런데
- * 헤더의 PRODUCT 갈래와 서비스 칸의 인프라·DXP 가 **전부 여기로 온다** — 들어온 사람이 가장
- * 많은 화면이 가장 비어 있었던 셈이다.
+ * 헤더의 PRODUCT 갈래와 홈의 인프라·DXP 카드가 **전부 여기로 왔다** — 들어온 사람이 가장 많은
+ * 화면이 가장 비어 있었던 셈이다. 지금은 여섯이 다 자기 화면을 가져 그 쏠림이 없어졌고,
+ * 여기는 **무엇을 파는지 한눈에 훑는 자리**로 남았다.
  *
  * ## 두 묶음으로 나눈다
  * 파는 것이 성격으로 갈린다. **클라우드 제품**(MES·ERP·CRM·DXP)은 계약하면 그날부터 쓰는
@@ -20,17 +27,24 @@ import { IR_ROUTES } from '@/lib/navigation';
  * 클라우드 제품에만 사진을 붙인다 — 사람이 하는 일에 사진을 붙이면 그 사진이 결과물처럼 읽힌다.
  *
  * ## 어드민 연동
- * - 제품 ← `@winpilot/store` 의 `SOLUTIONS` (IR 어드민 홈페이지 > 솔루션)
- * - 서비스 ← 같은 store 의 `SITE_SERVICES` (홈페이지 > 서비스)
+ * - 제품 ← `@winpilot/store` 의 `SOLUTIONS` (IR 어드민 제품 · 문제 · 해법)
+ * - 서비스 카드의 말 ← 같은 store 의 `SITE_SERVICES` (홈 무대 차례)
+ * - 어느 것이 서비스인가 ← 같은 store 의 `SERVICE_DETAILS` (서비스 목록)
  */
 export const metadata: Metadata = { title: `제품 — ${IR_COMPANY.name}` };
 
-/** 제품이 아니라 **사람이 붙어서 하는 일**. 아래 서비스 묶음으로 내려간다. */
-const SERVICE_IDS = ['consulting', 'infra'];
+/**
+ * 홈 카드 여섯 중 **사람이 붙어서 하는 일** 둘 — 아래 서비스 묶음으로 내려간다.
+ *
+ * 어느 것이 서비스인지를 여기에 이름으로 적어 두지 않는다. 한때 `['consulting', 'infra']` 를
+ * 적어 두었는데, 그러면 서비스가 셋이 되는 날 **이 화면만 조용히 둘을 세운다** — 목록이 짧아진
+ * 것은 빠뜨렸다는 표시가 아니라 그냥 짧은 목록으로 보인다. 무엇이 서비스인지는 store 가 안다.
+ */
+const SERVICE_CARDS = SITE_SERVICES.filter((card) =>
+  SERVICE_DETAILS.some((one) => one.id === card.id),
+);
 
 export default function ProductListPage() {
-  const services = SITE_SERVICES.filter((one) => SERVICE_IDS.includes(one.id));
-
   return (
     <IrSiteShell>
       <IrPageTitle
@@ -94,17 +108,34 @@ export default function ProductListPage() {
         <h2 className="text-xs font-bold uppercase tracking-widest text-ink-faint">서비스</h2>
 
         <ul className="grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2">
-          {services.map((one) => (
-            <li key={one.id} className="flex flex-col gap-3 bg-canvas px-6 py-6">
-              <span className="flex items-baseline gap-3">
-                <span className="font-mono text-xs tabular-nums text-ink-faint">{one.no}</span>
-                <span className="text-base font-semibold">{one.name}</span>
-              </span>
-              {one.body.map((line) => (
-                <p key={line} className="text-sm leading-relaxed text-ink-muted">
-                  {line}
-                </p>
-              ))}
+          {SERVICE_CARDS.map((one) => (
+            <li key={one.id}>
+              {/*
+                둘 다 이제 자기 상세 화면을 갖는다. 전에는 글만 서 있었는데, 그때는 화면이
+                없었기 때문이다 — 화면이 생긴 뒤로도 길을 내지 않으면 **여기까지 온 사람만**
+                그 화면을 못 본다.
+              */}
+              <a
+                href={siteServiceHref(one)}
+                className="group flex h-full flex-col gap-3 bg-canvas px-6 py-6 transition-colors duration-150 hover:bg-surface"
+              >
+                <span className="flex items-baseline gap-3">
+                  <span className="font-mono text-xs tabular-nums text-ink-faint">{one.no}</span>
+                  <span className="text-base font-semibold">{one.name}</span>
+                </span>
+                {one.body.map((line) => (
+                  <span key={line} className="block text-sm leading-relaxed text-ink-muted">
+                    {line}
+                  </span>
+                ))}
+                <span className="mt-auto flex items-center gap-1.5 pt-2 text-xs font-bold uppercase tracking-widest">
+                  자세히 보기
+                  <ArrowUpRight
+                    aria-hidden
+                    className="size-3.5 shrink-0 transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  />
+                </span>
+              </a>
             </li>
           ))}
         </ul>

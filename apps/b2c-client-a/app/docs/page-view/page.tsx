@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import { DocHeader } from '../_components/DocHeader';
-import { SectionList } from '../_components/SectionList';
+import { DocHeader } from '@winpilot/docs/ui';
+import { SectionList } from '@winpilot/docs';
 
 /** Page View 목차. */
 export const metadata: Metadata = { title: 'Page View' };

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { readDoc } from '@winpilot/docs';
 import { Markdown } from '@winpilot/docs/ui';
-import { DocHeader } from '../_components/DocHeader';
+import { DocHeader } from '@winpilot/docs/ui';
 
 /**
  * 갈래가 없는 한 장짜리 문서 — `/docs/path` · `/docs/coding-conventions` · `/docs/admin-mapping`.

@@ -45,7 +45,8 @@ export default async function OrderCreatePage({ searchParams }: { searchParams: 
     : [];
 
   return (
-    <SiteShell>
+    /* 금액을 확인하는 도중에 팝업이 화면을 덮으면, 닫는 동안 무엇을 보고 있었는지 잃는다. */
+    <SiteShell popup={false}>
       <PageTitle title="결제" description={COPY.cart.checkout} />
       <CheckoutView initialLines={lines} />
     </SiteShell>

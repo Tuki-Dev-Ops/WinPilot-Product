@@ -7,6 +7,9 @@
  *
  * 도메인이 확정되면 이 표를 채운다 — 아래는 예시 시드다.
  */
+import { FNB_GLOSSARY } from './glossary-fnb';
+import { IR_GLOSSARY } from './glossary-ir';
+
 export type GlossaryEntry = {
   canonical: string;
   ko: string;
@@ -14,7 +17,7 @@ export type GlossaryEntry = {
   note?: string;
 };
 
-export const GLOSSARY: readonly GlossaryEntry[] = [
+const CORE_GLOSSARY: readonly GlossaryEntry[] = [
   {
     canonical: 'site',
     ko: '사이트',
@@ -173,6 +176,15 @@ export const GLOSSARY: readonly GlossaryEntry[] = [
   { canonical: 'oauth', ko: 'OAuth', banned: ['sso'] },
   { canonical: 'payment', ko: '결제', banned: ['pg', 'billing', 'checkout'] },
 ];
+
+/**
+ * 전 제품의 정규 용어.
+ *
+ * 제품별 파일을 여기서 잇는다 — `features.ts` 와 같은 방식이다. 사전을 나눠 두어도 **이름이
+ * 겹치면 안 된다는 규칙은 그대로다**: 같은 자원을 IR 에서 `notice`, F&B 에서 `announcement`
+ * 로 부르기 시작하면 이 사전이 막으려던 표류가 그대로 돌아온다.
+ */
+export const GLOSSARY: readonly GlossaryEntry[] = [...CORE_GLOSSARY, ...IR_GLOSSARY, ...FNB_GLOSSARY];
 
 const BANNED_INDEX: ReadonlyMap<string, string> = new Map(
   GLOSSARY.flatMap((entry) => entry.banned.map((word) => [word.toLowerCase(), entry.canonical] as const)),

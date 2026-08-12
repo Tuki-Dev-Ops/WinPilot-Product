@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function TermsSettingsPage() {
+export default function IrTermsSettingsPage() {
   return (
     <IrShell sectionId="settings" trail={['설정', '서비스 이용약관']} activeChildId="settings-terms">
       <TermsSettingsView />

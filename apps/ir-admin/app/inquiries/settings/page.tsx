@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function InquirySettingsPage() {
+export default function IrInquirySettingsPage() {
   return (
     <IrShell sectionId="inquiry" trail={['문의', '설정']} activeChildId="inquiry-settings">
       <InquirySettingsView />

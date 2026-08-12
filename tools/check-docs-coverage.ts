@@ -1,5 +1,5 @@
 /**
- * 문서가 **화면을 따라가고 있는가**를 세 앱에서 한 번에 본다.
+ * 문서가 **화면을 따라가고 있는가**를 일곱 앱에서 한 번에 본다.
  *
  * ## 왜 검사기로 두는가
  * 화면을 하나 더하면 손대야 하는 곳이 넷이다 — 매니페스트 · IA 갈래 · 흐름 · 기능 명세.
@@ -23,7 +23,15 @@ import { fileURLToPath } from 'node:url';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, '..');
 
-const APPS = ['b2c-client-a', 'b2c-admin', 'internal-admin'] as const;
+const APPS = [
+  'b2c-client-a',
+  'b2c-admin',
+  'internal-admin',
+  'fnb-client-a',
+  'fnb-admin',
+  'ir-client-a',
+  'ir-admin',
+] as const;
 
 /** 캡처 너비는 매니페스트에 함께 적히지만 화면이 아니다. */
 const NOT_SCREENS = new Set(['desktop', 'tablet', 'mobile']);

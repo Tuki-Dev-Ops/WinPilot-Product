@@ -21,10 +21,10 @@ const COLUMNS = [
 /**
  * 제품 > 목록.
  *
- * ## 솔루션 목록과 같은 값을 본다
- * 이 회사에서 **파는 것**은 넷뿐이고, 그것을 제품이라 부르든 솔루션이라 부르든 같은 물건이다.
- * 두 갈래로 나눈 것은 **보는 사람이 다르기 때문**이다 — 제품 갈래는 이름과 기능을, 솔루션
- * 갈래는 어떤 문제를 어떻게 푸는지를 본다. 값을 두 벌로 두면 그 둘이 어긋난다.
+ * ## `문제 · 해법` 목록과 같은 값을 본다
+ * 이 회사가 **계약하면 그날부터 쓰게 파는 것**은 클라우드 제품 넷뿐이다. 두 갈래로 나눈 것은
+ * **보는 사람이 다르기 때문**이다 — 제품 갈래는 이름과 기능을, `문제 · 해법` 갈래는 어떤
+ * 문제를 어떻게 푸는지를 본다. 값을 두 벌로 두면 그 둘이 어긋난다.
  *
  * **프론트엔드 전용** — 값의 원본은 `@winpilot/store` 다.
  */
@@ -66,11 +66,12 @@ export function ProductListView() {
         columns={COLUMNS}
         rows={shown}
         onOpen={(one) => router.push(`/products/${one.id}`)}
-        labelOf={(one) => one.name}
+        labelOf={(one) => one.title}
         empty="등록된 제품이 없습니다."
         render={(one) => [
+          /* 화면에 서는 이름은 `title` 이 갖는다 — `Cloud ${name}` 을 만들어 쓰지 않는다(store 머리말). */
           <span key="name" className="min-w-0">
-            <span className="block min-w-0 truncate text-sm font-medium">Cloud {one.name}</span>
+            <span className="block min-w-0 truncate text-sm font-medium">{one.title}</span>
             <span className="block min-w-0 truncate font-mono text-xs text-ink-faint">{one.id}</span>
           </span>,
           <span key="tag" className="min-w-0 truncate text-sm">

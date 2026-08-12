@@ -1,8 +1,10 @@
 import type { ReactNode } from 'react';
 import { BackLink, BrandMark } from '@winpilot/ui';
-import { IR_COMPANY } from '@winpilot/store';
+import { IR_COMPANY, liveSitePopups } from '@winpilot/store';
 import { LEGAL_NAV, SITE_NAV } from '@/lib/navigation';
+import { TODAY } from '@/lib/today';
 import { SiteHeader } from './SiteHeader';
+import { SitePopup } from './SitePopup';
 
 /**
  * 회사 홈페이지 껍데기 — **가로 상단 내비 + 넓은 본문 + 공시 안내 푸터**.
@@ -39,6 +41,7 @@ export function IrSiteShell({
   hero,
   bleed,
   overlay = false,
+  popup = true,
   children,
 }: {
   back?: { href: string; label: string };
@@ -68,6 +71,16 @@ export function IrSiteShell({
    */
   overlay?: boolean;
   /**
+   * 팝업을 띄울지.
+   *
+   * 껍데기가 들고 있으므로 **기본이 켜짐**이다 — 화면마다 붙이게 두면 새로 만드는 화면에서
+   * 빠지고, 그 사실은 아무에게도 보이지 않는다.
+   *
+   * 끄는 자리가 있는 까닭: 문의 양식처럼 **다 적고 나서 보내는 중간에 덮이면 안 되는 화면**이
+   * 있다. 지금은 끄는 화면이 없지만, 자리를 안 두면 필요해지는 날 껍데기를 고치게 된다.
+   */
+  popup?: boolean;
+  /**
    * 너비가 제한된 본문.
    *
    * **없어도 된다.** 홈처럼 화면 끝까지 닿는 칸(`hero`·`bleed`)만으로 이뤄진 화면이 있는데,
@@ -77,6 +90,12 @@ export function IrSiteShell({
 }) {
   return (
     <div className="flex min-h-screen flex-col bg-canvas text-ink">
+      {/*
+        걸린 것을 고르는 일은 store 가 한다(`liveSitePopups`). 여기서 다시 기간을 재면 어드민
+        목록이 말하는 상태와 사이트가 그리는 것이 갈릴 수 있다.
+      */}
+      {popup && <SitePopup popups={liveSitePopups(TODAY)} />}
+
       <SiteHeader overlay={overlay} />
 
       {hero}

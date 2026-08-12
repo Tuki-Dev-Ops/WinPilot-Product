@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function CompanyAboutPage() {
+export default function IrProfileSettingsPage() {
   return (
     <IrShell sectionId="company" trail={['회사', '소개']} activeChildId="company-about">
       <CompanyAboutView />

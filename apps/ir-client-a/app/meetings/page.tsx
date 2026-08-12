@@ -13,7 +13,7 @@ import { IR_ROUTES } from '@/lib/navigation';
  */
 export const metadata: Metadata = { title: `주주총회 — ${IR_COMPANY.name}` };
 
-export default function IrMeetingListPage() {
+export default function MeetingListPage() {
   return (
     <IrSiteShell>
       <IrPageTitle title="주주총회" description="소집 공고와 안건입니다." />
