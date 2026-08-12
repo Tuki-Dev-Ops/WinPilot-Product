@@ -2,8 +2,9 @@
 
 <p align="center">
   以「正在运行的页面」为唯一事实来源，<br />
-  让设计与代码不再各走各路的电商运营平台。<br />
-  顾客页面、运营后台、内部控制台共用一套术语表与一套设计令牌。
+  让设计与代码不再各走各路的运营平台。<br />
+  电商、IR、餐饮连锁三条产品线的顾客页面与运营控制台，再加上内部控制台，<br />
+  七个应用共用一套术语表与一套设计令牌。
 </p>
 
 <p align="center">
@@ -35,7 +36,7 @@
 
 - **一物一名** —— 功能、实体、路由、组件名、i18n 键、测试 ID、Figma 画板名全部由同一份注册表派生。没走这条路的名字会被 `pnpm spec:check` 拦下。
 - **设计只有一份** —— 颜色、间距、字体、动效集中在 `@winpilot/tokens`，所有应用都从这里取用。应用一旦自行声明颜色，设计系统就变成了两套。
-- **文档贴着页面放** —— 设计文档就在应用内部，可用网址直接打开（`/ia`、`/path`）。只改页面不改文档，立刻会暴露出来。
+- **文档贴着页面放** —— 设计文档就在应用内部，可用网址直接打开（`/docs/ia`、`/docs/path`）。七个应用拥有同样的十四条文档路由，一个页面就是一份文档。只改页面不改文档，`pnpm docs:check` 会拦下来。
 - **多套模板，但不分岔** —— 顾客页面模板只在布局上不同，取值、文案、路由、插槽名都来自同一份契约（`@winpilot/client-content`）。
 
 ## 使用语言与库
@@ -56,9 +57,13 @@
 
 ```
 WinPilot-Product/
-├── apps/
-│   ├── b2c-client-a/       顾客页面 · 模板 A (3310)
-│   ├── b2c-admin/          运营后台 (3301)
+├── apps/                                     三条产品线 ×（顾客页面 + 运营控制台）+ 内部
+│   ├── b2c-client-a/       电商顾客页面 · 模板 A (3310)
+│   ├── b2c-admin/          电商运营控制台 (3301)
+│   ├── ir-client-a/        IR 站点 · 模板 A (3304)
+│   ├── ir-admin/           IR 运营控制台 (3303)
+│   ├── fnb-client-a/       餐饮品牌站点 · 模板 A (3305)
+│   ├── fnb-admin/          餐饮品牌运营控制台 (3306)
 │   └── internal-admin/     内部客户管理控制台 (3302)
 │
 ├── packages/
@@ -66,7 +71,9 @@ WinPilot-Product/
 │   ├── tokens/             设计令牌 (theme.css) —— 所有应用的唯一来源
 │   ├── store/              已保存的数据 —— 后台与顾客页面共读的同一份
 │   ├── ui/                 各应用共享的 UI 基础组件
+│   ├── docs/               文档路由所用的部件 —— 读取 (fs) 与渲染从入口起分开
 │   ├── client-content/     顾客页面内容契约 —— 模板 A~F 共用
+│   ├── geo/                行政边界图形 —— 地图页面共同读取
 │   └── uir/                UI 中间表示模式 · 容差定义
 │
 ├── tools/
@@ -80,6 +87,8 @@ WinPilot-Product/
 ```
 
 每个应用各自持有 `pages.manifest.ts`。Figma 页面的序号与名称只在那一个文件里决定。
+
+每条产品线都是**顾客页面与运营控制台成对**。两边处理的是同一批资源，因此只出现在一侧的功能一律按遗漏来怀疑，`pnpm spec:check` 会清点这些配对。内部控制台没有配对 —— 它是管理客户企业的另一个产品。
 
 数据只存在于 `packages/store`。后台的 `lib/data/*` 仅做再导出，顾客页面则经由 `client-content` 读取同一份值 —— 若保留两份种子数据，后台所见与顾客页面就会不同，届时无从判断哪一边为准。
 
@@ -95,19 +104,31 @@ pnpm install
 ### 开发服务器
 
 ```bash
-pnpm dev:client      # 顾客页面模板 A   http://localhost:3310
-pnpm dev:admin       # 运营后台        http://localhost:3301
-pnpm dev:internal    # 内部控制台      http://localhost:3302
+pnpm dev:client      # 电商顾客页面          http://localhost:3310
+pnpm dev:admin       # 电商运营控制台        http://localhost:3301
+pnpm dev:ir          # IR 站点               http://localhost:3304
+pnpm dev:ir-admin    # IR 运营控制台         http://localhost:3303
+pnpm dev:fnb         # 餐饮品牌站点          http://localhost:3305
+pnpm dev:fnb-admin   # 餐饮运营控制台        http://localhost:3306
+pnpm dev:internal    # 内部控制台            http://localhost:3302
 ```
+
+不用 `pnpm -r dev` 一次全部拉起 —— 一个挂掉会把其余的一并带走，而日志里看不出是哪一个先挂的。
 
 ### 检查
 
 ```bash
-pnpm spec:check      # 命名 · 路由 · 清单一致性检查（有错误则以状态码 1 退出）
+pnpm spec:check      # 命名 · 路由 · 清单一致性（有错误则以状态码 1 退出）
 pnpm spec:matrix     # 输出功能 ↔ 视图对照表
+pnpm sync:check      # 注册表里的组件名在实际文件中是否也叫这个名字
+pnpm docs:check      # 页面 ↔ 文档 —— 清点缺少 IA · 流程 · 功能规格的页面
+pnpm docs:build      # 从原本（lib/screen-specs.ts）展开功能与非功能规格
+pnpm overflow:check  # 在四种宽度下测量横向溢出（需开发服务器处于运行状态）
 pnpm typecheck       # 整个工作区类型检查
 pnpm build           # 全量构建
 ```
+
+之所以备了多个检查器，是因为它们各自盯着**不同种类的走样**。`spec:check` 只看注册表内部的规则，所以登记完再用另一个名字建文件照样能通过 —— 这个缺口由 `sync:check` 拦下。新增一个页面要动的地方有四处（清单 · IA · 流程 · 规格），漏掉其中一处应用照常运行，因此交给 `docs:check` 清点。
 
 ### 设计同步
 
@@ -124,11 +145,23 @@ pnpm figma:build                    # 打包 Figma 插件
 
 ### 查看文档
 
-启动开发服务器后用网址直接打开。
+启动开发服务器后用网址直接打开。**七个应用拥有同样的路由** —— 下面以电商顾客页面（3310）为例，只换端口，其余六个也一样。
 
 ```
-http://localhost:3310/docs            文档目录与页面清单
-http://localhost:3310/ia              信息架构
-http://localhost:3310/path            路径定义书
-http://localhost:3310/component       组件定义书
+http://localhost:3310/docs                     概览 —— 文档分支与页面清单
+http://localhost:3310/docs/ia                  IA —— 全局图与各页面的图
+http://localhost:3310/docs/flow-chart          流程图 —— 旅程与各页面的流转
+http://localhost:3310/docs/fsd                 功能规格书 —— 一个页面一份文档
+http://localhost:3310/docs/nfs                 非功能规格书 —— 一条策略一份文档
+http://localhost:3310/docs/page-view           每个页面在三种宽度下的截图
+http://localhost:3310/docs/components          组件定义书
+http://localhost:3310/docs/design-system       设计系统
+http://localhost:3310/docs/path                路径定义书
+http://localhost:3310/docs/coding-conventions  命名规范定义书
+http://localhost:3310/docs/admin-mapping       后台联动 —— 哪个值来自何处
+http://localhost:3310/docs/prompt              重新生成这套文档时所用的提示词
 ```
+
+只有内部控制台不同：倒数第二条是 `/docs/deployment-mapping` —— 那个控制台定下的值不流向顾客页面，而是流向**客户企业的部署**。
+
+功能与非功能规格是**生成物**。原本放在各应用的 `lib/screen-specs.ts`，由 `pnpm docs:build` 展开 —— 若靠手写，改了页面文档却留在原处，留下来的文档很快就成了谎话。

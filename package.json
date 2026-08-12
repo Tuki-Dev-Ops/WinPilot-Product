@@ -6,6 +6,10 @@
   "scripts": {
     "dev:client": "pnpm --filter @winpilot/b2c-client-a dev",
     "dev:admin": "pnpm --filter @winpilot/b2c-admin dev",
+    "dev:ir": "pnpm --filter ir-client-a dev",
+    "dev:ir-admin": "pnpm --filter ir-admin dev",
+    "dev:fnb": "pnpm --filter fnb-client-a dev",
+    "dev:fnb-admin": "pnpm --filter fnb-admin dev",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "figma:build": "pnpm --filter @winpilot/figma-plugin build",
