@@ -249,31 +249,96 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+
+  /*
+    닻(`#year-2026`)으로 뛸 때의 미끄러짐도 끈다. 위의 `*` 규칙은 전환과 애니메이션까지만
+    막고 스크롤 동작은 건드리지 않아, 이것을 적지 않으면 모션을 줄여 달라고 해 둔 사람에게도
+    화면이 주르륵 흐른다.
+  */
+  html {
+    scroll-behavior: auto !important;
+  }
 }
 
+/*
+  밝은 값과 어두운 값을 **둘 다 이름으로** 갖는다.
+
+  전에는 밝은 값이 `:root` 에, 어두운 값이 미디어 질의에 색으로 직접 적혀 있었다. 그래서
+  `.daylight` 처럼 **모드를 안 따르는 밝은 칸**을 만들려면 여덟 색을 다시 적어야 했고,
+  그때부터 팔레트가 두 벌이 된다 — 한쪽만 고치면 그 칸만 옛 색으로 남는다.
+
+  이름을 붙여 두면 아래 세 곳이 전부 같은 값을 가리킨다.
+*/
 :root {
-  --canvas: #ffffff;
-  --surface: #f6f7f9;
-  --surface-raised: #ffffff;
-  --border: #e3e5eb;
-  --border-strong: #cbcfd9;
-  --ink: #333d4b;
-  --ink-muted: #8b95a1;
+  --light-canvas: #ffffff;
+  --light-surface: #f6f7f9;
+  --light-surface-raised: #ffffff;
+  --light-border: #e3e5eb;
+  --light-border-strong: #cbcfd9;
+  --light-ink: #333d4b;
+  --light-ink-muted: #8b95a1;
   /* 서브 폰트보다 한 단계 더 옅어야 위계가 유지된다 */
-  --ink-faint: #b0b8c1;
+  --light-ink-faint: #b0b8c1;
+
+  --dark-canvas: #090a0d;
+  --dark-surface: #0f1117;
+  --dark-surface-raised: #151822;
+  --dark-border: #21252f;
+  --dark-border-strong: #333846;
+  --dark-ink: #f1f3f7;
+  --dark-ink-muted: #98a0af;
+  --dark-ink-faint: #6b7684;
+
+  /* 기본은 모드를 따라간다 */
+  --canvas: var(--light-canvas);
+  --surface: var(--light-surface);
+  --surface-raised: var(--light-surface-raised);
+  --border: var(--light-border);
+  --border-strong: var(--light-border-strong);
+  --ink: var(--light-ink);
+  --ink-muted: var(--light-ink-muted);
+  --ink-faint: var(--light-ink-faint);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --canvas: #090a0d;
-    --surface: #0f1117;
-    --surface-raised: #151822;
-    --border: #21252f;
-    --border-strong: #333846;
-    --ink: #f1f3f7;
-    --ink-muted: #98a0af;
-    --ink-faint: #6b7684;
+    --canvas: var(--dark-canvas);
+    --surface: var(--dark-surface);
+    --surface-raised: var(--dark-surface-raised);
+    --border: var(--dark-border);
+    --border-strong: var(--dark-border-strong);
+    --ink: var(--dark-ink);
+    --ink-muted: var(--dark-ink-muted);
+    --ink-faint: var(--dark-ink-faint);
   }
+}
+
+/*
+  **늘 밝은 칸.** `--color-night` 의 반대쪽 짝이다.
+
+  이 칸을 두르면 안쪽의 `bg-canvas` · `text-ink` · `border-border` 가 **밝기 모드와 무관하게**
+  밝은 값으로 풀린다. 배경만 흰색으로 못 박으면 다크 모드에서 글자가 밝은 쪽으로 뒤집혀
+  **흰 바탕에 흰 글씨**가 된다 — 바탕 하나가 아니라 그 칸의 팔레트 전체를 고정해야 한다.
+
+  쓰는 곳: 회사 홈페이지의 솔루션 칸과 미디어 칸. 위의 검은 칸 셋에서 한 번 밝아지는 자리라,
+  다크 모드에서 다시 어두워지면 그 리듬이 사라진다.
+
+  ## `--canvas` 가 아니라 `--color-canvas` 를 덮는다
+  처음에 `--canvas` 를 덮었더니 **아무 일도 일어나지 않았다.** 아래 `@theme` 의
+  `--color-canvas: var(--canvas)` 가 `:root` 에서 이미 값으로 풀리고, 자식에게는 그 **풀린
+  값**이 내려오기 때문이다. 칸에서 `--canvas` 를 바꿔도 그때는 이미 늦다.
+
+  그래서 타일윈드가 실제로 읽는 이름(`--color-*`)을 덮는다.
+*/
+.daylight {
+  --color-canvas: var(--light-canvas);
+  --color-surface: var(--light-surface);
+  --color-surface-raised: var(--light-surface-raised);
+  --color-border: var(--light-border);
+  --color-border-strong: var(--light-border-strong);
+  --color-ink: var(--light-ink);
+  --color-ink-muted: var(--light-ink-muted);
+  --color-ink-faint: var(--light-ink-faint);
 }
 
 /*
