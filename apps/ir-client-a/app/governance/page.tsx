@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { IR_COMPANY } from '@winpilot/store';
 import { OFFICERS, SHAREHOLDERS } from '@winpilot/store';
-import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
 import { IR_ROUTES } from '@/lib/navigation';
 import { IrSubNav } from '@/app/_components/IrSubNav';
 import { IrTable } from '@/app/_components/IrTable';
@@ -16,8 +17,7 @@ export const metadata: Metadata = { title: `지배구조 — ${IR_COMPANY.name}`
 
 export default function GovernanceListPage() {
   return (
-    <IrSiteShell>
-      <IrPageTitle title="지배구조" description="이사회 구성과 주주 현황입니다." />
+    <IrSiteShell hero={<PageHero title="지배구조" />}>
 
       <IrSubNav current={IR_ROUTES.governance} />
 

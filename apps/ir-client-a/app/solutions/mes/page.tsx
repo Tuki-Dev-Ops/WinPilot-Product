@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { IR_COMPANY, findOffering } from '@winpilot/store';
-import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
 import { OfferingDetail } from '../_components/OfferingDetail';
 
 /**
@@ -19,8 +20,7 @@ export default function MesHomePage() {
   if (!offering) notFound();
 
   return (
-    <IrSiteShell>
-      <IrPageTitle title={offering.title} description={offering.tagline} />
+    <IrSiteShell hero={<PageHero title={offering.title} image="/solutions/mes.jpg" />}>
       <OfferingDetail offering={offering} />
     </IrSiteShell>
   );

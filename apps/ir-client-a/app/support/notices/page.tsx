@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { IR_COMPANY, publicSiteNotices } from '@winpilot/store';
-import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
 import { NoticeListView } from './_components/NoticeListView';
 
 /**
@@ -26,8 +27,7 @@ export default function NoticeListPage() {
   const notices = publicSiteNotices();
 
   return (
-    <IrSiteShell>
-      <IrPageTitle title="공지사항" description="휴무 · 연락처 · 약관 개정처럼 미리 알려 드릴 것들입니다." />
+    <IrSiteShell hero={<PageHero title="공지사항" />}>
 
       <NoticeListView notices={notices} />
     </IrSiteShell>

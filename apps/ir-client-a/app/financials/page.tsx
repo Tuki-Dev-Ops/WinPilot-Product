@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { IR_COMPANY } from '@winpilot/store';
 import { FINANCIALS } from '@winpilot/store';
-import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
 import { IR_ROUTES } from '@/lib/navigation';
 import { IrSubNav } from '@/app/_components/IrSubNav';
 import { IrTable } from '@/app/_components/IrTable';
@@ -16,8 +17,7 @@ export const metadata: Metadata = { title: `재무 정보 — ${IR_COMPANY.name}
 
 export default function FinancialListPage() {
   return (
-    <IrSiteShell>
-      <IrPageTitle title="재무 정보" description="단위는 백만 원입니다. 감사 전 수치가 포함될 수 있습니다." />
+    <IrSiteShell hero={<PageHero title="재무 정보" />}>
 
       <IrSubNav current={IR_ROUTES.financials} />
 

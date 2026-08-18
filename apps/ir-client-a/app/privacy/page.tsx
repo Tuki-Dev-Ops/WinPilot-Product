@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { IR_COMPANY } from '@winpilot/store';
-import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
 
 /**
  * Feature: `site.privacy` · IR Client (템플릿 A) · route `/privacy`
@@ -17,11 +18,7 @@ export const metadata: Metadata = { title: `개인정보 처리방침 — ${IR_C
 
 export default function PrivacySettingsPage() {
   return (
-    <IrSiteShell back={{ href: '/', label: '홈' }}>
-      <IrPageTitle
-        title="개인정보 처리방침"
-        description="처리방침을 준비하고 있습니다. 확정되는 대로 이 자리에 공개합니다."
-      />
+    <IrSiteShell back={{ href: '/', label: '홈' }} hero={<PageHero title="개인정보 처리방침" />}>
 
       <section className="flex flex-col gap-3 rounded-xl border border-border px-6 py-5">
         <p className="text-sm font-medium">개인정보보호책임자</p>

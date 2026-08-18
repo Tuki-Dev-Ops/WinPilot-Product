@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { IR_COMPANY } from '@winpilot/store';
 import { DIVIDENDS } from '@winpilot/store';
-import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
 import { IR_ROUTES } from '@/lib/navigation';
 import { IrSubNav } from '@/app/_components/IrSubNav';
 import { IrTable } from '@/app/_components/IrTable';
@@ -16,8 +17,7 @@ export const metadata: Metadata = { title: `배당 정보 — ${IR_COMPANY.name}
 
 export default function DividendListPage() {
   return (
-    <IrSiteShell>
-      <IrPageTitle title="배당 정보" description="기준일까지 보유하신 주주에게 지급됩니다." />
+    <IrSiteShell hero={<PageHero title="배당 정보" />}>
 
       <IrSubNav current={IR_ROUTES.dividends} />
 

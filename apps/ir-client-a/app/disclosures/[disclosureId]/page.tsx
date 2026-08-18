@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Badge } from '@winpilot/ui';
 import { IR_COMPANY, findDisclosure, publicDisclosures } from '@winpilot/store';
-import { IrPageTitle, IrRichBody, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrRichBody, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
 import { IR_ROUTES } from '@/lib/navigation';
 
 /**
@@ -28,8 +29,7 @@ export default async function DisclosureDetailPage({
   if (!disclosure || (disclosure.state !== '공시됨' && disclosure.state !== '정정')) notFound();
 
   return (
-    <IrSiteShell back={{ href: IR_ROUTES.disclosures, label: '공시 정보' }}>
-      <IrPageTitle title={disclosure.title} description={`${disclosure.disclosedAt} · ${disclosure.kind}`} />
+    <IrSiteShell back={{ href: IR_ROUTES.disclosures, label: '공시 정보' }} hero={<PageHero title={disclosure.title} />}>
 
       {disclosure.correctionOf && (
         <p className="flex flex-wrap items-center gap-2 rounded-lg bg-surface px-4 py-3 text-sm">

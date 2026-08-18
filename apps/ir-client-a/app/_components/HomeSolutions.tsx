@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
 import { publicSolutions, type Solution } from '@winpilot/store';
+import { useAutoAdvance } from './useAutoAdvance';
 
 /**
  * 카드의 세로 길이.
@@ -29,8 +30,14 @@ const CARD_H = 'h-108';
  * 위의 두 칸이 거의 검정이라 여기서 한 번 밝아진다. 어두운 화면이 계속 이어지면 어디까지가
  * 첫 화면이고 어디부터 본문인지가 흐려진다.
  *
- * 색을 못 박지 않고 토큰(`bg-surface`)을 쓰는 이유: 이 칸은 **읽는 칸**이라 다크 모드에서도
+ * 색을 못 박지 않고 토큰(`bg-canvas`)을 쓰는 이유: 이 칸은 **읽는 칸**이라 다크 모드에서도
  * 따라가야 한다. 위의 두 칸은 배경 영상과 이어지는 자리라 색을 못 박았다.
+ *
+ * 한때 `bg-surface`(옅은 회색)였다. 흰색으로 바꾸면서 **아래 미디어 칸과 같은 색**이 되었다 —
+ * 두 칸 사이의 경계는 이제 색이 아니라 위아래 여백(`py-20`)이 만든다.
+ *
+ * `bg-canvas` 가 다크 모드에서 뒤집히지 않는 것은 **뿌리에서 고정**하기 때문이다 —
+ * `app/layout.tsx` 가 `daylight` 를 한 번 두른다. 이 칸에 따로 적지 않는 이유는 그것이다.
  *
  * ## 어드민 연동
  * - 솔루션 값 ← `lib/data/site.ts` 의 `SOLUTIONS` (아직 어드민에 올리는 화면이 없다)
@@ -45,8 +52,27 @@ export function HomeSolutions() {
   /* 끝에서 다시 처음으로 돈다. 화살표를 눌렀는데 아무 일도 없으면 고장으로 읽힌다. */
   const step = (delta: number) => setIndex((before) => (before + delta + rows.length) % rows.length);
 
+  /*
+    저절로도 넘어간다. 화살표가 오른쪽 아래에 작게 서 있어 **넘길 수 있다는 것 자체**를 못 보고
+    지나가는 사람이 많은데, 한 번 저절로 넘어가면 나머지 셋이 있다는 것이 그때 보인다.
+
+    손으로 넘길 때마다 `defer()` 를 불러 시계를 되돌린다 — 누른 직후에 자동으로 또 넘어가면
+    두 칸이 지나간 것으로 보인다.
+  */
+  const { defer, hold } = useAutoAdvance(() => step(1));
+
+  const pick = (position: number) => {
+    defer();
+    setIndex(position);
+  };
+
+  const nudge = (delta: number) => {
+    defer();
+    step(delta);
+  };
+
   return (
-    <section className="overflow-hidden bg-surface py-20 text-ink lg:py-28">
+    <section {...hold} className="overflow-hidden bg-canvas py-20 text-ink lg:py-28">
       {/*
         왼쪽 두 칸은 다른 칸들과 같은 자리에서 시작하고, **오른쪽은 화면 끝까지 간다.**
 
@@ -110,9 +136,11 @@ export function HomeSolutions() {
                 className="group flex w-fit items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-canvas transition-opacity duration-150 hover:opacity-85"
               >
                 Cloud {active.name} 자세히 보기
-                <ArrowUpRight aria-hidden className="size-4 shrink-0 transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                <ArrowUpRight
+                  aria-hidden
+                  className="size-4 shrink-0 transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                />
               </a>
-
             </div>
           </div>
 
@@ -123,27 +151,27 @@ export function HomeSolutions() {
             */}
             <div className="flex items-center gap-2">
               {rows.map((one, position) => (
-                  <button
-                    key={one.id}
-                    type="button"
-                    onClick={() => setIndex(position)}
-                    aria-current={position === index}
-                    aria-label={`${one.name} 보기`}
-                    className={`h-0.5 rounded-full transition-all duration-300 ${
-                      position === index ? 'w-20 bg-ink' : 'w-10 bg-border'
-                    }`}
-                  />
-                ))}
-              </div>
+                <button
+                  key={one.id}
+                  type="button"
+                  onClick={() => pick(position)}
+                  aria-current={position === index}
+                  aria-label={`${one.name} 보기`}
+                  className={`h-0.5 rounded-full transition-all duration-300 ${
+                    position === index ? 'w-20 bg-ink' : 'w-10 bg-border'
+                  }`}
+                />
+              ))}
+            </div>
 
-              <div className="flex items-center gap-2">
-                <ArrowButton label="이전 솔루션" onClick={() => step(-1)} direction="prev" />
-                <ArrowButton label="다음 솔루션" onClick={() => step(1)} direction="next" />
-              </div>
+            <div className="flex items-center gap-2">
+              <ArrowButton label="이전 솔루션" onClick={() => nudge(-1)} direction="prev" />
+              <ArrowButton label="다음 솔루션" onClick={() => nudge(1)} direction="next" />
             </div>
           </div>
+        </div>
 
-          {/*
+        {/*
             오른쪽 — 지금 보고 있지 않은 솔루션들.
 
             ## 사라지는 카드를 **지우지 않는다**
@@ -160,39 +188,39 @@ export function HomeSolutions() {
             카드 안쪽으로 옮기면 카드가 접힐 때 간격도 같이 접힌다. 바깥의 `-mx-2` 는 그 여백만큼
             줄 전체를 되돌려, 첫 카드가 왼쪽 끝에서 시작하게 한다.
           */}
-          <div className="hidden lg:block">
-            <div className={`-mx-2 flex ${CARD_H}`}>
-              {rows.map((one, position) => {
-                const folded = position === index;
+        <div className="hidden lg:block">
+          <div className={`-mx-2 flex ${CARD_H}`}>
+            {rows.map((one, position) => {
+              const folded = position === index;
 
-                return (
-                  <div
-                    key={one.id}
-                    className={`min-w-0 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
-                      folded ? 'grow-0 basis-0 px-0 opacity-0' : 'grow basis-0 px-2 opacity-100'
-                    }`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setIndex(position)}
-                      /*
+              return (
+                <div
+                  key={one.id}
+                  className={`min-w-0 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+                    folded ? 'grow-0 basis-0 px-0 opacity-0' : 'grow basis-0 px-2 opacity-100'
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => pick(position)}
+                    /*
                         접힌 카드는 눈에도 없고 **탭 순서에도 없어야** 한다 — 보이지 않는 단추에
                         초점이 가면 그 뒤로 화면이 사라진 것처럼 보인다.
                       */
-                      tabIndex={folded ? -1 : undefined}
-                      aria-hidden={folded}
-                      className="size-full overflow-hidden rounded-2xl text-left transition-opacity duration-200 hover:opacity-80"
-                    >
-                      <SolutionPhoto solution={one} />
-                      <span className="sr-only">{one.name} 보기</span>
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
+                    tabIndex={folded ? -1 : undefined}
+                    aria-hidden={folded}
+                    className="size-full overflow-hidden rounded-2xl text-left transition-opacity duration-200 hover:opacity-80"
+                  >
+                    <SolutionPhoto solution={one} />
+                    <span className="sr-only">{one.name} 보기</span>
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
-      </section>
+      </div>
+    </section>
   );
 }
 

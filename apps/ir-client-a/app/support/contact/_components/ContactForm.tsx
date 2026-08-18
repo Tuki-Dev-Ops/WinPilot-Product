@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { Clock, Mail, Paperclip, Phone, X } from 'lucide-react';
-import { Button, Field, HintInput, HintTextarea, RequiredLegend, useToast } from '@winpilot/ui';
+import { Button, Checkbox, Dropdown, Field, HintInput, HintTextarea, RequiredLegend, useToast } from '@winpilot/ui';
 import { IR_COMPANY, SITE_REGIONS } from '@winpilot/store';
 
 /**
@@ -16,8 +16,38 @@ import { IR_COMPANY, SITE_REGIONS } from '@winpilot/store';
  */
 const KINDS = ['도입 · 견적', '기술 지원', '주주 · 투자자', '기관 · 애널리스트', '언론', '기타'] as const;
 
-/** 붙임 파일 한 개의 크기 한도(MB). 메일로 그대로 전달되므로 받는 쪽 한도에 맞춘다. */
+/**
+ * 붙임 파일 정책.
+ *
+ * ## 왜 확장자를 정해 두나
+ * 전에는 크기만 봤다. 그러면 실행 파일이나 매크로가 든 문서가 그대로 담당자 메일함으로 가고,
+ * **막을 자리가 받는 사람의 주의뿐**이 된다. 여기서 걸러야 그 뒤가 조용하다.
+ *
+ * 목록에 있는 것만 받는다(허용 목록). 위험한 것을 하나씩 막는 방식은 새 확장자가 생길 때마다
+ * 뚫리고, 그 사실은 뚫린 다음에 안다.
+ *
+ * ## 왜 세 가지를 다 재나
+ * - **한 개 20MB** — 메일로 그대로 전달되므로 받는 쪽 한도에 맞춘다
+ * - **최대 5개** — 다섯을 넘기면 문의가 아니라 자료 전달이고, 그건 메일로 할 일이다
+ * - **합계 50MB** — 20MB 짜리 다섯이면 100MB 다. 개당 한도만 두면 합계가 새어 나간다
+ *
+ * 이 값들은 `docs/architecture/policy.md` §3 에도 적어 둔다 — 서버가 붙는 날 같은 수를 써야 한다.
+ */
 const MAX_MB = 20;
+const MAX_COUNT = 5;
+const MAX_TOTAL_MB = 50;
+
+/** 받는 확장자. 문서 · 표 · 발표 · 이미지 · 압축까지다. */
+const ALLOWED_EXTENSIONS = [
+  'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'hwp', 'hwpx', 'jpg', 'jpeg', 'png', 'zip',
+] as const;
+
+/** 파일 고르는 창이 처음부터 걸러 주게 한다. 검사는 고른 뒤에 한 번 더 한다 — 창은 속일 수 있다. */
+const ACCEPT = ALLOWED_EXTENSIONS.map((one) => `.${one}`).join(',');
+
+function extensionOf(name: string): string {
+  return name.slice(name.lastIndexOf('.') + 1).toLowerCase();
+}
 
 /**
  * 문의 양식 — **왼쪽에 갈래, 오른쪽에 양식**.
@@ -65,6 +95,7 @@ export function ContactForm() {
   const [body, setBody] = useState('');
   const [files, setFiles] = useState<File[]>([]);
   const [submitted, setSubmitted] = useState(false);
+  const [agreed, setAgreed] = useState(false);
 
   const errors = {
     company: company.trim() ? undefined : '회사명을 입력해 주세요.',
@@ -77,6 +108,11 @@ export function ContactForm() {
       : /^[0-9+\-\s()]{9,20}$/.test(phone.trim())
         ? undefined
         : '연락 가능한 번호 형식으로 적어 주세요.',
+    /*
+      동의를 **검증 항목으로** 둔다. 단추를 흐리게 만들어 막는 방법도 있는데, 그러면 왜 눌리지
+      않는지가 화면 어디에도 없다 — 누른 사람에게 무엇이 남았는지 알려 주는 편이 낫다.
+    */
+    agreed: agreed ? undefined : '개인정보 수집·이용에 동의해 주세요.',
     body: body.trim().length >= 10 ? undefined : '무엇이 궁금하신지 조금만 더 적어 주세요. (10자 이상)',
   };
   const broken = Object.values(errors).filter(Boolean).length;
@@ -92,15 +128,53 @@ export function ContactForm() {
 
     const kept: File[] = [];
     const tooBig: string[] = [];
+    const wrongKind: string[] = [];
+
     for (const file of Array.from(picked)) {
-      if (file.size > MAX_MB * 1024 * 1024) tooBig.push(file.name);
-      else kept.push(file);
+      if (!ALLOWED_EXTENSIONS.includes(extensionOf(file.name) as (typeof ALLOWED_EXTENSIONS)[number])) {
+        wrongKind.push(file.name);
+      } else if (file.size > MAX_MB * 1024 * 1024) {
+        tooBig.push(file.name);
+      } else {
+        kept.push(file);
+      }
     }
 
+    /*
+      걸린 까닭을 갈라 알린다. `붙이지 못했습니다` 한 줄로 묶으면 크기를 줄여야 하는지 형식을
+      바꿔야 하는지 몰라, 같은 파일을 다시 고르게 된다.
+    */
+    if (wrongKind.length > 0) {
+      toast.error({
+        message: '받지 않는 형식입니다.',
+        detail: `${wrongKind.join(' · ')} — ${ALLOWED_EXTENSIONS.join(' · ')} 만 붙일 수 있습니다.`,
+      });
+    }
     if (tooBig.length > 0) {
       toast.error({ message: `${MAX_MB}MB 를 넘는 파일은 붙이지 못합니다.`, detail: tooBig.join(' · ') });
     }
-    if (kept.length > 0) setFiles((previous) => [...previous, ...kept]);
+    if (kept.length === 0) return;
+
+    /*
+      개수와 합계는 **이미 붙인 것까지 더해** 잰다. 고를 때마다 따로 재면 세 번에 나눠 고른
+      사람이 한도를 지나친다.
+    */
+    setFiles((previous) => {
+      const merged = [...previous, ...kept];
+      if (merged.length > MAX_COUNT) {
+        toast.error({ message: `첨부는 ${MAX_COUNT}개까지입니다.`, detail: `지금 ${merged.length}개를 고르셨습니다.` });
+        return previous;
+      }
+      const total = merged.reduce((sum, one) => sum + one.size, 0);
+      if (total > MAX_TOTAL_MB * 1024 * 1024) {
+        toast.error({
+          message: `첨부 합계는 ${MAX_TOTAL_MB}MB 까지입니다.`,
+          detail: `지금 ${Math.ceil(total / 1024 / 1024)}MB 입니다.`,
+        });
+        return previous;
+      }
+      return merged;
+    });
   };
 
   const submit = () => {
@@ -118,6 +192,8 @@ export function ContactForm() {
     setEmail('');
     setBody('');
     setFiles([]);
+    /* 동의는 그 문의 한 건에 대한 것이라 함께 되돌린다 — 다음 문의는 다시 받는다. */
+    setAgreed(false);
     setSubmitted(false);
   };
 
@@ -126,7 +202,7 @@ export function ContactForm() {
       {/* 왼쪽 — 갈래와 연락처. 좁은 화면에서는 갈래가 가로로 눕는다(세로로 두면 양식이 화면 밖으로 밀린다). */}
       <aside className="flex shrink-0 flex-col gap-6 lg:w-60">
         <div>
-          <p className="mb-3 text-xs font-medium text-ink-faint">문의 갈래</p>
+          <p className="mb-3 text-xs font-medium text-ink-faint">문의 유형</p>
           <div className="flex flex-wrap gap-2 lg:flex-col lg:gap-1">
             {KINDS.map((one) => (
               <button
@@ -163,9 +239,7 @@ export function ContactForm() {
           label="회사명"
           htmlFor="contact-company"
           required
-          {...(submitted && errors.company
-            ? { error: errors.company }
-            : { hint: '기존에 상담하신 적이 있으면 같은 이름으로 적어 주세요.' })}
+          {...(submitted && errors.company ? { error: errors.company } : {})}
         >
           <HintInput
             id="contact-company"
@@ -181,34 +255,31 @@ export function ContactForm() {
           label="지역"
           htmlFor="contact-region"
           required
-          {...(submitted && errors.region
-            ? { error: errors.region }
-            : { hint: '현장이 있는 시 · 도를 골라 주세요. 방문 일정을 함께 안내드립니다.' })}
+          {...(submitted && errors.region ? { error: errors.region } : {})}
         >
-          <select
+          {/*
+            생 `<select>` 였다. 두 가지가 걸렸다 — 브라우저가 그리는 화살표가 **오른쪽 끝에
+            딱 붙어** 옆 칸들과 안쪽 여백이 어긋났고, `<option>` 의 글자는 DOM 텍스트 노드가
+            아니라 Figma 로 추출되지 않는다(`packages/ui/src/Dropdown.tsx` 머리말).
+
+            비워 둔 첫 값은 `label` 이 대신한다 — 고르기 전에는 그 말이 자리에 서 있고, 서울이
+            미리 골라져 있으면 고르지 않은 사람의 문의가 전부 서울로 쌓인다.
+          */}
+          <Dropdown
             id="contact-region"
+            label="고르지 않음"
             value={region}
-            onChange={(event) => setRegion(event.target.value)}
-            aria-invalid={submitted && Boolean(errors.region)}
-            className={`h-11 w-full min-w-0 rounded-lg border bg-canvas px-3 text-sm transition-colors duration-150 ${
-              submitted && errors.region ? 'border-signal-danger' : 'border-border-strong'
-            } ${region ? 'text-ink' : 'text-ink-faint'}`}
-          >
-            {/* 처음 값을 비워 둔다 — 서울이 미리 골라져 있으면 고르지 않은 사람의 문의가 전부 서울로 쌓인다. */}
-            <option value="">고르지 않음</option>
-            {SITE_REGIONS.map((one) => (
-              <option key={one} value={one}>
-                {one}
-              </option>
-            ))}
-          </select>
+            onChange={setRegion}
+            invalid={submitted && Boolean(errors.region)}
+            options={SITE_REGIONS.map((one) => ({ value: one, label: one }))}
+          />
         </Field>
 
         <Field
           label="담당자명"
           htmlFor="contact-name"
           required
-          {...(submitted && errors.name ? { error: errors.name } : { hint: '직함을 함께 적어 주시면 좋습니다.' })}
+          {...(submitted && errors.name ? { error: errors.name } : {})}
         >
           <HintInput
             id="contact-name"
@@ -220,40 +291,44 @@ export function ContactForm() {
           />
         </Field>
 
-        {/* 번호와 메일을 나란히 둔다 — 둘 다 연락처라, 세로로 떨어뜨리면 하나를 지나친다. */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <Field
-            label="휴대폰 번호"
-            htmlFor="contact-phone"
-            required
-            {...(submitted && errors.phone ? { error: errors.phone } : { hint: '통화가 필요할 때 연락드립니다.' })}
-          >
-            <HintInput
-              id="contact-phone"
-              type="tel"
-              hint="010-0000-0000"
-              value={phone}
-              onChange={(event) => setPhone(event.target.value)}
-              invalid={submitted && Boolean(errors.phone)}
-            />
-          </Field>
+        {/*
+          한 줄에 하나씩이다. 전에는 번호와 메일을 나란히 두었는데 — 둘 다 연락처라 붙여
+          두었던 것이다 — 이 폼의 나머지 칸이 전부 한 줄을 다 쓰고 있어 **여기서만 줄이 갈라져**
+          읽는 눈이 한 번 옆으로 튄다.
 
-          <Field
-            label="이메일"
-            htmlFor="contact-email"
-            required
-            {...(submitted && errors.email ? { error: errors.email } : { hint: '이 주소로 답변드립니다.' })}
-          >
-            <HintInput
-              id="contact-email"
-              type="email"
-              hint="name@example.com"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              invalid={submitted && Boolean(errors.email)}
-            />
-          </Field>
-        </div>
+          메일이 위다. 답은 메일로 가고 전화는 필요할 때만 건다 — 먼저 받는 것을 먼저 묻는다.
+        */}
+        <Field
+          label="이메일"
+          htmlFor="contact-email"
+          required
+          {...(submitted && errors.email ? { error: errors.email } : {})}
+        >
+          <HintInput
+            id="contact-email"
+            type="email"
+            hint="name@example.com"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            invalid={submitted && Boolean(errors.email)}
+          />
+        </Field>
+
+        <Field
+          label="휴대폰 번호"
+          htmlFor="contact-phone"
+          required
+          {...(submitted && errors.phone ? { error: errors.phone } : {})}
+        >
+          <HintInput
+            id="contact-phone"
+            type="tel"
+            hint="010-0000-0000"
+            value={phone}
+            onChange={(event) => setPhone(event.target.value)}
+            invalid={submitted && Boolean(errors.phone)}
+          />
+        </Field>
 
         <Field
           label="문의 내용"
@@ -261,7 +336,7 @@ export function ContactForm() {
           required
           {...(submitted && errors.body
             ? { error: errors.body }
-            : { hint: '도입 검토시 지금 쓰시는 시스템과 설비를 함께 적어 주시면 빠릅니다.' })}
+            : {})}
         >
           <HintTextarea
             id="contact-body"
@@ -273,7 +348,7 @@ export function ContactForm() {
           />
         </Field>
 
-        <Field label="첨부파일" htmlFor="contact-files" hint={`파일당 ${MAX_MB}MB 까지 · 여러 개 가능`}>
+        <Field label="첨부파일" htmlFor="contact-files" hint={`${ALLOWED_EXTENSIONS.join(" · ")} · 파일당 ${MAX_MB}MB · 최대 ${MAX_COUNT}개 · 합계 ${MAX_TOTAL_MB}MB`}>
           <div className="flex flex-col gap-3">
             {/*
               진짜 `<input type="file">` 은 숨기고 단추로 연다. 브라우저가 그리는 기본 모양은
@@ -286,6 +361,7 @@ export function ContactForm() {
               id="contact-files"
               type="file"
               multiple
+              accept={ACCEPT}
               className="sr-only"
               onChange={(event) => {
                 addFiles(event.target.files);
@@ -330,11 +406,60 @@ export function ContactForm() {
           </div>
         </Field>
 
-        {/* 먼저 적어 둔다. 답을 못 받고 기다리는 것보다, 왜 답할 수 없는지를 보내기 전에 아는 편이 낫다. */}
-        <p className="rounded-lg bg-surface px-4 py-3 text-xs leading-relaxed text-ink-muted">
-          아직 공시하지 않은 실적·전망은 개별적으로 알려 드릴 수 없습니다. 특정 투자자에게만 미리 알리는 것은
-          공정공시에 어긋납니다. 급하시면 {IR_COMPANY.irPhone} 으로 전화 주세요.
-        </p>
+        {/*
+          개인정보 수집·이용 동의.
+
+          ## 받고 있으면서 안 밝히면 안 된다
+          이 양식은 성함 · 이메일 · 휴대폰 번호를 **필수로** 받는다. 그런데 무엇을 왜 얼마나
+          갖고 있는지를 어디에도 적지 않고 있었다 — 개인정보보호법 제15조가 요구하는 고지다.
+
+          ## 항목을 접어 두지 않는다
+          `자세히 보기` 뒤에 숨기면 펴 보는 사람이 거의 없고, 그러면 동의는 받았는데 무엇에
+          동의했는지는 아무도 모르는 상태가 된다. 세 줄이라 그냥 편다.
+
+          ## 처리방침으로 가는 길을 함께 둔다
+          여기 적은 것은 **이 양식이 받는 것**이고, 회사 전체의 처리 방침은 그쪽에 있다.
+        */}
+        <div className="flex flex-col gap-3 rounded-lg border border-border px-4 py-4">
+          <p className="text-sm font-medium">개인정보 수집 · 이용 동의</p>
+          <dl className="flex flex-col gap-1.5 text-xs leading-relaxed text-ink-muted">
+            <div className="flex gap-2">
+              <dt className="w-14 shrink-0 text-ink-faint">수집 항목</dt>
+              <dd className="min-w-0">회사명 · 지역 · 담당자명 · 이메일 · 휴대폰 번호 · 문의 내용 · 첨부파일</dd>
+            </div>
+            <div className="flex gap-2">
+              <dt className="w-14 shrink-0 text-ink-faint">이용 목적</dt>
+              <dd className="min-w-0">문의 접수와 답변, 그에 따른 상담 진행</dd>
+            </div>
+            <div className="flex gap-2">
+              <dt className="w-14 shrink-0 text-ink-faint">보관 기간</dt>
+              <dd className="min-w-0">답변 완료 후 3년. 기간이 지나면 지체 없이 파기합니다</dd>
+            </div>
+          </dl>
+
+          {/*
+            거부할 수 있다는 것과 그때 어떻게 되는지를 함께 적는다. 법이 요구하는 고지이면서,
+            적어 두지 않으면 동의가 형식만 남는다.
+          */}
+          <p className="text-xs leading-relaxed text-ink-faint">
+            동의하지 않으실 수 있습니다. 다만 연락처 없이는 답변을 드릴 수 없어 문의 접수가 되지 않습니다.{' '}
+            <a href="/privacy" className="underline underline-offset-2 hover:text-ink">
+              개인정보 처리방침
+            </a>
+          </p>
+
+          <label className="flex w-fit cursor-pointer items-center gap-2 text-sm">
+            <Checkbox checked={agreed} onChange={setAgreed} label="개인정보 수집 · 이용에 동의" />
+            <span>
+              위 내용에 동의합니다
+              <span aria-hidden className="ml-0.5 text-signal-danger">*</span>
+            </span>
+          </label>
+
+          {submitted && errors.agreed && (
+            <p className="text-xs leading-relaxed text-signal-danger">{errors.agreed}</p>
+          )}
+        </div>
 
         <div className="flex justify-end">
           <Button onClick={submit}>문의 보내기</Button>

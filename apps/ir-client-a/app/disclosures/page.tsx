@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { Badge } from '@winpilot/ui';
 import { IR_COMPANY, publicDisclosures } from '@winpilot/store';
-import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
 import { IrSubNav } from '@/app/_components/IrSubNav';
 import { IR_ROUTES } from '@/lib/navigation';
 
@@ -22,11 +23,7 @@ export default function DisclosureListPage() {
   const rows = publicDisclosures();
 
   return (
-    <IrSiteShell>
-      <IrPageTitle
-        title="공시 정보"
-        description="공시 원문은 금융감독원 전자공시시스템(DART)에서도 확인하실 수 있습니다."
-      />
+    <IrSiteShell hero={<PageHero title="공시 정보" />}>
 
       <IrSubNav current={IR_ROUTES.disclosures} />
 

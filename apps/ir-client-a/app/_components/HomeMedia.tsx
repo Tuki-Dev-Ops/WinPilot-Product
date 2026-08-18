@@ -2,9 +2,11 @@
 
 import { CLIP, NIGHT } from '@/lib/palette';
 import { useRef } from 'react';
-import { ArrowLeft, ArrowRight, ArrowUpRight, Play } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, Share2 } from 'lucide-react';
 import { IR_COMPANY, publicMediaClips } from '@winpilot/store';
+import { useToast } from '@winpilot/ui';
 import { IR_ROUTES } from '@/lib/navigation';
+import { useAutoAdvance } from './useAutoAdvance';
 
 /**
  * 마지막 칸 — **영상으로 남은 것들**.
@@ -37,6 +39,27 @@ import { IR_ROUTES } from '@/lib/navigation';
  */
 export function HomeMedia() {
   const rail = useRef<HTMLDivElement | null>(null);
+  const toast = useToast();
+
+  /*
+    카드 하나를 가리키는 주소를 만들어 넘긴다.
+
+    영상마다 자기 화면이 없어서 홈 주소에 **닻**을 붙인다 — 받은 사람이 열면 그 카드가 있는
+    자리로 간다. 뉴스 목록 주소를 대신 주면 어느 영상 이야기였는지가 링크에서 사라진다.
+
+    `origin` 을 붙여 **온전한 주소**로 만든다. `/#clip-MC-005` 만 복사하면 메신저에 붙였을 때
+    링크로 잡히지 않는다.
+  */
+  const share = async (id: string) => {
+    const url = `${window.location.origin}/#clip-${id}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success('링크가 복사되었습니다.');
+    } catch {
+      /* 클립보드를 막아 둔 브라우저가 있다. 조용히 실패하면 눌러 본 사람이 복사된 줄 안다. */
+      toast.error({ message: '링크를 복사하지 못했습니다.', detail: url });
+    }
+  };
 
   /*
     한 번에 미는 거리를 **보이는 만큼**으로 잡는다. 고정된 픽셀로 두면 넓은 화면에서는 한 장도
@@ -46,11 +69,34 @@ export function HomeMedia() {
   const slide = (direction: -1 | 1) => {
     const box = rail.current;
     if (!box) return;
-    box.scrollBy({ left: direction * box.clientWidth * 0.9, behavior: 'smooth' });
+    defer();
+    box.scrollBy({
+      left: direction * box.clientWidth * 0.9,
+      behavior: 'smooth',
+    });
   };
 
+  /*
+    저절로도 흐른다. 오른쪽으로 잘린 카드가 **더 있다**를 말하고 있긴 하지만, 그것을 알아본
+    사람만 밀어 본다 — 한 번 저절로 흐르면 밀 수 있다는 것이 눌러 보지 않아도 보인다.
+
+    끝에 닿으면 처음으로 되돌아온다. 거기서 멈춰 두면 다시 볼 사람이 다섯 장을 손으로 되감아야
+    하고, 그 자리에 남은 화면은 **고장 난 줄**로 읽힌다. `2` 는 반올림 오차를 견디는 값이다 —
+    `scrollLeft` 는 정수가 아니라, 끝까지 밀어도 `scrollWidth` 에 딱 맞아떨어지지 않는다.
+  */
+  const { defer, hold } = useAutoAdvance(() => {
+    const box = rail.current;
+    if (!box) return;
+
+    if (box.scrollLeft + box.clientWidth >= box.scrollWidth - 2) {
+      box.scrollTo({ left: 0, behavior: 'smooth' });
+      return;
+    }
+    box.scrollBy({ left: box.clientWidth * 0.9, behavior: 'smooth' });
+  });
+
   return (
-    <section className="overflow-hidden bg-canvas py-20 text-ink lg:py-28">
+    <section {...hold} className="overflow-hidden bg-canvas py-20 text-ink lg:py-28">
       {/*
         제목과 카드 줄이 **같은 부모**의 왼쪽 여백을 쓴다. 전에는 제목은 가운데 정렬 상자
         (`mx-auto max-w-320 px-6`)에, 카드 줄은 그것과 같은 값을 계산한 여백에 두었다. 값이
@@ -62,24 +108,24 @@ export function HomeMedia() {
       <div className="px-6 lg:pl-[max(1.5rem,calc((100%_-_80rem)/2_+_1.5rem))] lg:pr-0">
         {/* 제목 묶음만 폭을 가둔다 — `80rem` 상자의 **안쪽 너비**(`80rem - 3rem`)와 같다. */}
         <div className="flex w-full max-w-308 flex-col gap-8">
-        <p className="text-lg font-bold tracking-tight">{IR_COMPANY.brandEn} Media</p>
+          <p className="text-lg font-bold tracking-tight">{IR_COMPANY.brandEn} Media</p>
 
-        <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-6">
-          <div className="flex flex-col gap-6">
-            <h2 className="text-3xl font-bold tracking-tight lg:text-4xl">스마트팩토리 Replay</h2>
+          <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-6">
+            <div className="flex flex-col gap-6">
+              <h2 className="text-3xl font-bold tracking-tight lg:text-4xl">스마트팩토리 Replay</h2>
 
-            <a href={IR_ROUTES.news} className="group flex w-fit items-center gap-3 text-sm font-bold">
-              뉴스 전체보기
-              <span className="grid size-6 shrink-0 place-items-center rounded-full bg-ink text-canvas transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
-                <ArrowUpRight aria-hidden className="size-3.5" strokeWidth={2} />
-              </span>
-            </a>
-          </div>
+              <a href={IR_ROUTES.news} className="group flex w-fit items-center gap-3 text-sm font-bold">
+                뉴스 전체보기
+                <span className="grid size-6 shrink-0 place-items-center rounded-full bg-ink text-canvas transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
+                  <ArrowUpRight aria-hidden className="size-3.5" strokeWidth={2} />
+                </span>
+              </a>
+            </div>
 
-          <div className="flex items-center gap-2">
-            <RailButton label="이전 영상" direction="prev" onClick={() => slide(-1)} />
-            <RailButton label="다음 영상" direction="next" onClick={() => slide(1)} />
-          </div>
+            <div className="flex items-center gap-2">
+              <RailButton label="이전 영상" direction="prev" onClick={() => slide(-1)} />
+              <RailButton label="다음 영상" direction="next" onClick={() => slide(1)} />
+            </div>
           </div>
         </div>
 
@@ -98,20 +144,34 @@ export function HomeMedia() {
             덩어리로 읽힌다.
           */}
           {publicMediaClips().map((clip) => (
-            <article key={clip.id} className="flex w-72 shrink-0 snap-start flex-col gap-3 lg:w-80">
-            <div className="relative aspect-video overflow-hidden rounded-xl bg-night">
-              <ClipPattern seed={clip.seed} />
-              {/* 재생 표시 — 이 카드가 글이 아니라 영상이라는 것을 말하는 유일한 것. */}
-              <span className="absolute bottom-3 right-3 grid size-7 place-items-center rounded bg-black/70">
-                <Play aria-hidden className="size-3 fill-white text-white" />
-              </span>
-            </div>
+            <article
+              key={clip.id}
+              id={`clip-${clip.id}`}
+              className="flex w-72 shrink-0 scroll-mt-28 snap-start flex-col gap-3 lg:w-80"
+            >
+              <div className="relative aspect-video overflow-hidden rounded-xl bg-night">
+                <ClipPattern seed={clip.seed} />
+                {/*
+                재생 표시였다. 눌러도 아무 일이 없어 **고장으로 읽혔다** — 영상 파일이 아직 없고,
+                있다 해도 홈에서 재생을 시작하면 그 아래 칸을 읽던 사람이 소리에 놀란다.
 
-            <div className="flex flex-col gap-1">
-              <p className="text-xs text-ink-faint">{clip.channel}</p>
-              <h3 className="text-sm font-semibold leading-relaxed">{clip.title}</h3>
-            </div>
-          </article>
+                지금 여기서 실제로 할 수 있는 일은 **이 영상을 남에게 보내는 것**이라 공유로 바꿨다.
+              */}
+                <button
+                  type="button"
+                  onClick={() => share(clip.id)}
+                  aria-label={`${clip.title} 링크 복사`}
+                  className="absolute bottom-3 right-3 grid size-7 place-items-center rounded bg-black/70 text-white transition-colors duration-150 hover:bg-black/85"
+                >
+                  <Share2 aria-hidden className="size-3.5" strokeWidth={1.8} />
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <p className="text-xs text-ink-faint">{clip.channel}</p>
+                <h3 className="text-sm font-semibold leading-relaxed">{clip.title}</h3>
+              </div>
+            </article>
           ))}
         </div>
       </div>
@@ -119,15 +179,7 @@ export function HomeMedia() {
   );
 }
 
-function RailButton({
-  label,
-  direction,
-  onClick,
-}: {
-  label: string;
-  direction: 'prev' | 'next';
-  onClick: () => void;
-}) {
+function RailButton({ label, direction, onClick }: { label: string; direction: 'prev' | 'next'; onClick: () => void }) {
   return (
     <button
       type="button"

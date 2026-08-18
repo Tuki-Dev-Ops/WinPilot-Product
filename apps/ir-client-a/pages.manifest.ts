@@ -17,24 +17,32 @@ export const pages: PageSpec[] = [
   { order: 2, id: 'about', name: 'About', route: '/about' },
   { order: 3, id: 'about-history', name: 'History', route: '/about/history' },
   { order: 4, id: 'about-certifications', name: 'Certifications', route: '/about/certifications' },
+  {
+    order: 5,
+    id: 'about-certifications-detail',
+    name: 'Certification Detail',
+    route: '/about/certifications/[credentialId]',
+    /* 목록에서 눌러 들어가는 화면이라 캡처·넘침 검사에 실제로 있는 값을 하나 준다. */
+    sampleUrl: '/about/certifications/C-001',
+  },
 
   /*
     5번대 — 파는 것 여섯과 그 목록.
     메뉴에 선 차례를 그대로 따른다(SOLUTION 둘 · PRODUCT 넷). 상세 화면이 여섯이므로
     5번대를 온전히 쓰고, 공시는 아래 10번대에서 시작한다.
   */
-  { order: 5, id: 'solutions-consulting', name: 'Smart Consulting', route: '/solutions/consulting' },
-  { order: 6, id: 'solutions-infra', name: 'Infra Service', route: '/solutions/infra' },
-  { order: 7, id: 'solutions-mes', name: 'Cloud MES', route: '/solutions/mes' },
-  { order: 8, id: 'solutions-erp', name: 'Cloud ERP', route: '/solutions/erp' },
-  { order: 9, id: 'solutions-crm', name: 'Cloud CRM', route: '/solutions/crm' },
-  { order: 10, id: 'solutions-dxp', name: 'Cloud DXP', route: '/solutions/dxp' },
-  { order: 11, id: 'products', name: 'Products', route: '/products' },
+  { order: 6, id: 'solutions-consulting', name: 'Smart Consulting', route: '/solutions/consulting' },
+  { order: 7, id: 'solutions-infra', name: 'Infra Service', route: '/solutions/infra' },
+  { order: 8, id: 'solutions-mes', name: 'Cloud MES', route: '/solutions/mes' },
+  { order: 9, id: 'solutions-erp', name: 'Cloud ERP', route: '/solutions/erp' },
+  { order: 10, id: 'solutions-crm', name: 'Cloud CRM', route: '/solutions/crm' },
+  { order: 11, id: 'solutions-dxp', name: 'Cloud DXP', route: '/solutions/dxp' },
+  { order: 12, id: 'products', name: 'Products', route: '/products' },
 
   // 12번대 — 공시
-  { order: 12, id: 'disclosures', name: 'Disclosures', route: '/disclosures' },
+  { order: 13, id: 'disclosures', name: 'Disclosures', route: '/disclosures' },
   {
-    order: 13,
+    order: 14,
     id: 'disclosures-detail',
     name: 'Disclosure Detail',
     route: '/disclosures/[disclosureId]',

@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { Badge } from '@winpilot/ui';
 import { IR_COMPANY, MEETINGS } from '@winpilot/store';
-import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
 import { IrSubNav } from '@/app/_components/IrSubNav';
 import { IR_ROUTES } from '@/lib/navigation';
 
@@ -15,8 +16,7 @@ export const metadata: Metadata = { title: `주주총회 — ${IR_COMPANY.name}`
 
 export default function MeetingListPage() {
   return (
-    <IrSiteShell>
-      <IrPageTitle title="주주총회" description="소집 공고와 안건입니다." />
+    <IrSiteShell hero={<PageHero title="주주총회" />}>
 
       <IrSubNav current={IR_ROUTES.meetings} />
 

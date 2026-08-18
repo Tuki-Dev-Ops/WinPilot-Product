@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { IR_COMPANY } from '@winpilot/store';
-import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
 
 /**
  * Feature: `site.terms` · IR Client (템플릿 A) · route `/terms`
@@ -17,11 +18,7 @@ export const metadata: Metadata = { title: `서비스 이용약관 — ${IR_COMP
 
 export default function TermsSettingsPage() {
   return (
-    <IrSiteShell back={{ href: '/', label: '홈' }}>
-      <IrPageTitle
-        title="서비스 이용약관"
-        description="약관 원고를 준비하고 있습니다. 확정되는 대로 이 자리에 공개합니다."
-      />
+    <IrSiteShell back={{ href: '/', label: '홈' }} hero={<PageHero title="서비스 이용약관" />}>
 
       <section className="flex flex-col gap-3 rounded-xl border border-border px-6 py-5">
         <p className="text-sm font-medium">문의</p>

@@ -75,7 +75,7 @@ export function CredentialListView() {
               type="search"
               value={keyword}
               onChange={(event) => setKeyword(event.target.value)}
-              placeholder="이름 · 번호 · 발급처"
+              placeholder="제목을 입력해주세요."
               className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-ink-faint"
             />
             <span className="sr-only">특허·인증 검색</span>
@@ -106,18 +106,24 @@ export function CredentialListView() {
 
             <ul>
               {rows.map((one) => (
-                <li
-                  key={one.id}
-                  className="flex flex-col gap-1 border-t border-border px-5 py-4 lg:grid lg:grid-cols-12 lg:items-center lg:gap-4"
-                >
-                  <span className="text-xs text-ink-muted lg:col-span-1">{one.kind}</span>
-                  <span className="text-sm font-medium lg:col-span-5">{one.title}</span>
-                  {/* 번호는 고정폭으로 — 자릿수가 눈으로 맞아야 다른 번호와 견줄 수 있다. */}
-                  <span className="font-mono text-xs tabular-nums text-ink-muted lg:col-span-3">{one.number}</span>
-                  <span className="text-xs text-ink-muted lg:col-span-2">{one.issuer}</span>
-                  <span className="font-mono text-xs tabular-nums text-ink-muted lg:col-span-1 lg:text-right">
-                    {one.acquiredAt}
-                  </span>
+                <li key={one.id} className="border-t border-border">
+                  {/*
+                    줄 전체가 링크다. 이름에만 걸면 좁은 화면에서 눌러야 할 자리가 글자 폭만큼만
+                    남는데, 이 줄은 이미 카드처럼 접혀 있어 어디를 눌러도 될 것처럼 보인다.
+                  */}
+                  <a
+                    href={`/about/certifications/${one.id}`}
+                    className="flex flex-col gap-1 px-5 py-4 transition-colors duration-150 hover:bg-surface lg:grid lg:grid-cols-12 lg:items-center lg:gap-4"
+                  >
+                    <span className="text-xs text-ink-muted lg:col-span-1">{one.kind}</span>
+                    <span className="text-sm font-medium lg:col-span-5">{one.title}</span>
+                    {/* 번호는 고정폭으로 — 자릿수가 눈으로 맞아야 다른 번호와 견줄 수 있다. */}
+                    <span className="font-mono text-xs tabular-nums text-ink-muted lg:col-span-3">{one.number}</span>
+                    <span className="text-xs text-ink-muted lg:col-span-2">{one.issuer}</span>
+                    <span className="font-mono text-xs tabular-nums text-ink-muted lg:col-span-1 lg:text-right">
+                      {one.acquiredAt}
+                    </span>
+                  </a>
                 </li>
               ))}
             </ul>

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { IR_COMPANY, MEETINGS } from '@winpilot/store';
-import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
 import { IR_ROUTES } from '@/lib/navigation';
 
 /**
@@ -16,11 +17,7 @@ export default function VoteHomePage() {
   const next = MEETINGS.find((one) => one.state === '예정' && one.electronicVote);
 
   return (
-    <IrSiteShell back={{ href: IR_ROUTES.meetings, label: '주주총회' }}>
-      <IrPageTitle
-        title="전자투표 안내"
-        description="총회에 오지 않아도 의결권을 행사하실 수 있습니다."
-      />
+    <IrSiteShell back={{ href: IR_ROUTES.meetings, label: '주주총회' }} hero={<PageHero title="전자투표 안내" />}>
 
       {next ? (
         <section className="flex flex-col gap-2 rounded-xl border border-border px-6 py-5">

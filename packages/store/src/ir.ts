@@ -53,6 +53,20 @@ export type IrCompany = {
   foundedAt: string;
   listedAt: string;
   address: string;
+  /**
+   * 본사 좌표.
+   *
+   * 주소를 좌표로 바꾸는 일(지오코딩)을 하지 않으므로 **값이 좌표를 들고 있어야 한다.** 화면이
+   * 주소 문자열로 지도를 찍게 두면 지도 제공사의 검색 API 를 부르게 되고, 그 호출은 열쇠와
+   * 한도와 실패 처리를 함께 데려온다 — 바뀌지 않는 값 하나 때문에.
+   *
+   * F&B 매장도 같은 이유로 자기 좌표를 들고 있다.
+   *
+   * 지금 값은 **왕십리역 언저리**다. 위 `address` 가 아직 자리 표시(`000, 000호`)라 정확한
+   * 점을 찍을 수 없다 — 주소가 정해지는 날 이 둘을 함께 고친다.
+   */
+  lat: number;
+  lng: number;
   /** IR 담당 창구 */
   irEmail: string;
   irPhone: string;
@@ -71,6 +85,8 @@ export const IR_COMPANY: IrCompany = {
   foundedAt: '2019-04-01',
   listedAt: '2024-11-12',
   address: '서울특별시 성동구 왕십리로 000, 000호',
+  lat: 37.5613,
+  lng: 127.0374,
   irEmail: 'ir@example.com',
   irPhone: '02-0000-0000',
   intro:

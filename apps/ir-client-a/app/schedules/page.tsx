@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { IR_COMPANY } from '@winpilot/store';
 import { upcomingSchedules } from '@winpilot/store';
-import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
 import { IR_ROUTES } from '@/lib/navigation';
 import { IrSubNav } from '@/app/_components/IrSubNav';
 import { IrTable } from '@/app/_components/IrTable';
@@ -16,8 +17,7 @@ export const metadata: Metadata = { title: `IR 일정 — ${IR_COMPANY.name}` };
 
 export default function ScheduleListPage() {
   return (
-    <IrSiteShell>
-      <IrPageTitle title="IR 일정" description="앞으로 예정된 일정입니다. 지난 일정은 표시하지 않습니다." />
+    <IrSiteShell hero={<PageHero title="IR 일정" />}>
 
       <IrSubNav current={IR_ROUTES.schedules} />
 

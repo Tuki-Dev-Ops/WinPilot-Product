@@ -43,6 +43,7 @@ export function IrSiteShell({
   overlay = false,
   popup = true,
   children,
+  after,
 }: {
   back?: { href: string; label: string };
   /**
@@ -81,6 +82,14 @@ export function IrSiteShell({
    */
   popup?: boolean;
   /**
+   * 본문 **뒤에** 서는, 좌우 끝까지 닿는 판.
+   *
+   * `bleed` 와 나눠 받는 이유는 **차례** 하나뿐이다 — 그쪽은 본문 앞이고 이쪽은 뒤다. 본문
+   * 안에서 음수 여백으로 끌어내는 방법도 있는데, 그러면 너비 제한(`max-w-320`)까지는 벗어나지
+   * 못해 넓은 화면에서 배경만 가운데 상자로 남는다.
+   */
+  after?: ReactNode;
+  /**
    * 너비가 제한된 본문.
    *
    * **없어도 된다.** 홈처럼 화면 끝까지 닿는 칸(`hero`·`bleed`)만으로 이뤄진 화면이 있는데,
@@ -108,11 +117,8 @@ export function IrSiteShell({
         </main>
       )}
 
-      {/*
-        푸터는 검다. 본문이 흰 바탕이라 그 아래가 같은 색이면 **페이지가 어디서 끝났는지**
-        보이지 않고, 마지막 칸(Solution)도 밝은 칸이라 더 그렇다. 첫 화면과 같은 색을 써서
-        위아래가 같은 색으로 닫히게 한다.
-      */}
+      {after}
+
       {/*
         푸터는 검다. 본문이 흰 바탕이라 그 아래가 같은 색이면 **페이지가 어디서 끝났는지**
         보이지 않고, 마지막 칸도 밝은 칸이라 더 그렇다. 첫 화면과 같은 색을 써서 위아래가 같은
@@ -199,16 +205,6 @@ export function IrSiteShell({
           </div>
         </div>
       </footer>
-    </div>
-  );
-}
-
-/** 화면 제목 — 상세에서는 위에 돌아가는 길이 함께 선다(`back`). */
-export function IrPageTitle({ title, description }: { title: string; description?: string }) {
-  return (
-    <div className="flex flex-col gap-2">
-      <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-      {description && <p className="text-sm leading-relaxed text-ink-muted">{description}</p>}
     </div>
   );
 }

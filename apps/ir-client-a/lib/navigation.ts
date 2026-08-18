@@ -37,7 +37,13 @@ export type SiteNavGroup = {
 export type SiteNavItem = {
   /** 갈래 이름. 영문 대문자로 두는 것은 국문 하위 항목과 층이 갈려 보이게 하려는 것이다 */
   label: string;
-  /** 갈래를 눌렀을 때 가는 곳 — 첫 하위 화면이다 */
+  /**
+   * 갈래를 눌렀을 때 가는 곳.
+   *
+   * **첫 하위 화면이 아니라 갈래 전체를 훑는 화면**이면 그쪽을 쓴다. SOLUTION 이 그렇다 —
+   * 여섯 중 첫째(스마트 컨설팅)로 보내면 나머지 다섯을 못 본 사람이 그 하나를 우리가 미는
+   * 것으로 읽는다. 그런 화면이 없는 갈래는 첫 하위 화면으로 간다.
+   */
   href: string;
   groups: SiteNavGroup[];
   /**
@@ -56,18 +62,27 @@ export type SiteNavItem = {
 /**
  * 갈래 넷과 그 아래 항목.
  *
- * ## 지금 헤더에 서는 것은 셋이다
- * `PRODUCT` 를 감췄다(`hidden`). 목록에서 지우지 않은 이유는 그 필드의 머리말에 있다.
+ * ## 지금 헤더에 서는 것은 셋이다 — ABOUT · SOLUTION · CS CENTER
+ * `hidden` 을 쓰는 갈래는 지금 없다. 그 필드는 남겨 둔다 — `PRODUCT` 를 그렇게 감춰 본 적이
+ * 있고, 갈래를 늘리지 않으면서 화면은 살려 두는 방법이 그것뿐이다.
  *
  * ## 항목에 설명을 달지 않는다
  * 한때 항목마다 한 줄 설명을 붙여 두었다(`Cloud MES — 설비 데이터 표준화·실시간 추적`).
  * 그러면 펼침이 **읽는 화면**이 되어, 고르러 온 사람이 여섯 문장을 지나야 자기 자리를 찾는다.
  * 메뉴에서 필요한 것은 이름뿐이고, 설명은 눌러서 들어간 화면이 한다.
  *
- * ## 파는 것은 PRODUCT 에 있다
- * Cloud MES·ERP·CRM·DXP 는 **제품**이다. 한때 SOLUTION 아래에 두었는데, 그러면 PRODUCT 갈래가
- * 비고 SOLUTION 이 둘로 갈린다(사람이 하는 일 + 파는 물건). 지금은 갈라 두었다 —
- * SOLUTION 은 사람이 붙어서 하는 일, PRODUCT 는 계약하면 그날부터 쓰는 것.
+ * ## 파는 것 여섯이 SOLUTION 한 갈래에 있다
+ * Cloud ERP·MES·CRM·DXP 는 **제품**이고 스마트 컨설팅·인프라 서비스는 **사람이 하는 일**이다.
+ * 셋을 오갔다.
+ *
+ * 1. 처음에는 SOLUTION 아래 여섯을 한 줄로 두었다 — 켜고 끌 수 있는 줄과 없는 줄이 한 목록에
+ *    섰다.
+ * 2. `PRODUCT` 갈래를 따로 세워 넷을 옮겼다 — 헤더 맨 위가 넷이 되어 무거웠고, 그래서
+ *    `hidden` 으로 감췄다. 그러자 **파는 것의 절반으로 가는 길이 홈과 푸터에만** 남았다.
+ * 3. 지금은 SOLUTION 안에서 **세 갈래로 나눈다** — 서비스 · 유지보수 · 솔루션.
+ *
+ * 헤더 맨 위는 셋 그대로이고, 펼침 안에서만 성격이 갈린다. 갈래를 늘리는 값과 길을 잃는 값을
+ * 함께 치르지 않는 자리가 여기였다.
  */
 export const SITE_NAV: readonly SiteNavItem[] = [
   {
@@ -86,31 +101,55 @@ export const SITE_NAV: readonly SiteNavItem[] = [
   },
   {
     label: 'SOLUTION',
-    href: '/solutions/consulting',
+    /*
+      갈래 이름을 누르면 **여섯이 다 보이는 화면**으로 간다.
+
+      전에는 첫 하위 화면인 `/solutions/consulting` 이었다. 그러면 마우스를 올리지 않고 바로
+      누른 사람에게 컨설팅 상세가 펼쳐지고, 나머지 다섯은 다시 헤더로 올라가야 보인다.
+
+      그 화면(`/products`)은 한동안 **어느 메뉴에서도 닿지 않았다.** PRODUCT 갈래를 감추면서
+      길이 홈과 404 화면에만 남았는데, 화면을 지우지도 못하고 길도 없는 상태가 가장 나쁘다 —
+      고치는 사람이 그 화면이 살아 있는 줄 모른다. 여기가 그 화면의 제자리다.
+    */
+    href: '/products',
+    /*
+      세 갈래로 나눈다. 앞의 둘은 **사람이 현장에 가서 하는 일**이고 셋째는 계약하면 그날부터
+      쓰는 것이다 — 하는 일이 다르면 갈래도 달라야 고를 때 헤매지 않는다.
+
+      `서비스` 와 `유지보수` 를 한 갈래에 묶어 두었더니 둘 다 `서비스` 라는 이름 아래 서서,
+      **한 번 붙이고 끝나는 일과 계속 도와주는 일**이 같은 것으로 읽혔다. 값은 그대로이고
+      나누는 자리만 바뀐다.
+
+      ## 클라우드 넷이 여기로 왔다
+      전에는 `PRODUCT` 라는 따로 선 갈래였고, 그것을 헤더에서 감춰 두었다(`hidden`). 감추면
+      화면 넷으로 가는 길이 홈과 푸터에만 남는데, **그 넷이 이 회사가 파는 것의 절반**이다.
+
+      갈래를 되살리는 대신 SOLUTION 안으로 들였다. 헤더 맨 위에 서는 갈래를 늘리지 않으면서
+      길은 되찾는다 — `hidden` 을 두었던 까닭이 그 갈래 수였다.
+
+      주소(`/solutions/*`)는 그대로다. 넷 다 원래 그 아래에 있었다.
+    */
     groups: [
       {
         title: '서비스',
-        children: [
-          { href: '/solutions/consulting', label: '스마트 컨설팅', ready: true },
-          { href: '/solutions/infra', label: '인프라 서비스', ready: true },
-        ],
+        children: [{ href: '/solutions/consulting', label: '스마트 컨설팅', ready: true }],
       },
-    ],
-  },
-  {
-    label: 'PRODUCT',
-    href: '/products',
-    /*
-      지금은 헤더에서 감춘다. 제품 넷의 화면은 그대로 있고 홈·푸터에서 갈 수 있다 —
-      다시 세우려면 이 줄만 지운다.
-    */
-    hidden: true,
-    groups: [
       {
-        title: '클라우드 제품',
+        title: '유지보수',
+        children: [{ href: '/solutions/infra', label: '인프라 서비스', ready: true }],
+      },
+      {
+        /*
+          차례가 ERP · MES · CRM · DXP 다. 수주에서 정산까지가 ERP 이고 그 안의 생산이 MES,
+          그 앞이 CRM, 화면을 만드는 것이 DXP 다 — 파는 쪽이 이야기하는 차례를 따른다.
+
+          이름은 `Cloud ERP` 로 적는다. 화면 제목 · 홈 카드 · 푸터가 전부 이 표기라, 메뉴에서만
+          대문자로 두면 같은 제품이 두 이름을 갖는다.
+        */
+        title: '솔루션',
         children: [
-          { href: '/solutions/mes', label: 'Cloud MES', ready: true },
           { href: '/solutions/erp', label: 'Cloud ERP', ready: true },
+          { href: '/solutions/mes', label: 'Cloud MES', ready: true },
           { href: '/solutions/crm', label: 'Cloud CRM', ready: true },
           { href: '/solutions/dxp', label: 'Cloud DXP', ready: true },
         ],
@@ -119,16 +158,34 @@ export const SITE_NAV: readonly SiteNavItem[] = [
   },
   {
     label: 'CS CENTER',
-    href: '/support/contact',
+    href: '/support/faq',
+    /*
+      두 갈래로 나눈다. 다섯이 한 줄로 서 있을 때는 **묻는 사람과 읽는 사람이 섞여 있었다** —
+      문의하기·오시는 길은 우리에게 닿으려는 길이고, 공지사항·뉴스는 우리가 내보낸 것을
+      읽는 길이다. 하는 일이 다르면 갈래도 달라야 고를 때 헤매지 않는다.
+
+      고객지원 안의 차례도 바꿨다. 맨 앞이 `자주 묻는 질문` 인 이유: 물으러 온 사람의 절반은
+      이미 적혀 있는 것을 묻는다. 문의 양식을 먼저 세우면 읽어 보기 전에 적기부터 한다.
+
+      갈래 이름을 누를 때 가는 곳(`href`)도 그 첫 화면으로 옮겼다.
+
+      `FAQ` 를 `자주 묻는 질문` 으로 적는다. 나머지 넷이 다 우리말이라 그 하나만 영문이면
+      약자를 모르는 사람에게는 무엇인지 알 수 없는 항목이 된다.
+    */
     groups: [
       {
         title: '고객지원',
         children: [
+          { href: '/support/faq', label: '자주 묻는 질문', ready: true },
           { href: '/support/contact', label: '문의하기', ready: true },
+          { href: '/support/directions', label: '오시는 길', ready: true },
+        ],
+      },
+      {
+        title: '회사소식',
+        children: [
           { href: '/support/notices', label: '공지사항', ready: true },
           { href: '/support/news', label: '뉴스', ready: true },
-          { href: '/support/faq', label: 'FAQ', ready: true },
-          { href: '/support/directions', label: '오시는 길', ready: true },
         ],
       },
     ],

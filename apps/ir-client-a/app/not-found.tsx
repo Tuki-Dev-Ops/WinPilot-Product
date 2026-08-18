@@ -23,7 +23,11 @@ export default function NotFound() {
       ]}
       actions={[
         { href: '/', label: '홈으로', primary: true },
-        { href: '/products', label: '상품 보기' },
+        /*
+          `상품` 이었다. 이 사이트는 어디서나 **제품**이라 부르고 사전의 자원 이름도 `product`
+          다 — 404 한 곳만 다른 말을 쓰면, 눌러 본 사람이 다른 곳으로 가는 줄 안다.
+        */
+        { href: '/products', label: '제품 · 서비스 보기' },
       ]}
     />
   );

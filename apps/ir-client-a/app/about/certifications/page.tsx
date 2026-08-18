@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { IR_COMPANY } from '@winpilot/store';
-import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
 import { CredentialListView } from './_components/CredentialListView';
 
 /**
@@ -16,11 +17,7 @@ export const metadata: Metadata = { title: `특허 및 인증 — ${IR_COMPANY.n
 
 export default function CredentialListPage() {
   return (
-    <IrSiteShell>
-      <IrPageTitle
-        title="특허 및 인증"
-        description="등록번호로 확인하실 수 있습니다. 구분을 고르거나 번호로 찾아보세요."
-      />
+    <IrSiteShell hero={<PageHero title="특허 및 인증" />}>
 
       <CredentialListView />
     </IrSiteShell>

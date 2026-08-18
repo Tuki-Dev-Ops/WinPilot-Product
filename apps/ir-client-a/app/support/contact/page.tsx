@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { IR_COMPANY } from '@winpilot/store';
-import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
 import { ContactForm } from './_components/ContactForm';
 
 /**
@@ -17,11 +18,7 @@ export const metadata: Metadata = { title: `문의하기 — ${IR_COMPANY.name}`
 
 export default function InquirySettingsPage() {
   return (
-    <IrSiteShell>
-      <IrPageTitle
-        title="문의하기"
-        description="도입 검토부터 기술 지원, 주주 문의까지 이 한 자리에서 받습니다. 갈래를 고르면 담당자에게 바로 갑니다."
-      />
+    <IrSiteShell hero={<PageHero title="문의하기" />}>
 
       <ContactForm />
     </IrSiteShell>

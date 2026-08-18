@@ -160,7 +160,33 @@ export const FLOW_SPECS: ScreenFlow[] = [
       { at: 3, label: '비공개 특허·인증은 오지 않는다' },
     ],
     data: ['@winpilot/store · CREDENTIALS (publicCredentials)'],
-    exits: ['여기서 끝난다 — 증서 상세 화면이 없다'],
+    exits: ['줄을 눌러 상세로 — /about/certifications/[credentialId]'],
+  },
+  {
+    screen: 'about-certifications-detail',
+    entries: ['특허 목록에서 줄을 눌러', '메일이나 제안서에 걸린 주소를 바로 열어'],
+    steps: [
+      '이름과 구분 · 발급처를 읽는다',
+      '값 표에서 등록번호를 옮겨 적거나 대조한다',
+      '같은 갈래의 다른 것으로 넘어간다',
+      '목록으로 돌아간다',
+    ],
+    branches: [
+      {
+        after: 0,
+        question: '공개된 것인가',
+        pass: '공개',
+        block: '404 — 내려 둔 것은 주소로도 안 열린다',
+        blockLabel: '비공개',
+      },
+    ],
+    exceptions: [
+      { at: 1, label: '번호와 취득일은 고정폭이다 — 자릿수가 눈으로 맞아야 대조가 된다' },
+      { at: 2, label: '이웃은 같은 구분에서만 넷까지다. 더 두면 이 화면이 두 번째 목록이 된다' },
+      { at: 3, label: '주소로 바로 들어온 사람은 뒤로 갈 곳이 없다 — 그래서 위에 돌아가는 길을 둔다' },
+    ],
+    data: ['@winpilot/store · CREDENTIALS (findCredential · publicCredentials)'],
+    exits: ['같은 갈래의 다른 특허·인증으로', '특허 및 인증 목록으로'],
   },
   {
     screen: 'solutions-consulting',

@@ -149,18 +149,30 @@ export const IR_FEATURES: readonly FeatureSpec[] = [
     singleViewByDesign: true,
   },
   {
+    /*
+      한 기능의 두 바인딩이다. **하는 일이 다르지만 보는 자원이 같다** — 콘솔은 고치고 사이트는
+      읽는다. 따로 등록하면 같은 특허가 두 이름을 갖고, 이 레지스트리를 두는 뜻이 사라진다.
+
+      사이트 쪽 상세를 만든 까닭은 목록에 값이 모자라서가 아니라 **주소가 필요해서**다. 특허
+      하나를 제안서나 메일에 걸 자리가 없어, 홈페이지 목록의 몇 번째 줄이라고 적게 된다.
+    */
     id: 'ir.credential.detail',
     label: { ko: '특허·인증 상세', en: 'Credential Detail' },
     entity: 'credential',
     action: 'detail',
     views: {
+      'ir-client': {
+        route: '/about/certifications/[credentialId]',
+        component: 'CredentialDetailPage',
+        status: 'implemented',
+        note: '읽기만 한다. 내려 둔 것은 주소로도 안 열린다 — 공시와 같은 규칙',
+      },
       'ir-admin': {
         route: '/company/credentials/[credentialId]',
         component: 'IrCredentialDetailPage',
         status: 'implemented',
       },
     },
-    singleViewByDesign: true,
   },
 
   // ── 파는 것 ─────────────────────────────────────────────────────────

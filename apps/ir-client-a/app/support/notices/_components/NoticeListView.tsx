@@ -41,7 +41,7 @@ export function NoticeListView({ notices }: { notices: SiteNotice[] }) {
       facets={SITE_NOTICE_GROUPS}
       facetOf={(one) => one.group}
       searchLabel="공지사항 검색"
-      searchPlaceholder="제목 · 내용"
+      searchPlaceholder="제목을 입력해주세요."
       searchIn={(one) => [one.title, ...one.body]}
       empty="조건에 맞는 공지가 없습니다."
     >

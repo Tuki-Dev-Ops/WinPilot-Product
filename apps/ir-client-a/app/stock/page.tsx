@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { IR_COMPANY, STOCK } from '@winpilot/store';
-import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
 import { IR_ROUTES } from '@/lib/navigation';
 import { IrSubNav } from '@/app/_components/IrSubNav';
 import { IrTable } from '@/app/_components/IrTable';
@@ -15,11 +16,7 @@ export const metadata: Metadata = { title: `주가 정보 — ${IR_COMPANY.name}
 
 export default function StockListPage() {
   return (
-    <IrSiteShell>
-      <IrPageTitle
-        title="주가 정보"
-        description={`${IR_COMPANY.market} ${IR_COMPANY.ticker} · 지연 시세이며 실시간과 다를 수 있습니다.`}
-      />
+    <IrSiteShell hero={<PageHero title="주가 정보" />}>
 
       <IrSubNav current={IR_ROUTES.stock} />
 

@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { IR_COMPANY } from '@winpilot/store';
 import { IR_DOCUMENTS } from '@winpilot/store';
-import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
 import { IR_ROUTES } from '@/lib/navigation';
 import { IrSubNav } from '@/app/_components/IrSubNav';
 import { IrTable } from '@/app/_components/IrTable';
@@ -16,8 +17,7 @@ export const metadata: Metadata = { title: `IR 자료실 — ${IR_COMPANY.name}`
 
 export default function DocumentListPage() {
   return (
-    <IrSiteShell>
-      <IrPageTitle title="IR 자료실" description="실적발표와 사업보고서를 내려받으실 수 있습니다." />
+    <IrSiteShell hero={<PageHero title="IR 자료실" />}>
 
       <IrSubNav current={IR_ROUTES.library} />
 

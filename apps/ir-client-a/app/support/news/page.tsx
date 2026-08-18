@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { IR_COMPANY, publicMediaClips } from '@winpilot/store';
-import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
 import { NewsListView } from './_components/NewsListView';
 
 /**
@@ -22,8 +23,7 @@ export const metadata: Metadata = { title: `뉴스 — ${IR_COMPANY.name}` };
 
 export default function NewsListPage() {
   return (
-    <IrSiteShell>
-      <IrPageTitle title="뉴스" description="방송·행사·제품 소개로 남은 것들입니다." />
+    <IrSiteShell hero={<PageHero title="뉴스" />}>
 
       <NewsListView clips={publicMediaClips()} />
     </IrSiteShell>

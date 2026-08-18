@@ -1,17 +1,46 @@
 import type { Metadata } from 'next';
-import { IR_COMPANY, MILESTONES, publicCredentials } from '@winpilot/store';
-import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
-import { IrTable } from '@/app/_components/IrTable';
+import { IR_COMPANY } from '@winpilot/store';
+import {
+  Building2,
+  CalendarCheck,
+  Cpu,
+  Factory,
+  Hash,
+  Landmark,
+  LayoutGrid,
+  LineChart,
+  MapPin,
+  UserRound,
+} from 'lucide-react';
+import { IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
+import { AboutIntro } from './_components/AboutIntro';
+import { CompanyFacts } from './_components/CompanyFacts';
+import { FactoryStack } from './_components/FactoryStack';
+import { WhatWeDo } from './_components/WhatWeDo';
 
 /**
  * Feature: `site.about` · IR Client (템플릿 A) · route `/about`
  *
- * ## 세 층으로 둔다 — 한 줄 · 숫자 · 표
+ * ## 네 층으로 둔다 — 배너 · 소개 · 하는 일 · 기업정보 띠
  * 전에는 문장 하나와 표 하나뿐이었다. 표는 확인하러 온 사람에게는 맞지만 **처음 온 사람에게는
  * 읽을 것이 없다** — 대표 이름과 주소를 보러 오는 사람은 드물다.
  *
- * 그래서 가운데에 **숫자 넉 줄**을 둔다. 설립 연도 · 상장 시장 · 연혁 수 · 특허와 인증 수.
- * 넷 다 이미 있는 값을 세는 것이라 지어낸 것이 없고, 회사의 크기와 나이를 한 눈에 준다.
+ * 그래서 위에 **사진과 문장**을 두어 무엇을 하는 회사인지 먼저 답하고, 그 아래에 **하는 일 넷**을,
+ * 맨 아래에 **기업정보 띠**를 둔다.
+ *
+ * 하는 일 넷은 파는 것 여섯을 **묶어서 줄인 것**이다. 여섯을 그대로 늘어놓으면 헤더 펼침 ·
+ * 제품 화면 · 여기 셋이 같은 목록을 갖는다 — 여기는 무엇을 파는지가 아니라 **어떤 일을 하는
+ * 회사인지**를 말하는 자리다.
+ *
+ * 가운데에 숫자 넉 줄(설립 · 상장 · 연혁 수 · 특허 수)을 두었다가 뺐다. 설립과 상장은 아래
+ * 기업정보 카드가 이미 말하고, 연혁 수와 특허 수는 **그 화면에 가면 세어져 있는 값**이라
+ * 여기서 다시 세면 두 곳이 각각 세는 셈이 된다.
+ *
+ * ## 표를 카드로 바꿨다
+ * 회사 정보 일곱 줄이 표였다. 표는 **줄끼리 견주는** 자리에 맞는데, 대표이사와 설립일을 나란히
+ * 놓고 크기를 재는 사람은 없다. 하나씩 집어 가는 값이라 카드가 맞고, 화면 끝까지 닿는 띠에
+ * 얹어 훑어 내리는 눈이 여기서 한 번 멈추게 했다.
  *
  * ## 긴 소개 글을 두지 않는 이유
  * 홈 화면이 이미 무엇을 하는 회사인지 말했다. 여기서 그것을 다시 길게 쓰면 **같은 말이 두 곳에
@@ -24,64 +53,120 @@ import { IrTable } from '@/app/_components/IrTable';
  *
  * ## 어드민 연동
  * - 회사 정보 ← `@winpilot/store` 의 `IR_COMPANY`
- * - 연혁 수 ← 같은 store 의 `MILESTONES` (B2C Admin 의 회사 > 연혁이 고친다)
  */
 export const metadata: Metadata = { title: `회사 소개 — ${IR_COMPANY.name}` };
 
 export default function ProfileSettingsPage() {
-  const visibleMilestones = MILESTONES.filter((one) => one.visible);
-
-  /* 설립 연도만 잘라 쓴다. `2019-04-01` 을 그대로 두면 넉 줄 중 이 칸만 길어져 줄이 어긋난다. */
-  const foundedYear = IR_COMPANY.foundedAt.slice(0, 4);
-
   return (
-    <IrSiteShell>
-      <IrPageTitle title="회사 소개" description={IR_COMPANY.intro} />
+    <IrSiteShell
+      hero={<PageHero title="회사 소개" image="/solutions/mes.jpg" />}
+      after={
+        <>
+          <FactoryStack
+            label="Architecture"
+            headline="설비에서 시작해 사람이 보는 화면에서 끝납니다."
+            lead="네 층은 따로 파는 것이 아니라 한 줄로 이어져 있습니다. 아래 층이 없으면 위 층이 볼 것이 없고, 위 층이 없으면 아래 층이 모은 것을 쓸 곳이 없습니다."
+            layers={[
+              {
+                name: '설비 · 신호',
+                body: 'PLC 와 센서, 계측기에서 나오는 신호를 있는 그대로 받습니다. 설비를 바꾸지 않고 붙는 것이 여기서 정해집니다.',
+              },
+              {
+                name: '수집 · 표준화',
+                body: '설비마다 다른 모양을 하나의 규격으로 바꿉니다. 위의 두 층이 같은 데이터를 보게 되는 것이 이 층 덕분입니다.',
+              },
+              {
+                name: '판단 · 최적화',
+                body: '표준이 된 데이터 위에서 비가동과 불량의 원인을 셉니다. AI 판단이 입력으로 삼는 자리도 여기입니다.',
+              },
+              {
+                name: '화면 · 실행',
+                body: '현장과 사무실이 각자 필요한 화면으로 봅니다. 판단이 공정과 물류의 실행으로 이어지는 것도 이 층에서 합니다.',
+              },
+            ]}
+          />
 
-      {/*
-        숫자 넉 줄. 값 아래에 이름을 두는 것이 아니라 **이름 아래에 값**을 둔다 — 훑는 눈은
-        작은 글씨(이름)를 먼저 지나 큰 글씨(값)에서 멈추고, 그 차례가 반대면 값을 보고 나서
-        그것이 무엇인지 되짚어 올라가야 한다.
-      */}
-      <section className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border lg:grid-cols-4">
-        <Stat label="설립" value={foundedYear} note="년" />
-        <Stat label="상장" value={IR_COMPANY.market} note={IR_COMPANY.ticker} />
-        <Stat label="연혁" value={`${visibleMilestones.length}`} note="건" />
-        <Stat label="특허 · 인증" value={`${publicCredentials().length}`} note="건" />
-      </section>
+          <CompanyFacts
+            /*
+            표제는 값이 아니라 화면이 든다. 어드민에서 고칠 수 있게 두면 계절 행사 문구가
+            이 자리에 서는 날이 온다 — 여기는 늘 같은 말을 해야 하는 자리다.
+          */
+            headline={`${IR_COMPANY.name}은 자원 중심의 설계와 어긋나지 않는 구현으로, 오래 쓰는 운영 도구를 만듭니다.`}
+            facts={[
+              {
+                label: '회사명',
+                value: `${IR_COMPANY.name} (${IR_COMPANY.nameEn})`,
+                icon: Building2,
+              },
+              { label: '대표이사', value: IR_COMPANY.ceo, icon: UserRound },
+              {
+                label: '설립일',
+                value: IR_COMPANY.foundedAt,
+                icon: CalendarCheck,
+              },
+              {
+                label: '상장',
+                value: `${IR_COMPANY.listedAt} · ${IR_COMPANY.market}`,
+                icon: Landmark,
+              },
+              { label: '종목코드', value: IR_COMPANY.ticker, icon: Hash },
+              {
+                label: '사업자등록번호',
+                value: IR_COMPANY.businessNumber,
+                icon: Hash,
+              },
+              { label: '본사', value: IR_COMPANY.address, icon: MapPin },
+            ]}
+          />
+        </>
+      }
+    >
+      <AboutIntro
+        headline="공장의 데이터를 표준으로, 표준 위에서 판단으로"
+        body={IR_COMPANY.intro}
+        image="/solutions/erp.jpg"
+        points={[
+          {
+            label: '만드는 것',
+            value: '제조 현장과 기간계를 잇는 운영 소프트웨어',
+          },
+          {
+            label: '일하는 방식',
+            value: '자원 중심 설계 · 디자인과 코드를 한 규격으로',
+          },
+          {
+            label: '닿는 곳',
+            value: '설비와 공정, 그리고 그 데이터를 보는 사람',
+          },
+        ]}
+      />
 
-      <section className="flex flex-col gap-4">
-        <h2 className="text-lg font-semibold tracking-tight">회사 정보</h2>
-
-        <IrTable
-          columns={[{ label: '항목' }, { label: '내용' }]}
-          rows={[
-            ['회사명', `${IR_COMPANY.name} (${IR_COMPANY.nameEn})`],
-            ['대표이사', IR_COMPANY.ceo],
-            ['사업자등록번호', IR_COMPANY.businessNumber],
-            ['설립일', IR_COMPANY.foundedAt],
-            ['상장일', `${IR_COMPANY.listedAt} · ${IR_COMPANY.market}`],
-            ['종목코드', IR_COMPANY.ticker],
-            ['본사', IR_COMPANY.address],
-          ]}
-          empty="회사 정보를 불러오지 못했습니다."
-        />
-      </section>
-
+      <WhatWeDo
+        label="하는 일"
+        headline="설비에서 나온 신호를 표준 데이터로 바꾸고, 그 위에서 판단과 실행이 돌게 합니다."
+        items={[
+          {
+            title: '현장 데이터 표준화',
+            body: '설비 · 작업자 · 자재의 기록을 실시간으로 모아 하나의 규격으로 맞춥니다. 관리의 사각지대가 사라집니다.',
+            icon: Factory,
+          },
+          {
+            title: '기간계 연결',
+            body: '수주에서 매입 · 생산 · 출하 · 정산까지 하나의 자원으로 잇습니다. 한 번 적은 값이 다음 단계로 그대로 흐릅니다.',
+            icon: LineChart,
+          },
+          {
+            title: '판단과 실행',
+            body: '표준화된 데이터 위에서 AI 가 판단하고, 공정 · 물류 로봇이 실행합니다.',
+            icon: Cpu,
+          },
+          {
+            title: '화면과 운영',
+            body: '코드 없이 화면을 만들고, 도입 이후의 인프라와 유지보수까지 사람이 붙어 함께 봅니다.',
+            icon: LayoutGrid,
+          },
+        ]}
+      />
     </IrSiteShell>
   );
 }
-
-/** 숫자 한 칸. 칸 사이 선은 바깥 격자의 `gap-px` 가 그린다 — 칸마다 테두리를 두르면 선이 겹쳐 두꺼워진다. */
-function Stat({ label, value, note }: { label: string; value: string; note: string }) {
-  return (
-    <div className="flex flex-col gap-1 bg-canvas px-6 py-5">
-      <p className="text-xs text-ink-faint">{label}</p>
-      <p className="flex items-baseline gap-1">
-        <span className="text-2xl font-bold tabular-nums tracking-tight">{value}</span>
-        <span className="text-xs text-ink-muted">{note}</span>
-      </p>
-    </div>
-  );
-}
-

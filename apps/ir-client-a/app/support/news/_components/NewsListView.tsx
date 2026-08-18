@@ -36,7 +36,7 @@ export function NewsListView({ clips }: { clips: MediaClip[] }) {
       facets={channels}
       facetOf={(one) => one.channel}
       searchLabel="뉴스 검색"
-      searchPlaceholder="제목 · 갈래"
+      searchPlaceholder="제목을 입력해주세요."
       searchIn={(one) => [one.title, one.channel]}
       empty="조건에 맞는 뉴스가 없습니다."
     >

@@ -7,17 +7,34 @@ import {
   publicSolutions,
   siteServiceHref,
 } from '@winpilot/store';
-import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
+import { SectionHead } from '@/app/solutions/_components/SectionHead';
 import { IR_ROUTES } from '@/lib/navigation';
 
 /**
  * Feature: `product.list` · IR Client (템플릿 A) · route `/products`
+ *
+ * ## 헤더의 SOLUTION 이 여기로 온다
+ * 한동안 이 화면은 **어느 메뉴에서도 닿지 않았다.** PRODUCT 갈래를 감추면서 길이 홈과 404
+ * 화면에만 남았는데, 화면은 살아 있고 길은 없는 상태가 가장 나쁘다 — 고치는 사람이 이 화면이
+ * 도는 줄 모른다. 지금은 갈래 이름(SOLUTION)을 누르면 여기로 온다.
+ *
+ * 그래서 절 제목이 솔루션 상세와 같은 모양이다(`SectionHead`). 여기서 상세로 넘어가는 동안
+ * 제목의 생김새가 바뀌면 다른 사이트로 건너간 것처럼 읽힌다.
  *
  * ## `준비중` 한 장이었다
  * 전에는 이 화면에 "제품별 소개는 준비 중" 한 줄과 솔루션으로 보내는 단추만 있었다. 그런데
  * 헤더의 PRODUCT 갈래와 홈의 인프라·DXP 카드가 **전부 여기로 왔다** — 들어온 사람이 가장 많은
  * 화면이 가장 비어 있었던 셈이다. 지금은 여섯이 다 자기 화면을 가져 그 쏠림이 없어졌고,
  * 여기는 **무엇을 파는지 한눈에 훑는 자리**로 남았다.
+ *
+ * ## 배너 제목이 `제품 · 서비스` 다
+ * 기능 이름은 `ir.product.list` 이고 사전의 자원도 `product` 다. 그런데 이 화면에는 **사람이
+ * 하는 일 둘**이 함께 서 있어서, 배너에 `제품` 만 적으면 아래 절 둘 중 하나가 제목에서 빠진다.
+ *
+ * 그렇다고 자원 이름을 `솔루션` 으로 바꾸지 않는다 — 사전이 두 벌이 되고, 그때 어드민과 사이트가
+ * 같은 것을 다른 이름으로 부른다. 바꾸는 것은 **사람이 읽는 제목 한 줄**뿐이다.
  *
  * ## 두 묶음으로 나눈다
  * 파는 것이 성격으로 갈린다. **클라우드 제품**(MES·ERP·CRM·DXP)은 계약하면 그날부터 쓰는
@@ -46,14 +63,14 @@ const SERVICE_CARDS = SITE_SERVICES.filter((card) =>
 
 export default function ProductListPage() {
   return (
-    <IrSiteShell>
-      <IrPageTitle
-        title="제품"
-        description="현장에서 자재까지, 고객이 만나는 화면까지 — 하나의 데이터 위에서 돕니다."
-      />
+    <IrSiteShell hero={<PageHero title="제품 · 서비스" image="/solutions/crm.jpg" />}>
 
-      <section className="flex flex-col gap-6">
-        <h2 className="text-xs font-bold uppercase tracking-widest text-ink-faint">클라우드 제품</h2>
+      <section className="flex flex-col gap-8">
+        <SectionHead
+          no="01"
+          title="클라우드 제품"
+          lead="계약하면 그날부터 쓰는 것들입니다. 넷 다 같은 데이터를 나눠 보므로, 하나만 먼저 들이고 나중에 붙여도 됩니다."
+        />
 
         <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           {publicSolutions().map((one) => (
@@ -104,8 +121,12 @@ export default function ProductListPage() {
         </ul>
       </section>
 
-      <section className="flex flex-col gap-6">
-        <h2 className="text-xs font-bold uppercase tracking-widest text-ink-faint">서비스</h2>
+      <section className="flex flex-col gap-8">
+        <SectionHead
+          no="02"
+          title="서비스"
+          lead="사람이 현장에 붙어서 하는 일입니다. 무엇을 도입할지 정하는 일과, 도입한 뒤에 계속 도는지 보는 일입니다."
+        />
 
         <ul className="grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-2">
           {SERVICE_CARDS.map((one) => (

@@ -36,7 +36,7 @@ export function FaqListView({ faqs, groups }: { faqs: SiteFaq[]; groups: SiteFaq
       facets={groups}
       facetOf={(one) => one.group}
       searchLabel="FAQ 검색"
-      searchPlaceholder="물음 · 답"
+      searchPlaceholder="제목을 입력해주세요."
       searchIn={(one) => [one.question, one.answer]}
       empty="조건에 맞는 물음이 없습니다. 찾으시는 것이 없으면 문의를 남겨 주세요."
     >

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { FAQ_GROUPS, IR_COMPANY, publicSiteFaqs } from '@winpilot/store';
-import { IrPageTitle, IrSiteShell } from '@/app/_components/IrSiteShell';
+import { IrSiteShell } from '@/app/_components/IrSiteShell';
+import { PageHero } from '@/app/_components/PageHero';
 import { FaqListView } from './_components/FaqListView';
 
 /**
@@ -17,8 +18,7 @@ export const metadata: Metadata = { title: `FAQ — ${IR_COMPANY.name}` };
 
 export default function FaqListPage() {
   return (
-    <IrSiteShell>
-      <IrPageTitle title="FAQ" description="자주 받는 물음을 모았습니다. 갈래를 고르거나 검색해 보세요." />
+    <IrSiteShell hero={<PageHero title="FAQ" />}>
 
       <FaqListView faqs={publicSiteFaqs()} groups={FAQ_GROUPS} />
     </IrSiteShell>
