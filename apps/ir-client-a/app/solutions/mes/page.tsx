@@ -20,7 +20,7 @@ export default function MesHomePage() {
   if (!offering) notFound();
 
   return (
-    <IrSiteShell hero={<PageHero title={offering.title} image="/solutions/mes.jpg" />}>
+    <IrSiteShell hero={<PageHero title={offering.title} image="/hero/mes.jpg" />}>
       <OfferingDetail offering={offering} />
     </IrSiteShell>
   );

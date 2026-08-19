@@ -23,7 +23,7 @@ export const metadata: Metadata = { title: `뉴스 — ${IR_COMPANY.name}` };
 
 export default function NewsListPage() {
   return (
-    <IrSiteShell hero={<PageHero title="뉴스" />}>
+    <IrSiteShell hero={<PageHero title="뉴스" image="/hero/news.jpg" />}>
 
       <NewsListView clips={publicMediaClips()} />
     </IrSiteShell>

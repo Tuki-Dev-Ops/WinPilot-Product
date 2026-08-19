@@ -25,7 +25,7 @@ export default function DxpHomePage() {
   if (!offering) notFound();
 
   return (
-    <IrSiteShell hero={<PageHero title={offering.title} image="/solutions/dxp.jpg" />}>
+    <IrSiteShell hero={<PageHero title={offering.title} image="/hero/dxp.jpg" />}>
       <OfferingDetail offering={offering} />
     </IrSiteShell>
   );

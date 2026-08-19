@@ -34,6 +34,16 @@ export type SpecButton = { label: string; onClick: string; onSuccess?: string; o
 export type ScreenSpec = {
   screen: string;
   purpose: string;
+  /**
+   * 이 화면이 왜 생겼는가 — **목적보다 앞의 이야기**.
+   *
+   * `purpose` 는 이 화면이 지금 무엇을 하는지를 적고, 여기는 **그 화면이 없던 때 무엇이
+   * 불편했는지**를 적는다. 둘을 한 칸에 쓰면 목적이 길어지면서 "무엇을 하는가" 가 흐려진다.
+   *
+   * 없어도 된다. 배경이 특별할 것 없는 화면(약관 · 개인정보처럼 법이 요구해서 있는 화면)에
+   * 억지로 쓰면 지어낸 이야기가 남는다 — 그럴 바에는 비워 두는 편이 낫다.
+   */
+  background?: string;
   effect?: string;
   actions: string[];
   guards: string[];
@@ -104,7 +114,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'inquiries',
-    purpose: '사이트 양식으로 들어온 것 중 **아직 답하지 않은 것**을 찾는다.',
+    purpose: '사이트 양식으로 들어온 것 중 **아직 답하지 않은 것**을 찾습니다.',
     actions: ['회사명·담당자·내용으로 검색', '갈래·상태로 거르기', '줄을 눌러 상세로 들어가기'],
     guards: [
       '상태를 오른쪽 끝 한 세로선 위에 세운다 — 가운데 있으면 줄마다 눈이 멈추는 자리가 달라져 끝까지 읽어야 몇 건이 남았는지 안다.',
@@ -127,8 +137,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'inquiries-detail',
-    purpose: '들어온 문의를 읽고 답을 적어 상태를 옮긴다.',
-    effect: '`답변완료` 로 옮긴 건은 목록의 남은 일에서 빠진다.',
+    purpose: '들어온 문의를 읽고 답을 적어 상태를 옮깁니다.',
+    effect: '`답변완료` 로 옮긴 건은 목록의 남은 일에서 빠집니다.',
     actions: ['보낸 사람 정보 확인', '문의 내용 읽기', '답변 적기', '상태 바꾸기', '목록으로 돌아가기'],
     guards: [
       '문의 내용은 읽기만 한다 — 고치는 순간 무엇이 실제로 왔는지 알 수 없게 되고, 나중에 남는 것은 이 글뿐이다.',
@@ -162,7 +172,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'inquiries-settings',
-    purpose: '사이트 문의 양식이 **무엇을 묻고 어디로 보내고 무엇을 안내할지**를 정한다.',
+    purpose: '사이트 문의 양식이 **무엇을 묻고 어디로 보내고 무엇을 안내할지**를 정합니다.',
     actions: ['대표 수신 메일 고치기', '양식이 묻는 칸 확인', '접수 안내 문구 고치기'],
     guards: [
       '양식의 칸을 끄고 켜지 못한다. 필수 칸을 끄면 이미 그 값을 전제로 만든 답변 절차가 어긋나고, 수집 항목은 개인정보 처리방침에 적힌 것과 같아야 한다.',
@@ -197,7 +207,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'contents-notices',
-    purpose: '회사 홈페이지의 공지를 찾고 살핀다.',
+    purpose: '회사 홈페이지의 공지를 찾고 살핍니다.',
     actions: ['제목·내용으로 검색', '갈래·상태로 거르기', '줄을 눌러 상세로 들어가기', '공지 등록', '삭제'],
     guards: [
       '고정한 것이 몇인지 표에서 바로 보이게 둔다 — 넷을 넘으면 맨 위가 전부 고정이라 고정의 뜻이 없어진다. 막지는 않는다.',
@@ -218,7 +228,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'contents-notices-new',
-    purpose: '사이트에 걸 공지를 새로 적는다.',
+    purpose: '사이트에 걸 공지를 새로 적습니다.',
     actions: ['갈래 고르기', '제목·올린 날 넣기', '본문 적기', '고정과 노출 정하기', '등록'],
     guards: [
       '공지 코드를 화면 밖에서 세어 넘긴다 — 폼 안에서 세면 화면을 다시 그릴 때마다 코드가 흔들린다.',
@@ -253,7 +263,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'contents-notices-detail',
-    purpose: '이미 걸린 공지의 말과 노출을 고친다.',
+    purpose: '이미 걸린 공지의 말과 노출을 고칩니다.',
     actions: ['갈래·제목·올린 날 고치기', '본문 고치기', '고정과 노출 끄고 켜기', '저장'],
     guards: [
       '코드는 고칠 수 없다 — `수정 불가` 라 적는다.',
@@ -272,7 +282,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'contents-news',
-    purpose: '방송·행사·제품 소개로 남은 것들을 찾고 살핀다.',
+    purpose: '방송·행사·제품 소개로 남은 것들을 찾고 살핍니다.',
     actions: ['제목으로 검색', '갈래·상태로 거르기', '줄을 눌러 상세로 들어가기', '뉴스 등록', '삭제'],
     guards: [
       '제목에 수상 · 수출 실적처럼 밖에서 확인되는 숫자를 적지 않는다 — 이 홈페이지는 IR 자료로도 읽혀 그 한 줄이 허위 기재가 될 수 있다.',
@@ -289,7 +299,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'contents-news-new',
-    purpose: '새 소식 한 건을 적어 사이트에 건다.',
+    purpose: '새 소식 한 건을 적어 사이트에 겁니다.',
     actions: ['갈래·제목 넣기', '썸네일 무늬 고르기', '노출 정하기', '등록'],
     guards: [
       '제목 칸 **위**에 검증되는 사실을 적지 말라는 안내를 둔다 — 다 적고 난 뒤에 읽는 주의는 늦다.',
@@ -320,7 +330,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'contents-news-detail',
-    purpose: '이미 걸린 소식의 제목과 무늬를 고친다.',
+    purpose: '이미 걸린 소식의 제목과 무늬를 고칩니다.',
     actions: ['갈래·제목 고치기', '썸네일 무늬 바꾸기', '노출 끄고 켜기', '저장'],
     guards: [
       '코드는 고칠 수 없다.',
@@ -338,7 +348,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'contents-faqs',
-    purpose: '자주 받는 물음과 답을 찾고 살핀다.',
+    purpose: '자주 받는 물음과 답을 찾고 살핍니다.',
     actions: ['물음·답으로 검색', '갈래·상태로 거르기', '줄을 눌러 상세로 들어가기', 'FAQ 등록', '삭제'],
     guards: [
       '답을 목록에서도 보여 준다 — 물음만 늘어놓으면 같은 물음이 두 번 적혔는지 알 수 없다.',
@@ -355,7 +365,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'contents-faqs-new',
-    purpose: '되풀이되는 물음 하나를 옮겨 적어 문의를 줄인다.',
+    purpose: '되풀이되는 물음 하나를 옮겨 적어 문의를 줄입니다.',
     actions: ['갈래 고르기', '물음 적기', '답 적기', '노출 정하기', '등록'],
     guards: [
       '적는 동안 같은 갈래의 다른 물음을 옆에 세운다. 막지는 않는다 — 정말 다른 물음인지는 사람만 안다.',
@@ -386,7 +396,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'contents-faqs-detail',
-    purpose: '이미 걸린 물음과 답을 고친다.',
+    purpose: '이미 걸린 물음과 답을 고칩니다.',
     actions: ['갈래·물음·답 고치기', '노출 끄고 켜기', '저장'],
     guards: ['코드는 고칠 수 없다.', '같은 갈래의 다른 물음이 옆에 그대로 선다 — 자기 자신은 빠진다.'],
     admin: ['사이트 CS CENTER > FAQ'],
@@ -401,7 +411,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'products',
-    purpose: '계약하면 그날부터 쓰는 클라우드 제품 넷의 이름과 기능을 살핀다.',
+    purpose: '계약하면 그날부터 쓰는 클라우드 제품 넷의 이름과 기능을 살핍니다.',
     actions: ['이름·소개로 검색', '상태로 거르기', '줄을 눌러 상세로 들어가기'],
     guards: [
       '등록 단추가 없다. 제품 넷은 각자 상세 화면이 코드로 짜여 있어, 목록에 한 줄 더한다고 사이트에 화면이 생기지 않는다 — 메뉴에는 있는데 눌러도 404 인 제품이 만들어진다.',
@@ -421,7 +431,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'products-detail',
-    purpose: '제품 하나를 소개하는 **말**을 고친다 — 구조는 못 고친다.',
+    purpose: '제품 하나를 소개하는 **말**을 고친다 — 구조는 못 고칩니다.',
     actions: ['이름·짧은 이름 고치기', '한 줄 소개 고치기', '무엇을 푸는가·어떻게 푸는가 고치기', '사이트 노출 끄고 켜기', '저장'],
     guards: [
       '구조(기능 넷 · 구성 층 · 업종 · 도입 절차)는 보여 주기만 한다. 화면이 그 개수를 전제로 그려져 있어 늘리고 줄이면 격자가 무너지고 층이 뜬다 — 깨진 것을 사이트에서 발견하게 된다.',
@@ -461,8 +471,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'products-settings',
-    purpose: '사이트 PRODUCT 메뉴에 무엇이 어떤 차례로 서는지 정한다.',
-    effect: '저장하면 사이트 머리 메뉴가 바로 바뀐다.',
+    purpose: '사이트 PRODUCT 메뉴에 무엇이 어떤 차례로 서는지 정합니다.',
+    effect: '저장하면 사이트 머리 메뉴가 바로 바뀝니다.',
     actions: ['차례를 한 칸씩 올리고 내리기', '메뉴에서 내리고 다시 올리기', '저장'],
     guards: [
       '저장 앞에 확인 창이 선다 — 숨긴 제품은 메뉴에서 사라지고 상세 화면도 열리지 않는다고 적는다.',
@@ -487,7 +497,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'solutions',
-    purpose: '제품 넷이 **어떤 문제를 어떻게 푸는지**가 채워졌는지 살핀다.',
+    purpose: '제품 넷이 **어떤 문제를 어떻게 푸는지**가 채워졌는지 살핍니다.',
     actions: ['이름·문제로 검색', '상태로 거르기', '줄을 눌러 상세로 들어가기'],
     guards: [
       '제품 목록과 같은 값을 보되 다른 칸을 보여 준다 — 여기서 확인할 것은 상세 화면이 채워졌는지다.',
@@ -508,7 +518,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'solutions-detail',
-    purpose: '문제와 해법의 **말**을 고친다 — 제품 상세와 같은 폼이다.',
+    purpose: '문제와 해법의 **말**을 고친다 — 제품 상세와 같은 폼입니다.',
     actions: ['이름·한 줄 소개 고치기', '무엇을 푸는가·어떻게 푸는가 고치기', '사이트 노출 끄고 켜기', '저장'],
     guards: [
       '구조(기능 · 구성 · 업종 · 절차)는 보여 주기만 한다.',
@@ -546,7 +556,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'services',
-    purpose: '사람이 현장에 가서 하는 일 둘의 상세가 채워졌는지 살핀다.',
+    purpose: '사람이 현장에 가서 하는 일 둘의 상세가 채워졌는지 살핍니다.',
     actions: ['이름으로 검색', '줄을 눌러 상세로 들어가기'],
     guards: [
       '거르개를 두지 않는다 — 서비스에는 켜고 끄는 값이 없어, 걸 것이 없는 거르개를 세우면 눌러 본 사람이 목록이 고장 났다고 여긴다.',
@@ -566,7 +576,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'services-detail',
-    purpose: '서비스 하나를 소개하는 말을 고친다 — 제품 상세와 같은 폼이다.',
+    purpose: '서비스 하나를 소개하는 말을 고친다 — 제품 상세와 같은 폼입니다.',
     actions: ['이름·한 줄 소개 고치기', '무엇을 푸는가·어떻게 푸는가 고치기', '저장'],
     guards: [
       '제품에만 있는 칸 둘(짧은 이름 · 사이트에 노출)은 폼이 알아서 접는다 — 여기서 `서비스라서 빼야 할 것`을 세어 두면 칸이 하나 늘 때마다 그 목록도 고쳐야 하고, 그러다 한 번 빠뜨린다.',
@@ -587,7 +597,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'services-settings',
-    purpose: '서비스 둘이 **사이트 어디에 어떤 말로 서는지**를 한자리에서 본다.',
+    purpose: '서비스 둘이 **사이트 어디에 어떤 말로 서는지**를 한자리에서 봅니다.',
     actions: ['나가는 자리 셋 확인', '홈 카드의 말과 상세의 말 견주기'],
     guards: [
       '켜고 끄는 자리를 두지 않는다 — 둘은 내리는 것이 아니라 안 파는 것이고, 안 팔기로 하는 날 바꿀 것은 토글 하나가 아니라 메뉴 · 홈 무대 · 제품 목록 셋이다. 토글만 두면 껐는데 홈 무대에는 그대로 도는 상태가 만들어진다.',
@@ -626,7 +636,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'company-history',
-    purpose: '사이트 연혁에 서는 줄들을 찾고 살핀다.',
+    purpose: '사이트 연혁에 서는 줄들을 찾고 살핍니다.',
     actions: ['제목·설명으로 검색', '상태로 거르기', '줄을 눌러 상세로 들어가기', '연혁 등록', '삭제'],
     guards: [
       '숨긴 것도 목록에는 보여 준다 — 목록에서 사라지면 다시 켤 방법이 없다.',
@@ -647,7 +657,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'company-history-new',
-    purpose: '연혁 한 줄을 새로 적는다.',
+    purpose: '연혁 한 줄을 새로 적습니다.',
     actions: ['연도·월 넣기', '제목·설명 적기', '노출 정하기', '등록'],
     guards: [
       '월은 비울 수 있다 — 창립 초기의 일은 몇 월인지 아무도 기억하지 못한다.',
@@ -677,7 +687,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'company-history-detail',
-    purpose: '이미 적힌 연혁 한 줄을 고친다.',
+    purpose: '이미 적힌 연혁 한 줄을 고칩니다.',
     actions: ['연도·월 고치기', '제목·설명 고치기', '노출 끄고 켜기', '저장'],
     guards: ['코드는 고칠 수 없다.', '저장 앞에 확인 창이 선다.'],
     admin: ['사이트 연혁 화면', 'B2C 쇼핑몰의 회사 소개 연혁'],
@@ -692,7 +702,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'company-credentials',
-    purpose: '특허와 인증을 등록번호로 찾고 살핀다.',
+    purpose: '특허와 인증을 등록번호로 찾고 살핍니다.',
     actions: ['이름·번호로 검색', '구분·상태로 거르기', '줄을 눌러 상세로 들어가기', '특허 · 인증 등록', '삭제'],
     guards: [
       '등록번호를 반드시 적는다 — 밖에서 조회할 수 있는 값이라 번호가 없으면 확인할 방법이 없어 적어 둔 뜻이 없다.',
@@ -709,7 +719,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'company-credentials-new',
-    purpose: '받은 특허 · 인증을 사이트에 세운다.',
+    purpose: '받은 특허 · 인증을 사이트에 세웁니다.',
     actions: ['구분 고르기', '이름·등록번호·발급 기관 넣기', '취득일 넣기', '노출 정하기', '등록'],
     guards: [
       '등록번호는 비운 채 저장할 수 없다 — 확인되지 않는 주장을 회사 홈페이지에 세우는 것은 그 자체로 위험한 일이다.',
@@ -737,7 +747,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'company-credentials-detail',
-    purpose: '이미 세운 특허 · 인증을 고친다.',
+    purpose: '이미 세운 특허 · 인증을 고칩니다.',
     actions: ['이름·번호·기관·취득일 고치기', '노출 끄고 켜기', '저장'],
     guards: ['코드는 고칠 수 없다.', '등록번호는 여기서도 비울 수 없다.', '취득일이 미래면 막는다.'],
     admin: ['사이트 특허 및 인증 화면'],
@@ -751,7 +761,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'banners',
-    purpose: '첫 화면 위에 기간을 갖고 서는 배너를 찾고 살핀다.',
+    purpose: '첫 화면 위에 기간을 갖고 서는 배너를 찾고 살핍니다.',
     actions: ['제목으로 검색', '상태로 거르기', '줄을 눌러 상세로 들어가기', '배너 등록', '삭제'],
     guards: [
       '기간을 반드시 적는다 — 끝을 비워 두면 행사가 끝난 뒤에도 계속 서 있고, 그 사실은 대개 밖에서 먼저 발견된다.',
@@ -771,7 +781,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'banners-new',
-    purpose: '첫 화면에 걸 배너를 새로 만든다.',
+    purpose: '첫 화면에 걸 배너를 새로 만듭니다.',
     actions: ['제목 넣기', '기간 정하기', '노출 정하기', '등록'],
     guards: [
       '끝난 날을 적는 순간 그 자리에서 알린다.',
@@ -799,7 +809,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'banners-detail',
-    purpose: '걸린 배너의 말과 기간을 고친다.',
+    purpose: '걸린 배너의 말과 기간을 고칩니다.',
     actions: ['제목 고치기', '기간 고치기', '노출 끄고 켜기', '저장'],
     guards: ['코드와 서는 자리는 고칠 수 없다.', '끝난 날을 적으면 그 자리에서 알린다.'],
     admin: ['사이트 첫 화면 위의 배너 띠'],
@@ -813,7 +823,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'banners-popups',
-    purpose: '들어오자마자 뜨는 창을 찾고 살핀다.',
+    purpose: '들어오자마자 뜨는 창을 찾고 살핍니다.',
     actions: ['제목으로 검색', '상태로 거르기', '줄을 눌러 상세로 들어가기', '팝업 등록', '삭제'],
     guards: [
       '기간이 겹치는 것이 있는지 목록에서 바로 보이게 기간을 한 칸에 둔다 — 창이 둘이면 들어온 사람이 하는 일은 둘 다 닫는 것이고, 그러면 알리려던 것도 읽히지 않는다.',
@@ -830,7 +840,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'banners-popups-new',
-    purpose: '들어온 사람이 반드시 읽어야 하는 고지를 창으로 띄운다.',
+    purpose: '들어온 사람이 반드시 읽어야 하는 고지를 창으로 띄웁니다.',
     actions: ['제목·본문 넣기', '자세히 보기 주소 넣기', '기간 정하기', '노출 정하기', '등록'],
     guards: [
       '본문은 필수다 — 제목만 뜬 팝업은 무슨 일이 있는데 뭔지는 안 알려 주는 상자로 보이고, 그 상태는 올린 사람 화면에서는 멀쩡해 보인다.',
@@ -861,7 +871,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'banners-popups-detail',
-    purpose: '뜨고 있는 창의 말과 기간을 고친다.',
+    purpose: '뜨고 있는 창의 말과 기간을 고칩니다.',
     actions: ['제목·본문·링크 고치기', '기간 고치기', '노출 끄고 켜기', '저장'],
     guards: ['코드와 자리는 고칠 수 없다.', '본문은 여기서도 비울 수 없다.', '끝난 날을 적으면 그 자리에서 알린다.'],
     admin: ['사이트에 들어오면 뜨는 창'],
@@ -875,7 +885,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'statistics',
-    purpose: '사이트 방문과 문의를 한 화면에서 나란히 본다.',
+    purpose: '사이트 방문과 문의를 한 화면에서 나란히 봅니다.',
     actions: ['달마다의 방문과 문의를 훑는다', '많이 방문한 화면을 확인한다'],
     guards: ['읽기만 하는 화면이다 — 저장 · 등록 · 삭제가 없다.'],
     admin: ['없음 — 운영자만 보는 화면이다.'],
@@ -892,7 +902,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'statistics-period',
-    purpose: '달마다의 방문과 문의를 나란히 놓고 어느 달이 달랐는지 본다.',
+    purpose: '달마다의 방문과 문의를 나란히 놓고 어느 달이 달랐는지 봅니다.',
     actions: ['달별 방문 수 읽기', '같은 달의 문의 수와 견주기'],
     guards: ['읽기만 하는 화면이다.'],
     admin: ['없음 — 운영자만 보는 화면이다.'],
@@ -905,7 +915,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'statistics-pages',
-    purpose: '어느 화면이 실제로 읽히는지 본다.',
+    purpose: '어느 화면이 실제로 읽히는지 봅니다.',
     actions: ['화면별 방문 수 읽기', '머문 시간과 함께 견주기'],
     guards: ['읽기만 하는 화면이다.'],
     admin: ['없음 — 운영자만 보는 화면이다.'],
@@ -918,7 +928,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'settings-supplier',
-    purpose: '사이트 아래에 **법이 적으라고 정한** 사업자 표시를 정한다.',
+    purpose: '사이트 아래에 **법이 적으라고 정한** 사업자 표시를 정합니다.',
     actions: ['상호·대표자·등록번호 넣기', '업태와 업종 고르기', '주소·전화·이메일 넣기', '저장'],
     guards: [
       '저장 앞에 확인 창을 세운다 — 이 값은 사이트 모든 화면 아래에 그대로 나가고, 사업자등록번호 한 자리가 틀린 것은 우리가 아니라 밖에서 먼저 발견된다.',
@@ -955,7 +965,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'settings-seo',
-    purpose: '검색 결과와 링크를 붙였을 때 뜨는 카드에 적히는 값을 정한다.',
+    purpose: '검색 결과와 링크를 붙였을 때 뜨는 카드에 적히는 값을 정합니다.',
     actions: ['제목·설명 적기', '대표 주소 넣기', '공유 그림 경로 넣기', '저장'],
     guards: [
       '글자 수를 세어 보여 주되 넘겨도 막지 않는다 — 잘려도 되는 문장이 있다.',
@@ -983,7 +993,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'settings-terms',
-    purpose: '사이트 아래의 서비스 이용약관 링크가 여는 글을 적고 건다.',
+    purpose: '사이트 아래의 서비스 이용약관 링크가 여는 글을 적고 겁니다.',
     actions: ['본문 적기', '초안으로 저장하기', '사이트에 걸기'],
     guards: [
       '공개를 저장과 따로 둔다 — 초안을 적어 두고 법무 검토를 기다리는 동안 사이트에는 준비 중이라는 사실만 서 있어야 한다.',
@@ -1012,7 +1022,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'settings-privacy',
-    purpose: '사이트 아래의 개인정보 처리방침 링크가 여는 글을 적고 건다.',
+    purpose: '사이트 아래의 개인정보 처리방침 링크가 여는 글을 적고 겁니다.',
     actions: ['본문 적기', '초안으로 저장하기', '사이트에 걸기'],
     guards: [
       '수집 항목은 문의 양식이 실제로 받는 칸과 같아야 한다 — 회사명 · 담당자명 · 휴대폰 번호 · 이메일 · 문의 내용 · 첨부파일.',
@@ -1041,7 +1051,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'settings-locales',
-    purpose: '사이트 문구를 국문 · 영문 **짝으로** 관리한다.',
+    purpose: '사이트 문구를 국문 · 영문 **짝으로** 관리합니다.',
     actions: ['짝 목록에서 아직 안 된 것 찾기', '줄을 눌러 창에서 고치기', '저장'],
     guards: [
       '국문은 지울 수 없다 — 영문이 비면 원문으로 대신하지만 국문이 비면 사이트의 그 자리가 통째로 사라진다.',
@@ -1071,8 +1081,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'result',
-    purpose: '방금 한 일의 결말을 알리고 돌아갈 길을 준다.',
-    effect: '되돌릴 수 없는 일을 마친 뒤에 어디로 갈지 헤매지 않는다.',
+    purpose: '방금 한 일의 결말을 알리고 돌아갈 길을 줍니다.',
+    effect: '되돌릴 수 없는 일을 마친 뒤에 어디로 갈지 헤매지 않습니다.',
     actions: ['결과 읽기', '처리 번호 확인', '돌아갈 곳 고르기'],
     guards: ['`state=failed` 면 실패 문구와 붉은 표시로 그린다.'],
     admin: ['없음 — 운영자만 보는 화면이다.'],

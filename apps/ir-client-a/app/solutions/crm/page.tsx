@@ -20,7 +20,7 @@ export default function CrmHomePage() {
   if (!offering) notFound();
 
   return (
-    <IrSiteShell hero={<PageHero title={offering.title} image="/solutions/crm.jpg" />}>
+    <IrSiteShell hero={<PageHero title={offering.title} image="/hero/crm.jpg" />}>
       <OfferingDetail offering={offering} />
     </IrSiteShell>
   );

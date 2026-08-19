@@ -7,12 +7,21 @@ import { FAQ_GROUPS, SITE_FAQS } from '@winpilot/store';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const FILTERS: ListFilterField[] = [
-  { id: 'group', label: '갈래', options: FAQ_GROUPS.map((one) => ({ value: one, label: one })) },
+  { id: 'group', label: '분류', options: FAQ_GROUPS.map((one) => ({ value: one, label: one })) },
   { id: 'state', label: '상태', options: [{ value: '노출', label: '노출' }, { value: '숨김', label: '숨김' }] },
 ];
 
+/*
+  짧은 칸은 가운데, **글 칸은 왼쪽**이다.
+
+  머리줄과 값 줄이 같은 `span` 을 쓰므로 여기 한 곳만 고치면 둘이 함께 움직인다.
+
+  `물음` 과 `답` 을 가운데로 두지 않는 이유: 둘은 길이가 줄마다 다른 글이라, 가운데로 맞추면
+  **줄마다 글이 시작하는 자리가 달라진다.** 목록을 훑는 눈은 왼쪽 끝을 따라 내려가는데 그
+  기준선이 사라진다. 가운데가 맞는 것은 길이가 고르거나 짧은 값(분류 · 상태 · 순번 · 관리)뿐이다.
+*/
 const COLUMNS = [
-  { label: '갈래', span: 'lg:col-span-1' },
+  { label: '분류', span: 'lg:col-span-1 lg:text-center' },
   { label: '물음', span: 'lg:col-span-3' },
   { label: '답', span: 'lg:col-span-4' },
   { label: '상태', span: 'lg:col-span-1 lg:text-center' },
@@ -68,7 +77,7 @@ export function FaqListView() {
 
       <IrRecordTable
         title="물음"
-        description="갈래가 사이트 FAQ 화면의 왼쪽 줄이 됩니다."
+        description="분류가 사이트 FAQ 화면의 왼쪽 줄이 됩니다."
         columns={COLUMNS}
         rows={shown}
         onOpen={(one) => router.push(`/contents/faqs/${one.id}`)}
@@ -86,7 +95,7 @@ export function FaqListView() {
           <span key="a" className="min-w-0 truncate text-xs text-ink-muted">
             {one.answer}
           </span>,
-          <span key="state" className="flex min-w-0 justify-end">
+          <span key="state" className="flex min-w-0 justify-center">
             <Badge tone={one.visible ? 'ok' : 'wait'}>{one.visible ? '노출' : '숨김'}</Badge>
           </span>,
         ]}

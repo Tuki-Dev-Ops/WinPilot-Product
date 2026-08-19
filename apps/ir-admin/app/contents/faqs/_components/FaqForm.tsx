@@ -23,7 +23,7 @@ const LIST = '/contents/faqs';
  * FAQ 가 늘어나는 방식은 늘 같다 — 문의가 들어올 때마다 하나씩 더하다 보면 **말만 다른 같은 답**이
  * 쌓인다. 쌓인 뒤에 정리하려면 스무 줄을 서로 견줘야 하는데, 그 일을 하는 사람은 없다.
  *
- * 그래서 적는 동안 같은 갈래의 물음을 옆에 세워 둔다. 막지는 않는다 — 정말 다른 물음인지는
+ * 그래서 적는 동안 같은 분류의 물음을 옆에 세워 둔다. 막지는 않는다 — 정말 다른 물음인지는
  * 사람만 알고, 막으면 비슷해 보이는 새 물음을 적을 방법이 사라진다.
  *
  * ## 답을 길게 받는다
@@ -49,7 +49,7 @@ export function FaqForm({
 
   const broken = [...(question.trim() ? [] : ['물음']), ...(answer.trim() ? [] : ['답'])];
 
-  /** 같은 갈래의 다른 물음. 자기 자신은 뺀다 — 수정 화면에서 자기가 자기 이웃으로 뜨면 헷갈린다. */
+  /** 같은 분류의 다른 물음. 자기 자신은 뺀다 — 수정 화면에서 자기가 자기 이웃으로 뜨면 헷갈린다. */
   const neighbors = SITE_FAQS.filter((one) => one.group === group && one.id !== initial?.id);
 
   return (
@@ -67,7 +67,7 @@ export function FaqForm({
         <div className="flex flex-col gap-5 px-6 py-5">
           <IrReadonly label="FAQ 코드" value={code} note={mode === 'create' ? '자동 생성' : '수정 불가'} />
 
-          <IrField label="갈래" htmlFor="faq-group" required hint="사이트 FAQ 화면 왼쪽 줄이 됩니다.">
+          <IrField label="분류" htmlFor="faq-group" required hint="사이트 FAQ 화면 왼쪽 줄이 됩니다.">
             <IrSelect id="faq-group" value={group} onChange={setGroup} options={FAQ_GROUPS} />
           </IrField>
         
@@ -118,11 +118,11 @@ export function FaqForm({
       </IrPanel>
 
       <IrPanel
-        title={`${group} 갈래의 다른 물음`}
+        title={`${group} 분류의 다른 물음`}
         description="같은 답을 두 번 적고 있지는 않은지 확인하세요."
       >
         {neighbors.length === 0 ? (
-          <p className="px-6 py-10 text-center text-sm text-ink-muted">이 갈래에 다른 물음이 없습니다.</p>
+          <p className="px-6 py-10 text-center text-sm text-ink-muted">이 분류에 다른 물음이 없습니다.</p>
         ) : (
           <ul className="flex flex-col">
             {neighbors.map((one) => (

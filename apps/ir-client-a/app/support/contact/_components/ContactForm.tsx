@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { Clock, Mail, Paperclip, Phone, X } from 'lucide-react';
+import { ChevronDown, Clock, Mail, Paperclip, Phone, X } from 'lucide-react';
 import { Button, Checkbox, Dropdown, Field, HintInput, HintTextarea, RequiredLegend, useToast } from '@winpilot/ui';
 import { IR_COMPANY, SITE_REGIONS } from '@winpilot/store';
 
@@ -407,58 +407,79 @@ export function ContactForm() {
         </Field>
 
         {/*
-          개인정보 수집·이용 동의.
+          개인정보 수집·이용 동의 — **가입 양식에서 쓰는 모양**으로 둔다.
 
           ## 받고 있으면서 안 밝히면 안 된다
-          이 양식은 성함 · 이메일 · 휴대폰 번호를 **필수로** 받는다. 그런데 무엇을 왜 얼마나
-          갖고 있는지를 어디에도 적지 않고 있었다 — 개인정보보호법 제15조가 요구하는 고지다.
+          이 양식은 성함 · 이메일 · 휴대폰 번호를 **필수로** 받는다. 무엇을 왜 얼마나 갖고
+          있는지를 밝히는 것은 개인정보보호법 제15조가 요구하는 고지다.
 
-          ## 항목을 접어 두지 않는다
-          `자세히 보기` 뒤에 숨기면 펴 보는 사람이 거의 없고, 그러면 동의는 받았는데 무엇에
-          동의했는지는 아무도 모르는 상태가 된다. 세 줄이라 그냥 편다.
+          ## 폈다가 접었다
+          한동안 항목 · 목적 · 기간 세 줄과 거부 안내를 **펴 둔 채로** 두었다. `자세히 보기`
+          뒤에 숨기면 아무도 안 펴 본다는 이유였는데, 그러자 양식 맨 아래에 **글이 여덟 줄**
+          서고 정작 눌러야 할 체크박스가 그 밑에 묻혔다. 보내려고 온 사람에게는 고지가 아니라
+          벽이었다.
 
-          ## 처리방침으로 가는 길을 함께 둔다
-          여기 적은 것은 **이 양식이 받는 것**이고, 회사 전체의 처리 방침은 그쪽에 있다.
+          지금은 **체크 한 줄이 먼저**고, 상세는 그 줄의 `>` 를 눌러 편다. 가입 양식들이
+          그렇게 두는 이유가 이것이다 — 할 일이 하나로 보이고, 확인하려는 사람은 여전히
+          한 번에 닿는다.
+
+          ## `details` 를 쓴다
+          여닫는 데 자바스크립트를 쓰지 않는다. 이 칸은 **법이 요구하는 고지**라, 스크립트가
+          막힌 자리에서 열리지 않으면 안 되는 글이다. `details` 는 브라우저가 여닫고, 검색
+          로봇과 낭독기에는 처음부터 다 보인다.
         */}
-        <div className="flex flex-col gap-3 rounded-lg border border-border px-4 py-4">
-          <p className="text-sm font-medium">개인정보 수집 · 이용 동의</p>
-          <dl className="flex flex-col gap-1.5 text-xs leading-relaxed text-ink-muted">
-            <div className="flex gap-2">
-              <dt className="w-14 shrink-0 text-ink-faint">수집 항목</dt>
-              <dd className="min-w-0">회사명 · 지역 · 담당자명 · 이메일 · 휴대폰 번호 · 문의 내용 · 첨부파일</dd>
-            </div>
-            <div className="flex gap-2">
-              <dt className="w-14 shrink-0 text-ink-faint">이용 목적</dt>
-              <dd className="min-w-0">문의 접수와 답변, 그에 따른 상담 진행</dd>
-            </div>
-            <div className="flex gap-2">
-              <dt className="w-14 shrink-0 text-ink-faint">보관 기간</dt>
-              <dd className="min-w-0">답변 완료 후 3년. 기간이 지나면 지체 없이 파기합니다</dd>
-            </div>
-          </dl>
+        <div className="flex flex-col gap-2">
+          <details className="group rounded-lg border border-border">
+            <summary className="flex cursor-pointer list-none items-center gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden">
+              {/*
+                체크박스를 `summary` 안에 두면 눌렀을 때 **여닫기까지 함께 일어난다.** 그래서
+                체크박스만 이벤트를 멈춘다 — 껍데기(`span`)에 걸어 안쪽 어디를 눌러도 같다.
+              */}
+              <span onClick={(event) => event.stopPropagation()} className="flex items-center">
+                <Checkbox checked={agreed} onChange={setAgreed} label="개인정보 수집 · 이용에 동의" />
+              </span>
 
-          {/*
-            거부할 수 있다는 것과 그때 어떻게 되는지를 함께 적는다. 법이 요구하는 고지이면서,
-            적어 두지 않으면 동의가 형식만 남는다.
-          */}
-          <p className="text-xs leading-relaxed text-ink-faint">
-            동의하지 않으실 수 있습니다. 다만 연락처 없이는 답변을 드릴 수 없어 문의 접수가 되지 않습니다.{' '}
-            <a href="/privacy" className="underline underline-offset-2 hover:text-ink">
-              개인정보 처리방침
-            </a>
-          </p>
+              <span className="flex-1 text-sm">
+                개인정보 수집 · 이용 동의
+                <span aria-hidden className="ml-1 text-signal-danger">*</span>
+              </span>
 
-          <label className="flex w-fit cursor-pointer items-center gap-2 text-sm">
-            <Checkbox checked={agreed} onChange={setAgreed} label="개인정보 수집 · 이용에 동의" />
-            <span>
-              위 내용에 동의합니다
-              <span aria-hidden className="ml-0.5 text-signal-danger">*</span>
-            </span>
-          </label>
+              <ChevronDown
+                aria-hidden
+                className="size-4 shrink-0 text-ink-faint transition-transform duration-150 group-open:rotate-180"
+              />
+            </summary>
 
-          {submitted && errors.agreed && (
-            <p className="text-xs leading-relaxed text-signal-danger">{errors.agreed}</p>
-          )}
+            <div className="flex flex-col gap-3 border-t border-border px-4 py-4">
+              <dl className="flex flex-col gap-1.5 text-xs leading-relaxed text-ink-muted">
+                <div className="flex gap-2">
+                  <dt className="w-14 shrink-0 text-ink-faint">수집 항목</dt>
+                  <dd className="min-w-0">회사명 · 지역 · 담당자명 · 이메일 · 휴대폰 번호 · 문의 내용 · 첨부파일</dd>
+                </div>
+                <div className="flex gap-2">
+                  <dt className="w-14 shrink-0 text-ink-faint">이용 목적</dt>
+                  <dd className="min-w-0">문의 접수와 답변, 그에 따른 상담 진행</dd>
+                </div>
+                <div className="flex gap-2">
+                  <dt className="w-14 shrink-0 text-ink-faint">보관 기간</dt>
+                  <dd className="min-w-0">답변 완료 후 3년. 기간이 지나면 지체 없이 파기합니다</dd>
+                </div>
+              </dl>
+
+              {/*
+                거부할 수 있다는 것과 그때 어떻게 되는지를 함께 적는다. 법이 요구하는 고지이면서,
+                적어 두지 않으면 동의가 형식만 남는다.
+              */}
+              <p className="text-xs leading-relaxed text-ink-faint">
+                동의하지 않으실 수 있습니다. 다만 연락처 없이는 답변을 드릴 수 없어 문의 접수가 되지 않습니다.{' '}
+                <a href="/privacy" className="underline underline-offset-2 hover:text-ink">
+                  개인정보 처리방침
+                </a>
+              </p>
+            </div>
+          </details>
+
+          {submitted && errors.agreed && <p className="text-xs leading-relaxed text-signal-danger">{errors.agreed}</p>}
         </div>
 
         <div className="flex justify-end">

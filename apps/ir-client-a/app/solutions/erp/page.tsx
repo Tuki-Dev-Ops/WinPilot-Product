@@ -20,7 +20,7 @@ export default function ErpHomePage() {
   if (!offering) notFound();
 
   return (
-    <IrSiteShell hero={<PageHero title={offering.title} image="/solutions/erp.jpg" />}>
+    <IrSiteShell hero={<PageHero title={offering.title} image="/hero/erp.jpg" />}>
       <OfferingDetail offering={offering} />
     </IrSiteShell>
   );

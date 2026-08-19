@@ -40,31 +40,14 @@ export const pages: PageSpec[] = [
   { order: 12, id: 'products', name: 'Products', route: '/products' },
 
   // 12번대 — 공시
-  { order: 13, id: 'disclosures', name: 'Disclosures', route: '/disclosures' },
-  {
-    order: 14,
-    id: 'disclosures-detail',
-    name: 'Disclosure Detail',
-    route: '/disclosures/[disclosureId]',
-    sampleUrl: '/disclosures/D-2026-014',
-  },
 
   // 20번대 — 숫자
-  { order: 20, id: 'financials', name: 'Financials', route: '/financials' },
-  { order: 21, id: 'stock', name: 'Stock', route: '/stock' },
-  { order: 22, id: 'dividends', name: 'Dividends', route: '/dividends' },
 
   // 30번대 — 주주
-  { order: 30, id: 'meetings', name: 'Meetings', route: '/meetings' },
-  { order: 31, id: 'meetings-voting', name: 'Electronic Voting', route: '/meetings/voting' },
-  { order: 32, id: 'governance', name: 'Governance', route: '/governance' },
 
   // 40번대 — 자료
-  { order: 40, id: 'library', name: 'IR Library', route: '/library' },
-  { order: 41, id: 'schedules', name: 'IR Schedules', route: '/schedules' },
 
   // 50번대 — 알림 · 문의
-  { order: 50, id: 'subscribe', name: 'Subscribe', route: '/subscribe' },
 
   // 60번대 — 고객지원 (CS CENTER)
   { order: 60, id: 'support-contact', name: 'Contact', route: '/support/contact' },

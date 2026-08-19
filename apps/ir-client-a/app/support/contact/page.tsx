@@ -18,7 +18,7 @@ export const metadata: Metadata = { title: `문의하기 — ${IR_COMPANY.name}`
 
 export default function InquirySettingsPage() {
   return (
-    <IrSiteShell hero={<PageHero title="문의하기" />}>
+    <IrSiteShell hero={<PageHero title="문의하기" image="/hero/contact.jpg" />}>
 
       <ContactForm />
     </IrSiteShell>

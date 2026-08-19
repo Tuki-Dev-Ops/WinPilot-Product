@@ -13,24 +13,14 @@
 | 2 | About | `/about` | [열기](/docs/fsd/about) |
 | 3 | History | `/about/history` | [열기](/docs/fsd/about-history) |
 | 4 | Certifications | `/about/certifications` | [열기](/docs/fsd/about-certifications) |
-| 5 | Smart Consulting | `/solutions/consulting` | [열기](/docs/fsd/solutions-consulting) |
-| 6 | Infra Service | `/solutions/infra` | [열기](/docs/fsd/solutions-infra) |
-| 7 | Cloud MES | `/solutions/mes` | [열기](/docs/fsd/solutions-mes) |
-| 8 | Cloud ERP | `/solutions/erp` | [열기](/docs/fsd/solutions-erp) |
-| 9 | Cloud CRM | `/solutions/crm` | [열기](/docs/fsd/solutions-crm) |
-| 10 | Cloud DXP | `/solutions/dxp` | [열기](/docs/fsd/solutions-dxp) |
-| 11 | Products | `/products` | [열기](/docs/fsd/products) |
-| 12 | Disclosures | `/disclosures` | [열기](/docs/fsd/disclosures) |
-| 13 | Disclosure Detail | `/disclosures/[disclosureId]` | [열기](/docs/fsd/disclosures-detail) |
-| 20 | Financials | `/financials` | [열기](/docs/fsd/financials) |
-| 21 | Stock | `/stock` | [열기](/docs/fsd/stock) |
-| 22 | Dividends | `/dividends` | [열기](/docs/fsd/dividends) |
-| 30 | Meetings | `/meetings` | [열기](/docs/fsd/meetings) |
-| 31 | Electronic Voting | `/meetings/voting` | [열기](/docs/fsd/meetings-voting) |
-| 32 | Governance | `/governance` | [열기](/docs/fsd/governance) |
-| 40 | IR Library | `/library` | [열기](/docs/fsd/library) |
-| 41 | IR Schedules | `/schedules` | [열기](/docs/fsd/schedules) |
-| 50 | Subscribe | `/subscribe` | [열기](/docs/fsd/subscribe) |
+| 5 | Certification Detail | `/about/certifications/[credentialId]` | [열기](/docs/fsd/about-certifications-detail) |
+| 6 | Smart Consulting | `/solutions/consulting` | [열기](/docs/fsd/solutions-consulting) |
+| 7 | Infra Service | `/solutions/infra` | [열기](/docs/fsd/solutions-infra) |
+| 8 | Cloud MES | `/solutions/mes` | [열기](/docs/fsd/solutions-mes) |
+| 9 | Cloud ERP | `/solutions/erp` | [열기](/docs/fsd/solutions-erp) |
+| 10 | Cloud CRM | `/solutions/crm` | [열기](/docs/fsd/solutions-crm) |
+| 11 | Cloud DXP | `/solutions/dxp` | [열기](/docs/fsd/solutions-dxp) |
+| 12 | Products | `/products` | [열기](/docs/fsd/products) |
 | 60 | Contact | `/support/contact` | [열기](/docs/fsd/support-contact) |
 | 61 | Notices | `/support/notices` | [열기](/docs/fsd/support-notices) |
 | 62 | Support News | `/support/news` | [열기](/docs/fsd/support-news) |

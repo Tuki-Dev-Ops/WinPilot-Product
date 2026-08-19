@@ -34,7 +34,7 @@ const KIND_ICON = {
 
 export default function DirectionListPage() {
   return (
-    <IrSiteShell hero={<PageHero title="오시는 길" />}>
+    <IrSiteShell hero={<PageHero title="오시는 길" image="/hero/directions.jpg" />}>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start lg:gap-10">
         {/* 왼쪽 — 지도. 좁은 화면에서도 위에 온다(`grid` 의 차례가 곧 세로 차례다). */}

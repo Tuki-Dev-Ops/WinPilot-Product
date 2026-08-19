@@ -1,20 +1,59 @@
+import Image from 'next/image';
+
 /**
- * 화면 머리 배너 — **머리띠 바로 아래, 화면 끝까지 닿는 띠**.
+ * 화면 머리 배너 — **사진 위 왼쪽 아래에, 작은 이름표와 큰 문장 하나**.
  *
  * ## 제목만 있던 자리다
  * 전에는 본문 맨 위에 글자 두 줄이 있었다(껍데기가 들고 있던 `IrPageTitle` — 이 띠로 다 옮겨
  * 간 뒤 지웠다). 그러면 머리띠와 본문 사이가 흰 여백 하나로만 갈리고, **여기가 어느 갈래인지**를
  * 말하는 것이 제목 한 줄뿐이었다.
  *
- * 띠를 두면 갈래 이름이 크게 서고, 본문이 어디서 시작하는지가 색으로 갈린다.
+ * ## 가운데에서 왼쪽 아래로 옮겼다
+ * 한동안 제목 한 낱말을 **가운데**에 두었다. 왼쪽에 붙이면 오른쪽이 비어 무언가 더 올 자리처럼
+ * 보인다는 이유였는데, 그것은 **띠에 낱말 하나만 있을 때**의 이야기였다.
  *
- * ## 설명을 달지 않는다
- * 처음에는 제목 아래 한 문장을 함께 두었다. 뺐다 — 배너가 답할 것은 **여기가 어디인가** 하나이고,
- * 그 설명은 아래 본문이 이미 한다. 두 줄이 서면 눈이 배너에서 한 번 멈춰 읽고 내려가는데,
- * 하위 화면에 온 사람은 이미 무엇을 보러 왔는지 안다.
+ * 상장사 홈페이지의 배너를 보면 거의 예외 없이 **왼쪽 아래**다. 사진의 가운데는 대개 사진이
+ * 말하려는 것이 있는 자리라 글자를 얹으면 둘이 겹치고, 아래로 내리면 사진이 어두워지는
+ * 쪽이라 흰 글자가 안전하다. 그리고 왼쪽은 **다음 줄이 시작하는 자리**다 — 두 줄짜리 문장을
+ * 가운데 두면 줄마다 시작점이 달라 읽는 눈이 매번 가운데를 다시 찾는다.
  *
- * 제목을 가운데 두는 것도 같은 까닭이다. 왼쪽에 붙이면 그 오른쪽이 비어 무언가 더 올 자리처럼
- * 보인다.
+ * 그래서 이 자리가 낱말 하나가 아니라 **문장 하나**를 받게 되었고, 그때부터 가운데가 맞지
+ * 않았다.
+ *
+ * ## 이름표와 문장을 나눠 받는다
+ * 작은 이름표(`label`)는 **여기가 어디인가**에 답하고, 큰 글씨(`title`)는 **여기서 무엇을
+ * 받는가**에 답한다. 같은 말을 두 번 하는 것처럼 보이지만 묻는 것이 다르다.
+ *
+ * 이름표가 없는 화면도 있다. 그때는 큰 글씨가 화면 이름을 대신한다 — 아직 그 화면의 문장을
+ * 정하지 않은 자리다.
+ *
+ * 한때 이 둘을 **배너 아래 흰 칸**(`IrPageIntro`)에 따로 두었다. 사진 위에 낱말 하나만 얹고
+ * 문장은 그 밑에서 다시 시작하는 모양이었는데, 그러면 배너가 **문장으로 가는 길목**이 되어
+ * 아무 일도 하지 않는다. 사진과 문장을 한 자리에 두면 배너 하나가 화면을 연다.
+ *
+ * ## 문장에 지어낸 수를 쓰지 않는다
+ * 이 자리는 아래 내용이 무엇인지를 말하는 곳이지, 그것을 요약해 자랑하는 곳이 아니다. IR
+ * 화면에서는 특히 그렇다 — 사실만 있어야 할 자리에서 투자자가 광고를 읽는다.
+ *
+ * ## 줄을 고르게 나눈다
+ * `text-balance` 다. 없으면 브라우저가 **넘칠 때까지 채우고 남은 것을 다음 줄로** 넘기는데,
+ * 그러다 `~ 적어 둡니` / `다.` 처럼 마지막 줄에 한두 글자만 떨어진다. 큰 글씨일수록 그 한
+ * 글자가 눈에 띈다.
+ *
+ * 문장을 짧게 고쳐 피하는 방법도 있다. 그러지 않은 이유: 화면 너비마다 넘치는 자리가 달라
+ * **어느 한 폭에서 맞춘 길이는 다른 폭에서 다시 어긋난다.** 길이로 푸는 문제가 아니다.
+ *
+ * ## 사진은 **모든 화면이 같은 것**을 쓴다
+ * 화면마다 다른 사진을 넘겼다. 회사 소개는 로봇 팔, 제품은 상담석, 솔루션 여섯은 각자의
+ * 제품 사진이었다. 그런데 배너는 **여기가 어디인가**만 말하는 자리라, 사진이 화면마다 바뀌면
+ * 그 사진이 화면의 내용을 말하는 것처럼 읽힌다 — 실제로는 그렇지 않다. 상담석 사진이 걸린
+ * 제품 화면에서 상담 이야기를 찾게 되는 식이다.
+ *
+ * 게다가 사진이 없는 화면(IR 아홉 · 고객지원 다섯)은 빛줄기만 서서, 같은 사이트 안에서
+ * **사진 있는 배너와 없는 배너 두 종류**가 생겼다.
+ *
+ * 지금은 한 장이다. 이 배너가 기본으로 들고 있으므로 화면 쪽에서 넘길 것이 없다 — 새 화면을
+ * 만들 때 사진을 빠뜨릴 자리 자체가 없어진다. 바꾸려면 `public/hero/page.jpg` 를 덮어쓴다.
  *
  * ## 사진은 없어도 뜬다
  * 기본 배경은 **인라인 SVG 로 그린 빛줄기**이고, 사진은 `image` 를 넘길 때만 그 위에 깔린다.
@@ -31,30 +70,60 @@
  *
  * ## 화면 높이를 다 쓰지 않는다
  * 첫 화면은 `min-h-dvh` 로 꽉 채우지만 여기는 **띠**다. 하위 화면에서 화면을 꽉 채우면 본문을
- * 보려고 매번 한 번씩 굴려야 한다.
+ * 보려고 매번 한 번씩 굴려야 한다. 다만 문장을 받으면서 전보다 높아졌다 — 두 줄짜리 큰 글씨
+ * 아래위로 숨 쉴 자리가 없으면 커진 것이 아니라 **꽉 찬 것**으로 읽힌다.
  */
-export function PageHero({ title, image }: { title: string; image?: string }) {
+/**
+ * 모든 화면이 함께 쓰는 배너 사진.
+ *
+ * 값으로 못 박는다. 화면마다 넘기게 두면 **하나만 다른 것을 넘긴 날** 그 화면만 다른 사진이
+ * 걸리고, 그 사실은 두 화면을 나란히 열어 본 사람에게만 보인다.
+ */
+const BANNER = '/hero/page.jpg';
+
+export function PageHero({ label, title, image = BANNER }: { label?: string; title: string; image?: string }) {
   return (
-    <section className="relative isolate overflow-hidden bg-night text-white">
+    <section className="relative isolate flex min-h-84 overflow-hidden bg-night text-white lg:min-h-[26rem]">
       <LightStreaks />
 
       {image && (
         <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={image} alt="" aria-hidden className="absolute inset-0 -z-10 size-full object-cover" />
+          {/*
+            `priority` — 이 사진은 **화면을 열자마자 보이는 자리**다. 지연 로딩으로 두면 첫
+            그림에서 검은 판만 서고 사진이 한 박자 늦게 덮이는데, 그 깜빡임이 배너에서는
+            페이지가 두 번 그려진 것처럼 보인다.
+
+            `sizes="100vw"` — 좌우 끝까지 닿는 사진이라 화면 폭이 곧 필요한 폭이다. 적지
+            않으면 Next 가 가장 큰 폭을 내려보낸다.
+          */}
+          <Image
+            src={image}
+            alt=""
+            aria-hidden
+            fill
+            priority
+            sizes="100vw"
+            className="-z-10 object-cover"
+          />
           {/*
             사진 위에 어두운 막을 깐다. 사진마다 밝기가 달라 막이 없으면 **어떤 사진에서는
             흰 글씨가 사라진다** — 사진을 바꿀 때마다 글자 색을 다시 고르게 둘 수 없다.
+
+            아래로 갈수록 짙다. 글자가 앉는 자리가 아래라, 위까지 같은 세기로 덮으면 사진이
+            통째로 어두워져 **무엇을 찍은 것인지**가 사라진다.
           */}
           <span
             aria-hidden
-            className="absolute inset-0 -z-10 bg-[linear-gradient(to_top,rgba(5,6,13,0.9)_0%,rgba(5,6,13,0.62)_55%,rgba(5,6,13,0.4)_100%)]"
+            className="absolute inset-0 -z-10 bg-[linear-gradient(to_top,rgba(5,6,13,0.92)_0%,rgba(5,6,13,0.6)_45%,rgba(5,6,13,0.28)_100%)]"
           />
         </>
       )}
 
-      <div className="mx-auto flex w-full max-w-320 items-center justify-center px-6 py-16 lg:py-20">
-        <h1 className="text-center text-3xl font-bold tracking-tight lg:text-4xl">{title}</h1>
+      <div className="mx-auto flex w-full max-w-320 flex-col justify-end gap-4 px-6 pb-12 pt-24 lg:gap-6 lg:pb-16 lg:pt-32">
+        {label && <p className="text-sm font-medium tracking-wide text-white/60">{label}</p>}
+        <h1 className="max-w-4xl text-balance text-3xl font-bold leading-[1.3] tracking-tight lg:text-[2.75rem] lg:leading-[1.25]">
+          {title}
+        </h1>
       </div>
     </section>
   );
@@ -65,11 +134,15 @@ export function PageHero({ title, image }: { title: string; image?: string }) {
  *
  * 첫 화면의 것보다 **얕게** 그린다 — 여기는 띠라서 세로가 짧고, 같은 세기로 그리면 줄이
  * 서로 붙어 무늬가 아니라 얼룩으로 보인다.
+ *
+ * `viewBox` 의 세로가 240 이었다. 배너가 문장을 받으면서 두 배 가까이 높아졌는데, 그때
+ * `slice` 가 좁은 그림을 세로로 늘려 **줄이 거의 수직으로 서고 무늬가 사라졌다.** 그려 두는
+ * 판의 비례를 실제 띠에 맞춘다.
  */
 function LightStreaks() {
   return (
     <svg
-      viewBox="0 0 1440 240"
+      viewBox="0 0 1440 420"
       preserveAspectRatio="xMidYMid slice"
       aria-hidden
       className="absolute inset-0 -z-10 size-full"
@@ -80,15 +153,15 @@ function LightStreaks() {
           <stop offset="100%" stopColor="#05060d" />
         </linearGradient>
       </defs>
-      <rect width="1440" height="240" fill="url(#page-hero-bg)" />
-      <g transform="rotate(-18 720 120)">
+      <rect width="1440" height="420" fill="url(#page-hero-bg)" />
+      <g transform="rotate(-18 720 210)">
         {[-160, 40, 240, 440, 640, 840, 1040, 1240, 1440].map((x, index) => (
           <line
             key={x}
             x1={x}
-            y1="-200"
+            y1="-300"
             x2={x}
-            y2="440"
+            y2="720"
             stroke={index === 2 ? 'rgba(138,186,255,0.45)' : 'rgba(148,163,184,0.10)'}
             strokeWidth={index === 2 ? 2.5 : 1.5}
           />

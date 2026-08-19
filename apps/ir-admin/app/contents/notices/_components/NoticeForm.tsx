@@ -68,7 +68,7 @@ export function NoticeForm({
         <div className="flex flex-col gap-5 px-6 py-5">
           <IrReadonly label="공지 코드" value={code} note={mode === 'create' ? '자동 생성' : '수정 불가'} />
 
-          <IrField label="갈래" htmlFor="notice-group" required hint="사이트 왼쪽 줄에서 고르는 이름입니다.">
+          <IrField label="분류" htmlFor="notice-group" required hint="사이트 왼쪽 줄에서 고르는 이름입니다.">
             <IrSelect id="notice-group" value={group} onChange={setGroup} options={SITE_NOTICE_GROUPS} />
           </IrField>
         

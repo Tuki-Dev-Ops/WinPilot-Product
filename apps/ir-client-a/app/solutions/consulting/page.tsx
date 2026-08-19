@@ -25,7 +25,7 @@ export default function ConsultingHomePage() {
   if (!offering) notFound();
 
   return (
-    <IrSiteShell hero={<PageHero title={offering.title} image="/solutions/erp.jpg" />}>
+    <IrSiteShell hero={<PageHero title={offering.title} image="/hero/consulting.jpg" />}>
       <OfferingDetail offering={offering} />
     </IrSiteShell>
   );

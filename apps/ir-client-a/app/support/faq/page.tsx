@@ -18,7 +18,7 @@ export const metadata: Metadata = { title: `FAQ — ${IR_COMPANY.name}` };
 
 export default function FaqListPage() {
   return (
-    <IrSiteShell hero={<PageHero title="FAQ" />}>
+    <IrSiteShell hero={<PageHero title="자주 묻는 질문" image="/hero/faq.jpg" />}>
 
       <FaqListView faqs={publicSiteFaqs()} groups={FAQ_GROUPS} />
     </IrSiteShell>

@@ -143,7 +143,7 @@ export function InquirySettingsView() {
           <p className="text-xs leading-relaxed text-ink-muted">
             칸을 켜고 끄는 자리는 두지 않습니다. 필수 칸을 끄면 이미 그 값을 전제로 만든 답변 절차가
             어긋나고, 수집 항목은{' '}
-            <a href="/settings/privacy" className="font-medium text-brand-700 underline dark:text-brand-300">
+ <a href="/settings/privacy" className="font-medium text-brand-700 underline">
               개인정보 처리방침
             </a>
             에 적힌 것과 같아야 합니다 — 한 칸 끄는 일은 그 글도 함께 고치는 일입니다.

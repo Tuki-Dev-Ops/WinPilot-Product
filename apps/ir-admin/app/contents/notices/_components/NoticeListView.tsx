@@ -7,13 +7,13 @@ import { SITE_NOTICES, SITE_NOTICE_GROUPS } from '@winpilot/store';
 import { IrRecordTable } from '@/app/_components/IrRecordTable';
 
 const FILTERS: ListFilterField[] = [
-  { id: 'group', label: '갈래', options: SITE_NOTICE_GROUPS.map((one) => ({ value: one, label: one })) },
+  { id: 'group', label: '분류', options: SITE_NOTICE_GROUPS.map((one) => ({ value: one, label: one })) },
   { id: 'state', label: '상태', options: [{ value: '노출', label: '노출' }, { value: '숨김', label: '숨김' }] },
 ];
 
 const COLUMNS = [
   { label: '제목', span: 'lg:col-span-4' },
-  { label: '갈래', span: 'lg:col-span-1' },
+  { label: '분류', span: 'lg:col-span-1 lg:text-center' },
   { label: '올린 날', span: 'lg:col-span-2' },
   { label: '고정', span: 'lg:col-span-1 lg:text-center' },
   { label: '상태', span: 'lg:col-span-1 lg:text-center' },

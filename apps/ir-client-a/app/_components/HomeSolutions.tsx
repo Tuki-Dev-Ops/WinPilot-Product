@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
 import { publicSolutions, type Solution } from '@winpilot/store';
@@ -269,7 +270,13 @@ function ArrowButton({
 function SolutionPhoto({ solution }: { solution: Solution }) {
   return (
     <span className="relative block size-full">
-      <img src={`/solutions/${solution.id}.jpg`} alt="" className="size-full object-cover" />
+      <Image
+        src={`/solutions/${solution.id}.jpg`}
+        alt=""
+        fill
+        sizes="(min-width: 1024px) 40vw, 100vw"
+        className="object-cover"
+      />
       <span
         aria-hidden
         className="absolute inset-0 bg-[linear-gradient(to_top,rgba(5,6,13,0.9)_0%,rgba(5,6,13,0.45)_35%,rgba(5,6,13,0.1)_70%,transparent_100%)]"

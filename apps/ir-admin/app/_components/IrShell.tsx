@@ -55,7 +55,7 @@ export function IrShell({ sectionId, trail, activeChildId, back, children }: IrS
                 href={linkFor(item)}
                 className={`rounded-r-lg border-l-2 px-3 py-2 text-sm ${
                   item.id === sectionId
-                    ? 'border-brand-500 font-semibold text-brand-700 dark:text-brand-300'
+ ? 'border-brand-500 font-semibold text-brand-700'
                     : 'border-transparent text-ink-muted'
                 }`}
               >
@@ -83,10 +83,18 @@ export function IrShell({ sectionId, trail, activeChildId, back, children }: IrS
             </h1>
             <div className="flex items-center gap-3">
               <span className="hidden text-sm text-ink-muted sm:inline">ir@example.com</span>
-              {/* B2C Admin 과 같은 자리에 둔다 — 로그인 화면은 아직 없어 주소만 맞춰 둔다. */}
-              <a href="/login" className="text-sm text-brand-700 dark:text-brand-300">
+              {/*
+                로그인 화면이 아직 없다. 한때 `B2C Admin 과 같은 자리에 둔다` 며 `/login` 을
+                걸어 두었는데, 그 앱에만 화면이 있고 여기에는 없어서 **누르면 404** 였다.
+
+                저장소가 이미 정한 규칙이 있다(`ir-client-a/lib/navigation.ts`) — 준비 중인
+                자리를 눌러 404 로 보내면, 그 뒤로는 다른 메뉴도 눌러 보지 않는다. 그래서
+                링크를 걸지 않고 글자로만 둔다. 화면이 생기는 날 `<a href="/login">` 으로
+                되돌리면 된다.
+              */}
+              <span className="text-sm text-ink-faint" title="로그인 화면은 아직 없습니다">
                 로그아웃
-              </a>
+              </span>
             </div>
           </div>
 
@@ -117,7 +125,7 @@ export function IrShell({ sectionId, trail, activeChildId, back, children }: IrS
                     href={linkFor(child)}
                     className={`rounded-r-lg border-l-2 px-3 py-2 text-sm ${
                       child.id === activeChildId
-                        ? 'border-brand-500 font-semibold text-brand-700 dark:text-brand-300'
+ ? 'border-brand-500 font-semibold text-brand-700'
                         : 'border-transparent text-ink-muted'
                     }`}
                   >

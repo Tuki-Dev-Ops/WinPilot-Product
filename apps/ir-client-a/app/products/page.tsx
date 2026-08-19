@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import type { Metadata } from 'next';
 import { ArrowUpRight } from 'lucide-react';
 import {
@@ -63,7 +64,7 @@ const SERVICE_CARDS = SITE_SERVICES.filter((card) =>
 
 export default function ProductListPage() {
   return (
-    <IrSiteShell hero={<PageHero title="제품 · 서비스" image="/solutions/crm.jpg" />}>
+    <IrSiteShell hero={<PageHero title="제품 · 서비스" image="/hero/products.jpg" />}>
 
       <section className="flex flex-col gap-8">
         <SectionHead
@@ -84,7 +85,13 @@ export default function ProductListPage() {
                   여기서는 넷이 나란히 서므로, 세로로 두면 목록이 화면 두 배로 길어진다.
                 */}
                 <span className="relative block aspect-[16/7] w-full overflow-hidden bg-night">
-                  <img src={`/solutions/${one.id}.jpg`} alt="" className="size-full object-cover" />
+                  <Image
+                    src={`/solutions/${one.id}.jpg`}
+                    alt=""
+                    fill
+                    sizes="(min-width: 640px) 50vw, 100vw"
+                    className="object-cover"
+                  />
                   <span
                     aria-hidden
                     className="absolute inset-0 bg-[linear-gradient(to_top,rgba(5,6,13,0.85)_0%,rgba(5,6,13,0.2)_60%,transparent_100%)]"

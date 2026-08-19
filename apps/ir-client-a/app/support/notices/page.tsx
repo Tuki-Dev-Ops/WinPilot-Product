@@ -27,7 +27,7 @@ export default function NoticeListPage() {
   const notices = publicSiteNotices();
 
   return (
-    <IrSiteShell hero={<PageHero title="공지사항" />}>
+    <IrSiteShell hero={<PageHero title="공지사항" image="/hero/notices.jpg" />}>
 
       <NoticeListView notices={notices} />
     </IrSiteShell>

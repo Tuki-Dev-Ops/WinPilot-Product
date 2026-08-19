@@ -96,12 +96,20 @@ export function CredentialListView() {
               머리 줄은 넓은 화면에서만 보인다. 좁은 화면에서는 한 줄이 카드처럼 접히는데, 그때
               머리 줄만 남으면 **어느 값이 어느 칸인지가 오히려 어긋난다.**
             */}
-            <div className="hidden bg-surface px-5 py-3 text-xs font-medium text-ink-muted lg:grid lg:grid-cols-12 lg:gap-4">
+            {/*
+              머리줄과 값 줄이 **같은 칸 너비**를 써야 한다. 여기만 고치고 아래를 두면 두
+              줄이 어긋나는데, 그 어긋남은 값이 길어지는 날에만 보인다.
+
+              취득일 칸을 하나에서 둘로 넓혔다. `2024-08-21` 은 열두 칸 중 하나(=화면의 12분의
+              1)에 들어가지 않아 **`2024-08-` / `21` 두 줄로 접혔다.** 날짜가 두 줄로 접히면
+              줄 높이가 그 줄만 커져 표가 들쭉날쭉해진다. 이름 칸에서 하나를 덜어 준다.
+            */}
+            <div className="hidden bg-surface px-5 py-3 text-xs font-medium text-ink-muted lg:grid lg:grid-cols-12 lg:items-center lg:gap-4">
               <span className="lg:col-span-1">구분</span>
-              <span className="lg:col-span-5">이름</span>
+              <span className="lg:col-span-4">이름</span>
               <span className="lg:col-span-3">번호</span>
               <span className="lg:col-span-2">발급</span>
-              <span className="lg:col-span-1 lg:text-right">취득일</span>
+              <span className="lg:col-span-2 lg:text-right">취득일</span>
             </div>
 
             <ul>
@@ -116,11 +124,11 @@ export function CredentialListView() {
                     className="flex flex-col gap-1 px-5 py-4 transition-colors duration-150 hover:bg-surface lg:grid lg:grid-cols-12 lg:items-center lg:gap-4"
                   >
                     <span className="text-xs text-ink-muted lg:col-span-1">{one.kind}</span>
-                    <span className="text-sm font-medium lg:col-span-5">{one.title}</span>
+                    <span className="text-sm font-medium lg:col-span-4">{one.title}</span>
                     {/* 번호는 고정폭으로 — 자릿수가 눈으로 맞아야 다른 번호와 견줄 수 있다. */}
                     <span className="font-mono text-xs tabular-nums text-ink-muted lg:col-span-3">{one.number}</span>
                     <span className="text-xs text-ink-muted lg:col-span-2">{one.issuer}</span>
-                    <span className="font-mono text-xs tabular-nums text-ink-muted lg:col-span-1 lg:text-right">
+                    <span className="whitespace-nowrap font-mono text-xs tabular-nums text-ink-muted lg:col-span-2 lg:text-right">
                       {one.acquiredAt}
                     </span>
                   </a>

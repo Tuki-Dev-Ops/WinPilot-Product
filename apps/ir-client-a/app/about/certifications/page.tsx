@@ -17,7 +17,7 @@ export const metadata: Metadata = { title: `특허 및 인증 — ${IR_COMPANY.n
 
 export default function CredentialListPage() {
   return (
-    <IrSiteShell hero={<PageHero title="특허 및 인증" />}>
+    <IrSiteShell hero={<PageHero title="특허 및 인증" image="/hero/certifications.jpg" />}>
 
       <CredentialListView />
     </IrSiteShell>

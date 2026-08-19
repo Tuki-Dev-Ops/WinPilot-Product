@@ -93,7 +93,7 @@ export function CredentialListView() {
           <span key="at" className="min-w-0 truncate font-mono text-xs tabular-nums text-ink-muted">
             {one.acquiredAt}
           </span>,
-          <span key="state" className="flex min-w-0 justify-end">
+          <span key="state" className="flex min-w-0 justify-center">
             <Badge tone={one.visible ? 'ok' : 'wait'}>{one.visible ? '노출' : '숨김'}</Badge>
           </span>,
         ]}

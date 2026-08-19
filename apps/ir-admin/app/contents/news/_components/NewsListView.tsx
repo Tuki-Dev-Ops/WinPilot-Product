@@ -12,7 +12,7 @@ const FILTERS: ListFilterField[] = [
 
 const COLUMNS = [
   { label: '제목', span: 'lg:col-span-4' },
-  { label: '갈래', span: 'lg:col-span-3' },
+  { label: '분류', span: 'lg:col-span-3' },
   { label: '무늬', span: 'lg:col-span-1' },
   { label: '상태', span: 'lg:col-span-1 lg:text-center' },
 ];
@@ -47,7 +47,7 @@ export function NewsListView() {
       <ListToolbar
         searchId="news-search"
         searchLabel="제목 검색"
-        searchHint="제목 · 갈래"
+        searchHint="제목 · 분류"
         searchValue={keyword}
         onSearchChange={setKeyword}
         filters={FILTERS}
@@ -83,7 +83,7 @@ export function NewsListView() {
           <span key="seed" className="min-w-0 truncate font-mono text-xs tabular-nums text-ink-muted">
             {one.seed}
           </span>,
-          <span key="state" className="flex min-w-0 justify-end">
+          <span key="state" className="flex min-w-0 justify-center">
             <Badge tone={one.visible ? 'ok' : 'wait'}>{one.visible ? '노출' : '숨김'}</Badge>
           </span>,
         ]}

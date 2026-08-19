@@ -47,7 +47,7 @@ export function NewsForm({
   const [visible, setVisible] = useState(initial?.visible ?? true);
   const [tried, setTried] = useState(false);
 
-  const broken = [...(channel.trim() ? [] : ['갈래']), ...(title.trim() ? [] : ['제목'])];
+  const broken = [...(channel.trim() ? [] : ['분류']), ...(title.trim() ? [] : ['제목'])];
 
   return (
     <IrRecordForm
@@ -71,11 +71,11 @@ export function NewsForm({
           <IrReadonly label="뉴스 코드" value={code} note={mode === 'create' ? '자동 생성' : '수정 불가'} />
 
           <IrField
-            label="갈래"
+            label="분류"
             htmlFor="news-channel"
             required
             {...(tried && !channel.trim()
-              ? { error: '갈래를 입력해 주세요.' }
+              ? { error: '분류를 입력해 주세요.' }
               : { hint: '어디에 실렸는지 — 방송사 · 행사 이름입니다.' })}
           >
             <IrTextInput
