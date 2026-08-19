@@ -185,7 +185,7 @@ export function ListToolbar({
             onClick={() => setOpen((previous) => !previous)}
             className={`flex h-9 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border px-4 text-sm transition-colors duration-150 ${
               activeCount > 0
-                ? 'border-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200'
+ ? 'border-brand-500 bg-brand-50 text-brand-700'
                 : 'border-border-strong bg-canvas text-ink-muted hover:border-ink-faint'
             }`}
           >

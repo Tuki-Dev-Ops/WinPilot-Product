@@ -11,16 +11,30 @@ import { DocHeader } from '@winpilot/docs/ui';
  * 남는 한 마디만 여기로 온다. 등록되지 않은 이름이면 404 다 — 저장소의 아무 파일이나
  * 주소로 열리게 두지 않는다.
  */
-const SINGLE: Record<string, { title: string; description: string }> = {
+/*
+  `group` 은 사이드바에서 그 문서가 어느 묶음에 서는지다. 빵부스러기가 `문서 · 시스템` 로
+  못 박혀 있었는데, 나중에 들어온 `전체 범위` 는 **개요** 묶음이라 사이드바와 빵부스러기가
+  서로 다른 자리를 가리켰다. 한 곳에서 함께 정한다.
+*/
+const SINGLE: Record<string, { title: string; description: string; group: string }> = {
+  scope: {
+    group: '개요',
+    title: '전체 범위',
+    description:
+      '앱 일곱 벌과 화면 · 기능이 몇인지, 무엇을 만들지 않는지, 어긋남을 무엇으로 막는지. `pnpm docs:build` 가 매니페스트와 기능 레지스트리에서 세어 만든다.',
+  },
   path: {
+    group: '시스템',
     title: 'Path',
     description: '주소를 어떻게 짓는지. 목록의 상태를 전부 주소에 두는 이유는 새로고침·공유·뒤로가기에서 살아남아야 하기 때문이다.',
   },
   'coding-conventions': {
+    group: '시스템',
     title: 'Coding Conventions',
     description: '한 자원에 이름은 하나다. 같은 것을 두 이름으로 부르면 그때부터 두 구현이 생긴다.',
   },
   'deployment-mapping': {
+    group: '시스템',
     title: 'Deployment Mapping',
     description: '이 콘솔이 정하는 값이 고객사의 배포 어느 자리에 반영되는지. 키 하나가 틀리면 로그인·결제·사이트가 통째로 멈춘다.',
   },
@@ -45,7 +59,7 @@ export default async function SingleDocPage({ params }: { params: Promise<{ page
 
   return (
     <>
-      <DocHeader trail={['문서', '시스템']} title={meta.title} description={meta.description} />
+      <DocHeader trail={['문서', meta.group]} title={meta.title} description={meta.description} />
       <article className="min-w-0">
         <Markdown source={source} />
       </article>

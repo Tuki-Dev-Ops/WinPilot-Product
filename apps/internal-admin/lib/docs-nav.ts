@@ -26,12 +26,14 @@ export type { NavGroup, NavLink } from '@winpilot/docs/ui';
 
 export const DOCS_ROOT = '/docs';
 
-export function docsNav(counts: { fsd: number; nfs: number; pageView: number }): NavGroup[] {
+export function docsNav(counts: { fsd: number; nfs: number; pageView: number; screens: number }): NavGroup[] {
   return [
     {
       title: '개요',
       items: [
         { href: '/docs', label: 'Overview' },
+        { href: '/docs/purpose', label: '목적과 배경' },
+        { href: '/docs/scope', label: '전체 범위' },
         { href: '/docs/ia', label: 'IA' },
         { href: '/docs/flow-chart', label: 'Flow Chart' },
       ],
@@ -42,6 +44,7 @@ export function docsNav(counts: { fsd: number; nfs: number; pageView: number }):
         { href: '/docs/fsd', label: '기능 명세서 (FSD)', hint: `${counts.fsd}장` },
         { href: '/docs/nfs', label: '비기능 명세서 (NFS)', hint: `${counts.nfs}장` },
         { href: '/docs/page-view', label: 'Page View', hint: `${counts.pageView}개` },
+        { href: '/docs/pages', label: 'Screens', hint: `${counts.screens}개` },
       ],
     },
     {

@@ -32,7 +32,7 @@ export default function DocsIaPage() {
         <DocHeader
           trail={['문서', '개요', '전체']}
           title="IA — 정보 구조"
-          description="지금 이 템플릿에 실제로 있는 화면의 구조다. 계획이 아니라 현황이며, 화면을 늘리면 도면이 함께 자란다. 화면 하나의 IA 는 왼쪽 목록에서 고른다."
+          description="지금 이 템플릿에 실제로 있는 화면의 구조입니다. 계획이 아니라 현황이며, 화면이 늘면 도면도 함께 자랍니다. 화면 하나의 IA 는 왼쪽 목록에서 고르실 수 있습니다."
         />
 
         <section className="flex min-w-0 flex-col gap-3">
@@ -90,7 +90,7 @@ export default function DocsIaPage() {
                     <tr key={screen.screen} className="border-b border-border last:border-b-0">
                       <td className="px-5 py-3 align-top">
                         <a
-                          className="text-brand-700 underline underline-offset-2 dark:text-brand-300"
+ className="text-brand-700 underline underline-offset-2"
                           href={`/docs/ia/${screen.screen}`}
                         >
                           {screen.ko}
@@ -101,19 +101,19 @@ export default function DocsIaPage() {
                       </td>
                       <td className="flex flex-wrap gap-x-2 px-3 py-3 align-top text-xs">
                         <a
-                          className="text-brand-700 underline underline-offset-2 dark:text-brand-300"
+ className="text-brand-700 underline underline-offset-2"
                           href={`/docs/flow-chart/${screen.screen}`}
                         >
                           흐름
                         </a>
                         <a
-                          className="text-brand-700 underline underline-offset-2 dark:text-brand-300"
+ className="text-brand-700 underline underline-offset-2"
                           href={`/docs/fsd/${screen.screen}`}
                         >
                           기능
                         </a>
                         <a
-                          className="text-brand-700 underline underline-offset-2 dark:text-brand-300"
+ className="text-brand-700 underline underline-offset-2"
                           href={`/docs/page-view/${screen.screen}`}
                         >
                           캡처

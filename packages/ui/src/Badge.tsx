@@ -10,7 +10,7 @@ import type { ReactNode } from 'react';
  *
  * 그렇게 두면 셋이 어긋난다.
  *
- * 1. **어긋나도 아무도 모른다.** `dark:bg-brand-900` 을 빠뜨린 표가 하나 있어도 그 화면을
+ * 1. **어긋나도 아무도 모른다.** `` 을 빠뜨린 표가 하나 있어도 그 화면을
  *    다크 모드로 열어 보기 전에는 드러나지 않는다. 타입은 `string` 이라 통과한다.
  * 2. **색을 바꾸려면 스물한 곳을 고쳐야 한다.** 한 곳이라도 놓치면 그 화면만 옛 색으로 남는다.
  * 3. **시드가 화면을 안다.** `lib/data/tenants.ts` 는 값이 있는 곳인데 Tailwind 클래스를
@@ -32,7 +32,7 @@ export type BadgeTone = 'neutral' | 'brand' | 'ok' | 'wait' | 'danger';
  */
 const TONE_CLASS: Record<BadgeTone, string> = {
   neutral: 'bg-surface text-ink-muted',
-  brand: 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200',
+ brand: 'bg-brand-50 text-brand-700',
   ok: 'bg-signal-ok/12 text-signal-ok',
   wait: 'bg-signal-wait/12 text-signal-wait',
   danger: 'bg-signal-danger/12 text-signal-danger',

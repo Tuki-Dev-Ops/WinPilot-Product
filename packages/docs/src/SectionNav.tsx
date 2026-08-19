@@ -31,7 +31,7 @@ export function SectionNav({
       aria-current={on ? 'page' : undefined}
       className={`shrink-0 truncate whitespace-nowrap rounded-lg px-3 py-2 text-sm transition-colors duration-150 ${
         on
-          ? 'bg-brand-50 font-medium text-brand-700 dark:bg-brand-900 dark:text-brand-200'
+ ? 'bg-brand-50 font-medium text-brand-700'
           : 'text-ink-muted hover:bg-surface hover:text-ink'
       }`}
     >

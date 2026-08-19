@@ -27,7 +27,16 @@ import type { ReactNode } from 'react';
  *
  * 파일을 두 벌 두지 않는 이유는 늘 같다 — 로고를 바꾸는 날 한쪽만 바꾸게 된다.
  *
- * 다크 모드도 같은 문제라 `dark:` 로 함께 처리한다. 밝은 바탕에서는 받은 색 그대로다.
+ * ## 다크 모드에는 손대지 않는다
+ * 한동안 `dark:brightness-0 dark:invert` 를 함께 걸어 두었다. 어두운 바탕에서 안 보이는
+ * 문제는 검은 헤더나 다크 모드나 같다고 본 것이다.
+ *
+ * 그런데 일곱 앱이 뿌리에서 밝게 못 박히면서(`.daylight`) **바탕은 다크 모드에서도 흰색**이
+ * 되었다. `dark:` 는 그 사실과 무관하게 운영체제 설정만 보고 켜지므로, 다크 모드로 쓰는
+ * 사람에게는 **흰 바탕에 흰 로고**가 떴다 — 로고가 사라진 것이다.
+ *
+ * 그래서 뺐다. 어두운 자리인지 아닌지는 `tone` 이 정한다 — 그 값은 **쓰는 쪽이 자기 바탕을
+ * 보고 넘기는 것**이라, 바탕이 실제로 어두울 때만 켜진다.
  *
  * ## 받은 파일이 없는 브랜드는 `mark` 로 자기 그림을 넘긴다
  * 위의 판단은 **로고 파일을 받았을 때** 이야기다. 아직 파일이 없는 브랜드는 이 자리에 남의
@@ -84,7 +93,7 @@ export function BrandMark({
           alt=""
           aria-hidden
           style={{ height: size }}
-          className={`w-auto shrink-0 ${tone === 'light' ? 'brightness-0 invert' : 'dark:brightness-0 dark:invert'}`}
+          className={`w-auto shrink-0 ${tone === 'light' ? 'brightness-0 invert' : ''}`}
         />
       )}
 

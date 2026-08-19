@@ -40,7 +40,7 @@ export function DocsSidebarView({ groups, pathname }: { groups: NavGroup[]; path
                   aria-current={on ? 'page' : undefined}
                   className={`flex shrink-0 items-center justify-between gap-2 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-sm transition-colors duration-150 ${
                     on
-                      ? 'bg-brand-50 font-medium text-brand-700 dark:bg-brand-900 dark:text-brand-200'
+ ? 'bg-brand-50 font-medium text-brand-700'
                       : 'text-ink-muted hover:bg-surface hover:text-ink'
                   }`}
                 >

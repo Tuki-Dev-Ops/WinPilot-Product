@@ -198,6 +198,8 @@ export const DOCS_GENERATION_PROMPT = `# 역할
   받은 값만 그리는 `DocHeader` 셋과 진입점을 갈라 두어야, 브라우저로 가는 번들에 파일 읽기가
   섞이지 않는다.
 */
+export { PROJECT_PURPOSE } from './purpose';
 export { SectionList } from './SectionList';
+export { ScreenShots, ScreenShotView, type ScreenShot } from './ScreenShots';
 export { SectionNav } from './SectionNav';
 export type { NavGroup, NavLink } from './nav';

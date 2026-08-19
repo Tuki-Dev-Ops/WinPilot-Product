@@ -38,7 +38,7 @@ export default function InternalDocsFlowChartPage() {
         <DocHeader
           trail={['문서', '개요', '전체']}
           title="Flow Chart — 흐름"
-          description="실선은 정상, 점선은 예외, 마름모는 갈림길, 원통은 값이 오는 곳이다. 화면 하나의 흐름은 왼쪽 목록에서 고른다."
+          description="실선은 정상, 점선은 예외, 마름모는 갈림길, 원통은 값이 오는 곳을 뜻합니다. 화면 하나의 흐름은 왼쪽 목록에서 고르실 수 있습니다."
         />
 
         <section className="flex min-w-0 flex-col gap-3">

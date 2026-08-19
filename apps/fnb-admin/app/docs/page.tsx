@@ -16,6 +16,16 @@ import { pages } from '@/pages.manifest';
 export const metadata: Metadata = { title: 'Overview' };
 
 const CARDS = [
+  {
+    href: '/docs/purpose',
+    label: '목적과 배경',
+    text: '이 저장소가 무엇을 만들고 있고 왜 이렇게 만들고 있는지 정리했습니다. 일곱 앱이 같은 글을 봅니다.',
+  },
+  {
+    href: '/docs/scope',
+    label: '전체 범위',
+    text: '앱과 화면, 기능이 몇인지와 무엇을 만들지 않는지를 담았습니다. 매니페스트에서 세어 만듭니다.',
+  },
   { href: '/docs/ia', label: 'IA', text: '사이드바가 곧 구조다. 전체 도면과 화면별로 드나드는 길.' },
   {
     href: '/docs/flow-chart',
@@ -25,12 +35,12 @@ const CARDS = [
   {
     href: '/docs/fsd',
     label: '기능 명세서 (FSD)',
-    text: '화면 하나가 문서 하나. 목적·구성·데이터 항목·기능·버튼·시나리오·예외·검증·상태·정책·인수 조건.',
+    text: '화면 하나가 문서 한 장입니다. 목적과 구성, 데이터 항목, 기능, 버튼, 시나리오, 예외, 검증, 상태, 정책, 인수 조건까지 담았습니다.',
   },
   {
     href: '/docs/nfs',
     label: '비기능 명세서 (NFS)',
-    text: '화면을 가리지 않고 걸리는 정책. 접근성·반응형·검증·오류 문구·정렬·페이징 등.',
+    text: '특정 화면에 매이지 않고 전체에 걸리는 정책입니다. 접근성과 반응형, 검증, 오류 문구, 정렬, 페이징 등을 다룹니다.',
   },
   { href: '/docs/page-view', label: 'Page View', text: '화면마다 세 너비의 캡처.' },
   {
@@ -120,7 +130,7 @@ export default function AdminDocsOverviewPage() {
                 {page.sampleUrl ?? page.route}
               </a>
               <a
-                className="col-span-2 text-xs text-brand-700 underline underline-offset-2 dark:text-brand-300"
+ className="col-span-2 text-xs text-brand-700 underline underline-offset-2"
                 href={`/docs/fsd/${page.id}`}
               >
                 기능 명세

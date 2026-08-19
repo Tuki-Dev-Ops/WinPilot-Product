@@ -13,7 +13,7 @@ export default function DocPage() {
 
   return (
     <>
-      <DocHeader trail={['문서']} title="Components" description="다시 쓰는 컴포넌트 — 이름과 층, 어느 화면에 쓰이는지." />
+      <DocHeader trail={['문서']} title="Components" description="다시 쓰는 컴포넌트를 이름과 층, 쓰이는 화면과 함께 정리했습니다." />
       <article className="min-w-0">
         <Markdown source={source} />
       </article>

@@ -22,7 +22,7 @@ export default function FsdIndexPage() {
       <DocHeader
         trail={['문서', '명세']}
         title="기능 명세서 (FSD)"
-        description="화면 하나가 문서 하나다. 목적·구성·데이터 항목·기능·버튼·시나리오·예외·검증·상태·정책·인수 조건까지 14절로 적는다."
+        description="화면 하나가 문서 한 장입니다. 목적과 구성, 데이터 항목, 기능, 버튼, 시나리오, 예외, 검증, 상태, 정책, 인수 조건까지 열네 절로 적었습니다."
       />
       <SectionList section="fsd" base="/docs/fsd" hide={['00-overview']} />
       <article className="min-w-0 border-t border-border pt-6">

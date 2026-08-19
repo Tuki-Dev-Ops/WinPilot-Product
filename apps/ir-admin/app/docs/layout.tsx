@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { listSection } from '@winpilot/docs';
+import { pages } from '@/pages.manifest';
 import { docsNav } from '@/lib/docs-nav';
 import { DocsSidebar } from './_components/DocsSidebar';
 
@@ -24,6 +25,8 @@ export default function DocsLayout({ children }: { children: ReactNode }) {
     fsd: listSection('fsd').length,
     nfs: listSection('nfs').length,
     pageView: listSection('page-view').length,
+    /* 사진이 아니라 **화면 수**를 센다 — 아직 안 찍었어도 목록에는 그만큼 서기 때문이다. */
+    screens: pages.length,
   };
 
   return (

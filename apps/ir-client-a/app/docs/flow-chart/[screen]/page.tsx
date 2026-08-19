@@ -66,7 +66,7 @@ export default async function FlowChartScreenPage({ params }: { params: Promise<
         <DocHeader
           trail={['문서', '개요', 'Flow Chart']}
           title={`흐름 — ${label}`}
-          description="실선은 정상, 점선은 예외, 마름모는 갈림길, 원통은 값이 오는 곳이다."
+          description="실선은 정상, 점선은 예외, 마름모는 갈림길, 원통은 값이 오는 곳을 뜻합니다."
           aside={<span className="font-mono text-xs text-ink-muted">{page.route}</span>}
         />
 
@@ -98,13 +98,13 @@ export default async function FlowChartScreenPage({ params }: { params: Promise<
         </section>
 
         <section className="flex flex-wrap gap-x-4 gap-y-2 border-t border-border pt-5 text-sm">
-          <a className="text-brand-700 underline underline-offset-2 dark:text-brand-300" href={`/docs/ia/${screen}`}>
+ <a className="text-brand-700 underline underline-offset-2" href={`/docs/ia/${screen}`}>
             이 화면의 IA
           </a>
-          <a className="text-brand-700 underline underline-offset-2 dark:text-brand-300" href={`/docs/fsd/${screen}`}>
+ <a className="text-brand-700 underline underline-offset-2" href={`/docs/fsd/${screen}`}>
             기능 명세
           </a>
-          <a className="text-brand-700 underline underline-offset-2 dark:text-brand-300" href={`/docs/page-view/${screen}`}>
+ <a className="text-brand-700 underline underline-offset-2" href={`/docs/page-view/${screen}`}>
             화면 캡처
           </a>
         </section>

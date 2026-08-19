@@ -207,7 +207,7 @@ export function ImageUploader({ images, onChange, rules }: ImageUploaderProps) {
               full
                 ? 'border-border cursor-not-allowed bg-surface opacity-60'
                 : dragging
-                  ? 'border-brand-500 bg-brand-50 dark:bg-brand-900'
+ ? 'border-brand-500 bg-brand-50'
                   : 'border-border-strong bg-surface hover:border-brand-500'
             }`}
           >

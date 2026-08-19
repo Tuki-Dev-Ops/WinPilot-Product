@@ -13,7 +13,7 @@ export function SectionList({
   const entries = listSection(section).filter((entry) => !hide.includes(entry.slug));
 
   if (entries.length === 0) {
-    return <p className="text-sm text-ink-muted">아직 만들어진 문서가 없습니다 — `pnpm docs:build` 를 돌립니다.</p>;
+    return <p className="text-sm text-ink-muted">아직 만들어진 문서가 없습니다. `pnpm docs:build` 를 실행해 주세요.</p>;
   }
 
   return (

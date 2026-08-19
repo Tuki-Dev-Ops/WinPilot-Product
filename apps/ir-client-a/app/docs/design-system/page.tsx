@@ -13,7 +13,7 @@ export default function DocPage() {
 
   return (
     <>
-      <DocHeader trail={['문서']} title="Design System" description="색·글자 크기·간격·모서리와 기본 요소. 값의 원본은 @winpilot/tokens 한 곳이고, 앱이 색을 직접 선언하면 그 순간 디자인 시스템이 두 벌이 된다." />
+      <DocHeader trail={['문서']} title="Design System" description="색과 글자 크기, 간격, 모서리와 기본 요소입니다. 값의 원본은 @winpilot/tokens 한 곳이며, 앱에서 색을 직접 선언하는 순간 디자인 시스템이 두 벌이 됩니다." />
       <article className="min-w-0">
         <Markdown source={source} />
       </article>

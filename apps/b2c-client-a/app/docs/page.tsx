@@ -17,44 +17,59 @@ export const metadata: Metadata = { title: 'Overview' };
 
 const CARDS = [
   {
+    href: '/docs/purpose',
+    label: '목적과 배경',
+    text: '이 저장소가 무엇을 만들고 있고 왜 이렇게 만들고 있는지 정리했습니다. 일곱 앱이 같은 글을 봅니다.',
+  },
+  {
+    href: '/docs/scope',
+    label: '전체 범위',
+    text: '앱과 화면, 기능이 몇인지와 무엇을 만들지 않는지를 담았습니다. 매니페스트에서 세어 만듭니다.',
+  },
+  {
     href: '/docs/ia',
     label: 'IA',
-    text: '전체 사이트맵 한 장과 갈래별 도면. 화면이 어디에 놓이고 값이 어디서 오는지.',
+    text: '전체 사이트맵 한 장과 영역별 도면입니다. 화면이 어디에 놓이고 값이 어디서 오는지 보실 수 있습니다.',
   },
   {
     href: '/docs/flow-chart',
     label: 'Flow Chart',
-    text: '전체 여정과 화면별 흐름. 실선은 정상, 점선은 예외, 마름모는 갈림길.',
+    text: '전체 여정과 화면마다의 흐름입니다. 실선은 정상, 점선은 예외, 마름모는 갈림길을 뜻합니다.',
   },
   {
     href: '/docs/fsd',
     label: '기능 명세서 (FSD)',
-    text: '화면 하나가 문서 하나. 목적·구성·데이터 항목·기능·버튼·시나리오·예외·검증·상태·정책·인수 조건.',
+    text: '화면 하나가 문서 한 장입니다. 목적과 구성, 데이터 항목, 기능, 버튼, 시나리오, 예외, 검증, 상태, 정책, 인수 조건까지 담았습니다.',
   },
   {
     href: '/docs/nfs',
     label: '비기능 명세서 (NFS)',
-    text: '화면을 가리지 않고 걸리는 정책. 접근성·반응형·검증·오류 문구·정렬·페이징 등.',
+    text: '특정 화면에 매이지 않고 전체에 걸리는 정책입니다. 접근성과 반응형, 검증, 오류 문구, 정렬, 페이징 등을 다룹니다.',
   },
   {
     href: '/docs/page-view',
     label: 'Page View',
-    text: '화면마다 세 너비의 캡처. 정상 화면과 예외 화면을 같은 방식으로 찍는다.',
+    text: '화면마다 세 가지 너비로 찍은 캡처입니다. 정상 화면과 예외 화면을 같은 방식으로 담았습니다.',
   },
   {
     href: '/docs/components',
     label: 'Components',
-    text: '다시 쓰는 컴포넌트를 실제로 그려 본다 — 이름·층·어느 화면에 쓰이는지.',
+    text: '다시 쓰는 컴포넌트를 실제로 그려 보여 드립니다. 이름과 층, 어느 화면에 쓰이는지를 함께 적었습니다.',
   },
   {
     href: '/docs/design-system',
     label: 'Design System',
-    text: '색·글자 크기·간격·모서리와 기본 요소. 값의 원본은 @winpilot/tokens 한 곳이다.',
+    text: '색과 글자 크기, 간격, 모서리와 기본 요소입니다. 값의 원본은 @winpilot/tokens 한 곳입니다.',
+  },
+  {
+    href: '/docs/pages',
+    label: 'Screens',
+    text: '앱의 모든 화면을 한 장씩 모았습니다. 어느 화면이 있는지 한눈에 훑어보실 수 있습니다.',
   },
   {
     href: '/docs/prompt',
     label: '생성 프롬프트',
-    text: '이 문서 묶음을 다시 만들 때 쓰는 프롬프트. 그대로 복사해 간다.',
+    text: '이 문서 묶음을 다시 만들 때 쓰는 프롬프트입니다. 그대로 복사해 가시면 됩니다.',
   },
 ];
 
@@ -69,7 +84,7 @@ export default function DocsOverviewPage() {
     <>
       <DocHeader
         title="WinPilot B2C Client 템플릿 A — 문서"
-        description="이 문서는 앱 안의 진짜 라우트다. 따로 배포하거나 위키에 두지 않는 이유는 화면과 문서가 같은 레포에서 같이 바뀌어야 어긋나지 않기 때문이다. 문서를 고치지 않고 화면만 고치면 주소를 열었을 때 바로 드러난다."
+        description="이 문서는 애플리케이션 안의 실제 주소입니다. 따로 배포하거나 위키에 두지 않는 것은, 화면과 문서가 같은 저장소에서 함께 바뀌어야 서로 어긋나지 않기 때문입니다. 문서를 고치지 않은 채 화면만 손대면 주소를 열어 보는 순간 드러납니다."
       />
 
       <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -128,10 +143,10 @@ export default function DocsOverviewPage() {
                 {page.sampleUrl ?? page.route}
               </a>
               <span className="col-span-3 flex flex-wrap gap-x-2 text-xs">
-                <a className="text-brand-700 underline underline-offset-2 dark:text-brand-300" href={`/docs/fsd/${page.id}`}>
+ <a className="text-brand-700 underline underline-offset-2" href={`/docs/fsd/${page.id}`}>
                   기능
                 </a>
-                <a className="text-brand-700 underline underline-offset-2 dark:text-brand-300" href={`/docs/page-view/${page.id}`}>
+ <a className="text-brand-700 underline underline-offset-2" href={`/docs/page-view/${page.id}`}>
                   캡처
                 </a>
               </span>

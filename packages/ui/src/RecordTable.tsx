@@ -158,7 +158,20 @@ export function RecordTable<T extends { id: string }>({
                 {cells.map((cell, cellIndex) => (
                   <div
                     key={columns[cellIndex]?.label ?? cellIndex}
-                    className={`flex min-w-0 items-center gap-2 ${columns[cellIndex]?.span ?? ''}`}
+                    /*
+                      칸 안이 `flex` 라 **`text-center` 가 듣지 않는다** — 글의 정렬이 아니라
+                      상자의 배치가 자리를 정하기 때문이다. 열 정의에 `lg:text-center` 를
+                      적어 두면 머리줄만 가운데로 가고 값은 왼쪽에 남아, 둘이 어긋나 보였다.
+
+                      그래서 여기서 `justify-center` 를 함께 건다. 열 정의를 고치는 쪽은
+                      `lg:text-center` 하나만 적으면 되고, 그 뜻이 무엇인지도 그 낱말 그대로다.
+
+                      좁은 화면에서는 이름표(`분류` 같은 것)가 왼쪽에 함께 서므로 가운데로
+                      모으지 않는다 — `lg:` 를 붙이는 이유다.
+                    */
+                    className={`flex min-w-0 items-center gap-2 ${columns[cellIndex]?.span ?? ''} ${
+                      columns[cellIndex]?.span?.includes('text-center') ? 'lg:justify-center' : ''
+                    }`}
                   >
                     {/* 좁은 화면에는 열 머리가 없으므로 이름을 함께 적는다. */}
                     <span className="w-16 shrink-0 text-xs text-ink-faint lg:hidden">

@@ -77,7 +77,7 @@ function inline(text: string, keyPrefix: string): ReactNode[] {
       const label = token.slice(1, token.indexOf(']'));
       const href = token.slice(token.indexOf('(') + 1, -1);
       nodes.push(
-        <a key={key} href={href} className="text-brand-700 underline underline-offset-2 dark:text-brand-300">
+ <a key={key} href={href} className="text-brand-700 underline underline-offset-2">
           {label}
         </a>,
       );

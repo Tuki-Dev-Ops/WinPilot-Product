@@ -46,7 +46,7 @@ function PathTable({ title, paths, empty }: { title: string; paths: CrossLike[];
                 <tr key={`${path.screen}-${path.how}`} className="border-b border-border last:border-b-0">
                   <td className="w-40 px-5 py-3 align-top">
                     <a
-                      className="text-brand-700 underline underline-offset-2 dark:text-brand-300"
+ className="text-brand-700 underline underline-offset-2"
                       href={`/docs/ia/${path.screen}`}
                     >
                       {koOf(path.screen)}
@@ -143,13 +143,13 @@ export default async function IaScreenPage({ params }: { params: Promise<{ scree
         )}
 
         <section className="flex flex-wrap gap-x-4 gap-y-2 border-t border-border pt-5 text-sm">
-          <a className="text-brand-700 underline underline-offset-2 dark:text-brand-300" href={`/docs/flow-chart/${screen}`}>
+ <a className="text-brand-700 underline underline-offset-2" href={`/docs/flow-chart/${screen}`}>
             이 화면의 흐름
           </a>
-          <a className="text-brand-700 underline underline-offset-2 dark:text-brand-300" href={`/docs/fsd/${screen}`}>
+ <a className="text-brand-700 underline underline-offset-2" href={`/docs/fsd/${screen}`}>
             기능 명세
           </a>
-          <a className="text-brand-700 underline underline-offset-2 dark:text-brand-300" href={`/docs/page-view/${screen}`}>
+ <a className="text-brand-700 underline underline-offset-2" href={`/docs/page-view/${screen}`}>
             화면 캡처
           </a>
         </section>

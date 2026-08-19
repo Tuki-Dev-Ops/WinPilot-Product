@@ -63,7 +63,7 @@ export default function InternalDocsIaPage() {
                     <tr key={screen.screen} className="border-b border-border last:border-b-0">
                       <td className="px-5 py-3 align-top">
                         <a
-                          className="text-brand-700 underline underline-offset-2 dark:text-brand-300"
+ className="text-brand-700 underline underline-offset-2"
                           href={`/docs/ia/${screen.screen}`}
                         >
                           {screen.ko}
@@ -74,19 +74,19 @@ export default function InternalDocsIaPage() {
                       </td>
                       <td className="flex flex-wrap gap-x-2 px-3 py-3 align-top text-xs">
                         <a
-                          className="text-brand-700 underline underline-offset-2 dark:text-brand-300"
+ className="text-brand-700 underline underline-offset-2"
                           href={`/docs/flow-chart/${screen.screen}`}
                         >
                           흐름
                         </a>
                         <a
-                          className="text-brand-700 underline underline-offset-2 dark:text-brand-300"
+ className="text-brand-700 underline underline-offset-2"
                           href={`/docs/fsd/${screen.screen}`}
                         >
                           기능
                         </a>
                         <a
-                          className="text-brand-700 underline underline-offset-2 dark:text-brand-300"
+ className="text-brand-700 underline underline-offset-2"
                           href={`/docs/page-view/${screen.screen}`}
                         >
                           캡처

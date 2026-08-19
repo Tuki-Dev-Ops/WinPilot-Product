@@ -141,7 +141,7 @@ export function Dropdown({ id, label, options, value, onChange, invalid = false,
                 triggerRef.current?.focus();
               }}
               className={`flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm transition-colors duration-100 hover:bg-surface ${
-                active ? 'bg-brand-50 font-medium text-brand-700 dark:bg-brand-900 dark:text-brand-200' : 'text-ink'
+ active ? 'bg-brand-50 font-medium text-brand-700' : 'text-ink'
               }`}
             >
               <span className="min-w-0 truncate">{option.label}</span>

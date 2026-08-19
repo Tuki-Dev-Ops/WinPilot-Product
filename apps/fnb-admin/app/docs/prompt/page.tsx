@@ -27,7 +27,7 @@ export default function DocsPromptPage() {
       <DocHeader
         trail={['문서', '시스템']}
         title="생성 프롬프트"
-        description="이 문서 묶음을 다시 만들 때 쓰는 지시문이다. 저장소 밖에 두면 다음 사람이 찾지 못하고 처음부터 다시 적게 되며, 그러면 같은 프로젝트의 문서가 판마다 다른 규칙으로 만들어진다."
+        description="이 문서 묶음을 다시 만들 때 쓰는 지시문입니다. 저장소 밖에 두면 다음 담당자가 찾지 못해 처음부터 다시 적게 되고, 그러면 같은 프로젝트의 문서가 판마다 다른 규칙으로 만들어집니다."
       />
       <CodeBlock code={DOCS_GENERATION_PROMPT} label="docs-generation-prompt.md" />
     </>
