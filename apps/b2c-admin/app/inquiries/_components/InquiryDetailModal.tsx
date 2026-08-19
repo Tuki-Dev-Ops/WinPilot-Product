@@ -125,7 +125,7 @@ export function InquiryDetailModal({ open, inquiry, onClose, onSubmit }: Inquiry
                     onClick={() => update(answer, option)}
                     className={`h-10 shrink-0 whitespace-nowrap rounded-lg border px-3 text-sm transition-colors duration-150 ${
                       active
-                        ? 'border-brand-500 bg-brand-50 font-medium text-brand-700 dark:bg-brand-900 dark:text-brand-200'
+ ? 'border-brand-500 bg-brand-50 font-medium text-brand-700'
                         : 'border-border-strong text-ink-muted hover:border-ink-faint'
                     }`}
                   >

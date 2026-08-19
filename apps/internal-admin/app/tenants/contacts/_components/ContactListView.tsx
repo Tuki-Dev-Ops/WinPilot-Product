@@ -305,7 +305,7 @@ export function ContactListView() {
                   <a
                     href={`/tenants/${contact.tenantId}`}
                     onClick={(event) => event.stopPropagation()}
-                    className="min-w-0 truncate text-sm text-brand-700 underline underline-offset-2 dark:text-brand-300"
+ className="min-w-0 truncate text-sm text-brand-700 underline underline-offset-2"
                   >
                     {findTenant(contact.tenantId)?.name ?? contact.tenantId}
                   </a>

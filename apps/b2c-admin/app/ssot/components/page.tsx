@@ -90,7 +90,7 @@ export default function AdminSiteLibraryPage() {
                 className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-border px-5 py-3 last:border-b-0"
               >
                 <span className="font-mono text-sm font-medium">{property.name}</span>
-                <span className="font-mono text-xs text-brand-700 dark:text-brand-300">{property.type}</span>
+ <span className="font-mono text-xs text-brand-700">{property.type}</span>
                 <span className="min-w-0 flex-1 text-sm text-ink-muted">{property.values}</span>
                 <span className="text-xs text-ink-faint">{property.source}</span>
               </div>

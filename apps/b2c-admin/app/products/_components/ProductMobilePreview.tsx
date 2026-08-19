@@ -105,7 +105,7 @@ export function ProductMobilePreview({ value, imageUrl, tags = [] }: ProductMobi
             <div className="flex flex-col gap-1 border-t border-border pt-3">
               <div className="flex items-center justify-between gap-2">
                 <span className="text-xs text-ink-faint">적립</span>
-                <span className="text-xs tabular-nums text-brand-700 dark:text-brand-300">
+ <span className="text-xs tabular-nums text-brand-700">
                   {formatAmount(reward)}원
                 </span>
               </div>

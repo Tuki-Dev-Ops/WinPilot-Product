@@ -33,6 +33,16 @@ export type SpecButton = { label: string; onClick: string; onSuccess?: string; o
 export type ScreenSpec = {
   screen: string;
   purpose: string;
+  /**
+   * 이 화면이 왜 생겼는가 — **목적보다 앞의 이야기**.
+   *
+   * `purpose` 는 이 화면이 지금 무엇을 하는지를 적고, 여기는 **그 화면이 없던 때 무엇이
+   * 불편했는지**를 적는다. 둘을 한 칸에 쓰면 목적이 길어지면서 "무엇을 하는가" 가 흐려진다.
+   *
+   * 없어도 된다. 배경이 특별할 것 없는 화면(약관 · 개인정보처럼 법이 요구해서 있는 화면)에
+   * 억지로 쓰면 지어낸 이야기가 남는다 — 그럴 바에는 비워 두는 편이 낫다.
+   */
+  background?: string;
   effect?: string;
   actions: string[];
   guards: string[];
@@ -67,7 +77,7 @@ export const COMMON_NON_FUNCTIONAL = [
 export const SCREEN_SPECS: ScreenSpec[] = [
   {
     screen: 'dashboard',
-    purpose: '오늘 손대야 할 것 하나를 먼저 보여 준다.',
+    purpose: '오늘 손대야 할 것 하나를 먼저 보여 줍니다.',
     actions: [
       '요약 카드 여섯으로 오늘 수치를 훑는다',
       '답을 기다리는 창업 문의를 바로 연다',
@@ -100,7 +110,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'menus',
-    purpose: '메뉴판에 서는 것과 값·알레르기를 찾고 살핀다.',
+    purpose: '메뉴판에 서는 것과 값·알레르기를 찾고 살핍니다.',
     actions: [
       '메뉴명·설명으로 검색',
       '묶음·상태로 거르기',
@@ -139,7 +149,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'menus-detail',
-    purpose: '이미 파는 메뉴의 말과 값을 고친다.',
+    purpose: '이미 파는 메뉴의 말과 값을 고칩니다.',
     actions: [
       '메뉴명·묶음·값·열량·설명 고치기',
       '알레르기 고르기',
@@ -199,7 +209,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'menus-new',
-    purpose: '팔기로 한 것을 먼저 적어 둔다.',
+    purpose: '팔기로 한 것을 먼저 적어 둡니다.',
     actions: [
       '메뉴명·묶음·값·열량·설명 넣기',
       '알레르기 고르기',
@@ -254,7 +264,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'menus-categories',
-    purpose: '묶음마다 몇 가지가 서 있는지 본다.',
+    purpose: '묶음마다 몇 가지가 서 있는지 봅니다.',
     actions: [
       '먹는 순서대로 늘어선 묶음을 읽는다',
       '묶음별 판매중·내림 가짓수를 센다',
@@ -283,7 +293,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'marketing',
-    purpose: '창구마다 무엇을 올렸는지 찾고 상태를 본다.',
+    purpose: '창구마다 무엇을 올렸는지 찾고 상태를 봅니다.',
     actions: [
       '제목·설명으로 검색',
       '창구·상태로 거르기',
@@ -318,7 +328,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'marketing-detail',
-    purpose: '이미 올린 글의 창구와 말을 고친다.',
+    purpose: '이미 올린 글의 창구와 말을 고칩니다.',
     actions: [
       '창구 고르기',
       '올린 날 고치기',
@@ -368,7 +378,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'marketing-new',
-    purpose: '창구에 올린 글을 옮겨 적는다.',
+    purpose: '창구에 올린 글을 옮겨 적습니다.',
     actions: [
       '창구 고르기',
       '올린 날 넣기',
@@ -416,7 +426,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'stores',
-    purpose: '사이트 매장 찾기에 서는 것과 영업 정보를 찾고 살핀다.',
+    purpose: '사이트 매장 찾기에 서는 것과 영업 정보를 찾고 살핍니다.',
     actions: [
       '매장명·주소로 검색',
       '지역·상태로 거르기',
@@ -453,7 +463,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'stores-detail',
-    purpose: '문 연 매장의 주소·번호·시간을 고친다.',
+    purpose: '문 연 매장의 주소·번호·시간을 고칩니다.',
     actions: [
       '매장명·지역·주소 고치기',
       '상태 바꾸기',
@@ -507,7 +517,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'stores-new',
-    purpose: '새로 낼 매장을 미리 세워 둔다.',
+    purpose: '새로 낼 매장을 미리 세워 둡니다.',
     actions: [
       '매장명·지역·주소 넣기',
       '개점 연월 넣기',
@@ -558,7 +568,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'inquiries',
-    purpose: '차리려는 사람이 남긴 것을 받아 밀리지 않게 본다.',
+    purpose: '차리려는 사람이 남긴 것을 받아 밀리지 않게 봅니다.',
     actions: [
       '신청자·연락처·내용으로 검색',
       '상태·지역으로 거르기',
@@ -594,7 +604,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'inquiries-detail',
-    purpose: '문의 한 건을 읽고 통화에서 알게 된 것을 쌓는다.',
+    purpose: '문의 한 건을 읽고 통화에서 알게 된 것을 쌓습니다.',
     actions: [
       '신청자가 남긴 것 읽기',
       '상태 바꾸기',
@@ -632,7 +642,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'franchise-faqs',
-    purpose: '차리려는 사람이 묻는 것을 모아 둔다.',
+    purpose: '차리려는 사람이 묻는 것을 모아 둡니다.',
     actions: [
       '질문·답으로 검색',
       '분류·상태로 거르기',
@@ -667,7 +677,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'franchise-faqs-detail',
-    purpose: '창업 물음 하나의 말과 답을 고친다.',
+    purpose: '창업 물음 하나의 말과 답을 고칩니다.',
     actions: [
       '분류 고르기',
       '질문·답 고치기',
@@ -715,7 +725,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'franchise-faqs-new',
-    purpose: '되풀이되는 창업 물음을 새로 적는다.',
+    purpose: '되풀이되는 창업 물음을 새로 적습니다.',
     actions: [
       '분류 고르기',
       '질문·답 넣기',
@@ -762,7 +772,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'franchise-cost',
-    purpose: '사이트 창업 안내에 지금 무엇이 적혀 있는지 한자리에서 본다.',
+    purpose: '사이트 창업 안내에 지금 무엇이 적혀 있는지 한자리에서 봅니다.',
     actions: [
       '비용 항목과 합계 읽기',
       '개점까지의 차례와 기간 읽기',
@@ -794,7 +804,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'support-faqs',
-    purpose: '드시러 오시는 분이 묻는 것을 모아 둔다.',
+    purpose: '드시러 오시는 분이 묻는 것을 모아 둡니다.',
     actions: [
       '질문·답으로 검색',
       '분류·상태로 거르기',
@@ -829,7 +839,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'support-faqs-detail',
-    purpose: '손님 물음 하나의 말과 답을 고친다.',
+    purpose: '손님 물음 하나의 말과 답을 고칩니다.',
     actions: [
       '분류 고르기',
       '질문·답 고치기',
@@ -876,7 +886,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'support-faqs-new',
-    purpose: '되풀이되는 손님 물음을 새로 적는다.',
+    purpose: '되풀이되는 손님 물음을 새로 적습니다.',
     actions: [
       '분류 고르기',
       '질문·답 넣기',
@@ -922,7 +932,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'support-notices',
-    purpose: '손님이 사이트에서 읽는 글을 찾고 상태를 본다.',
+    purpose: '손님이 사이트에서 읽는 글을 찾고 상태를 봅니다.',
     actions: [
       '제목·본문으로 검색',
       '상태로 거르기',
@@ -959,7 +969,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'support-notices-detail',
-    purpose: '이미 걸린 공지의 말과 자리를 고친다.',
+    purpose: '이미 걸린 공지의 말과 자리를 고칩니다.',
     actions: [
       '제목·본문 고치기',
       '올린 날 고치기',
@@ -1010,7 +1020,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'support-notices-new',
-    purpose: '알릴 것을 새로 적는다.',
+    purpose: '알릴 것을 새로 적습니다.',
     actions: [
       '제목·본문 넣기',
       '올린 날 넣기',
@@ -1058,7 +1068,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'banners-main',
-    purpose: '사이트 첫 화면에 걸리는 것을 세우고 내린다.',
+    purpose: '사이트 첫 화면에 걸리는 것을 세우고 내립니다.',
     actions: [
       '제목·한 줄로 검색',
       '상태로 거르기',
@@ -1095,7 +1105,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'banners-main-detail',
-    purpose: '이미 건 배너의 말과 기간을 고친다.',
+    purpose: '이미 건 배너의 말과 기간을 고칩니다.',
     actions: [
       '제목·한 줄 고치기',
       '가는 곳 고치기',
@@ -1147,7 +1157,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'banners-main-new',
-    purpose: '첫 화면에 걸 것을 새로 만든다.',
+    purpose: '첫 화면에 걸 것을 새로 만듭니다.',
     actions: [
       '제목·한 줄 넣기',
       '가는 곳 넣기',
@@ -1196,7 +1206,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'banners-popups',
-    purpose: '화면을 막고 뜨는 것을 세우고 내린다.',
+    purpose: '화면을 막고 뜨는 것을 세우고 내립니다.',
     actions: [
       '제목·내용으로 검색',
       '상태·닫기로 거르기',
@@ -1233,7 +1243,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'banners-popups-detail',
-    purpose: '이미 띄운 팝업의 말과 닫는 방법을 고친다.',
+    purpose: '이미 띄운 팝업의 말과 닫는 방법을 고칩니다.',
     actions: [
       '제목·내용 고치기',
       '기간 고치기',
@@ -1285,7 +1295,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'banners-popups-new',
-    purpose: '꼭 읽혀야 하는 것을 새로 띄운다.',
+    purpose: '꼭 읽혀야 하는 것을 새로 띄웁니다.',
     actions: [
       '제목·내용 넣기',
       '기간 정하기',
@@ -1335,7 +1345,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'settings-brand',
-    purpose: '사이트가 읽는 브랜드 값 한 벌을 고친다.',
+    purpose: '사이트가 읽는 브랜드 값 한 벌을 고칩니다.',
     actions: [
       '한 줄 소개 고치기',
       '손님 문의와 창업 상담 번호 고치기',
@@ -1389,7 +1399,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'settings-admins',
-    purpose: '이 콘솔에 들어오는 사람을 본다.',
+    purpose: '이 콘솔에 들어오는 사람을 봅니다.',
     actions: [
       '이름·이메일로 검색',
       '권한·상태로 거르기',
@@ -1423,7 +1433,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'settings-admins-detail',
-    purpose: '들어오는 사람의 권한과 상태를 고친다.',
+    purpose: '들어오는 사람의 권한과 상태를 고칩니다.',
     actions: [
       '이름·이메일 고치기',
       '권한 바꾸기',
@@ -1473,7 +1483,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'settings-admins-new',
-    purpose: '들어올 사람을 새로 들인다.',
+    purpose: '들어올 사람을 새로 들입니다.',
     actions: [
       '이름·이메일 넣기',
       '권한 고르기',

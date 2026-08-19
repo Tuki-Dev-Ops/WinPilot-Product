@@ -15,7 +15,7 @@ const COLUMNS: Array<ContentColumn<NoticeRecord>> = [
     render: (notice) => (
       <div className="flex min-w-0 items-center gap-2">
         {notice.pinned && (
-          <span className="shrink-0 whitespace-nowrap rounded-full bg-brand-50 px-2 py-0.5 text-xs font-semibold text-brand-700 dark:bg-brand-900 dark:text-brand-200">
+ <span className="shrink-0 whitespace-nowrap rounded-full bg-brand-50 px-2 py-0.5 text-xs font-semibold text-brand-700">
             고정
           </span>
         )}

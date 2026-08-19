@@ -229,7 +229,7 @@ export function PipelineBoardView() {
                               <a
                                 href={`/tenants/${deal.tenantId}`}
                                 onClick={(event) => event.stopPropagation()}
-                                className="min-w-0 truncate text-sm font-medium text-brand-700 underline underline-offset-2 dark:text-brand-300"
+ className="min-w-0 truncate text-sm font-medium text-brand-700 underline underline-offset-2"
                               >
                                 {deal.name}
                               </a>
@@ -266,7 +266,7 @@ export function PipelineBoardView() {
                             type="button"
                             disabled={!nextStage(deal.stage)}
                             onClick={() => move(deal, nextStage(deal.stage))}
-                            className={`${MOVE_BUTTON} border-brand-500 font-medium text-brand-700 hover:bg-brand-50 disabled:opacity-40 dark:text-brand-300`}
+ className={`${MOVE_BUTTON} border-brand-500 font-medium text-brand-700 hover:bg-brand-50 disabled:opacity-40`}
                           >
                             {nextStage(deal.stage) ?? '마지막'} →
                           </button>

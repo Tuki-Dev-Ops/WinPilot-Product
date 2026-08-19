@@ -132,7 +132,7 @@ export function PopupLayer({ popups }: { popups: readonly PopupItem[] }) {
         {shown.linkUrl && (
           <a
             href={shown.linkUrl}
-            className="mx-5 mb-1 w-fit text-sm font-medium text-brand-700 underline underline-offset-2 dark:text-brand-300"
+ className="mx-5 mb-1 w-fit text-sm font-medium text-brand-700 underline underline-offset-2"
           >
             자세히 보기
           </a>

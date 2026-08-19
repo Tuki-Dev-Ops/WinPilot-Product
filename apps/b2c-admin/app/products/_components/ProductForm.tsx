@@ -131,7 +131,7 @@ function ChoiceGroup({
               onClick={() => onChange(option)}
               className={`h-11 flex-1 rounded-lg border px-4 text-sm transition-colors duration-150 ${
                 active
-                  ? 'border-brand-500 bg-brand-50 font-medium text-brand-700 dark:bg-brand-900 dark:text-brand-200'
+ ? 'border-brand-500 bg-brand-50 font-medium text-brand-700'
                   : 'border-border-strong text-ink-muted hover:border-ink-faint'
               }`}
             >
@@ -429,7 +429,7 @@ export function ProductForm({
             <p className="text-xs font-medium uppercase tracking-widest text-ink-faint">적립 예상</p>
             <p className="mt-2 text-sm leading-relaxed text-ink">
               판매가 <span className="font-medium tabular-nums">{formatAmount(parseAmount(value.price))}</span>원 기준{' '}
-              <span className="font-medium tabular-nums text-brand-700 dark:text-brand-300">
+ <span className="font-medium tabular-nums text-brand-700">
                 {formatAmount(reward)}
               </span>
               원이 적립됩니다.

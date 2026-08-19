@@ -51,7 +51,7 @@ export function MyPageShell({ children }: { children: ReactNode }) {
                 aria-current={active ? 'page' : undefined}
                 className={`shrink-0 whitespace-nowrap rounded-lg px-4 py-2.5 text-sm transition-colors duration-150 ${
                   active
-                    ? 'bg-brand-50 font-medium text-brand-700 dark:bg-brand-900 dark:text-brand-200'
+ ? 'bg-brand-50 font-medium text-brand-700'
                     : 'text-ink-muted hover:bg-surface'
                 }`}
               >

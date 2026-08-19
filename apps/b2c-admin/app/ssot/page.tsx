@@ -69,9 +69,9 @@ export default function SsotStatusPage() {
       </section>
 
       {manifestErrors.length > 0 && (
-        <section className="mt-6 rounded-xl border border-red-300 bg-red-50 p-5 dark:border-red-900 dark:bg-red-950/40">
-          <h2 className="text-sm font-semibold text-red-700 dark:text-red-300">매니페스트 오류</h2>
-          <ul className="mt-2 space-y-1 text-[12.5px] text-red-700 dark:text-red-300">
+ <section className="mt-6 rounded-xl border border-red-300 bg-red-50 p-5">
+ <h2 className="text-sm font-semibold text-red-700">매니페스트 오류</h2>
+ <ul className="mt-2 space-y-1 text-[12.5px] text-red-700">
             {manifestErrors.map((error) => (
               <li key={error}>· {error}</li>
             ))}
@@ -209,7 +209,7 @@ function PhaseBadge({ state }: { state: PhaseState }) {
   }
   if (state === 'review') {
     return (
-      <span className="rounded-full bg-brand-500/12 px-2.5 py-1 text-[11.5px] font-medium text-brand-700 dark:text-brand-300">
+ <span className="rounded-full bg-brand-500/12 px-2.5 py-1 text-[11.5px] font-medium text-brand-700">
         Figma 확인 대기
       </span>
     );
@@ -235,7 +235,7 @@ function Criterion({
 }) {
   return (
     <div className="bg-surface-raised px-5 py-5">
-      <div className="text-2xs font-medium uppercase tracking-[0.1em] text-brand-600 dark:text-brand-400">
+ <div className="text-2xs font-medium uppercase tracking-[0.1em] text-brand-600">
         {stage}
       </div>
       <div className="mt-2 text-[15px] font-semibold tracking-tight">{headline}</div>

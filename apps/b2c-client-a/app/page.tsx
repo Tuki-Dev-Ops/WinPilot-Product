@@ -72,7 +72,7 @@ export default function SiteHomePage() {
             <h2 className="text-xl font-bold tracking-tight">{COPY.home.categoryTitle}</h2>
             <p className="text-sm text-ink-muted">{COPY.home.categoryDescription}</p>
           </div>
-          <a href={ROUTES.products} className="shrink-0 whitespace-nowrap text-sm text-brand-700 dark:text-brand-300">
+ <a href={ROUTES.products} className="shrink-0 whitespace-nowrap text-sm text-brand-700">
             {COPY.home.more}
           </a>
         </div>

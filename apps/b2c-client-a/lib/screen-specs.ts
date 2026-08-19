@@ -44,6 +44,16 @@ export type ScreenSpec = {
   screen: string;
   /** 이 화면이 있는 이유 — 한 문장 */
   purpose: string;
+  /**
+   * 이 화면이 왜 생겼는가 — **목적보다 앞의 이야기**.
+   *
+   * `purpose` 는 이 화면이 지금 무엇을 하는지를 적고, 여기는 **그 화면이 없던 때 무엇이
+   * 불편했는지**를 적는다. 둘을 한 칸에 쓰면 목적이 길어지면서 "무엇을 하는가" 가 흐려진다.
+   *
+   * 없어도 된다. 배경이 특별할 것 없는 화면(약관 · 개인정보처럼 법이 요구해서 있는 화면)에
+   * 억지로 쓰면 지어낸 이야기가 남는다 — 그럴 바에는 비워 두는 편이 낫다.
+   */
+  background?: string;
   /** 이 화면을 두어서 얻는 것 — 없으면 목적에서 끌어 쓴다 */
   effect?: string;
   /** 할 수 있는 일 */
@@ -83,7 +93,7 @@ export const COMMON_NON_FUNCTIONAL = [
 export const SCREEN_SPECS: ScreenSpec[] = [
   {
     screen: 'index',
-    purpose: '무엇을 파는 곳인지와 지금 밀고 있는 것을 한 화면에서 보여 준다.',
+    purpose: '무엇을 파는 곳인지와 지금 밀고 있는 것을 한 화면에서 보여 줍니다.',
     actions: ['히어로 배너 넘김(자동·수동)', '바로가기 타일로 분류 이동', '신상품·베스트 줄에서 상품 열기', '카테고리 탐색'],
     guards: ['노출 기간이 끝난 배너는 오지 않는다.', '숨김 상품은 어느 줄에도 나오지 않는다.'],
     admin: ['배너 > 메인 비주얼', '상품 > 상품 목록·카테고리', '설정 > 공급자 정보'],
@@ -111,7 +121,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'products',
-    purpose: '파는 것 전부를 한 자리에서 좁혀 가며 고른다.',
+    purpose: '파는 것 전부를 한 자리에서 좁혀 가며 고릅니다.',
     actions: ['1Depth·2Depth 탭으로 분류', '상품명 검색', '필터 서랍에서 분류·가격 범위 적용', '상품 열기'],
     guards: [
       '2Depth 는 고른 1Depth 안에서만 유효하다 — 짝이 맞지 않으면 없는 것으로 본다.',
@@ -156,7 +166,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'products-detail',
-    purpose: '이 상품을 살지 결정하는 데 필요한 것만 모아 둔다.',
+    purpose: '이 상품을 살지 결정하는 데 필요한 것만 모아 둡니다.',
     actions: ['색상 → 사이즈 순서로 옵션 고르기', '수량 조절', '장바구니 담기', '바로 구매', '설명·리뷰 탭 전환'],
     guards: [
       '옵션이 있는 상품은 고르기 전에 담을 수 없다.',
@@ -196,7 +206,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'cart',
-    purpose: '담아 둔 것을 확인하고 주문으로 넘긴다.',
+    purpose: '담아 둔 것을 확인하고 주문으로 넘깁니다.',
     actions: ['수량 조절', '줄 삭제(확인 창)', '결제 화면으로 이동'],
     guards: ['품절 줄은 합계에서 빠지고 주문에서 제외된다 — 숨기지 않고 표시한다.', '수량은 재고를 넘지 못한다.'],
     admin: ['상품 > 상품 목록(가격·재고)'],
@@ -230,7 +240,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'orders-new',
-    purpose: '무엇을·어디로·얼마에 세 가지를 한 화면에서 확정한다.',
+    purpose: '무엇을·어디로·얼마에 세 가지를 한 화면에서 확정합니다.',
     actions: ['배송지 수정', '배송 요청사항 선택(직접 입력 포함)', '쿠폰 한 장 적용', '적립금 사용', '결제 수단 선택', '결제'],
     guards: [
       '배송지가 비면 결제할 수 없다.',
@@ -238,7 +248,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
       '직접 입력을 골라 놓고 비워 두면 막는다.',
       '주문 내용 확인 동의 없이는 결제할 수 없다.',
     ],
-    admin: ['상품 > 상품 목록', '사용자 > 사용자 목록(배송지)', '사내 어드민 > PG 설정'],
+    admin: ['상품 > 상품 목록', '사용자 > 사용자 목록(배송지)', '사내 어드민 > 연동 > PG'],
     areas: [
       { area: '주문 상품', purpose: '무엇을 사는지' },
       { area: '받는 사람', purpose: '이름·연락처·주소' },
@@ -280,10 +290,10 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'orders',
-    purpose: '내 주문이 지금 어디까지 왔는지 본다.',
+    purpose: '내 주문이 지금 어디까지 왔는지 봅니다.',
     actions: ['배송 상태 탭으로 좁히기', '주문 상세 열기'],
     guards: ['한 건도 없는 상태는 탭에서 뺀다 — 늘 0 인 탭이 줄지어 있으면 탭 줄만 길어진다.'],
-    admin: ["판매 목록 (`/products/sales`) — 고객 화면의 '주문' 과 같은 자원"],
+    admin: ["상품 > 판매 — 고객 화면의 '주문' 과 같은 자원이다"],
     areas: [
       { area: '기간 필터', purpose: '언제 것을 볼지' },
       { area: '주문 목록', purpose: '주문번호·상품·금액·상태' },
@@ -304,10 +314,10 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'orders-detail',
-    purpose: '한 주문의 결제·배송·운송장을 확인한다.',
+    purpose: '한 주문의 결제·배송·운송장을 확인합니다.',
     actions: ['운송장 번호 확인', '주문 목록으로 돌아가기'],
     guards: ['없는 주문번호는 404 다.'],
-    admin: ['판매 상세 — 운송장·결제 취소·교환은 운영자가 처리한다'],
+    admin: ['상품 > 판매 — 운송장 · 결제 취소 · 교환은 운영자가 처리한다'],
     areas: [
       { area: '주문 요약', purpose: '주문번호·주문일·상태' },
       { area: '상품 목록', purpose: '산 것과 금액' },
@@ -325,7 +335,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'mypage',
-    purpose: '내 정보를 확인하고 필요할 때만 고친다.',
+    purpose: '내 정보를 확인하고 필요할 때만 고칩니다.',
     actions: ['수정 시작·취소', '닉네임 자동 생성', '주소 찾기(우편번호 서비스)', '마케팅 동의', '저장(확인 창)'],
     guards: [
       '이메일·이름은 고칠 수 없다 — 주문·문의 기록을 묶는 값이고 실명이다.',
@@ -362,7 +372,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'mypage-inquiries',
-    purpose: '내가 보낸 문의와 운영자의 답변을 한 자리에서 본다.',
+    purpose: '내가 보낸 문의와 운영자의 답변을 한 자리에서 봅니다.',
     actions: ['상태 탭으로 좁히기', '답변 읽기'],
     guards: ['답변이 없으면 비워 두지 않고 준비 중이라고 적는다.'],
     admin: ['문의 > 목록 — 같은 기록이다'],
@@ -383,10 +393,10 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'mypage-coupons',
-    purpose: '가진 쿠폰과 받을 수 있는 쿠폰을 나눠 본다.',
+    purpose: '가진 쿠폰과 받을 수 있는 쿠폰을 나눠 봅니다.',
     actions: ['내 쿠폰 / 쿠폰 받기 탭 전환', '쿠폰 받기(확인 창)'],
     guards: ['기간이 지난 쿠폰도 숨기지 않고 흐리게 남긴다 — 왜 못 쓰는지 알 수 있어야 한다.'],
-    admin: ['*(쿠폰 화면 예정)* — 값은 store `COUPONS`'],
+    admin: ['store: COUPONS'],
     areas: [
       { area: '왼쪽 aside', purpose: '마이페이지 갈래' },
       { area: '상태 탭', purpose: '사용 가능·사용 완료·기간 만료' },
@@ -407,10 +417,10 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'alarms',
-    purpose: '읽지 않은 소식을 먼저 본다.',
+    purpose: '읽지 않은 소식을 먼저 봅니다.',
     actions: ['읽지 않음 / 읽음 / 전체 탭 전환', '알람이 가리키는 화면으로 이동'],
     guards: [],
-    admin: ['판매 상태 변경 · 콘텐츠 > 공지사항 · 배너'],
+    admin: ['상품 > 판매 — 상태를 바꾸면 알림이 뜬다', '콘텐츠 > 공지사항', '배너 > 메인 비주얼'],
     areas: [
       { area: '알람 목록', purpose: '받은 알림' },
       { area: '읽음 처리', purpose: '한 번에 읽음' },
@@ -430,10 +440,10 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'login',
-    purpose: '계정으로 들어온다.',
+    purpose: '계정으로 들어옵니다.',
     actions: ['이메일·비밀번호 로그인', '소셜 로그인 5종', '회원가입 탭으로 이동'],
     guards: ['어느 항목이 틀렸는지 말하지 않는다 — 계정 존재 여부를 알려 주는 것과 같다.'],
-    admin: ['사용자 > 사용자 목록', '사내 어드민 > OAuth 설정'],
+    admin: ['사용자 > 사용자 목록', '사내 어드민 > 연동 > OAuth'],
     areas: [
       { area: '탭', purpose: '로그인 · 회원가입' },
       { area: '입력 묶음', purpose: '이메일·비밀번호' },
@@ -463,7 +473,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'signup',
-    purpose: '계정을 만든다.',
+    purpose: '계정을 만듭니다.',
     actions: ['항목 입력', '닉네임 자동 생성', '이메일 인증(발송·확인)', '가입(확인 창)'],
     guards: [
       '이메일 인증을 마쳐야 가입할 수 있다.',
@@ -501,7 +511,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'notices',
-    purpose: '운영자가 알리는 것을 최신 순으로 본다.',
+    purpose: '운영자가 알리는 것을 최신 순으로 봅니다.',
     actions: ['상세 열기'],
     guards: ['상단 고정 공지가 위로 온다.'],
     admin: ['콘텐츠 > 공지사항'],
@@ -521,7 +531,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'notices-detail',
-    purpose: '공지 한 건을 읽는다.',
+    purpose: '공지 한 건을 읽습니다.',
     actions: ['목록으로 돌아가기'],
     guards: ['없는 id 는 404 다.'],
     admin: ['콘텐츠 > 공지사항 상세의 에디터 내용 그대로'],
@@ -540,7 +550,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'faqs',
-    purpose: '자주 묻는 것을 분류와 함께 훑는다.',
+    purpose: '자주 묻는 것을 분류와 함께 훑습니다.',
     actions: ['상세 열기'],
     guards: [],
     admin: ['콘텐츠 > FAQ (분류 이름 포함)'],
@@ -563,7 +573,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   { screen: 'news-detail', purpose: '뉴스 한 건의 요약을 읽고 원문으로 간다.', actions: ['원문 보기(새 창)', '목록으로 돌아가기'], guards: ['없는 id 는 404 다.'], admin: ['콘텐츠 > 뉴스 상세'], areas: [{ area: '왼쪽 aside', purpose: '고객지원 갈래' }, { area: '요약 본문', purpose: '어드민이 넣은 요약' }, { area: '원문 링크', purpose: '언론사 쪽 원문으로', when: '원문 주소가 있을 때' }], buttons: [{ label: '원문 보기', onClick: '새 창으로 언론사 쪽을 연다', onSuccess: '우리 화면은 그대로 남는다' }], policy: ['숨김 뉴스는 주소로 직접 들어와도 열리지 않는다.', '본문 전체는 언론사 쪽에 있어 우리는 요약만 둔다.'], future: ['공유하기.'], nonFunctional: ['원문은 새 창으로 연다 — 우리 화면을 잃지 않게 한다.'] },
   {
     screen: 'portfolios',
-    purpose: '무엇을 만들어 왔는지 훑는다.',
+    purpose: '무엇을 만들어 왔는지 훑습니다.',
     actions: ['연도 탭으로 좁히기'],
     guards: [],
     admin: ['콘텐츠 > 포트폴리오'],
@@ -582,7 +592,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'company',
-    purpose: '무엇을 하는 회사인지 읽는다.',
+    purpose: '무엇을 하는 회사인지 읽습니다.',
     actions: ['소개 읽기', '사업자 정보 확인'],
     guards: ['대표 이미지가 없으면 자리표시자를 둔다 — 올렸을 때 배치가 밀리지 않게.'],
     admin: ['회사 > 회사 소개(본문·대표 이미지)', '설정 > 공급자 정보'],
@@ -601,7 +611,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'company-history',
-    purpose: '어떻게 커 왔는지 본다.',
+    purpose: '어떻게 커 왔는지 봅니다.',
     actions: ['연도별로 훑기'],
     guards: ['숨김 항목은 오지 않는다.'],
     admin: ['회사 > 연혁'],
@@ -619,7 +629,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'contact',
-    purpose: '문의를 보낸다.',
+    purpose: '문의를 보냅니다.',
     actions: ['유형 선택', '항목 입력', '파일 첨부', '개인정보 동의', '보내기(확인 창)'],
     guards: [
       '어드민이 켠 항목만 나오고, 필수 여부도 어드민을 따른다.',
@@ -659,10 +669,10 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   { screen: 'privacy', purpose: '개인정보 처리방침을 읽는다.', actions: [], guards: [], admin: ['설정 > 약관 정보'], areas: [{ area: '본문', purpose: '어드민이 넣은 처리방침' }, { area: '판·시행일', purpose: '어느 판을 읽고 있는지' }], policy: ['로그인 없이 읽힌다.', '문의 폼·회원가입의 동의 문구가 이 문서를 가리킨다.'], future: ['개정 이력·판 고르기.'], nonFunctional: ['문의 폼·회원가입의 동의 문구가 이 문서를 가리킨다.'] },
   {
     screen: 'result',
-    purpose: '방금 한 일이 끝났는지 알린다.',
+    purpose: '방금 한 일이 끝났는지 알립니다.',
     actions: ['다음 화면으로 이동(주문 내역·마이페이지 등)'],
     guards: ['무엇이 끝났는지(`kind`)와 잘됐는지(`state`)를 주소로 받는다 — 새로고침해도 남는다.'],
-    admin: ['판매 목록 · 문의 > 설정의 완료 문구'],
+    admin: ['상품 > 판매', '문의 > 설정 — 완료 문구'],
     areas: [
       { area: '결과 아이콘', purpose: '성공·실패를 모양으로 갈라 보여 준다' },
       { area: '안내 문구', purpose: '무엇이 끝났는지' },

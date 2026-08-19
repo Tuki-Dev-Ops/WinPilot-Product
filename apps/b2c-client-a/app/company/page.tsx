@@ -52,7 +52,7 @@ export default function ProfileSettingsPage() {
     <SiteShell>
       {/* 표제 — 회사명을 눈에 먼저 넣고, 한 줄로 무엇을 하는 곳인지 말한다. */}
       <header className="flex flex-col gap-4 border-b border-border pb-10">
-        <p className="text-sm font-medium text-brand-700 dark:text-brand-300">{COPY.company.title}</p>
+ <p className="text-sm font-medium text-brand-700">{COPY.company.title}</p>
         <h1 className="text-[34px] font-bold leading-tight tracking-tight">{company.name}</h1>
         <p className="max-w-160 text-sm leading-relaxed text-ink-muted">{CONTENT.seo.description}</p>
 

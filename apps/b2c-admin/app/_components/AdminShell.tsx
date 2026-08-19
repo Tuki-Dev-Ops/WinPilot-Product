@@ -66,7 +66,7 @@ export function AdminShell({ sectionId, trail, activeChildId, back, children }: 
               */
                 className={`rounded-r-lg border-l-2 px-3 py-2 text-sm ${
                   item.id === sectionId
-                    ? 'border-brand-500 font-semibold text-brand-700 dark:text-brand-300'
+ ? 'border-brand-500 font-semibold text-brand-700'
                     : 'border-transparent text-ink-muted'
                 }`}
               >
@@ -94,7 +94,7 @@ export function AdminShell({ sectionId, trail, activeChildId, back, children }: 
             </h1>
             <div className="flex items-center gap-3">
               <span className="hidden text-sm text-ink-muted sm:inline">demo@winpilot.test</span>
-              <a href="/login" className="text-sm text-brand-700 dark:text-brand-300">
+ <a href="/login" className="text-sm text-brand-700">
                 로그아웃
               </a>
             </div>
@@ -129,7 +129,7 @@ export function AdminShell({ sectionId, trail, activeChildId, back, children }: 
                     href={linkFor(child)}
                     className={`rounded-r-lg border-l-2 px-3 py-2 text-sm ${
                       child.id === activeChildId
-                        ? 'border-brand-500 font-semibold text-brand-700 dark:text-brand-300'
+ ? 'border-brand-500 font-semibold text-brand-700'
                         : 'border-transparent text-ink-muted'
                     }`}
                   >

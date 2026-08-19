@@ -315,7 +315,7 @@ export function ActivityListView() {
                     <a
                       href={`/tenants/${activity.tenantId}`}
                       onClick={(event) => event.stopPropagation()}
-                      className="block min-w-0 truncate text-sm font-medium text-brand-700 underline underline-offset-2 dark:text-brand-300"
+ className="block min-w-0 truncate text-sm font-medium text-brand-700 underline underline-offset-2"
                     >
                       {activity.target}
                     </a>
@@ -338,7 +338,7 @@ export function ActivityListView() {
                       하지 않은 것" 을 목록에서 셀 수 없다 — 탭의 건수와 같은 것을 가리킨다.
                     */}
                     {activity.nextStep && (
-                      <span className="mr-1.5 shrink-0 whitespace-nowrap rounded-full bg-brand-50 px-2 py-0.5 text-3xs font-medium text-brand-700 dark:bg-brand-900 dark:text-brand-200">
+ <span className="mr-1.5 shrink-0 whitespace-nowrap rounded-full bg-brand-50 px-2 py-0.5 text-3xs font-medium text-brand-700">
                         후속
                       </span>
                     )}

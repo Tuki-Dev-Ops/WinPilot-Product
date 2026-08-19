@@ -92,7 +92,7 @@ export function DashboardView({ today }: { today: string }) {
                   </span>
                   <a
                     href={`/inquiries/${one.id}`}
-                    className="ml-auto text-xs font-medium text-brand-700 dark:text-brand-300"
+ className="ml-auto text-xs font-medium text-brand-700"
                   >
                     열기
                   </a>

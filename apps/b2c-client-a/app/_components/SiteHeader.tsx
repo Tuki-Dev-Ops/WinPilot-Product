@@ -48,7 +48,7 @@ export function SiteHeader() {
                 href={item.href}
                 /* 강조 메뉴(신상품·베스트)는 색과 **굵기**를 함께 올린다 — 색만으로는 색각 이상 사용자가 놓친다. */
                 className={`flex h-10 shrink-0 items-center whitespace-nowrap text-[15px] ${
-                  item.emphasis ? 'font-bold text-brand-700 dark:text-brand-300' : 'font-medium text-ink'
+ item.emphasis ? 'font-bold text-brand-700' : 'font-medium text-ink'
                 }`}
               >
                 {item.label}
@@ -107,7 +107,7 @@ export function SiteHeader() {
             key={item.id}
             href={item.href}
             className={`shrink-0 whitespace-nowrap text-sm ${
-              item.emphasis ? 'font-medium text-brand-700 dark:text-brand-300' : 'text-ink-muted'
+ item.emphasis ? 'font-medium text-brand-700' : 'text-ink-muted'
             }`}
           >
             {item.label}

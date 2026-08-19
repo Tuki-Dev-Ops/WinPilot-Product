@@ -84,7 +84,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                     key={tag}
                     className={`shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-semibold ${
                       tag === 'NEW'
-                        ? 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200'
+ ? 'bg-brand-50 text-brand-700'
                         : 'bg-signal-danger/12 text-signal-danger'
                     }`}
                   >
@@ -116,7 +116,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           <dl className="flex flex-col gap-2 rounded-xl bg-surface px-5 py-4">
             <div className="flex items-baseline justify-between gap-4">
               <dt className="shrink-0 text-xs text-ink-faint">{COPY.product.reward}</dt>
-              <dd className="text-sm tabular-nums text-brand-700 dark:text-brand-300">
+ <dd className="text-sm tabular-nums text-brand-700">
                 {formatMoney(product.reward)}
                 {COPY.product.priceUnit}
               </dd>

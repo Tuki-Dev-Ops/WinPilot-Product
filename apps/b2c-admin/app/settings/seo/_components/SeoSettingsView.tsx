@@ -347,7 +347,7 @@ export function SeoSettingsView({ today }: { today: string }) {
         <ContentSection title="검색 결과 미리보기">
           <div className="flex flex-col gap-1 rounded-lg bg-surface px-4 py-3">
             <p className="min-w-0 truncate text-xs text-ink-muted">{host || 'example.com'}</p>
-            <p className="min-w-0 truncate text-sm font-medium text-brand-700 dark:text-brand-300">
+ <p className="min-w-0 truncate text-sm font-medium text-brand-700">
               {value.title.trim() || '검색 제목이 여기에 표시됩니다'}
             </p>
             <p className="line-clamp-2 text-xs leading-relaxed text-ink-muted">

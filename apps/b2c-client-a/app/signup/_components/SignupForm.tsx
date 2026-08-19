@@ -268,7 +268,7 @@ export function SignupForm() {
           </div>
           <p className="text-xs leading-relaxed text-ink-faint">
             자세한 내용은{' '}
-            <a href={ROUTES.privacy} className="text-brand-700 underline underline-offset-2 dark:text-brand-300">
+ <a href={ROUTES.privacy} className="text-brand-700 underline underline-offset-2">
               {CONTENT.privacy.label}
             </a>
             에서 확인할 수 있습니다.

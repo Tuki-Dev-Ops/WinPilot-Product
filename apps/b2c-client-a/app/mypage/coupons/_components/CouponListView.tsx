@@ -104,7 +104,7 @@ export function CouponListView({ mine, open }: { mine: CouponRecord[]; open: Cou
                     className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium ${
                       spent
                         ? 'bg-border text-ink-muted'
-                        : 'bg-brand-50 text-brand-700 dark:bg-brand-900 dark:text-brand-200'
+ : 'bg-brand-50 text-brand-700'
                     }`}
                   >
                     {state}

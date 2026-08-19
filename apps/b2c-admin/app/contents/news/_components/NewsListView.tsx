@@ -32,7 +32,7 @@ const COLUMNS: Array<ContentColumn<NewsRecord>> = [
           target="_blank"
           rel="noreferrer"
           onClick={(event) => event.stopPropagation()}
-          className="flex min-w-0 items-center gap-1 text-xs text-brand-700 underline underline-offset-2 dark:text-brand-300"
+ className="flex min-w-0 items-center gap-1 text-xs text-brand-700 underline underline-offset-2"
         >
           <span className="shrink-0">
             <LinkIcon />

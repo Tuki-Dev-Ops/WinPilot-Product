@@ -4,8 +4,12 @@ import { AdminUserAuthForm } from './_components/AdminUserAuthForm';
 /**
  * 고객 화면은 **다른 앱이자 다른 레포**다. 상대 경로로는 갈 수 없으므로 절대 URL 을 쓴다.
  * 배포 환경에서는 `NEXT_PUBLIC_CLIENT_SITE_URL` 로 주입한다.
+ *
+ * 개발 기본값이 `3300` 이었다. 쇼핑몰이 실제로 뜨는 자리는 **3310** 이라(`apps/b2c-client-a`
+ * 의 `dev` 스크립트) 이 링크는 개발 중에 늘 연결 실패였다. 눌러 본 사람은 쇼핑몰이 안 떠
+ * 있는 줄 알았지, 주소가 틀렸다고는 생각하지 않는다.
  */
-const CLIENT_SITE_URL = process.env.NEXT_PUBLIC_CLIENT_SITE_URL ?? 'http://localhost:3300';
+const CLIENT_SITE_URL = process.env.NEXT_PUBLIC_CLIENT_SITE_URL ?? 'http://localhost:3310';
 
 /**
  * Feature: `user.auth` · Admin View · route `/admin/login`
@@ -88,8 +92,8 @@ export default function AdminUserAuthPage() {
             <h1 className="mt-8 text-2xl font-semibold tracking-tight lg:mt-0">로그인</h1>
             <p className="mt-2 text-sm leading-relaxed text-ink-muted">운영자 계정으로 접속하세요.</p>
 
-            <div className="mt-6 rounded-lg bg-brand-50 px-4 py-3 dark:bg-brand-900">
-              <p className="text-xs font-semibold uppercase tracking-widest text-brand-700 dark:text-brand-200">
+ <div className="mt-6 rounded-lg bg-brand-50 px-4 py-3">
+ <p className="text-xs font-semibold uppercase tracking-widest text-brand-700">
                 Demo
               </p>
               <div className="mt-2 flex flex-col gap-1">
@@ -106,7 +110,7 @@ export default function AdminUserAuthPage() {
 
             <p className="mt-8 text-sm leading-relaxed text-ink-muted">
               운영자 계정만 접근할 수 있습니다. 고객 계정은{' '}
-              <a href={CLIENT_SITE_URL} className="text-brand-700 dark:text-brand-300">
+ <a href={CLIENT_SITE_URL} className="text-brand-700">
                 서비스 화면
               </a>
               에서 로그인하세요.

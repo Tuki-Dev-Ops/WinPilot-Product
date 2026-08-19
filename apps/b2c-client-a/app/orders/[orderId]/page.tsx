@@ -56,7 +56,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ or
             <span className="font-mono tabular-nums text-ink-muted">{order.orderedAt}</span>
           </Row>
           <Row label={COPY.product.listTitle}>
-            <a href={ROUTES.productDetail(order.productId)} className="text-brand-700 dark:text-brand-300">
+ <a href={ROUTES.productDetail(order.productId)} className="text-brand-700">
               {order.productName}
             </a>
           </Row>

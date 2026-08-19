@@ -230,7 +230,7 @@ export function SupplierSettingsView() {
                     onClick={() => update('industry', suggestion)}
                     className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-xs transition-colors duration-150 ${
                       value.industry === suggestion
-                        ? 'bg-brand-50 font-medium text-brand-700 dark:bg-brand-900 dark:text-brand-200'
+ ? 'bg-brand-50 font-medium text-brand-700'
                         : 'bg-surface text-ink-muted hover:text-ink'
                     }`}
                   >

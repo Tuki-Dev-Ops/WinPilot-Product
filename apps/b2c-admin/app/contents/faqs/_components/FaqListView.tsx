@@ -299,7 +299,7 @@ export function FaqListView() {
                       key={category.id}
                       onClick={() => setSelectedCategoryId(category.id)}
                       className={`group flex cursor-pointer items-center gap-3 border-b border-border px-5 py-3.5 transition-colors duration-100 last:border-b-0 ${
-                        active ? 'bg-brand-50 dark:bg-brand-900' : 'hover:bg-surface'
+ active ? 'bg-brand-50' : 'hover:bg-surface'
                       }`}
                     >
                       <RowSelectCell
@@ -316,7 +316,7 @@ export function FaqListView() {
                       {/* 이름이 먼저, 코드와 개수가 그 아래 한 줄. 둘은 같은 것에 딸린 값이라 붙여 둔다. */}
                       <div className="min-w-0 flex-1">
                         <p
-                          className={`truncate text-sm font-medium ${active ? 'text-brand-700 dark:text-brand-200' : ''}`}
+ className={`truncate text-sm font-medium ${active ? 'text-brand-700' : ''}`}
                         >
                           {category.name}
                         </p>

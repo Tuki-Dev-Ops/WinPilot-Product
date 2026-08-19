@@ -197,7 +197,7 @@ export function GradeListView() {
 
                 <div className="flex items-baseline gap-2 lg:col-span-2">
                   <span className="w-24 shrink-0 text-xs text-ink-faint lg:hidden">할인율</span>
-                  <span className="text-sm font-medium tabular-nums text-brand-700 dark:text-brand-300">
+ <span className="text-sm font-medium tabular-nums text-brand-700">
                     {grade.discountRate}%
                   </span>
                 </div>

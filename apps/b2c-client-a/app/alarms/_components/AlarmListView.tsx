@@ -54,7 +54,7 @@ export function AlarmListView({ alarms }: { alarms: AlarmItem[] }) {
               onClick={() => setTabId(tab.id)}
               className={`flex h-9 shrink-0 items-center gap-2 whitespace-nowrap rounded-full px-4 text-sm transition-colors duration-150 ${
                 active
-                  ? 'bg-brand-50 font-medium text-brand-700 dark:bg-brand-900 dark:text-brand-200'
+ ? 'bg-brand-50 font-medium text-brand-700'
                   : 'bg-surface text-ink-muted'
               }`}
             >
@@ -78,7 +78,7 @@ export function AlarmListView({ alarms }: { alarms: AlarmItem[] }) {
               key={alarm.id}
               href={alarm.href}
               className={`flex items-start gap-3 border-b border-border px-5 py-4 last:border-b-0 hover:bg-surface ${
-                alarm.read ? '' : 'bg-brand-50/40 dark:bg-brand-900/30'
+ alarm.read ? '' : 'bg-brand-50/40'
               }`}
             >
               <span

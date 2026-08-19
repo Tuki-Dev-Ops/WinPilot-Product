@@ -51,7 +51,7 @@ export function PeriodAnalysisView() {
               onClick={() => setPeriodId(period.id)}
               className={`h-9 shrink-0 whitespace-nowrap rounded-lg border px-3 text-sm transition-colors duration-150 ${
                 period.id === periodId
-                  ? 'border-brand-500 bg-brand-50 font-medium text-brand-700 dark:bg-brand-900 dark:text-brand-200'
+ ? 'border-brand-500 bg-brand-50 font-medium text-brand-700'
                   : 'border-border-strong text-ink-muted hover:border-ink-faint'
               }`}
             >
@@ -70,7 +70,7 @@ export function PeriodAnalysisView() {
               onClick={() => setMetricId(item.id)}
               className={`h-9 shrink-0 whitespace-nowrap rounded-lg px-3 text-sm transition-colors duration-150 ${
                 item.id === metricId
-                  ? 'bg-brand-50 font-medium text-brand-700 dark:bg-brand-900 dark:text-brand-200'
+ ? 'bg-brand-50 font-medium text-brand-700'
                   : 'bg-surface text-ink-muted'
               }`}
             >

@@ -97,7 +97,7 @@ export function AdminUserAuthForm() {
             로그인 상태 유지
           </label>
         </div>
-        <a href="#reset" className="text-sm text-brand-700 dark:text-brand-300">
+ <a href="#reset" className="text-sm text-brand-700">
           비밀번호 찾기
         </a>
       </div>

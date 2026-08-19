@@ -72,7 +72,7 @@ export default function AdminRevenueListPage() {
         <StatSection
           title="상품별 매출"
           action={
-            <a href="/products" className="shrink-0 whitespace-nowrap text-sm text-brand-700 dark:text-brand-300">
+ <a href="/products" className="shrink-0 whitespace-nowrap text-sm text-brand-700">
               상품 목록
             </a>
           }

@@ -78,7 +78,7 @@ export function InternalShell({ sectionId, trail, activeChildId, back, children 
                 */
                 className={`rounded-r-lg border-l-2 px-3 py-2 text-sm ${
                   item.id === sectionId
-                    ? 'border-brand-500 font-semibold text-brand-700 dark:text-brand-300'
+ ? 'border-brand-500 font-semibold text-brand-700'
                     : 'border-transparent text-ink-muted'
                 }`}
               >
@@ -141,7 +141,7 @@ export function InternalShell({ sectionId, trail, activeChildId, back, children 
                     href={linkFor(child)}
                     className={`rounded-r-lg border-l-2 px-3 py-2 text-sm ${
                       child.id === activeChildId
-                        ? 'border-brand-500 font-semibold text-brand-700 dark:text-brand-300'
+ ? 'border-brand-500 font-semibold text-brand-700'
                         : 'border-transparent text-ink-muted'
                     }`}
                   >

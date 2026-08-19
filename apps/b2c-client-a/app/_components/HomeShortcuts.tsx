@@ -54,7 +54,7 @@ export function HomeShortcuts() {
 
       <a
         href={ROUTES.mypageCoupons}
-        className="flex items-center gap-4 rounded-lg bg-[#faf7ec] px-8 py-5 dark:bg-surface"
+ className="flex items-center gap-4 rounded-lg bg-[#faf7ec] px-8 py-5"
       >
         <span className="min-w-0 flex-1 text-center text-base">
           <strong className="font-bold">

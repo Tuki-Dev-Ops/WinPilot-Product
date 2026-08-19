@@ -42,7 +42,7 @@ export default function MilestoneListPage() {
       {/* 표제 — 연혁은 읽을거리라 제목을 크게 세우고 회사 한 줄 소개를 붙인다. */}
       <header className="flex flex-col gap-6 border-b border-border pb-10">
         <div className="flex flex-col gap-3">
-          <p className="text-sm font-medium text-brand-700 dark:text-brand-300">{company.name}</p>
+ <p className="text-sm font-medium text-brand-700">{company.name}</p>
           <h1 className="text-[34px] font-bold leading-tight tracking-tight">{COPY.company.historyTitle}</h1>
           <p className="max-w-160 text-sm leading-relaxed text-ink-muted">
             {founded}년부터 지금까지, 화면과 운영을 한 벌로 맞춰 온 기록입니다.
@@ -83,7 +83,7 @@ export default function MilestoneListPage() {
                   <p className="mt-2 flex items-center gap-2 text-xs text-ink-faint">
                     {items.length}건
                     {latest && (
-                      <span className="rounded-full bg-brand-50 px-2 py-0.5 font-medium text-brand-700 dark:bg-brand-900 dark:text-brand-200">
+ <span className="rounded-full bg-brand-50 px-2 py-0.5 font-medium text-brand-700">
                         최근
                       </span>
                     )}
@@ -101,7 +101,7 @@ export default function MilestoneListPage() {
                   {items.map((milestone) => (
                     <li key={milestone.id}>
                       <article className="rounded-xl border border-border px-5 py-4 transition-colors duration-150 hover:bg-surface">
-                        <p className="font-mono text-xs tabular-nums text-brand-700 dark:text-brand-300">
+ <p className="font-mono text-xs tabular-nums text-brand-700">
                           {milestone.date}
                         </p>
                         <h2 className="mt-1.5 text-base font-medium leading-snug">{milestone.title}</h2>

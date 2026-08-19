@@ -260,7 +260,7 @@ export function CheckoutView({ initialLines }: { initialLines: Line[] }) {
                 <span className="tabular-nums text-ink-muted">
                   {ACCOUNT.countryCode} {ACCOUNT.phone}
                 </span>
-                <a href={ROUTES.mypage} className="ml-auto shrink-0 text-xs text-brand-700 dark:text-brand-300">
+ <a href={ROUTES.mypage} className="ml-auto shrink-0 text-xs text-brand-700">
                   내 정보 수정
                 </a>
               </div>
@@ -430,7 +430,7 @@ export function CheckoutView({ initialLines }: { initialLines: Line[] }) {
             <Checkbox checked={agreed} onChange={setAgreed} label="주문 내용 확인 및 결제 동의" />
             <span className="text-xs leading-relaxed text-ink-muted">
               주문 내용을 확인했으며 결제에 동의합니다.{' '}
-              <a href={ROUTES.terms} className="text-brand-700 underline underline-offset-2 dark:text-brand-300">
+ <a href={ROUTES.terms} className="text-brand-700 underline underline-offset-2">
                 이용약관
               </a>
             </span>

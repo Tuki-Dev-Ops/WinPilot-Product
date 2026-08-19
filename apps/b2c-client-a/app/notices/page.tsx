@@ -34,7 +34,7 @@ export default function NoticeListPage() {
                 className="flex items-center gap-3 border-b border-border px-1 py-4 hover:bg-surface"
               >
                 {notice.pinned && (
-                  <span className="shrink-0 whitespace-nowrap rounded-full bg-brand-50 px-2 py-0.5 text-xs font-semibold text-brand-700 dark:bg-brand-900 dark:text-brand-200">
+ <span className="shrink-0 whitespace-nowrap rounded-full bg-brand-50 px-2 py-0.5 text-xs font-semibold text-brand-700">
                     {COPY.notice.pinned}
                   </span>
                 )}

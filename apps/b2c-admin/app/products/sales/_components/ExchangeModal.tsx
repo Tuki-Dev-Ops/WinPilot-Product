@@ -111,7 +111,7 @@ export function ExchangeModal({ open, order, onClose, onSubmit }: ExchangeModalP
                         onClick={() => setSelected(option.id)}
                         className={`flex h-11 shrink-0 flex-col items-center justify-center whitespace-nowrap rounded-lg border px-4 text-sm transition-colors duration-150 ${
                           active
-                            ? 'border-brand-500 bg-brand-50 font-medium text-brand-700 dark:bg-brand-900 dark:text-brand-200'
+ ? 'border-brand-500 bg-brand-50 font-medium text-brand-700'
                             : 'border-border-strong text-ink hover:border-ink-faint'
                         } disabled:cursor-not-allowed disabled:border-border disabled:text-ink-faint disabled:hover:border-border`}
                       >

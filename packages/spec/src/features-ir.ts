@@ -424,187 +424,21 @@ export const IR_FEATURES: readonly FeatureSpec[] = [
     것은 **설계가 그렇다는 뜻이 아니라 지금 그렇다는 사실을 한 줄로 적어 두는 것**이다 —
     경고 하나로는 `왜` 가 남지 않아 다음 사람이 다시 처음부터 알아내야 한다.
   */
-  {
-    id: 'ir.disclosure.list',
-    label: { ko: '공시', en: 'Disclosures' },
-    entity: 'disclosure',
-    action: 'list',
-    views: {
-      'ir-client': {
-        route: '/disclosures',
-        component: 'DisclosureListPage',
-        status: 'implemented',
-        note: '어드민 화면을 지웠다 — 사이트에 나가는데 저장소 어디에도 고치는 자리가 없다. 게시 상태를 바꿀 자리가 없다는 뜻이다',
-      },
-    },
-    singleViewByDesign: true,
-  },
-  {
-    id: 'ir.disclosure.detail',
-    label: { ko: '공시 상세', en: 'Disclosure Detail' },
-    entity: 'disclosure',
-    action: 'detail',
-    views: {
-      'ir-client': {
-        route: '/disclosures/[disclosureId]',
-        component: 'DisclosureDetailPage',
-        status: 'implemented',
-        note: '어드민 화면을 지웠다 — 사이트에 나가는데 저장소 어디에도 고치는 자리가 없다. 안 나간 공시는 주소로도 열리지 않는다',
-      },
-    },
-    singleViewByDesign: true,
-  },
-  {
-    id: 'ir.financial.list',
-    label: { ko: '재무정보', en: 'Financials' },
-    entity: 'financial',
-    action: 'list',
-    views: {
-      'ir-client': {
-        route: '/financials',
-        component: 'FinancialListPage',
-        status: 'implemented',
-        note: '어드민 화면을 지웠다 — 사이트에 나가는데 저장소 어디에도 고치는 자리가 없다',
-      },
-    },
-    singleViewByDesign: true,
-  },
   /*
     주가는 `detail` 이 아니라 `list` 다. 화면이 보여 주는 것이 시세 한 줄과 항목 표라
     자원 하나를 펼치는 자리가 아니고, `detail` 의 경로 꼬리(`/[xxxId]`)와도 맞지 않는다.
   */
-  {
-    id: 'ir.stock.list',
-    label: { ko: '주가 정보', en: 'Stock' },
-    entity: 'stock',
-    action: 'list',
-    views: {
-      'ir-client': {
-        route: '/stock',
-        component: 'StockListPage',
-        status: 'implemented',
-        note: '어드민 화면을 지웠다 — 사이트에 나가는데 저장소 어디에도 고치는 자리가 없다. 다만 주가는 손으로 넣는 칸을 두지 않은 것이 뜻한 것이라, 이 줄만 구멍이 아니다',
-      },
-    },
-    singleViewByDesign: true,
-  },
-  {
-    id: 'ir.dividend.list',
-    label: { ko: '배당정보', en: 'Dividends' },
-    entity: 'dividend',
-    action: 'list',
-    views: {
-      'ir-client': {
-        route: '/dividends',
-        component: 'DividendListPage',
-        status: 'implemented',
-        note: '어드민 화면을 지웠다 — 사이트에 나가는데 저장소 어디에도 고치는 자리가 없다',
-      },
-    },
-    singleViewByDesign: true,
-  },
-  {
-    id: 'ir.meeting.list',
-    label: { ko: '주주총회', en: 'Meetings' },
-    entity: 'meeting',
-    action: 'list',
-    views: {
-      'ir-client': {
-        route: '/meetings',
-        component: 'MeetingListPage',
-        status: 'implemented',
-        note: '어드민 화면을 지웠다 — 사이트에 나가는데 저장소 어디에도 고치는 자리가 없다',
-      },
-    },
-    singleViewByDesign: true,
-  },
   /*
     전자투표는 `/meetings/voting` 이라 총회 목록의 꼬리로도, 상세로도 잡히지 않는다.
     표를 던지는 곳이 예탁결제원이므로 이 화면이 하는 일은 **어디로 가서 무엇을 준비하는지**를
     적는 것 하나뿐이다 — 그래서 자원을 `vote` 로 나누고 동작은 진입 화면(`home`)으로 둔다.
   */
-  {
-    id: 'ir.vote.home',
-    label: { ko: '전자투표', en: 'Electronic Voting' },
-    entity: 'vote',
-    action: 'home',
-    views: {
-      'ir-client': {
-        route: '/meetings/voting',
-        component: 'VoteHomePage',
-        status: 'implemented',
-        note: '어드민 화면을 지웠다 — 사이트에 나가는데 저장소 어디에도 고치는 자리가 없다. 투표 자체는 예탁결제원에서 한다',
-      },
-    },
-    singleViewByDesign: true,
-  },
-  {
-    id: 'ir.governance.list',
-    label: { ko: '지배구조', en: 'Governance' },
-    entity: 'governance',
-    action: 'list',
-    views: {
-      'ir-client': {
-        route: '/governance',
-        component: 'GovernanceListPage',
-        status: 'implemented',
-        note: '어드민 화면을 지웠다 — 사이트에 나가는데 저장소 어디에도 고치는 자리가 없다',
-      },
-    },
-    singleViewByDesign: true,
-  },
   // 라우트는 /library 지만 엔티티는 document 다 — 'library' 는 동작 어휘라 자원 이름으로 겹쳐 쓰지 않는다.
-  {
-    id: 'ir.document.list',
-    label: { ko: '자료실', en: 'IR Library' },
-    entity: 'document',
-    action: 'list',
-    views: {
-      'ir-client': {
-        route: '/library',
-        component: 'DocumentListPage',
-        status: 'implemented',
-        note: '어드민 화면을 지웠다 — 사이트에 나가는데 저장소 어디에도 고치는 자리가 없다. 자료를 새로 올릴 자리가 없다는 뜻이다',
-      },
-    },
-    singleViewByDesign: true,
-  },
-  {
-    id: 'ir.schedule.list',
-    label: { ko: 'IR 일정', en: 'IR Schedules' },
-    entity: 'schedule',
-    action: 'list',
-    views: {
-      'ir-client': {
-        route: '/schedules',
-        component: 'ScheduleListPage',
-        status: 'implemented',
-        note: '어드민 화면을 지웠다 — 사이트에 나가는데 저장소 어디에도 고치는 자리가 없다',
-      },
-    },
-    singleViewByDesign: true,
-  },
   /*
     신청은 자원을 만드는 일이지만 `create` 를 쓰지 못한다 — 경로 꼬리가 `/new` 여야 하는데
     이쪽은 `/subscribe` 다. 가입이 `/users/new` 가 아니라 `/signup` 인 것과 같은 관습이라
     동작도 같은 것(`signup`)을 쓴다.
   */
-  {
-    id: 'ir.subscriber.signup',
-    label: { ko: '공시 구독 신청', en: 'Subscribe' },
-    entity: 'subscriber',
-    action: 'signup',
-    views: {
-      'ir-client': {
-        route: '/subscribe',
-        component: 'SubscriberSignupPage',
-        status: 'implemented',
-        note: '어드민 화면을 지웠다 — 사이트에 나가는데 저장소 어디에도 고치는 자리가 없다. 신청은 쌓이는데 그것을 열어 볼 화면이 없다',
-      },
-    },
-    singleViewByDesign: true,
-  },
-
   // ── 고객지원 ────────────────────────────────────────────────────────
   {
     id: 'ir.notice.list',

@@ -50,7 +50,7 @@ export default function AdminAnalyticsHomePage() {
       <StatSection
         title="매출 추이"
         action={
-          <a href="/statistics/periods" className="shrink-0 whitespace-nowrap text-sm text-brand-700 dark:text-brand-300">
+ <a href="/statistics/periods" className="shrink-0 whitespace-nowrap text-sm text-brand-700">
             기간별 분석
           </a>
         }
@@ -66,7 +66,7 @@ export default function AdminAnalyticsHomePage() {
         <StatSection
           title="많이 방문한 페이지"
           action={
-            <a href="/statistics/pages" className="shrink-0 whitespace-nowrap text-sm text-brand-700 dark:text-brand-300">
+ <a href="/statistics/pages" className="shrink-0 whitespace-nowrap text-sm text-brand-700">
               전체 보기
             </a>
           }

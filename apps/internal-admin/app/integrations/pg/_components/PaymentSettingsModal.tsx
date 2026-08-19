@@ -251,7 +251,7 @@ export function PaymentSettingsModal({
               onClick={() => commit({ ...value, live: option.live })}
               className={`flex flex-col items-start gap-0.5 rounded-lg border px-4 py-3 text-left text-sm transition-colors duration-150 ${
                 value.live === option.live
-                  ? 'border-brand-500 bg-brand-50 font-medium text-brand-700 dark:bg-brand-900 dark:text-brand-200'
+ ? 'border-brand-500 bg-brand-50 font-medium text-brand-700'
                   : 'border-border-strong text-ink-muted hover:border-ink-faint'
               }`}
             >

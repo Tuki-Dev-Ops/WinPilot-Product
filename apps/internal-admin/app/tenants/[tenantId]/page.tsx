@@ -148,7 +148,7 @@ export default async function InternalTenantDetailPage({ params }: { params: Pro
               </div>
               <a
                 href="/tenants/contacts"
-                className="shrink-0 whitespace-nowrap text-sm text-brand-700 underline underline-offset-2 dark:text-brand-300"
+ className="shrink-0 whitespace-nowrap text-sm text-brand-700 underline underline-offset-2"
               >
                 전체 담당자
               </a>
@@ -197,7 +197,7 @@ export default async function InternalTenantDetailPage({ params }: { params: Pro
               </div>
               <a
                 href="/tenants/activities"
-                className="shrink-0 whitespace-nowrap text-sm text-brand-700 underline underline-offset-2 dark:text-brand-300"
+ className="shrink-0 whitespace-nowrap text-sm text-brand-700 underline underline-offset-2"
               >
                 전체 활동
               </a>

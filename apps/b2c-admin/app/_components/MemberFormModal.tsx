@@ -126,7 +126,7 @@ function ChoiceGroup({
               onClick={() => onChange(option)}
               className={`h-11 flex-1 rounded-lg border px-4 text-sm transition-colors duration-150 ${
                 active
-                  ? 'border-brand-500 bg-brand-50 font-medium text-brand-700 dark:bg-brand-900 dark:text-brand-200'
+ ? 'border-brand-500 bg-brand-50 font-medium text-brand-700'
                   : 'border-border-strong text-ink-muted hover:border-ink-faint'
               }`}
             >

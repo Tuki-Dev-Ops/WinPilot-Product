@@ -156,7 +156,7 @@ export function OrderDetailView({ order: initial }: { order: OrderRecord }) {
                   toast.info('상품 상세로 이동합니다.');
                   router.push(`/products/${order.productId}`);
                 }}
-                className="font-mono text-brand-700 underline underline-offset-2 dark:text-brand-300"
+ className="font-mono text-brand-700 underline underline-offset-2"
               >
                 {order.productId}
               </button>

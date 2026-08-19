@@ -29,6 +29,16 @@ export type SpecButton = { label: string; onClick: string; onSuccess?: string; o
 export type ScreenSpec = {
   screen: string;
   purpose: string;
+  /**
+   * 이 화면이 왜 생겼는가 — **목적보다 앞의 이야기**.
+   *
+   * `purpose` 는 이 화면이 지금 무엇을 하는지를 적고, 여기는 **그 화면이 없던 때 무엇이
+   * 불편했는지**를 적는다. 둘을 한 칸에 쓰면 목적이 길어지면서 "무엇을 하는가" 가 흐려진다.
+   *
+   * 없어도 된다. 배경이 특별할 것 없는 화면(약관 · 개인정보처럼 법이 요구해서 있는 화면)에
+   * 억지로 쓰면 지어낸 이야기가 남는다 — 그럴 바에는 비워 두는 편이 낫다.
+   */
+  background?: string;
   effect?: string;
   actions: string[];
   guards: string[];
@@ -62,8 +72,8 @@ export const COMMON_NON_FUNCTIONAL = [
 export const SCREEN_SPECS: ScreenSpec[] = [
   {
     screen: 'dashboard',
-    purpose: '오늘 손대야 할 것을 한 화면에 모은다.',
-    effect: '만료·연체·답하지 않은 문의를 각 목록에서 따로 찾지 않아도 된다.',
+    purpose: '오늘 손대야 할 것을 한 화면에 모읍니다.',
+    effect: '만료·연체·답하지 않은 문의를 각 목록에서 따로 찾지 않아도 됩니다.',
     actions: ['요약 카드에서 그 수치를 만든 목록으로 이동', '만료가 임박한 고객사 열기', '연체·문의 줄에서 해당 목록으로 이동'],
     guards: ['볼 것이 없으면 카드에 0 을 적는다 — 카드 자체를 숨기지 않는다.'],
     admin: ['없음 — 여기서 정하는 값이 하나도 없다. 다른 화면의 신호를 모아 보내는 자리다.'],
@@ -82,8 +92,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'tenants',
-    purpose: '지금 맡고 있는 고객사를 찾고 상태를 본다.',
-    effect: '유지보수가 끝나가는 곳을 계약이 끊기기 전에 알아챈다.',
+    purpose: '지금 맡고 있는 고객사를 찾고 상태를 봅니다.',
+    effect: '유지보수가 끝나가는 곳을 계약이 끊기기 전에 알아챕니다.',
     actions: ['고객사명·담당자·도메인으로 검색', '플랜으로 거르기', '행을 눌러 상세로 이동', '연동 단추로 그 고객사의 OAuth 설정으로 이동', '고객사 등록'],
     guards: [
       '고객사명과 담당자가 비면 등록하지 않는다.',
@@ -119,8 +129,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'tenants-pipeline',
-    purpose: '아직 고객사가 아닌 곳까지 한 줄에 세워 도입 단계를 본다.',
-    effect: '어떻게 여기까지 왔는지가 남아, 계약이 끊길 때가 되어서야 처음 아는 일이 줄어든다.',
+    purpose: '아직 고객사가 아닌 곳까지 한 줄에 세워 도입 단계를 봅니다.',
+    effect: '어떻게 여기까지 왔는지가 남아, 계약이 끊길 때가 되어서야 처음 아는 일이 줄어듭니다.',
     actions: ['이름·건 번호·플랜으로 검색', '사내 담당으로 거르기', '카드 단추로 단계 옮기기', '파이프라인 건 등록'],
     guards: [
       '문의의 앞 단계와 운영의 뒤 단계로는 옮길 수 없다 — 단추를 잠근다.',
@@ -160,8 +170,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'tenants-activities',
-    purpose: '언제 누구와 무엇을 했는지를 남긴다.',
-    effect: '담당자가 바뀌어도 관계가 사라지지 않아, 고객사가 같은 것을 다시 설명하지 않는다.',
+    purpose: '언제 누구와 무엇을 했는지를 남깁니다.',
+    effect: '담당자가 바뀌어도 관계가 사라지지 않아, 고객사가 같은 것을 다시 설명하지 않습니다.',
     actions: ['상대·내용·담당으로 검색', '활동 종류로 거르기', '고객사로 거르기', '줄을 눌러 기록 열기', '활동 기록'],
     guards: [
       '무엇을 했는지와 상대가 비면 기록하거나 저장하지 않는다.',
@@ -203,8 +213,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'tenants-contacts',
-    purpose: '고객사 쪽 사람을 역할별로 나눠 둔다.',
-    effect: '급할 때 누구에게 걸지 묻지 않는다.',
+    purpose: '고객사 쪽 사람을 역할별로 나눠 둡니다.',
+    effect: '급할 때 누구에게 걸지 묻지 않습니다.',
     actions: ['이름·직함·이메일·고객사로 검색', '역할로 거르기', '담당자 등록'],
     guards: [
       '이름이나 직함이 비면 등록하지 않는다.',
@@ -247,8 +257,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'tenants-churned',
-    purpose: '떠난 고객사와 그 이유를 남긴다.',
-    effect: '왜 떠났는지가 다음 계약의 조건을 정한다.',
+    purpose: '떠난 고객사와 그 이유를 남깁니다.',
+    effect: '왜 떠났는지가 다음 계약의 조건을 정합니다.',
     actions: ['고객사명·담당자·코드로 검색', '이탈 사유로 거르기'],
     guards: ['조건에 맞는 것이 없으면 목록 자리에 왜 비었는지 적는다.'],
     admin: ['없음 — 이미 배포가 내려간 고객사다.'],
@@ -268,8 +278,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'tenants-detail',
-    purpose: '고객사 하나의 계약·배포·청구를 한 화면에서 본다.',
-    effect: '고객사 문의가 들어왔을 때 여러 화면을 열지 않고 여기서 답할 수 있다.',
+    purpose: '고객사 하나의 계약·배포·청구를 한 화면에서 봅니다.',
+    effect: '고객사 문의가 들어왔을 때 여러 화면을 열지 않고 여기서 답할 수 있습니다.',
     actions: ['고객사 정보 읽기', '배포·계정 확인', '청구 내역 확인', '담당자와 활동 읽기', '그 고객사의 연동 설정으로 이동'],
     guards: ['그 코드의 고객사가 없으면 404 화면으로 보낸다.'],
     admin: ['고객사의 배포 — 여기 적힌 도메인과 계정이 실제 배포의 것이다.'],
@@ -298,8 +308,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'subscriptions-plans',
-    purpose: '도메인마다 등급 셋이 무엇을 여는지 정한다.',
-    effect: '무엇을 얼마에 파는지가 한자리에 있어 견적을 말로 만들지 않는다.',
+    purpose: '도메인마다 등급 셋이 무엇을 여는지 정합니다.',
+    effect: '무엇을 얼마에 파는지가 한자리에 있어 견적을 말로 만들지 않습니다.',
     actions: ['B2C · B2B · IR 탭으로 도메인 고르기', '플랜 이름·코드로 검색', '등급 카드에서 요금과 한도 읽기', '비교표에서 어느 등급부터 열리는 기능인지 읽기'],
     guards: [
       '기능이 아직 정해지지 않은 도메인에는 빈 표 대신 미정이라고 적는다.',
@@ -331,8 +341,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'subscriptions-roles',
-    purpose: '고객사 콘솔의 역할이 도메인마다 몇 개이고 누가 무엇을 맡는지 본다.',
-    effect: '"CS 에게는 무엇을 줘야 하나" 를 화면에서 답한다 — 답하지 못하면 넓은 쪽을 주게 된다.',
+    purpose: '고객사 콘솔의 역할이 도메인마다 몇 개이고 누가 무엇을 맡는지 봅니다.',
+    effect: '"CS 에게는 무엇을 줘야 하나" 를 화면에서 답한다 — 답하지 못하면 넓은 쪽을 주게 됩니다.',
     actions: ['B2C · B2B · IR 탭으로 도메인 고르기', '역할 이름·맡기는 자리로 검색', '줄을 눌러 세부 권한으로 들어가기'],
     guards: ['조건에 맞는 역할이 없으면 목록 자리에 왜 비었는지 적는다.'],
     admin: ['고객사 배포의 어드민 — 여기 역할이 그 콘솔의 운영자 등록 화면에 그대로 나온다.'],
@@ -355,8 +365,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'subscriptions-roles-detail',
-    purpose: '역할 하나가 자원마다 어디까지 하는지를 켜고 끈다.',
-    effect: '최소 권한이 화면에서 지켜진다 — 넓은 역할을 주는 대신 필요한 칸만 연다.',
+    purpose: '역할 하나가 자원마다 어디까지 하는지를 켜고 끕니다.',
+    effect: '최소 권한이 화면에서 지켜진다 — 넓은 역할을 주는 대신 필요한 칸만 엽니다.',
     actions: ['자원별로 조회·등록·삭제·설정 변경 켜고 끄기', '저장', '되돌리기', '목록으로 돌아가기'],
     guards: [
       '그 id 의 역할이 없으면 404 화면으로 보낸다.',
@@ -397,8 +407,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'inquiries',
-    purpose: '고객사가 우리에게 보낸 문의를 받아 답한다.',
-    effect: '장애 문의가 기능 요청 아래에 깔리지 않는다.',
+    purpose: '고객사가 우리에게 보낸 문의를 받아 답합니다.',
+    effect: '장애 문의가 기능 요청 아래에 깔리지 않습니다.',
     actions: ['제목·내용·보낸 사람·번호로 검색', '상태로 거르기', '고객사로 거르기', '줄을 눌러 답변 쓰기'],
     guards: [
       '조건에 맞는 것이 없으면 목록 자리에 왜 비었는지 적는다.',
@@ -435,8 +445,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'integrations-pg',
-    purpose: '고객사의 결제 연동을 우리가 대신 잡는다.',
-    effect: '고객사가 키를 잘못 넣어 결제가 멈추는 일을 막는다.',
+    purpose: '고객사의 결제 연동을 우리가 대신 잡습니다.',
+    effect: '고객사가 키를 잘못 넣어 결제가 멈추는 일을 막습니다.',
     actions: ['고객사 고르기', '대행사 고르기', '그 대행사가 요구하는 값 넣기', '결제 수단 고르기', '운영 모드 고르기', '저장'],
     guards: [
       '상점 ID 나 비밀 키가 비면 저장하지 않는다.',
@@ -475,8 +485,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'integrations-oauth',
-    purpose: '고객사의 소셜 로그인 연동을 우리가 대신 잡는다.',
-    effect: '오타 하나로 로그인 전체가 막히는 일을 막는다.',
+    purpose: '고객사의 소셜 로그인 연동을 우리가 대신 잡습니다.',
+    effect: '오타 하나로 로그인 전체가 막히는 일을 막습니다.',
     actions: ['고객사 고르기', '제공자 켜고 끄기', '줄을 눌러 그 제공자의 키 넣기', '리다이렉트 주소 확인', '제공자마다 저장'],
     guards: [
       '켜 둔 제공자에 필수 값이 비어 있으면 저장하지 않는다.',
@@ -516,8 +526,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'integrations-plugin',
-    purpose: '고객사 배포에 얹는 조각을 켜고 끈다.',
-    effect: '무엇이 밖으로 나가고 있는지를 한 화면에서 안다.',
+    purpose: '고객사 배포에 얹는 조각을 켜고 끕니다.',
+    effect: '무엇이 밖으로 나가고 있는지를 한 화면에서 압니다.',
     actions: ['고객사 고르기', '조각 켜고 끄기', '연동 키 넣기', '저장'],
     guards: ['켜 두었는데 키가 필요한 조각의 키가 비면 저장하지 않는다.'],
     admin: ['고객사 배포 — 켠 조각은 고객사 화면에서 바로 돈다.'],
@@ -546,8 +556,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'integrations-dns',
-    purpose: '고객사 도메인이 우리 배포를 가리키게 하고, 그 도메인의 SSL 인증서를 대신 받아 갱신한다.',
-    effect: '레코드 한 줄이 틀려 사이트가 통째로 열리지 않거나 자물쇠가 풀리는 일을 미리 잡는다.',
+    purpose: '고객사 도메인이 우리 배포를 가리키게 하고, 그 도메인의 SSL 인증서를 대신 받아 갱신합니다.',
+    effect: '레코드 한 줄이 틀려 사이트가 통째로 열리지 않거나 자물쇠가 풀리는 일을 미리 잡습니다.',
     actions: [
       '고객사 고르기',
       '인증서 만료일과 자동 갱신 상태 읽기',
@@ -620,8 +630,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'statistics-revenue',
-    purpose: '우리가 고객사에게 받는 돈의 흐름을 읽는다.',
-    effect: '한 곳에 매출이 쏠려 있는지를 계약이 끝나기 전에 안다.',
+    purpose: '우리가 고객사에게 받는 돈의 흐름을 읽습니다.',
+    effect: '한 곳에 매출이 쏠려 있는지를 계약이 끝나기 전에 압니다.',
     actions: ['달별 막대 훑기', '무엇으로 버는지 보기', '어디서 버는지 보기', '표에서 숫자 옮겨 적기'],
     guards: ['읽기만 하는 화면이라 막을 조건이 없다.'],
     admin: ['없음 — 운영자만 보는 화면이다.'],
@@ -641,8 +651,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'statistics-members',
-    purpose: '고객사 사이트에 가입한 사람의 규모를 읽는다.',
-    effect: '플랜 상한을 넘겨 새 가입이 막히기 전에 플랜을 올린다.',
+    purpose: '고객사 사이트에 가입한 사람의 규모를 읽습니다.',
+    effect: '플랜 상한을 넘겨 새 가입이 막히기 전에 플랜을 올립니다.',
     actions: ['달별 누적 훑기', '고객사별 규모와 상한 비교', '표에서 가입·탈퇴 확인'],
     guards: ['상한의 90% 를 넘긴 고객사는 그 자리에 붉게 적는다.'],
     admin: ['없음 — 운영자만 보는 화면이다.'],
@@ -660,8 +670,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'billing-due',
-    purpose: '앞으로 받을 청구를 만들고 기한을 지킨다.',
-    effect: '기한이 지나 연체로 넘어가기 전에 손을 쓴다.',
+    purpose: '앞으로 받을 청구를 만들고 기한을 지킵니다.',
+    effect: '기한이 지나 연체로 넘어가기 전에 손을 씁니다.',
     actions: ['항목·번호·고객사로 검색', '항목으로 거르기', '고객사로 거르기', '청구 등록'],
     guards: [
       '제목이나 금액이 비면 등록하지 않는다.',
@@ -704,8 +714,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'billing-overdue',
-    purpose: '기한이 지난 청구를 구간별로 본다.',
-    effect: '무엇부터 손댈지가 목록만 보고 정해진다.',
+    purpose: '기한이 지난 청구를 구간별로 봅니다.',
+    effect: '무엇부터 손댈지가 목록만 보고 정해집니다.',
     actions: ['항목·번호·고객사로 검색', '연체 구간으로 거르기'],
     guards: ['조건에 맞는 것이 없으면 목록 자리에 왜 비었는지 적는다.'],
     admin: ['없음 — 고객사에게는 담당자가 직접 연락한다.'],
@@ -726,8 +736,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'settings-staff',
-    purpose: '이 콘솔에 들어오는 우리 직원을 관리한다.',
-    effect: '되돌릴 수 없는 일을 누가 할 수 있는지가 한자리에서 보인다.',
+    purpose: '이 콘솔에 들어오는 우리 직원을 관리합니다.',
+    effect: '되돌릴 수 없는 일을 누가 할 수 있는지가 한자리에서 보입니다.',
     actions: ['이름·계정·소속으로 검색', '직급으로 거르기', '관리자 등록'],
     guards: [
       '이름이나 소속이 비면 등록하지 않는다.',
@@ -765,8 +775,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'settings-notifications',
-    purpose: '통계·결제가 만들어 내는 신호를 어디로 보낼지 정한다.',
-    effect: '같은 알림 규칙이 화면마다 되풀이되지 않는다.',
+    purpose: '통계·결제가 만들어 내는 신호를 어디로 보낼지 정합니다.',
+    effect: '같은 알림 규칙이 화면마다 되풀이되지 않습니다.',
     actions: ['규칙 켜고 끄기', '알릴 시점 고치기', '보내는 곳 고르기', '받는 사람 고르기', '저장'],
     guards: ['켜 둔 규칙의 알릴 시점이 숫자가 아니면 저장하지 않는다.'],
     admin: ['없음 — 우리에게 오는 알림이다.'],
@@ -796,8 +806,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'settings-codes',
-    purpose: '여러 화면이 함께 쓰는 목록을 한 곳에서 정한다.',
-    effect: '이름 하나를 고칠 때 화면을 찾아다니지 않는다.',
+    purpose: '여러 화면이 함께 쓰는 목록을 한 곳에서 정합니다.',
+    effect: '이름 하나를 고칠 때 화면을 찾아다니지 않습니다.',
     actions: ['목록 이름·값·쓰는 화면으로 검색', '값 더하기', '값 빼기', '기준 값 목록 등록'],
     guards: [
       '값이 비면 더하지 않는다.',
@@ -834,8 +844,8 @@ export const SCREEN_SPECS: ScreenSpec[] = [
   },
   {
     screen: 'result',
-    purpose: '방금 한 일의 결말을 알리고 돌아갈 길을 준다.',
-    effect: '되돌릴 수 없는 일을 마친 뒤에 어디로 갈지 헤매지 않는다.',
+    purpose: '방금 한 일의 결말을 알리고 돌아갈 길을 줍니다.',
+    effect: '되돌릴 수 없는 일을 마친 뒤에 어디로 갈지 헤매지 않습니다.',
     actions: ['결과 읽기', '처리 번호 확인', '돌아갈 곳 고르기'],
     guards: ['`state=failed` 면 실패 문구와 붉은 표시로 그린다.'],
     admin: ['없음 — 운영자만 보는 화면이다.'],

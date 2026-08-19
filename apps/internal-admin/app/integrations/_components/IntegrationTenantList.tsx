@@ -71,7 +71,7 @@ export function IntegrationTenantList({
                 }
               }}
               className={`grid cursor-pointer grid-cols-1 gap-x-4 gap-y-2 border-b border-border px-5 py-4 text-left transition-colors duration-150 last:border-b-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand-500 lg:grid-cols-12 lg:items-center lg:gap-y-0 ${
-                active ? 'bg-brand-50 dark:bg-brand-900' : 'hover:bg-surface'
+ active ? 'bg-brand-50' : 'hover:bg-surface'
               }`}
             >
               <div className="flex items-center gap-3 lg:col-span-1" onClick={(event) => event.stopPropagation()}>
@@ -80,7 +80,7 @@ export function IntegrationTenantList({
               </div>
 
               <div className="min-w-0 lg:col-span-3">
-                <p className={`min-w-0 truncate text-sm font-medium ${active ? 'text-brand-700 dark:text-brand-200' : ''}`}>
+ <p className={`min-w-0 truncate text-sm font-medium ${active ? 'text-brand-700' : ''}`}>
                   {tenant.name}
                 </p>
                 <p className="min-w-0 truncate text-xs text-ink-faint">

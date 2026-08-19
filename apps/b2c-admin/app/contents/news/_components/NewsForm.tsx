@@ -163,7 +163,7 @@ export function NewsForm({ mode, newsCode, createdAt, initial }: NewsFormProps) 
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => toast.info('원문을 새 창에서 엽니다.')}
-                className="shrink-0 whitespace-nowrap text-xs text-brand-700 underline underline-offset-2 dark:text-brand-300"
+ className="shrink-0 whitespace-nowrap text-xs text-brand-700 underline underline-offset-2"
               >
                 링크 열어 확인
               </a>

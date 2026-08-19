@@ -63,7 +63,7 @@ export function ProductTile({ product, rank }: { product: ProductItem; rank?: nu
 
       <div className="flex flex-col gap-1.5">
         {/* 두 줄까지만 — 이름 길이가 제각각이라 자르지 않으면 카드 높이가 들쭉날쭉해진다. */}
-        <p className="line-clamp-2 text-sm leading-snug text-ink transition-colors duration-150 group-hover:text-brand-700 dark:group-hover:text-brand-300">{product.name}</p>
+ <p className="line-clamp-2 text-sm leading-snug text-ink transition-colors duration-150 group-hover:text-brand-700:text-brand-300">{product.name}</p>
 
         <p className="flex items-baseline gap-1.5">
           {rate > 0 && <span className="text-base font-bold tabular-nums text-signal-danger">{rate}%</span>}

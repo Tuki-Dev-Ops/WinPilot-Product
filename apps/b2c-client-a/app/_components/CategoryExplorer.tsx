@@ -49,7 +49,7 @@ export function CategoryExplorer() {
               }}
               className={`flex shrink-0 items-center justify-between gap-3 whitespace-nowrap rounded-lg px-4 py-3 text-left text-sm transition-colors duration-150 ${
                 active
-                  ? 'bg-brand-50 font-medium text-brand-700 dark:bg-brand-900 dark:text-brand-200'
+ ? 'bg-brand-50 font-medium text-brand-700'
                   : 'text-ink-muted hover:bg-surface'
               }`}
             >
