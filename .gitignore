@@ -4,6 +4,11 @@ out/
 dist/
 *.tsbuildinfo
 
+# Next 가 다시 쓰는 파일이다. `dev` 를 돌리면 `.next/dev/types` 를, `build` 를 돌리면
+# `.next/types` 를 가리키도록 스스로 바뀌어, 마지막에 무슨 명령을 돌렸는지가 커밋으로 남는다.
+# create-next-app 의 기본 `.gitignore` 에도 들어 있다.
+next-env.d.ts
+
 # SSOT 생성물 — 소스가 아니므로 커밋하지 않는다 (CI 아티팩트로 보관)
 artifacts/
 
