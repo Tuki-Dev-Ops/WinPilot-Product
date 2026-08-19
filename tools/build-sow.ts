@@ -1,430 +1,165 @@
-import { readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { FEATURES, type ViewId } from '@winpilot/spec';
+import { writeFileSync } from 'node:fs';
 import { FNB_BRAND } from '@winpilot/store';
-import { pages as clientPages } from '../apps/fnb-client-a/pages.manifest';
-import { pages as adminPages } from '../apps/fnb-admin/pages.manifest';
-import {
-  SCREEN_SPECS as clientSpecs,
-  COMMON_NON_FUNCTIONAL as clientCommon,
-  type ScreenSpec,
-} from '../apps/fnb-client-a/lib/screen-specs';
-import { SCREEN_SPECS as adminSpecs } from '../apps/fnb-admin/lib/screen-specs';
-import { IA_GROUPS as clientIa } from '../apps/fnb-client-a/lib/ia-groups';
-import { IA_GROUPS as adminIa } from '../apps/fnb-admin/lib/ia-groups';
-import { FNB_MENU } from '../apps/fnb-admin/lib/navigation/fnb-menu';
-import { formal, formalAction } from './lib/polite';
+import { ADMIN_SCREENS, CLIENT_SCREENS, SCREENS } from './lib/fnb-model';
+import { esc, note, rich } from './lib/html';
 
 /**
- * F&B 한 쌍의 **업무 범위 정의서**를 만든다 — 기획 · UI 디자인 · Front-End · Back-End.
+ * F&B 두 앱의 **업무 범위 정의서**를 만든다 — 계약 · 범위 · 책임 · 제외.
  *
- * ## 왜 Depth 로 적는가
- * 범위를 줄글이나 수량표로만 적으면 "화면 47개" 까지는 합의되는데 **그 화면 안에 무엇이
- * 들어가는가**에서 갈린다. 인수 자리에서 다투는 것은 늘 그 안쪽이다.
+ * ## 기능 명세서와 나눈 까닭
+ * 한 파일에 다 담았더니 60쪽이 넘었고, 그중 대부분이 화면별 세부 항목이었다. 그러면 계약을
+ * 맞추는 자리에서 화면 명세를 넘기게 되고, 개발자는 계약 조항 사이에서 자기 화면을 찾게 된다.
  *
- * 그래서 앱 → 갈래 → 화면 → 세부 항목 네 단으로 편다. 같은 값이 이어지는 칸은 `rowspan`
- * 으로 묶어 나무처럼 읽히게 한다. 줄마다 앱 이름을 되풀이하면 어디서 갈래가 바뀌는지 눈에
- * 들어오지 않는다.
+ * 읽는 사람이 다르면 문서도 나뉜다. 이 문서가 답하는 것은 넷이다 — **무엇을 만드는가 ·
+ * 어디까지 만드는가 · 무엇을 제공하지 않는가 · 누가 어디까지 맡는가.** 화면 안에서 무슨 일이
+ * 벌어지는가는 「기능 명세서」(`pnpm fsd:build`)가 답한다.
  *
- * 네 갈래가 보는 것이 다르다 — 기획은 **왜 있고 무엇을 하기로 했는가**, UI 디자인은
- * **무엇으로 이루어졌는가**, Front-End 는 **화면에서 어떻게 도는가**, Back-End 는 **서버가
- * 무엇을 맡아야 하는가**. 넷을 한 표에 넣으면 어느 줄이 누구의 일인지 알 수 없어진다.
+ * 두 문서는 **같은 기능 ID** 를 쓴다. 그래야 범위 정의서의 `MENU-002` 와 기능 명세서의
+ * `MENU-002` 가 같은 화면을 가리킨다(`lib/fnb-model.ts`).
  *
- * BX(로고 · BI · 패키지 · 촬영)는 제공하지 않는다. 갈래를 두지 않고 범위 밖 표에만 적는다 —
- * 빈 갈래를 세워 두면 나중에 채우기로 한 것으로 읽힌다.
- *
- * ## 내용을 손으로 적지 않는다
- * 손으로 옮겨 적으면 화면이 하나 늘 때 고칠 곳이 둘이 되고, 실제로는 한쪽만 고친다. 그러면
- * 계약 자리에서 코드와 문서가 다른 말을 한다.
- *
- * 여기 줄은 전부 저장소에서 읽은 것이다 — 화면 등록부 · IA 묶음 · 화면 명세 · 기능
- * 레지스트리. `pnpm sow:build` 를 다시 돌리면 지금 코드와 맞는 문서가 나온다.
+ * ## 손으로 적지 않는다
+ * 화면 목록을 옮겨 적으면 화면이 하나 늘 때 고칠 곳이 둘이 되고, 실제로는 한쪽만 고친다.
+ * 그러면 계약 자리에서 코드와 문서가 다른 말을 한다. 여기 목록은 화면 등록부에서 읽는다.
  *
  * ## 범위 밖은 0 이 아니라 —
- * 서버 · 결제 · 촬영처럼 이 과업에 없는 것에 `0` 을 적으면 **하기로 했는데 아직 안 한 것**
- * 으로 읽힌다. 따로 표를 두고 왜 없는지를 적는다.
- *
- * ## HTML 로 내는 이유
- * 받는 쪽이 바로 인쇄해 PDF 로 만들 수 있어야 한다. 워드나 한글 파일은 만드는 쪽의 글꼴과
- * 여백에 기대므로 열 때마다 다르게 보인다. HTML 은 `@page` 와 `break-inside` 로 **끊기는
- * 자리를 지정할 수 있다.** 파일 하나로 끝나고 밖에서 받아 오는 것이 없어 메일로 보내도
- * 그대로 열린다.
+ * 이 과업에 없는 것에 `0` 을 적으면 **하기로 했는데 아직 안 한 것**으로 읽힌다. 따로 표를
+ * 두고 왜 없는지를 적는다.
  *
  * ```
  * pnpm sow:build
  * ```
  */
 
-const esc = (s: string): string =>
-  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-
-/** 명세가 마크다운으로 적혀 있어 강조 표기를 태그로 바꾼다. */
-const rich = (s: string): string =>
-  esc(s)
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+const cells = (...values: string[]): string => `<tr>${values.map((one) => `<td>${one}</td>`).join('')}</tr>`;
 
 /**
- * 기능 정의 칸 — 한 줄이면 문단, 여럿이면 목록. 여럿을 한 문장으로 이으면 어디서 끊기는지
- * 보이지 않는다.
+ * 세 칸짜리 표를 편다 — 첫 칸이 이어지면 묶는다.
  *
- * 명세는 만드는 사람끼리 읽는 해라체로 적혀 있다. 밖으로 내보내는 문서이므로 여기서
- * 합쇼체로 올린다 — 원본을 고치지 않는 까닭은 `lib/polite.ts` 에 적었다.
+ * 「구분」이 줄마다 되풀이되면 어디서 갈래가 바뀌는지 눈으로 셈해야 한다. 갈래가 서너 줄로
+ * 짧아 인쇄해도 한 쪽 안에 들어가므로, 묶어도 빈칸이 생기지 않는다.
  */
-const note = (value: string | readonly string[], voice: (text: string) => string = formal): string => {
-  const line = (text: string): string => rich(voice(text));
-  const list = typeof value === 'string' ? [value] : value;
-  const [only] = list;
-  if (only !== undefined && list.length === 1) return line(only);
-  return `<ul>${list.map((text) => `<li>${line(text)}</li>`).join('')}</ul>`;
-};
+const grouped = (list: readonly [string, string, string][]): string =>
+  list
+    .map(([area, what, why], index) => {
+      const first = list[index - 1]?.[0] !== area;
+      /* 같은 이름이 떨어져서 두 번 나올 때를 대비해 **이어지는 만큼만** 센다. */
+      let span = 0;
+      while (list[index + span]?.[0] === area) span += 1;
+      const head = first ? `<td class="d1" rowspan="${span}">${esc(area)}</td>` : '';
+      return `<tr${first ? ' class="head"' : ''}>${head}<td class="d4">${rich(what)}</td><td class="memo">${note(why)}</td></tr>`;
+    })
+    .join('');
 
-/* ── 저장소에서 읽은 값 ─────────────────────────────────────── */
+/* ── 2. 과업 범위 ──────────────────────────────────────────── */
 
-function walk(dir: string, out: string[] = []): string[] {
-  for (const name of readdirSync(dir)) {
-    if (name === 'node_modules' || name === '.next') continue;
-    const path = join(dir, name);
-    if (statSync(path).isDirectory()) walk(path, out);
-    else out.push(path);
-  }
-  return out;
-}
+const scopeRows = SCREENS.map((one) =>
+  cells(
+    `<code>${esc(one.featureId)}</code>`,
+    esc(one.name),
+    esc(one.appLabel),
+    esc(one.menuPath),
+    `<code>${esc(one.route)}</code>`,
+    String(one.spec.actions.length),
+  ),
+).join('');
 
-const componentCount = (dir: string): number =>
-  walk(dir).filter((p) => p.endsWith('.tsx') && p.includes('_components')).length;
+const totalActions = SCREENS.reduce((sum, one) => sum + one.spec.actions.length, 0);
 
-const featuresOf = (view: ViewId) => FEATURES.filter((one) => view in one.views);
+/* ── 3. 책임 범위 ──────────────────────────────────────────── */
 
-type IaLike = {
-  id: string;
-  label?: string;
-  screens: readonly { screen: string; ko: string }[];
-  /** 이 갈래의 화면이 읽고 쓰는 곳 — Back-End 단의 원본이 된다 */
-  data: readonly string[];
-};
-
-/** 어드민 갈래는 이름을 사이드바에서 읽는다 — 도면과 메뉴가 다른 말을 하지 않게. */
-const menuLabel = (id: string): string => FNB_MENU.find((one) => one.id === id)?.label ?? id;
-
-type App = {
-  label: string;
-  dir: string;
-  view: ViewId;
-  pages: readonly { id: string; name: string; route: string }[];
-  specs: readonly ScreenSpec[];
-  ia: readonly IaLike[];
-  /** 갈래 이름을 어디서 읽는가 — 고객 사이트는 직접 적고, 콘솔은 메뉴가 이긴다 */
-  groupLabel: (group: IaLike) => string;
-  /** 값을 쌓는 화면이 있는가 */
-  readOnly: boolean;
-};
-
-const APPS: App[] = [
-  {
-    label: '고객 사이트',
-    dir: 'fnb-client-a',
-    view: 'fnb-client',
-    pages: clientPages,
-    specs: clientSpecs,
-    ia: clientIa,
-    groupLabel: (group) => group.label ?? group.id,
-    readOnly: true,
-  },
-  {
-    label: '운영 콘솔',
-    dir: 'fnb-admin',
-    view: 'fnb-admin',
-    pages: adminPages,
-    specs: adminSpecs,
-    ia: adminIa,
-    groupLabel: (group) => group.label ?? menuLabel(group.id),
-    readOnly: false,
-  },
+/**
+ * 갈래마다 **어디서 끝나는가**를 적는다.
+ *
+ * 책임 범위에서 다투는 것은 맡았는가 아닌가가 아니라 **어디까지 하면 끝인가**다. 그래서
+ * 「완료 기준」 칸을 따로 둔다 — 그 칸이 없으면 "다 됐다" 의 뜻이 서로 다른 채로 진행된다.
+ */
+const DUTY: [string, string, string][] = [
+  [
+    '기획',
+    '화면 정의 · 세부 기능 정의 · 운영 정책 · IA · 화면 흐름',
+    `화면 ${SCREENS.length}개에 대해 목적 · 세부 기능 · 정책이 「기능 명세서」에 적히고, 저장소의 문서 검사(\`docs:check\`)가 빈 자리 없이 통과한 상태입니다.`,
+  ],
+  [
+    'UI 디자인',
+    '디자인 토큰 · 공통 컴포넌트 · 화면별 구성 영역 · 반응형',
+    '네 너비(1280 · 1024 · 768 · 390)에서 가로 스크롤이 없고, 저장소의 넘침 검사(`overflow:check`)가 통과한 상태입니다. 별도 시안 파일(PSD · AI)은 산출물이 아닙니다.',
+  ],
+  [
+    'Front-End',
+    `화면 ${SCREENS.length}개 구현 · 세부 기능 ${totalActions}건 · 입력 검증 · 예외 화면 처리`,
+    '「기능 명세서」의 화면별 검수 기준을 모두 통과한 상태입니다. 값은 공유 패키지에서 읽으며, 서버 호출 지점은 한 곳으로 모아 둡니다.',
+  ],
+  [
+    'Back-End',
+    '**정의만 제공하고 구현은 제공하지 않습니다.** 화면별 데이터 연산 · 권한 · 항목 · 검증과 데이터 정책',
+    '뒤에 맡는 쪽이 화면을 눌러 보지 않고도 착수할 수 있는 상태입니다. 실제 서버 · 데이터베이스 · API 구축은 **본 과업의 범위가 아닙니다.**',
+  ],
+  [
+    '운영',
+    '**제공하지 않습니다.**',
+    '인수 시점의 산출물은 소스와 문서입니다. 호스팅 · 배포 · 콘텐츠 등록 대행은 포함하지 않습니다.',
+  ],
 ];
 
-const N = {
-  screenClient: clientPages.length,
-  screenAdmin: adminPages.length,
-  screens: clientPages.length + adminPages.length,
-  features: FEATURES.filter((one) => 'fnb-client' in one.views || 'fnb-admin' in one.views).length,
-  featureClient: featuresOf('fnb-client').length,
-  featureAdmin: featuresOf('fnb-admin').length,
-  compClient: componentCount('apps/fnb-client-a/app'),
-  compAdmin: componentCount('apps/fnb-admin/app'),
-  common: clientCommon.length,
-};
+/* ── 6. 변경 관리 기준 ─────────────────────────────────────── */
 
-/* ── 나무 ──────────────────────────────────────────────────── */
+const CHANGE: [string, string, string][] = [
+  [
+    '접수',
+    '변경 요청은 **기능 ID 를 지목해** 제기합니다.',
+    '`MENU-002` 처럼 ID 로 지목하면 두 문서의 같은 자리를 함께 찾을 수 있습니다. 화면 이름으로 부르면 목록 · 상세 · 등록 중 어느 것인지 갈리지 않습니다.',
+  ],
+  [
+    '판단',
+    '요청을 **범위 안**과 **범위 밖**으로 나눕니다.',
+    '이미 정의된 기능의 표현 · 배치 · 문구를 고치는 것은 범위 안입니다. 화면이 늘거나, 새 데이터 항목이 생기거나, 4장 「제외 범위」에 적힌 것을 하기로 하는 것은 범위 밖이며 별도 협의 대상입니다.',
+  ],
+  [
+    '반영',
+    '변경은 **화면 등록부와 화면 명세를 고치는 것**으로 시작합니다.',
+    '그 둘을 고치면 본 문서와 기능 명세서가 함께 갱신되고, 저장소의 검사 도구가 빠진 곳을 잡아냅니다.',
+  ],
+  [
+    '반영',
+    '**문서만 고치거나 코드만 고치는 변경은 받지 않습니다.**',
+    '한쪽만 고쳐 두면 다른 쪽이 조용히 낡은 상태로 남고, 그 사실은 한참 뒤 인수 자리에서 드러납니다.',
+  ],
+  [
+    '기록',
+    '변경 이력은 저장소의 이력으로 갈음합니다.',
+    '별도 변경 관리 대장을 두지 않습니다. 두 벌이 되면 한쪽만 적히고, 그때부터 어느 쪽이 맞는지 확인할 방법이 없어집니다.',
+  ],
+];
 
-type Item = {
-  name: string;
-  note: string | readonly string[];
-  /** 기능 목록인가 — `…공지사항으로` 처럼 자리만 가리키고 끝나는 줄의 뜻이 달라진다 */
-  action?: boolean;
-};
-type ScreenNode = { ko: string; route: string; items: Item[] };
-type GroupNode = { label: string; screens: ScreenNode[] };
-type AppNode = { label: string; groups: GroupNode[] };
 
-/**
- * 앱 → 갈래 → 화면 → 세부 항목 나무를 만든다.
- *
- * 어느 갈래에도 들지 않는 화면이 있다(고객 사이트의 홈이 그렇다 — 일곱 갈래가 모두 거기서
- * 갈라지므로 어느 하나에 넣을 수 없다). 그런 화면은 마지막에 `공통` 으로 모은다. 빠뜨리면
- * 표의 화면 수가 등록부와 달라지고, 그 차이는 아무도 눈치채지 못한다.
- */
-type Ctx = {
-  spec: ScreenSpec;
-  /** 이 갈래가 읽고 쓰는 곳 */
-  data: readonly string[];
-  route: string;
-  /** 읽기만 하는 화면인가 — 서버가 열어야 할 연산이 갈린다 */
-  readOnly: boolean;
-};
+/* ── 4. 제외 범위 ──────────────────────────────────────────── */
 
-const tree = (pick: (ctx: Ctx) => Item[]): AppNode[] =>
-  APPS.map((app) => {
-    const byId = new Map(app.specs.map((one) => [one.screen, one]));
-    const pageById = new Map(app.pages.map((one) => [one.id, one]));
-    const placed = new Set<string>();
+const OUT: [string, string, string][] = [
+  ['BX', '로고 · BI 가이드 제작', '**BX 는 제공하지 않는 서비스입니다.** 로고는 원본 파일을 받아 그대로 씁니다 — 눈으로 보고 다시 그린 로고는 그 브랜드의 표장이 아닙니다.'],
+  ['BX', '패키지 · 인쇄물 · 편집 디자인', 'BX 범위이므로 제공하지 않습니다. 본 과업은 웹 화면에 한정합니다.'],
+  ['BX', 'SNS · 프로모션 콘텐츠 디자인', '같은 이유로 제공하지 않습니다.'],
+  ['BX', '제품 · 모델 촬영 · 영상 제작', '메뉴 사진과 영상은 발주처가 제공합니다.'],
+  ['기획', '경쟁사 분석 · 시장 조사', '발주처가 제공하는 브랜드 기준을 따릅니다.'],
+  ['UI 디자인', '시안 파일 (PSD · AI)', '디자인은 실제로 동작하는 화면으로 인도합니다. 별도 시안 파일은 만들지 않습니다.'],
+  ['Back-End', '서버 · 데이터베이스 **구현**', '**정의는 제공하고 구현은 제공하지 않습니다.** 화면별 데이터 연산 · 권한 · 항목 · 검증은 「기능 명세서」에, 보존 · 삭제 · 소멸 기준은 이 문서 5장에 있습니다. 그 둘이 뒤에 맡는 쪽의 착수 명세가 됩니다.'],
+  ['Back-End', 'API 개발 · 배포', '같은 구분입니다. 화면이 필요로 하는 연산 · 권한 · 항목 · 검증은 「기능 명세서」에 정의해 두었습니다.'],
+  ['Back-End', '회원 · 로그인 · 권한 **구현**', '화면까지만 만듭니다. 입력한 값은 지금은 어디로도 전송되지 않습니다.'],
+  ['Back-End', '온라인 주문 · 결제', '**정의도 하지 않습니다.** 이 브랜드는 주문을 전화와 매장 방문으로 받습니다.'],
+  ['Back-End', '메일 · 문자 발송', '정의하지 않습니다. 창업 문의는 값을 받는 양식까지 제공합니다.'],
+  ['Back-End', '지도 · 예약 · POS 등 외부 연동', '정의하지 않습니다. 지도는 화면에서 지도 SDK 를 직접 부릅니다.'],
+  ['운영', '서버 구성 · 배포 · 호스팅', '인수 시점의 산출물은 소스와 문서입니다.'],
+  ['운영', '취약점 진단 · 보안 점검', '포함하지 않습니다. 「데이터 정책」의 보안 항목은 점검이 아니라 설계 기준입니다.'],
+  ['운영', '콘텐츠 제작 · 등록 대행', '메뉴 사진과 문구는 발주처가 제공하며, 등록은 콘솔에서 직접 하십니다.'],
+];
 
-    const node = (id: string, ko: string, data: readonly string[]): ScreenNode | null => {
-      const page = pageById.get(id);
-      const spec = byId.get(id);
-      if (!page || !spec) return null;
-      placed.add(id);
-      /*
-        고객 사이트는 읽기만 한다 — 창업 상담 신청 한 곳만 값을 쌓는다. 그 하나 때문에
-        사이트 전체를 쓰기 가능으로 두면 서버가 열지 않아도 될 연산까지 명세에 오른다.
-      */
-      const readOnly = app.readOnly && !page.route.endsWith('/apply');
-      const items = pick({ spec, data, route: page.route, readOnly });
-      return items.length > 0 ? { ko, route: page.route, items } : null;
-    };
 
-    const groups: GroupNode[] = [];
-    for (const group of app.ia) {
-      const screens = group.screens
-        .map((one) => node(one.screen, one.ko, group.data))
-        .filter((one) => one !== null);
-      if (screens.length > 0) groups.push({ label: app.groupLabel(group), screens });
-    }
+/* ── 5. 데이터 정책 ────────────────────────────────────────── */
 
-    const loose = app.pages
-      .filter((page) => !placed.has(page.id))
-      .map((page) => node(page.id, page.name, []))
-      .filter((one) => one !== null);
-    if (loose.length > 0) groups.push({ label: '공통', screens: loose });
-
-    /*
-      세울 항목이 하나도 없어 표에서 빠진 화면을 알린다. 범위 문서에서 화면이 사라지는 것은
-      범위가 줄어든 것으로 읽히는데, 조용히 빠지면 만든 사람도 모른다.
-    */
-    const shown = new Set(groups.flatMap((group) => group.screens.map((screen) => screen.route)));
-    const dropped = app.pages.filter((page) => !shown.has(page.route));
-    if (dropped.length > 0) {
-      console.warn(`  [빠짐] ${app.dir} — ${dropped.map((one) => one.id).join(', ')}`);
-    }
-
-    return { label: app.label, groups };
-  });
-
-/**
- * 나무를 표로 편다 — **화면 하나가 묶음 하나**다.
- *
- * 처음에는 1Depth 를 앱 전체로 묶었다. 그러자 133줄이 한 칸이 되어 글자가 표 한가운데
- * 놓였고, 인쇄하면 그 칸이 여러 쪽에 걸치면서 **앞쪽 몇 장은 1Depth 가 통째로 비었다.**
- * 칸을 나누는 선은 종이 위에서 끊기지만 글자는 한 번만 찍히기 때문이다.
- *
- * 그래서 세 단을 모두 화면 단위로 묶는다. 같은 앱 이름이 화면마다 되풀이되지만, 어느 쪽을
- * 펴도 그 줄이 어느 앱 · 어느 갈래의 것인지 읽힌다. 되풀이가 빈칸보다 낫다.
- */
-const rows = (apps: AppNode[]): string => {
-  const out: string[] = [];
-  for (const app of apps) {
-    for (const group of app.groups) {
-      for (const screen of group.screens) {
-        const span = screen.items.length;
-        screen.items.forEach((item, index) => {
-          const cells =
-            index === 0
-              ? [
-                  `<td class="d1" rowspan="${span}">${esc(app.label)}</td>`,
-                  `<td class="d2" rowspan="${span}">${esc(group.label)}</td>`,
-                  `<td class="d3" rowspan="${span}">${esc(screen.ko)}<span class="route">${esc(screen.route)}</span></td>`,
-                ]
-              : [];
-          cells.push(`<td class="d4">${esc(item.name)}</td>`);
-          cells.push(`<td class="memo">${note(item.note, item.action ? formalAction : formal)}</td>`);
-          out.push(`<tr${index === 0 ? ' class="head"' : ''}>${cells.join('')}</tr>`);
-        });
-      }
-    }
-  }
-  return out.join('');
-};
-
-const table = (title: string, lead: string, apps: AppNode[]): string => `
-<h2 class="band">${esc(title)}</h2>
-<p class="lead">${rich(lead)}</p>
-<table class="depth">
-  <thead>
-    <tr>
-      <th style="width:64px">1Depth</th>
-      <th style="width:78px">2Depth</th>
-      <th style="width:104px">3Depth</th>
-      <th style="width:150px">4Depth</th>
-      <th>기능 정의</th>
-    </tr>
-  </thead>
-  <tbody>${rows(apps)}</tbody>
-</table>`;
-
-/* ── 세 갈래 ───────────────────────────────────────────────── */
-
-/**
- * 기획 — 화면이 **왜 있고 무엇을 하기로 했는가**.
- *
- * 세부 기능 목록을 Front-End 와 겹쳐 싣는다. 겹치는 것이 낭비로 보이지만, 기획 단에서는
- * **무엇을 하기로 했는가**를 정하고 Front-End 단에서는 **그것이 화면에서 어떻게 도는가**를
- * 적는다. 앞의 것이 빠지면 구현이 기획을 앞질러도 알아챌 방법이 없다.
- */
-const PLAN = tree(({ spec }) => {
-  const items: Item[] = [{ name: '화면 목적', note: spec.purpose }];
-  if (spec.effect) items.push({ name: '기대 효과', note: spec.effect });
-  items.push({ name: `세부 기능 정의 ${spec.actions.length}건`, note: spec.actions, action: true });
-  if (spec.policy?.length) items.push({ name: '운영 정책', note: spec.policy });
-  return items;
-});
-
-/**
- * UI 디자인 — 화면이 **무엇으로 이루어졌는가**. 영역 하나가 한 줄이다.
- *
- * 영역이 아직 안 적힌 화면도 한 줄은 세운다. 빈 배열을 그대로 두면 그 화면이 표에서 사라지고,
- * 범위 문서에서 화면이 사라지는 것은 곧 **범위가 줄어든 것**으로 읽힌다.
- */
-const DESIGN = tree(({ spec }) =>
-  spec.areas?.length
-    ? spec.areas.map((area) => ({
-        name: area.area,
-        note: area.when ? `${area.purpose} · 표시 조건: ${area.when}` : area.purpose,
-      }))
-    : [{ name: '화면 디자인', note: '구성 영역이 아직 명세에 적히지 않았습니다.' }],
-);
-
-/**
- * Front-End — 세부 기능이 **화면에서 어떻게 도는가**. 기능 하나가 한 줄이다.
- *
- * 4Depth 에 기능 번호를 매긴다. 검토 회신에서 "세 번째 줄" 이라고 부르면 줄이 하나 늘거나
- * 빠진 뒤에는 서로 다른 것을 가리키게 된다. 번호는 화면 안에서만 이어진다.
- *
- * 단추가 적힌 기능은 눌렀을 때 · 성공했을 때 · 실패했을 때를 함께 적는다. 기능 이름만으로는
- * 실패가 어떻게 보이는지 알 수 없고, 그 자리가 인수 때 다투는 자리다.
- */
-const FRONT = tree(({ spec }) => {
-  const buttons = spec.buttons ?? [];
-  const items: Item[] = spec.actions.map((action, index) => {
-    const button = buttons.find((one) => action.includes(one.label));
-    const lines = [action];
-    if (button) {
-      lines.push(`누르면 ${button.onClick}`);
-      if (button.onSuccess) lines.push(`성공 시 ${button.onSuccess}`);
-      if (button.onFail) lines.push(`실패 시 ${button.onFail}`);
-    }
-    return { name: `기능 ${String(index + 1).padStart(2, '0')}`, note: lines, action: true };
-  });
-  if (spec.guards.length > 0) items.push({ name: '제약 · 예외 처리', note: spec.guards });
-  if (spec.nonFunctional.length > 0) items.push({ name: '비기능 요건', note: spec.nonFunctional });
-  return items;
-});
-
-const PUBLIC_ACCESS = '누구나 읽습니다. 로그인을 요구하지 않으며, 쓰기 연산은 열지 않습니다.';
-const ADMIN_ACCESS = '인증된 운영자만 호출합니다. 개인정보가 담긴 창업 문의는 권한을 따로 나누기를 권고합니다.';
-
-/**
- * 화면 주소에서 **서버가 해야 할 일**을 읽는다.
- *
- * 주소 규칙이 곧 연산이다 — `/menus` 는 목록, `/menus/[itemId]` 는 단건, `/menus/new` 는
- * 등록. 이 규칙은 화면 등록부가 강제하므로(`spec:check`) 주소를 보고 연산을 말할 수 있다.
- *
- * 화면마다 손으로 적지 않는 까닭은 늘 같다 — 화면이 하나 늘 때 고칠 곳이 둘이 되면 한쪽만
- * 고치게 된다.
- */
-const operations = (route: string, readOnly: boolean): string[] => {
-  if (readOnly) {
-    return route.includes('[')
-      ? ['단건 조회 — 주소의 식별자로 하나를 찾아 내려보냅니다. 없거나 공개가 꺼진 것은 404 로 답합니다.']
-      : ['목록 조회 — 공개 상태인 것만, 정해진 차례대로 내려보냅니다.'];
-  }
-  if (route.endsWith('/new')) {
-    return [
-      '등록 — 받은 값을 검증한 뒤 새로 만듭니다. 식별자는 서버가 발급합니다.',
-      '중복 확인 — 같은 값이 이미 있는지 저장 전에 확인합니다.',
-    ];
-  }
-  if (route.includes('[')) {
-    return [
-      '단건 조회 — 주소의 식별자로 하나를 찾습니다. 없으면 404 로 답합니다.',
-      '수정 — 받은 값을 검증한 뒤 덮어씁니다. 바뀐 항목만 이력에 남깁니다.',
-      '삭제 — 목록에서 즉시 감춘 뒤, 데이터 정책의 파기 기준에 따라 지웁니다.',
-      '상태 변경 — 공개 · 고정 등 노출을 가르는 값을 따로 바꿉니다.',
-    ];
-  }
-  return [
-    '목록 조회 — 검색어 · 조건 · 정렬 · 쪽 나눔을 받습니다.',
-    '건수 집계 — 조건에 걸린 전체 건수를 함께 내려보냅니다. 쪽 나눔이 이 값을 씁니다.',
-    '일괄 처리 — 여러 건을 골라 상태를 바꾸거나 지웁니다.',
-  ];
-};
-
-/**
- * Back-End — 서버가 **무엇을 맡아야 하는가**.
- *
- * 본 과업에는 서버가 없다. 그렇다고 이 칸을 비워 두면 뒤에 서버를 맡는 사람이 화면을 눌러
- * 보며 필요한 것을 짐작해야 하고, 짐작은 늘 어긋난다. 그래서 **지금 화면이 실제로 필요로
- * 하는 것**에서 서버의 일을 끌어내 적는다.
- *
- * 끌어낸 것과 확정된 것을 섞지 않는다 — 보존 기간처럼 발주처가 정해야 하는 값은 뒤의
- * 「데이터 정책」에 `권고` 로 따로 모았다. 여기 적힌 것을 정해진 값으로 읽으면 안 된다.
- */
-const BACK = tree(({ spec, data, route, readOnly }) => {
-  const items: Item[] = [
-    { name: '데이터 연산', note: operations(route, readOnly) },
-    { name: '권한', note: readOnly ? PUBLIC_ACCESS : ADMIN_ACCESS },
-  ];
-  if (data.length > 0) items.push({ name: '대상 데이터', note: data });
-  if (spec.fields?.length) {
-    items.push({
-      name: `항목 정의 ${spec.fields.length}건`,
-      note: spec.fields.map(
-        (one) =>
-          `${one.name} · ${one.type}${one.required ? ' · 필수' : ''}${one.rule ? ` · ${one.rule}` : ''}`,
-      ),
-    });
-  }
-  if (spec.validations?.length) items.push({ name: '저장 전 검증', note: spec.validations });
-  if (readOnly && spec.admin.length > 0) items.push({ name: '값의 출처', note: spec.admin });
-  return items;
-});
-
-/* ── 데이터 정책 ───────────────────────────────────────────── */
-
-/**
- * 서버를 맡는 쪽이 **정해 놓고 시작해야 하는 것**들.
- *
- * 기능은 화면에서 끌어낼 수 있지만 보존 기간과 파기 시점은 화면에 드러나지 않는다. 그런데
- * 이것을 안 정하고 만들면 나중에 "언제 지우기로 했더라" 를 물을 곳이 없고, 개인정보가 담긴
- * 창업 문의는 그 물음이 곧 위험이 된다.
- *
- * **여기 적힌 기간은 전부 `권고` 다.** 근거로 삼은 법령을 함께 적었지만, 실제 값은 발주처가
- * 정한다. 지어낸 수를 확정된 값처럼 적어 두면 그것이 그대로 굳는다.
- */
 const POLICY: [string, string, string][] = [
   [
     '수집',
     '수집 항목',
-    '창업 상담 신청에서 받는 값 — 성함 · 연락처 · 지역 · 예산 · 하고 싶은 말. 실제 항목은 Back-End 표의 「항목 정의」와 같습니다.',
+    '창업 상담 신청에서 받는 값 — 성함 · 연락처 · 지역 · 예산 · 하고 싶은 말. 실제 항목과 검증 규칙은 「기능 명세서」 `FRANCHISE-002` 의 「입력 데이터」와 같습니다.',
   ],
   [
     '수집',
@@ -518,59 +253,6 @@ const POLICY: [string, string, string][] = [
   ],
 ];
 
-/**
- * 세 칸짜리 표를 편다 — 첫 칸이 이어지면 묶는다.
- *
- * 「구분」이 줄마다 되풀이되면 어디서 갈래가 바뀌는지 눈으로 셈해야 한다. 화면별 표와 달리
- * 여기는 갈래가 서너 줄로 짧아 인쇄해도 한 쪽 안에 들어가므로, 묶어도 빈칸이 생기지 않는다.
- */
-const grouped = (list: readonly [string, string, string][]): string =>
-  list
-    .map(([area, what, why], index) => {
-      const first = list[index - 1]?.[0] !== area;
-      /* 같은 이름이 떨어져서 두 번 나올 때를 대비해 **이어지는 만큼만** 센다. */
-      let span = 0;
-      while (list[index + span]?.[0] === area) span += 1;
-      const head = first ? `<td class="d1" rowspan="${span}">${esc(area)}</td>` : '';
-      return `<tr${first ? ' class="head"' : ''}>${head}<td class="d4">${rich(what)}</td><td class="memo">${note(why)}</td></tr>`;
-    })
-    .join('');
-
-const policyRows = grouped(POLICY);
-
-const countRows = (apps: AppNode[]): number =>
-  apps.reduce(
-    (sum, app) =>
-      sum +
-      app.groups.reduce(
-        (inner, group) => inner + group.screens.reduce((last, screen) => last + screen.items.length, 0),
-        0,
-      ),
-    0,
-  );
-
-/* ── 범위 밖 ───────────────────────────────────────────────── */
-
-const OUT: [string, string, string][] = [
-  ['BX', '로고 · BI 가이드 제작', '**BX 는 제공하지 않는 서비스입니다.** 로고는 원본 파일을 받아 그대로 씁니다 — 눈으로 보고 다시 그린 로고는 그 브랜드의 표장이 아닙니다.'],
-  ['BX', '패키지 · 인쇄물 · 편집 디자인', 'BX 범위이므로 제공하지 않습니다. 본 과업은 웹 화면에 한정합니다.'],
-  ['BX', 'SNS · 프로모션 콘텐츠 디자인', '같은 이유로 제공하지 않습니다.'],
-  ['BX', '제품 · 모델 촬영 · 영상 제작', '메뉴 사진과 영상은 발주처가 제공합니다.'],
-  ['기획', '경쟁사 분석 · 시장 조사', '발주처가 제공하는 브랜드 기준을 따릅니다.'],
-  ['UI 디자인', '시안 파일 (PSD · AI)', '디자인은 실제로 동작하는 화면으로 인도합니다. 별도 시안 파일은 만들지 않습니다.'],
-  ['Back-End', '서버 · 데이터베이스 **구현**', '**정의는 본 문서에 포함되고, 구현은 포함되지 않습니다.** 「Back-End」와 「데이터 정책」 두 표가 뒤에 맡는 쪽의 착수 명세가 됩니다.'],
-  ['Back-End', 'API 개발 · 배포', '같은 구분입니다. 화면이 필요로 하는 연산 · 권한 · 항목 · 검증은 정의해 두었습니다.'],
-  ['Back-End', '회원 · 로그인 · 권한 **구현**', '화면까지만 만듭니다. 입력한 값은 지금은 어디로도 전송되지 않습니다.'],
-  ['Back-End', '온라인 주문 · 결제', '**정의도 하지 않습니다.** 이 브랜드는 주문을 전화와 매장 방문으로 받습니다.'],
-  ['Back-End', '메일 · 문자 발송', '정의하지 않습니다. 창업 문의는 값을 받는 양식까지 제공합니다.'],
-  ['Back-End', '지도 · 예약 · POS 등 외부 연동', '정의하지 않습니다. 지도는 화면에서 지도 SDK 를 직접 부릅니다.'],
-  ['운영', '서버 구성 · 배포 · 호스팅', '인수 시점의 산출물은 소스와 문서입니다.'],
-  ['운영', '취약점 진단 · 보안 점검', '포함하지 않습니다. 「데이터 정책」의 보안 항목은 점검이 아니라 설계 기준입니다.'],
-  ['운영', '콘텐츠 제작 · 등록 대행', '메뉴 사진과 문구는 발주처가 제공하며, 등록은 콘솔에서 직접 하십니다.'],
-];
-
-
-const outRows = grouped(OUT);
 
 /**
  * 만든 날. 문서가 생성물이라 **언제 기준인가**가 곧 유효기간이다 — 날짜가 없으면 받는 쪽이
@@ -598,7 +280,7 @@ const html = `<!doctype html>
     --band: #eceef2;
     --head: #f5f6f8;
     --d1: #f2f4f7;
-    --d2: #f7f8fa;
+    --accent: #1b5fc4;
   }
 
   * { box-sizing: border-box; }
@@ -610,7 +292,7 @@ const html = `<!doctype html>
     color: var(--ink);
     font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", system-ui, sans-serif;
     font-size: 9.5pt;
-    line-height: 1.6;
+    line-height: 1.62;
     /* 한글은 낱말 한가운데서 끊긴다. 띄어쓰기 단위로만 끊게 한다. */
     word-break: keep-all;
     overflow-wrap: break-word;
@@ -618,77 +300,42 @@ const html = `<!doctype html>
 
   .sheet { max-width: 200mm; margin: 0 auto; }
 
-  .title-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 14px;
-  }
+  .title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
   h1 { font-size: 17pt; margin: 0; letter-spacing: -0.02em; }
   h1 .dim { color: var(--faint); font-weight: 600; }
   .date { color: var(--muted); font-size: 9pt; font-style: italic; white-space: nowrap; }
 
-  table { width: 100%; border-collapse: collapse; margin: 0 0 18px; }
-  th, td { border: 1px solid var(--line); padding: 4px 7px; vertical-align: middle; }
+  h2 {
+    background: var(--band);
+    border: 1px solid var(--line);
+    text-align: center;
+    font-size: 11pt;
+    letter-spacing: 0.24em;
+    padding: 6px;
+    margin: 26px 0 10px;
+    break-after: avoid;
+  }
+  h3 { font-size: 10pt; margin: 16px 0 6px; color: var(--accent); break-after: avoid; }
+  p { margin: 6px 0; }
+  .lead { color: var(--muted); margin: 0 0 8px; }
 
-  .ident th { width: 100px; background: var(--head); text-align: center; font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; margin: 4px 0 12px; }
+  th, td { border: 1px solid var(--line); padding: 5px 7px; vertical-align: top; text-align: left; }
+  thead th { background: var(--head); font-weight: 600; text-align: center; white-space: nowrap; }
+  tbody tr { break-inside: avoid; }
 
-  .common { margin-bottom: 18px; }
+  td.d1 { text-align: center; vertical-align: middle; background: var(--d1); font-weight: 700; }
+  td.d4 { font-weight: 600; }
+  td.memo { color: var(--muted); }
+  td.memo ul { margin: 0; padding-left: 15px; }
+  tbody tr.head > td { border-top: 1.4px solid #9aa1ad; }
+
+  .common { margin-bottom: 16px; border: 1px solid var(--line); }
   .common th { background: var(--band); text-align: center; font-weight: 700; font-size: 10pt; padding: 5px; }
   .common td { padding: 10px 14px; }
   .common ol { margin: 0; padding-left: 18px; color: var(--muted); }
   .common li { margin: 2px 0; }
   .common li strong { color: var(--ink); }
-
-  h2.band {
-    background: var(--band);
-    border: 1px solid var(--line);
-    border-bottom: none;
-    text-align: center;
-    font-size: 11pt;
-    font-weight: 700;
-    letter-spacing: 0.3em;
-    padding: 6px;
-    margin: 22px 0 0;
-    break-after: avoid;
-  }
-  p.lead {
-    border: 1px solid var(--line);
-    border-top: none;
-    margin: 0;
-    padding: 7px 12px;
-    color: var(--muted);
-    font-size: 9pt;
-    break-after: avoid;
-  }
-
-  .depth thead th { background: var(--head); text-align: center; font-weight: 600; }
-  .depth thead tr { break-inside: avoid; break-after: avoid; }
-  .depth tbody tr { break-inside: avoid; }
-  /* 화면이 바뀌는 자리에만 굵은 선. 앱 이름이 되풀이되므로 묶음의 경계는 선이 알려 준다. */
-  .depth tbody tr.head > td { border-top: 1.4px solid #9aa1ad; }
-
-  /*
-    1·2·3Depth 는 rowspan 으로 묶여 여러 줄에 걸친다. 가운데 정렬해야 묶인 범위가 눈에 보인다.
-    위로 붙이면 어디까지가 그 갈래인지 알 수 없다.
-  */
-  td.d1, td.d2, td.d3 { text-align: center; vertical-align: middle; }
-  td.d1 { background: var(--d1); font-weight: 700; }
-  td.d2 { background: var(--d2); font-weight: 600; }
-  td.d3 { font-weight: 600; line-height: 1.4; }
-  td.d3 .route {
-    display: block;
-    color: var(--faint);
-    font-weight: 400;
-    font-size: 8pt;
-    font-family: "Consolas", "D2Coding", ui-monospace, monospace;
-    word-break: break-all;
-  }
-  td.d4 { font-weight: 500; }
-  td.memo { color: var(--muted); font-size: 9pt; }
-  td.memo ul { margin: 0; padding-left: 15px; }
-  td.memo li { margin: 1px 0; }
 
   code {
     font-family: "Consolas", "D2Coding", ui-monospace, monospace;
@@ -697,10 +344,13 @@ const html = `<!doctype html>
     padding: 0.5px 3px;
     border-radius: 3px;
   }
+  th code, td code { background: transparent; }
+  .none { color: var(--faint); }
 
-  @media print {
-    body { padding: 0; }
-  }
+  ul { margin: 4px 0; padding-left: 17px; }
+  li { margin: 2px 0; }
+
+  @media print { body { padding: 0; } }
 </style>
 </head>
 <body>
@@ -715,43 +365,97 @@ const html = `<!doctype html>
   <tr><th>공통사항</th></tr>
   <tr><td>
     <ol>
-      <li><strong>대상</strong> — F&amp;B 고객 사이트(<code>apps/fnb-client-a</code>)와 운영 콘솔(<code>apps/fnb-admin</code>) 한 쌍입니다. 손님이 보는 사이트와, 그 내용을 고치는 콘솔입니다.</li>
-      <li><strong>범위 기준</strong> — 화면 ${N.screens}개(고객 ${N.screenClient} · 콘솔 ${N.screenAdmin}) · 기능 ${N.features}가지 · 컴포넌트 ${N.compClient + N.compAdmin}개입니다.</li>
-      <li>본 문서의 내용은 <strong>현재 구현된 것을 읽어 만든 값</strong>입니다. 예정이 아니라 저장소의 화면 등록부 · IA 묶음 · 화면 명세 · 기능 레지스트리에서 기계로 뽑았습니다. 범위가 바뀌면 다시 만들어 갱신합니다.</li>
-      <li>표는 <strong>앱 → 갈래 → 화면 → 세부 항목</strong> 네 단으로 읽습니다. 화면 하나가 한 묶음이며, 같은 값이 이어지는 칸은 묶어 두었습니다.</li>
-      <li>네 갈래가 보는 것이 다릅니다 — <strong>기획</strong>은 왜 있고 무엇을 하기로 했는가, <strong>UI 디자인</strong>은 무엇으로 이루어졌는가, <strong>Front-End</strong>는 화면에서 어떻게 도는가, <strong>Back-End</strong>는 서버가 무엇을 맡아야 하는가.</li>
-      <li><strong>Back-End 는 정의만 하고 구현하지 않습니다.</strong> 뒤에 맡는 쪽이 화면을 눌러 보며 짐작하지 않도록, 지금 화면이 실제로 필요로 하는 연산 · 권한 · 항목 · 검증을 끌어내 적었습니다. 「데이터 정책」의 보존 · 삭제 · 소멸 기준이 함께 착수 명세가 됩니다.</li>
-      <li>「데이터 정책」에서 <strong>권고</strong>라고 적은 기간과 값은 <strong>확정된 것이 아닙니다.</strong> 근거로 삼은 법령을 함께 적었으나 실제 값은 발주처가 정합니다.</li>
-      <li><strong>BX(로고 · BI · 패키지 · 촬영 · SNS 콘텐츠)는 제공하지 않습니다.</strong> 자세한 것은 마지막 「범위 밖」 표에 있습니다.</li>
+      <li>이 문서는 <strong>계약 · 범위 · 책임 · 제외 범위</strong>를 정하는 문서입니다. 화면 안에서 무슨 일이 벌어지는가는 <strong>별도 문서 「기능 명세서」</strong>에 있습니다.</li>
+      <li>두 문서는 <strong>같은 기능 ID</strong> 를 씁니다. 회신 시 <code>MENU-002</code> 처럼 ID 로 지목해 주십시오. 화면 이름으로 부르면 목록 · 상세 · 등록 중 어느 것인지 갈리지 않습니다.</li>
+      <li><strong>대상</strong> — F&amp;B 고객 사이트(<code>apps/fnb-client-a</code>)와 관리자(<code>apps/fnb-admin</code>) 한 쌍입니다.</li>
+      <li><strong>범위 기준</strong> — 화면 ${SCREENS.length}개(고객 사이트 ${CLIENT_SCREENS.length} · 관리자 ${ADMIN_SCREENS.length}) · 세부 기능 ${totalActions}건입니다.</li>
+      <li>본 문서의 화면 목록은 <strong>현재 구현된 것을 읽어 만든 값</strong>입니다. 예정이 아니라 저장소의 화면 등록부에서 기계로 뽑았습니다.</li>
+      <li><strong>Back-End 는 정의만 제공하고 구현하지 않습니다.</strong> 필요한 연산 · 권한 · 항목 · 검증은 「기능 명세서」에, 보존 · 삭제 · 소멸 기준은 이 문서 5장 「데이터 정책」에 있습니다.</li>
+      <li>5장에서 <strong>권고</strong>라고 적은 기간과 값은 <strong>확정된 것이 아닙니다.</strong> 근거로 삼은 법령을 함께 적었으나 실제 값은 발주처가 정합니다.</li>
+      <li><strong>BX(로고 · BI · 패키지 · 촬영 · SNS 콘텐츠)는 제공하지 않습니다.</strong> 4장 「제외 범위」를 확인해 주십시오.</li>
       <li>메뉴 사진과 문구 등 <strong>콘텐츠는 발주처가 제공</strong>합니다. 본 과업은 받은 값을 화면에 세우는 일까지입니다.</li>
-      <li><strong>현 단계에는 서버와 데이터베이스가 없습니다.</strong> 화면이 읽는 값은 공유 패키지 한 곳에 있으며, 콘솔에서 고친 값은 브라우저 안에서만 유지됩니다. 양식에 입력한 값은 전송되지 않습니다.</li>
-      <li>화면은 <strong>1280 · 1024 · 768 · 390</strong> 네 너비에서 가로 스크롤 없이 동작합니다. 저장소의 검사 도구가 이를 자동으로 확인합니다.</li>
-      <li>범위를 더하거나 빼는 일은 <strong>화면 등록부와 화면 명세를 고치는 것</strong>으로 시작하며, 본 문서와 기능 명세서가 함께 갱신됩니다. 문서만 고치거나 코드만 고치는 변경은 받지 않습니다.</li>
+      <li>범위를 더하거나 빼는 절차는 6장 「변경 관리 기준」에 있습니다.</li>
     </ol>
   </td></tr>
 </table>
 
-${table('기 획', '페이지마다 **왜 있는가**와 **무엇을 하기로 했는가**를 적습니다. 목적 · 기대 효과 · 세부 기능 정의 · 그 화면에서만 지키는 운영 정책입니다.', PLAN)}
-${table('U I 디 자 인', '페이지마다 **무엇으로 이루어졌는가**를 적습니다. 구성 영역 하나가 한 줄이며, 언제 보이는지가 정해진 영역은 표시 조건을 함께 적었습니다. 네 너비(1280 · 1024 · 768 · 390) 반응형으로 만듭니다.', DESIGN)}
-${table('F r o n t - E n d', '페이지마다 **세부 기능이 화면에서 어떻게 도는가**를 적습니다. 기능 하나가 한 줄이고, 단추가 있는 기능은 눌렀을 때 · 성공했을 때 · 실패했을 때를 함께 적었습니다.', FRONT)}
-${table('B a c k - E n d', '페이지마다 **서버가 무엇을 맡아야 하는가**를 적습니다. **정의는 본 문서에 포함되고 구현은 포함되지 않습니다** — 뒤에 맡는 쪽이 화면을 눌러 보며 짐작하지 않도록, 지금 화면이 실제로 필요로 하는 연산 · 권한 · 대상 데이터 · 항목 · 검증을 끌어내 적었습니다. 보존과 파기 기준은 다음 「데이터 정책」에 있습니다.', BACK)}
+<h2>1. 개 요</h2>
 
-<h2 class="band">데 이 터 정 책</h2>
-<p class="lead">서버를 맡는 쪽이 <strong>정해 놓고 시작해야 하는 것</strong>들입니다. 기능은 화면에서 끌어낼 수 있지만 보존 기간과 파기 시점은 화면에 드러나지 않습니다. <strong>「권고」라고 적은 값은 확정된 것이 아니며</strong>, 근거로 삼은 법령을 함께 적었습니다.</p>
-<table class="depth">
-  <thead>
-    <tr><th style="width:64px">구분</th><th style="width:150px">항목</th><th>정의 · 기준</th></tr>
-  </thead>
-  <tbody>${policyRows}</tbody>
+<h3>1.1 배경</h3>
+<p>
+  브랜드 사이트의 내용이 코드에 적혀 있으면 메뉴 가격 한 줄, 공지 한 건을 고치는 데에도
+  개발자와 배포가 필요합니다. 그 결과 사이트는 만들어진 시점에 멈춰 있고, 실제 운영은 전화와
+  종이로 돌아갑니다.
+</p>
+
+<h3>1.2 무엇을 만드는가</h3>
+<p>
+  <strong>고객 사이트</strong>와 <strong>그 내용을 고치는 관리자</strong> 한 쌍을 만듭니다.
+  고객 사이트는 손님에게 무엇을 파는 집인지를, 예비 점주에게 얼마가 들고 얼마나 걸리는지를
+  각각의 길에서 답합니다. 관리자는 사이트에 나가는 값을 운영자가 직접 고치는 자리입니다.
+</p>
+<p>
+  두 앱은 <strong>같은 값 한 곳</strong>을 읽습니다. 값을 두 벌로 두면 어느 쪽이 맞는지 확인할
+  방법이 없어지기 때문입니다.
+</p>
+
+<h3>1.3 전제</h3>
+<ul>
+  <li>본 단계에는 <strong>서버와 데이터베이스가 없습니다.</strong> 화면이 읽는 값은 공유 패키지에 담기며, 관리자에서 고친 값은 브라우저 안에서만 유지됩니다.</li>
+  <li>메뉴 사진과 문구 등 콘텐츠는 <strong>발주처가 제공</strong>합니다.</li>
+  <li>브랜드 로고는 <strong>원본 파일을 받아 그대로</strong> 사용합니다. 눈으로 보고 다시 그린 로고는 그 브랜드의 표장이 아닙니다.</li>
+</ul>
+
+<h2>2. 과 업 범 위</h2>
+<p class="lead">어디까지 만드는가 — 화면 단위로 확정된 범위입니다. 이 표에 없는 화면은 범위 밖입니다.</p>
+
+<table>
+  <thead><tr><th style="width:110px">구분</th><th style="width:80px">화면 수</th><th style="width:80px">기능 수</th><th>범위</th></tr></thead>
+  <tbody>
+    ${cells('고객 사이트', String(CLIENT_SCREENS.length), String(CLIENT_SCREENS.reduce((sum, one) => sum + one.spec.actions.length, 0)), '브랜드 · 메뉴 · 인테리어 · 마케팅 · 매장안내 · 창업안내 · 고객센터 · 법적 고지. 창업 상담 신청 한 곳을 제외하면 모두 읽기 전용입니다.')}
+    ${cells('관리자', String(ADMIN_SCREENS.length), String(ADMIN_SCREENS.reduce((sum, one) => sum + one.spec.actions.length, 0)), '대시보드 · 등록 · 창업 · 고객센터 · 배너 · 설정. 목록 · 상세 · 등록 세 꼴이 반복됩니다.')}
+    ${cells('Back-End', '<span class="none">–</span>', '<span class="none">–</span>', '<strong>정의만 포함하고 구현은 포함하지 않습니다.</strong> 3장 「책임 범위」와 5장 「데이터 정책」을 확인해 주십시오.')}
+  </tbody>
 </table>
 
-<h2 class="band">범 위 밖</h2>
+<h3>2.1 화면 목록</h3>
+<table>
+  <thead><tr><th style="width:88px">기능 ID</th><th style="width:110px">화면명</th><th style="width:74px">서비스</th><th>메뉴 경로</th><th style="width:130px">화면 경로</th><th style="width:52px">기능 수</th></tr></thead>
+  <tbody>${scopeRows}</tbody>
+</table>
+
+<h2>3. 책 임 범 위</h2>
+<p class="lead">
+  책임 범위에서 다투는 것은 맡았는가 아닌가가 아니라 <strong>어디까지 하면 끝인가</strong>입니다.
+  그래서 「완료 기준」을 함께 적었습니다.
+</p>
+<table>
+  <thead><tr><th style="width:82px">갈래</th><th style="width:240px">맡는 일</th><th>완료 기준</th></tr></thead>
+  <tbody>${grouped(DUTY)}</tbody>
+</table>
+
+<h2>4. 제 외 범 위</h2>
 <p class="lead">아래는 <strong>이번 과업에 포함하지 않습니다.</strong> 적어 두지 않으면 포함된 것으로 읽히기 때문에 따로 둡니다.</p>
-<table class="depth">
-  <thead>
-    <tr><th style="width:64px">갈래</th><th style="width:200px">항목</th><th>사유 · 지금 상태</th></tr>
-  </thead>
-  <tbody>${outRows}</tbody>
+<table>
+  <thead><tr><th style="width:82px">갈래</th><th style="width:200px">항목</th><th>사유 · 지금 상태</th></tr></thead>
+  <tbody>${grouped(OUT)}</tbody>
+</table>
+
+<h2>5. 데 이 터 정 책</h2>
+<p class="lead">
+  Back-End 를 맡는 쪽이 <strong>정해 놓고 시작해야 하는 것</strong>들입니다. 기능은 화면에서
+  끌어낼 수 있지만 보존 기간과 파기 시점은 화면에 드러나지 않습니다.
+  <strong>「권고」라고 적은 값은 확정된 것이 아니며</strong>, 근거로 삼은 법령을 함께 적었습니다.
+</p>
+<table>
+  <thead><tr><th style="width:64px">구분</th><th style="width:150px">항목</th><th>정의 · 기준</th></tr></thead>
+  <tbody>${grouped(POLICY)}</tbody>
+</table>
+
+<h2>6. 변 경 관 리 기 준</h2>
+<table>
+  <thead><tr><th style="width:64px">단계</th><th style="width:240px">기준</th><th>까닭</th></tr></thead>
+  <tbody>${grouped(CHANGE)}</tbody>
 </table>
 
 </div>
@@ -761,6 +465,4 @@ ${table('B a c k - E n d', '페이지마다 **서버가 무엇을 맡아야 하�
 
 const out = 'FnB-업무범위정의서.html';
 writeFileSync(out, html, 'utf8');
-console.log(
-  `${out} — 화면 ${N.screens} · 기획 ${countRows(PLAN)}줄 · UI 디자인 ${countRows(DESIGN)}줄 · Front-End ${countRows(FRONT)}줄 · Back-End ${countRows(BACK)}줄`,
-);
+console.log(`${out} — 화면 ${SCREENS.length} · 세부 기능 ${totalActions} · 제외 ${OUT.length} · 정책 ${POLICY.length}`);

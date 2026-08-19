@@ -146,7 +146,12 @@ const oneSentence = (text: string, navigates: boolean): string => {
     /* 명사형 `-기` — 명세의 기능 목록이 이 꼴로 적혀 있다. 고르기 → 고릅니다 */
     if (word.endsWith('기') && word.length > 1) return conjugate(word.slice(0, -1));
 
-    if (VERBAL_NOUN.has(word.slice(-2))) return `${word}합니다`;
+    /*
+      `-하다` 명사에 종결을 붙이는 것은 **기능 목록에서만** 한다. 구성 영역 설명은
+      `코드 · 이름 · 묶음 · 값 · 열량 · 설명 · 노출` 처럼 명사를 늘어놓고 끝나는데,
+      거기에 붙이면 마지막 낱말만 `노출합니다` 가 되어 나열이 깨진다.
+    */
+    if (navigates && VERBAL_NOUN.has(word.slice(-2))) return `${word}합니다`;
 
     /*
       `…공지사항으로` 처럼 자리만 가리키고 끝나는 기능 줄이 있다. 기능 목록에서는 이것이
