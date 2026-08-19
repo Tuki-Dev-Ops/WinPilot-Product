@@ -100,7 +100,7 @@ export function fsdDoc(app: FsdApp, page: PageLike, spec: ScreenSpecLike): strin
     ? `![${page.name} 데스크톱](/page-view/${spec.screen}/${spec.screen}-desktop.jpg)
 
 세 너비(데스크톱·태블릿·모바일)와 예외 화면은 \`${app.dir}/docs/page-view/${spec.screen}/\` 에서 본다.`
-    : `_캡처가 아직 없습니다 — \`pnpm docs:capture\` 로 뜹니다._`;
+    : `_캡처가 아직 없습니다. \`pnpm docs:capture\` 를 실행하면 채워집니다._`;
 
   return `# ${page.name}
 
@@ -116,6 +116,7 @@ export function fsdDoc(app: FsdApp, page: PageLike, spec: ScreenSpecLike): strin
 | 메뉴 위치 | ${app.menuOf(spec.screen)} |
 | URL | \`${page.route}\`${page.sampleUrl ? ` · 예 \`${page.sampleUrl}\`` : ''} |
 | 화면 목적 | ${spec.purpose} |
+| 배경 | ${spec.background ?? '—'} |
 | 기대 효과 | ${spec.effect ?? '이 화면이 없으면 위 목적을 다른 화면이 대신 떠안게 되고, 그 화면은 하는 일이 둘이 된다.'} |
 | ${app.sourceLabel} | ${spec.admin.length > 0 ? spec.admin.join(' · ') : app.sourceEmpty} |
 | Figma 페이지 순번 | ${page.order} |

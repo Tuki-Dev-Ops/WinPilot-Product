@@ -27,7 +27,10 @@
     "docs:build": "tsx tools/build-docs.ts",
     "docs:capture": "tsx tools/capture-page-views.ts",
     "docs:capture:admin": "tsx tools/capture-page-views.ts --app=admin",
-    "docs:capture:internal": "tsx tools/capture-page-views.ts --app=internal"
+    "docs:capture:internal": "tsx tools/capture-page-views.ts --app=internal",
+    "weight:check": "tsx tools/check-weight.ts",
+    "bind:check": "tsx tools/check-binding.ts",
+    "pages:shoot": "tsx tools/shoot-pages.ts"
   },
   "devDependencies": {
     "playwright": "^1.62.1",

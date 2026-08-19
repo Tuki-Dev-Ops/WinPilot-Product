@@ -35,6 +35,7 @@ import {
 } from '../apps/ir-admin/lib/screen-specs';
 import { IR_MENU } from '../apps/ir-admin/lib/navigation/ir-menu';
 import { buildFsd, type FsdApp } from './docs/fsd';
+import { buildScope } from './docs/scope';
 import { buildNfs, type NfsApp } from './docs/nfs';
 
 /**
@@ -218,10 +219,37 @@ const irAdmin: App = {
   menuOf: menuLocator(IR_MENU, irAdminPages),
 };
 
-for (const app of [client, admin, internal, fnbClient, fnbAdmin, irClient, irAdmin]) {
+const ALL = [client, admin, internal, fnbClient, fnbAdmin, irClient, irAdmin];
+
+for (const app of ALL) {
   const fsd = buildFsd(app);
   const nfs = buildNfs(app);
 
   console.log(`[${app.label}] 기능 명세 ${fsd.written}장 · 비기능 정책 ${nfs}장`);
   if (fsd.missing.length > 0) console.log(`  명세 없음: ${fsd.missing.join(', ')}`);
 }
+
+/*
+  범위 문서는 **일곱이 같은 글**을 받는다. 앱마다 다른 것은 자기가 그 표의 어느 줄인가뿐이라
+  그 줄만 굵게 표시한다 — 글을 일곱 벌 쓰는 대신 한 벌을 일곱 번 찍는다.
+*/
+const VIEWS = {
+  'apps/b2c-client-a': 'b2c-client',
+  'apps/b2c-admin': 'b2c-admin',
+  'apps/internal-admin': 'internal-admin',
+  'apps/fnb-client-a': 'fnb-client',
+  'apps/fnb-admin': 'fnb-admin',
+  'apps/ir-client-a': 'ir-client',
+  'apps/ir-admin': 'ir-admin',
+} as const;
+
+const scoped = buildScope(
+  ALL.map((app) => ({
+    dir: app.dir,
+    label: app.label,
+    view: VIEWS[app.dir as keyof typeof VIEWS],
+    pages: app.pages,
+  })),
+);
+console.log(`
+전체 범위 ${scoped}장 — apps/*/docs/scope.md`);
