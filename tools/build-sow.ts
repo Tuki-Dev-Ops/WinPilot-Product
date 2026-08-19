@@ -73,9 +73,10 @@ const rich = (s: string): string =>
  */
 const note = (value: string | readonly string[], voice: (text: string) => string = formal): string => {
   const line = (text: string): string => rich(voice(text));
-  if (typeof value === 'string') return line(value);
-  if (value.length === 1) return line(value[0]);
-  return `<ul>${value.map((text) => `<li>${line(text)}</li>`).join('')}</ul>`;
+  const list = typeof value === 'string' ? [value] : value;
+  const [only] = list;
+  if (only !== undefined && list.length === 1) return line(only);
+  return `<ul>${list.map((text) => `<li>${line(text)}</li>`).join('')}</ul>`;
 };
 
 /* ── 저장소에서 읽은 값 ─────────────────────────────────────── */
