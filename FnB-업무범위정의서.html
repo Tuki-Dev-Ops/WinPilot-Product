@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>F&amp;B 업무 범위 정의서</title>
+<style>
+  @page { size: A4; margin: 14mm 12mm 16mm; }
+
+  :root {
+    --ink: #1a1c20;
+    --muted: #5a6070;
+    --faint: #939aa6;
+    --line: #c9ced7;
+    --band: #eceef2;
+    --head: #f5f6f8;
+    --qty: #b8792a;
+    --link: #1b5fc4;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 26px 22px 56px;
+    background: #fff;
+    color: var(--ink);
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", system-ui, sans-serif;
+    font-size: 9.5pt;
+    line-height: 1.6;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  .sheet { max-width: 200mm; margin: 0 auto; }
+
+  .title-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+  h1 { font-size: 17pt; margin: 0; letter-spacing: -0.02em; }
+  h1 .dim { color: var(--faint); font-weight: 600; }
+  .date { color: var(--muted); font-size: 9pt; font-style: italic; white-space: nowrap; }
+
+  table { width: 100%; border-collapse: collapse; margin: 0 0 18px; }
+  th, td { border: 1px solid var(--line); padding: 4px 7px; vertical-align: middle; }
+
+  .ident th { width: 100px; background: var(--head); text-align: center; font-weight: 600; }
+  .ident td { text-align: left; }
+
+  .common { margin-bottom: 18px; }
+  .common th { background: var(--band); text-align: center; font-weight: 700; font-size: 10pt; padding: 5px; }
+  .common td { padding: 10px 14px; }
+  .common ol { margin: 0; padding-left: 18px; color: var(--muted); }
+  .common li { margin: 2px 0; }
+  .common li strong { color: var(--ink); }
+
+  .scope-table { break-inside: auto; }
+  .scope-table .band {
+    background: var(--band);
+    text-align: center;
+    font-size: 11pt;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    padding: 6px;
+  }
+  .scope-table thead th { background: var(--head); text-align: center; font-weight: 600; }
+  .scope-table thead tr { break-inside: avoid; break-after: avoid; }
+  .scope-table tbody tr { break-inside: avoid; }
+
+  td.scope, td.kind { text-align: center; font-weight: 600; background: #fbfcfd; }
+  td.kind { font-weight: 500; }
+  td.field { font-weight: 600; }
+  td.qty {
+    text-align: center;
+    font-weight: 700;
+    color: var(--qty);
+    background: #fffdf7;
+    font-variant-numeric: tabular-nums;
+  }
+  td.qty.out { color: var(--faint); background: #fafafb; font-weight: 500; }
+  td.unit { text-align: center; color: var(--muted); }
+  td.note { color: var(--muted); font-size: 9pt; }
+  td.note.out { color: var(--faint); }
+
+  code {
+    font-family: "Consolas", "D2Coding", ui-monospace, monospace;
+    font-size: 0.92em;
+    background: #f1f3f6;
+    padding: 0.5px 3px;
+    border-radius: 3px;
+  }
+
+  .foot { margin-top: 18px; color: var(--muted); font-size: 9pt; }
+  .foot h2 { font-size: 10.5pt; margin: 14px 0 6px; color: var(--ink); }
+  .foot ul { margin: 4px 0; padding-left: 18px; }
+
+  .no-print {
+    margin: 0 0 16px;
+    padding: 7px 11px;
+    background: #f4f6f9;
+    border: 1px dashed var(--line);
+    border-radius: 5px;
+    font-size: 9pt;
+    color: var(--muted);
+  }
+
+  @media print {
+    body { padding: 0; }
+    .no-print { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<p class="no-print">브라우저에서 <strong>인쇄(Ctrl/Cmd + P) → 대상을 “PDF로 저장”</strong> 하면 A4 문서가 됩니다. 배경 그래픽 옵션을 켜면 표 머리 음영이 함께 인쇄됩니다. 이 안내문은 인쇄물에 나오지 않습니다.</p>
+
+<div class="title-row">
+  <h1>어쭈구리왕문어 <span class="dim">업무 범위 정의서</span></h1>
+  <div class="date">2026년 8월 19일</div>
+</div>
+
+<table class="ident">
+  <tr><th>대 상</th><td>F&amp;B 고객 사이트(<code>apps/fnb-client-a</code>) · 운영 콘솔(<code>apps/fnb-admin</code>)</td></tr>
+  <tr><th>범위 기준</th><td>화면 <strong>47개</strong> (고객 14 · 콘솔 33) · 기능 <strong>37가지</strong></td></tr>
+  <tr><th>작성 근거</th><td>저장소의 화면 등록부 · 화면 명세 · 기능 레지스트리에서 생성 (<code>pnpm sow:build</code>)</td></tr>
+</table>
+
+<table class="common">
+  <tr><th>공통사항</th></tr>
+  <tr><td>
+    <ol>
+      <li>본 문서의 <strong>수량은 현재 구현된 것을 센 값</strong>입니다. 예상치가 아니라 저장소에서 기계로 세어 만들었습니다.</li>
+      <li>수량이 <strong>—</strong> 인 줄은 <strong>이번 과업의 범위가 아닙니다.</strong> 0 이 아니라 —인 것은, 0 이 “하기로 했는데 아직 안 한 것” 으로 읽히기 때문입니다.</li>
+      <li>메뉴 사진과 문구 등 <strong>콘텐츠는 발주처가 제공</strong>합니다. 본 과업은 받은 값을 화면에 세우는 일까지입니다.</li>
+      <li>본 단계에는 <strong>서버와 데이터베이스가 없습니다.</strong> 콘솔에서 고친 값은 브라우저 안에서만 유지되며, 양식에 입력한 값은 전송되지 않습니다.</li>
+      <li>디자인 산출물은 <strong>실제로 동작하는 화면</strong>으로 인도합니다. 별도의 시안 파일(PSD · AI)은 포함하지 않습니다.</li>
+      <li>범위를 더하거나 빼는 일은 <strong>화면 등록부와 화면 명세를 고치는 것</strong>으로 시작하며, 본 문서와 기능 명세서가 함께 갱신됩니다.</li>
+    </ol>
+  </td></tr>
+</table>
+
+
+<table class="scope-table">
+  <thead>
+    <tr><th colspan="6" class="band">기 획</th></tr>
+    <tr>
+      <th style="width:76px">범위</th>
+      <th style="width:104px">분류</th>
+      <th style="width:190px">분야</th>
+      <th style="width:64px">수량</th>
+      <th style="width:52px">단위</th>
+      <th>비고</th>
+    </tr>
+  </thead>
+  <tbody><tr><td class="scope" rowspan="2">PM</td><td class="kind" rowspan="2">프로젝트 관리</td><td class="field">범위 정의 · 산출물 정의</td><td class="qty">1</td><td class="unit">건</td><td class="note">본 문서. 코드에서 생성하므로 범위가 바뀌면 다시 만든다</td></tr><tr><td class="field">변경 관리 절차</td><td class="qty">1</td><td class="unit">건</td><td class="note">화면 등록부와 명세를 고치는 것으로 시작한다 — 7장</td></tr><tr><td class="scope" rowspan="3">분석</td><td class="kind" rowspan="2">요구 분석</td><td class="field">기능 정의</td><td class="qty">37</td><td class="unit">건</td><td class="note">기능 레지스트리에 등록된 수. 등록되지 않은 화면은 품질 검사에 잡히지 않는다</td></tr><tr><td class="field">화면 정의</td><td class="qty">47</td><td class="unit">건</td><td class="note">고객 사이트 14 · 운영 콘솔 33</td></tr><tr><td class="kind" rowspan="1">시장 조사</td><td class="field">경쟁사 분석</td><td class="qty out">—</td><td class="unit">건</td><td class="note out">범위 밖 — 발주처가 제공하는 브랜드 기준을 따른다</td></tr><tr><td class="scope" rowspan="6">기획</td><td class="kind" rowspan="2">IA 기획</td><td class="field">정보 구조 도면</td><td class="qty">14</td><td class="unit">갈래</td><td class="note">고객 사이트 8 · 운영 콘솔 6. 화면이 늘면 도면도 함께 자란다</td></tr><tr><td class="field">메뉴 구조 설계</td><td class="qty">2</td><td class="unit">건</td><td class="note">사이트 헤더 갈래 · 콘솔 사이드바 갈래</td></tr><tr><td class="kind" rowspan="2">UX 기획</td><td class="field">화면 흐름도</td><td class="qty">47</td><td class="unit">건</td><td class="note">화면마다 한 장. 실선은 정상, 점선은 예외</td></tr><tr><td class="field">입력 양식 설계</td><td class="qty">25</td><td class="unit">화면</td><td class="note">양식이 있는 화면. 고객 5 · 콘솔 20</td></tr><tr><td class="kind" rowspan="2">명세</td><td class="field">기능 명세서 (FSD)</td><td class="qty">47</td><td class="unit">장</td><td class="note">화면 하나가 한 장. 목적 · 구성 · 데이터 항목 · 버튼 · 예외 · 인수 조건까지 열네 절</td></tr><tr><td class="field">비기능 명세서 (NFS)</td><td class="qty">6</td><td class="unit">항목</td><td class="note">화면을 가리지 않고 걸리는 공통 요건</td></tr></tbody>
+</table>
+
+<table class="scope-table">
+  <thead>
+    <tr><th colspan="6" class="band">디 자 인</th></tr>
+    <tr>
+      <th style="width:76px">범위</th>
+      <th style="width:104px">분류</th>
+      <th style="width:190px">분야</th>
+      <th style="width:64px">수량</th>
+      <th style="width:52px">단위</th>
+      <th>비고</th>
+    </tr>
+  </thead>
+  <tbody><tr><td class="scope" rowspan="4">BX</td><td class="kind" rowspan="3">브랜드</td><td class="field">로고 디자인</td><td class="qty out">—</td><td class="unit">건</td><td class="note out">범위 밖 — 원본 파일을 받아 그대로 쓴다. 눈으로 보고 다시 그린 로고는 그 브랜드의 표장이 아니다</td></tr><tr><td class="field">BI 가이드 제작</td><td class="qty out">—</td><td class="unit">건</td><td class="note out">범위 밖 — 색 · 글자 · 간격은 아래 디자인 토큰이 대신한다</td></tr><tr><td class="field">패키지 · 인쇄물 디자인</td><td class="qty out">—</td><td class="unit">건</td><td class="note out">범위 밖 — 웹 화면에 한정한다</td></tr><tr><td class="kind" rowspan="1">멀티미디어</td><td class="field">제품 · 모델 촬영 · 영상 제작</td><td class="qty out">—</td><td class="unit">컷</td><td class="note out">범위 밖 — 메뉴 사진은 발주처가 제공한다</td></tr><tr><td class="scope" rowspan="5">UI 디자인</td><td class="kind" rowspan="2">디자인 시스템</td><td class="field">디자인 토큰</td><td class="qty">41</td><td class="unit">개</td><td class="note">색 토큰 수. 값의 원본이 한 파일이라 앱에서 색을 직접 선언하지 않는다</td></tr><tr><td class="field">공통 컴포넌트</td><td class="qty">24</td><td class="unit">개</td><td class="note">버튼 · 입력 · 표 등 화면을 가리지 않고 쓰는 조각</td></tr><tr><td class="kind" rowspan="3">화면 디자인</td><td class="field">고객 사이트 화면</td><td class="qty">14</td><td class="unit">화면</td><td class="note">반응형 — 1280 · 1024 · 768 · 390 네 너비</td></tr><tr><td class="field">운영 콘솔 화면</td><td class="qty">33</td><td class="unit">화면</td><td class="note">반응형 — 같은 네 너비</td></tr><tr><td class="field">화면별 전용 컴포넌트</td><td class="qty">59</td><td class="unit">개</td><td class="note">고객 33 · 콘솔 26</td></tr><tr><td class="scope" rowspan="2">검수</td><td class="kind" rowspan="1">반응형</td><td class="field">가로 넘침 검사</td><td class="qty">188</td><td class="unit">건</td><td class="note">화면 × 네 너비. <code>overflow:check</code> 로 자동 확인</td></tr><tr><td class="kind" rowspan="1">산출</td><td class="field">화면 캡처</td><td class="qty">47</td><td class="unit">장</td><td class="note">전 화면 한 장씩. <code>pages:shoot</code> 으로 다시 찍는다</td></tr></tbody>
+</table>
+
+<table class="scope-table">
+  <thead>
+    <tr><th colspan="6" class="band">개 발</th></tr>
+    <tr>
+      <th style="width:76px">범위</th>
+      <th style="width:104px">분류</th>
+      <th style="width:190px">분야</th>
+      <th style="width:64px">수량</th>
+      <th style="width:52px">단위</th>
+      <th>비고</th>
+    </tr>
+  </thead>
+  <tbody><tr><td class="scope" rowspan="4">아키텍처</td><td class="kind" rowspan="2">기술 선정</td><td class="field">프레임워크 · 언어</td><td class="qty">1</td><td class="unit">건</td><td class="note">Next.js App Router · TypeScript · Tailwind CSS</td></tr><tr><td class="field">저장소 구조</td><td class="qty">1</td><td class="unit">건</td><td class="note">pnpm 워크스페이스. 앱과 공유 패키지를 한 저장소에서 관리</td></tr><tr><td class="kind" rowspan="2">데이터</td><td class="field">데이터 모델 정의</td><td class="qty">1</td><td class="unit">건</td><td class="note">공유 패키지가 값의 원본. 콘솔과 사이트가 같은 한 곳을 읽는다</td></tr><tr><td class="field">서버 · DB 구축</td><td class="qty out">—</td><td class="unit">건</td><td class="note out">범위 밖 — 본 단계에는 서버와 데이터베이스가 없다</td></tr><tr><td class="scope" rowspan="2">퍼블리싱</td><td class="kind" rowspan="1">UI 마크업</td><td class="field">화면 마크업</td><td class="qty">47</td><td class="unit">화면</td><td class="note">반응형. 별도 퍼블리싱 산출물 없이 컴포넌트로 바로 구현</td></tr><tr><td class="kind" rowspan="1">접근성</td><td class="field">색 · 모양 이중 표기</td><td class="qty">6</td><td class="unit">항목</td><td class="note">색만으로 상태를 알리지 않는다 등 공통 요건</td></tr><tr><td class="scope" rowspan="5">프론트엔드</td><td class="kind" rowspan="2">컴포넌트</td><td class="field">공통 컴포넌트 개발</td><td class="qty">24</td><td class="unit">개</td><td class="note">앱 두 벌이 나눠 쓴다</td></tr><tr><td class="field">화면별 컴포넌트 개발</td><td class="qty">59</td><td class="unit">개</td><td class="note">고객 33 · 콘솔 26</td></tr><tr><td class="kind" rowspan="2">기능</td><td class="field">고객 사이트 기능</td><td class="qty">14</td><td class="unit">기능</td><td class="note">메뉴 · 매장 · 창업 · 고객센터</td></tr><tr><td class="field">운영 콘솔 기능</td><td class="qty">33</td><td class="unit">기능</td><td class="note">등록 · 창업 · 고객센터 · 배너 · 설정</td></tr><tr><td class="kind" rowspan="1">검증</td><td class="field">입력 검증 · 오류 문구</td><td class="qty">25</td><td class="unit">화면</td><td class="note">양식이 있는 화면마다</td></tr><tr><td class="scope" rowspan="3">백엔드</td><td class="kind" rowspan="1">API</td><td class="field">REST API 개발</td><td class="qty out">—</td><td class="unit">개</td><td class="note out">범위 밖 — 서버가 없다</td></tr><tr><td class="kind" rowspan="1">인증</td><td class="field">회원 · 로그인 · 권한</td><td class="qty out">—</td><td class="unit">건</td><td class="note out">범위 밖 — 화면까지만 있고 입력한 값은 전송되지 않는다</td></tr><tr><td class="kind" rowspan="1">결제</td><td class="field">주문 · 결제 연동</td><td class="qty out">—</td><td class="unit">건</td><td class="note out">범위 밖 — 주문은 전화와 매장 방문으로 받는다</td></tr><tr><td class="scope" rowspan="2">인프라</td><td class="kind" rowspan="1">배포</td><td class="field">서버 구성 · 배포</td><td class="qty out">—</td><td class="unit">건</td><td class="note out">범위 밖 — 인수 산출물은 소스와 문서다</td></tr><tr><td class="kind" rowspan="1">보안</td><td class="field">취약점 진단</td><td class="qty out">—</td><td class="unit">건</td><td class="note out">범위 밖</td></tr><tr><td class="scope" rowspan="3">품질</td><td class="kind" rowspan="3">자동 검사</td><td class="field">명명 · 등록 일치</td><td class="qty">3</td><td class="unit">종</td><td class="note"><code>spec:check</code> · <code>sync:check</code> · <code>bind:check</code></td></tr><tr><td class="field">문서 누락 검사</td><td class="qty">1</td><td class="unit">종</td><td class="note"><code>docs:check</code> — 화면은 있는데 문서가 빈 자리</td></tr><tr><td class="field">반응형 · 무게 검사</td><td class="qty">2</td><td class="unit">종</td><td class="note"><code>overflow:check</code> · <code>weight:check</code></td></tr></tbody>
+</table>
+
+<div class="foot">
+  <h2>인도물</h2>
+  <ul>
+    <li>소스 코드 — 앱 2벌과 공유 패키지</li>
+    <li>기능 명세서 47장 · 비기능 명세서 · IA · 화면 흐름도</li>
+    <li>화면 캡처 47장</li>
+    <li>디자인 토큰 한 벌 (색 토큰 41개)</li>
+    <li>품질 검사 도구 6종</li>
+    <li>본 문서 (HTML · 인쇄 시 PDF)</li>
+  </ul>
+
+  <h2>품질 기준</h2>
+  <p>
+    아래 검사는 저장소에 포함되어 있으며, 인수 시점에 <strong>모두 통과한 상태</strong>로 인도합니다.
+    검사를 여럿 두는 것은 하나가 나머지를 대신하지 못하기 때문입니다 —
+    <code>spec:check</code>(이름 · 주소 · 등록) ·
+    <code>sync:check</code>(레지스트리와 실제 파일 이름) ·
+    <code>docs:check</code>(문서 누락) ·
+    <code>bind:check</code>(값의 출처가 아직 있는가) ·
+    <code>overflow:check</code>(네 너비 가로 넘침) ·
+    <code>weight:check</code>(화면이 내려받는 바이트).
+  </p>
+
+  <h2>변경 관리</h2>
+  <p>
+    문서만 고치거나 코드만 고치는 변경은 받지 않습니다. 한쪽만 고쳐 두면 다른 쪽이 조용히 낡은
+    상태로 남고, 그 사실은 한참 뒤 인수 자리에서 드러나기 때문입니다.
+  </p>
+</div>
+
+</div>
+</body>
+</html>

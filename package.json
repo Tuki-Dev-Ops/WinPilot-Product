@@ -31,7 +31,8 @@
     "weight:check": "tsx tools/check-weight.ts",
     "bind:check": "tsx tools/check-binding.ts",
     "pages:shoot": "tsx tools/shoot-pages.ts",
-    "readme:build": "tsx tools/build-readme.ts"
+    "readme:build": "tsx tools/build-readme.ts",
+    "sow:build": "tsx tools/build-sow.ts"
   },
   "devDependencies": {
     "playwright": "^1.62.1",
