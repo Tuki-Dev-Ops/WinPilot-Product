@@ -318,7 +318,12 @@ const html = `<!doctype html>
 <title>F&amp;B 업무 범위 정의서</title>
 <style>
   /* 인쇄를 먼저 생각한 판이다. A4 로 뽑았을 때 줄이 페이지 사이에서 잘리지 않는 것이 중요하다. */
-  @page { size: A4; margin: 14mm 12mm 16mm; }
+  /*
+    A4 를 눕힌다. 이 문서의 표는 여섯 칸까지 가고(책임 범위 · API 요구사항), 세로 A4 에서는
+    칸마다 두세 글자에서 줄이 꺾여 읽는 속도가 떨어진다. 눕히면 가로 여유가 100mm 늘어
+    한 칸이 한 줄로 앉는다.
+  */
+  @page { size: A4 landscape; margin: 12mm 14mm 14mm; }
 
   :root {
     --ink: #1a1c20;
@@ -347,7 +352,7 @@ const html = `<!doctype html>
     overflow-wrap: break-word;
   }
 
-  .sheet { max-width: 200mm; margin: 0 auto; }
+  .sheet { max-width: 269mm; margin: 0 auto; }
 
   .title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
   h1 { font-size: 17pt; margin: 0; letter-spacing: -0.02em; }

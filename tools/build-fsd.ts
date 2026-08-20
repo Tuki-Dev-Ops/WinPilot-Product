@@ -369,7 +369,12 @@ const html = `<!doctype html>
 <meta charset="utf-8">
 <title>F&amp;B 기능 명세서</title>
 <style>
-  @page { size: A4; margin: 14mm 12mm 16mm; }
+  /*
+    A4 를 눕힌다. 이 문서의 표는 여섯 칸까지 가고(책임 범위 · API 요구사항), 세로 A4 에서는
+    칸마다 두세 글자에서 줄이 꺾여 읽는 속도가 떨어진다. 눕히면 가로 여유가 100mm 늘어
+    한 칸이 한 줄로 앉는다.
+  */
+  @page { size: A4 landscape; margin: 12mm 14mm 14mm; }
 
   :root {
     --ink: #1a1c20;
@@ -396,7 +401,7 @@ const html = `<!doctype html>
     overflow-wrap: break-word;
   }
 
-  .sheet { max-width: 200mm; margin: 0 auto; }
+  .sheet { max-width: 269mm; margin: 0 auto; }
 
   .title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
   h1 { font-size: 17pt; margin: 0; letter-spacing: -0.02em; }
@@ -440,10 +445,15 @@ const html = `<!doctype html>
   thead th { background: var(--head); font-weight: 600; text-align: center; white-space: nowrap; }
   tbody tr { break-inside: avoid; }
 
+  /*
+    가로로 눕히면서 두 칸짜리 표가 종이 폭만큼 늘어났다. 「기능 ID」 옆에 빈 공간이 한 뼘
+    생기면 값이 어디까지인지 눈으로 좇게 된다. 좁은 표는 폭을 따로 잡는다.
+  */
+  table.kv { max-width: 560px; }
   table.kv th, table.kv td:first-child { width: 92px; background: #fafbfc; font-weight: 600; color: var(--muted); }
   table.flow td:first-child { width: 30px; text-align: center; color: var(--faint); }
   table.flow td:last-child { width: 62px; text-align: center; color: var(--muted); white-space: nowrap; }
-  table.rule td:first-child { width: 44%; }
+  table.rule td:first-child { width: 220px; }
   table.right td { text-align: center; }
   table.right td:first-child { text-align: left; width: 96px; }
 
