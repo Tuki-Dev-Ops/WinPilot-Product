@@ -1,4 +1,4 @@
-import type { Screen, SpecButton, SpecField } from './screens';
+import type { Screen, SpecArea, SpecButton, SpecField } from './screens';
 import { condition, kindIn, type ActionKind } from './action-kind';
 import { formal } from './polite';
 
@@ -141,9 +141,25 @@ const guardsFor = (name: string, pool: readonly string[]): string[] =>
  * 쓰고, 나가는 길이 하나뿐이면 그것으로 본다. 둘 이상인데 이름이 안 걸리면 **짐작하지 않고**
  * 정의 필요로 남긴다.
  */
-const targetOf = (screen: Screen, action: string): Screen['links'][number] | undefined => {
-  const named = screen.links.find((one) => action.includes(one.name.replace(/\s+/g, '')) || action.includes(one.name));
+const targetOf = (
+  screen: Screen,
+  action: string,
+  pool: readonly Screen[],
+): { name: string; route: string } | undefined => {
+  const named = screen.links.find((one) => action.includes(one.name));
   if (named) return named;
+
+  /*
+    도면에 이동선이 없어도 기능 이름이 대상 화면의 이름을 그대로 담고 있으면 그것으로 본다 —
+    `메뉴판으로 돌아가기` 는 `메뉴판` 화면이다. 이름이 통째로 들어 있을 때만 짝짓는다.
+    비슷해 보인다고 이어 붙이면 문서가 없는 이동을 말하게 된다.
+  */
+  const byName = pool
+    .filter((one) => one.app === screen.app && one.featureId !== screen.featureId)
+    .filter((one) => action.includes(one.name))
+    .sort((a, b) => b.name.length - a.name.length)[0];
+  if (byName) return byName;
+
   return screen.links.length === 1 ? screen.links[0] : undefined;
 };
 
@@ -174,6 +190,26 @@ const fromField = (one: SpecField, screen: Screen, validations: readonly string[
   };
 };
 
+/**
+ * 화면의 표시 영역을 요소로 세운다.
+ *
+ * 명세의 기능에는 `해를 따라 내려가며 읽기` 처럼 **읽는 행동**이 섞여 있다. 그것은 요소가
+ * 아니다 — 누를 것도 고를 것도 없고, 이름으로 가리킬 수 있는 자리도 아니다. 그대로 옮기면
+ * `Type : TEXT · 사용자 동작 : 화면에 표시된 값을 확인한다` 가 화면마다 되풀이된다.
+ *
+ * 읽는 행동을 걷어 내는 대신 **실제로 값이 서는 영역**을 세운다. 영역은 이름이 있고 표시
+ * 조건이 있어 가리킬 수 있다. Sub / Flow 가 그 이름을 차례로 보여 주고, 여기서는 각 영역이
+ * 무엇을 어떤 조건으로 보이는지를 적는다.
+ */
+const fromArea = (one: SpecArea): Element => ({
+  name: one.area,
+  type: 'AREA (표시 영역)',
+  lines: [
+    ...line('표시 내용', formal(one.purpose)),
+    ...line('표시 조건', one.when ? formal(one.when) : '항상 표시한다.'),
+  ],
+});
+
 const fromButton = (one: SpecButton, screen: Screen): Element => ({
   name: one.label,
   type: 'BTN',
@@ -189,10 +225,10 @@ const fromButton = (one: SpecButton, screen: Screen): Element => ({
   ],
 });
 
-const fromAction = (action: string, screen: Screen): Element => {
+const fromAction = (action: string, screen: Screen, pool: readonly Screen[]): Element => {
   const kind = kindIn(action, screen.route, screen.readOnly);
   const base = KIND[kind];
-  const target = kind === '이동' ? targetOf(screen, action) : undefined;
+  const target = kind === '이동' ? targetOf(screen, action, pool) : undefined;
   const param = target ? paramOf(target.route) : undefined;
 
   return {
@@ -204,7 +240,7 @@ const fromAction = (action: string, screen: Screen): Element => {
       ...line('사용자 동작', base.act),
       ...(kind === '이동'
         ? [
-            ...line('이동 대상', target ? `${target.name} 화면` : '정의 필요'),
+            ...line('이동 대상', target ? `${target.name} 화면` : '정의 필요 — 화면 도면에 이 이동선이 없다.'),
             ...line('전달 정보', param ? `${param} (대상 식별자)` : target ? '없음' : undefined),
             ...line('URL 처리', target ? target.route : undefined),
             ...line('예외 처리', target && param ? '대상 데이터가 존재하지 않을 경우 404 화면으로 이동한다.' : undefined),
@@ -223,7 +259,7 @@ const fromAction = (action: string, screen: Screen): Element => {
  * 항목 넷을 통틀어 부르는 말이다. 항목이 있는 화면의 「채우기 · 넣기」 는 그 항목들의 다른
  * 이름으로 본다.
  */
-export const elementsOf = (screen: Screen): { list: Element[]; rest: string[] } => {
+export const elementsOf = (screen: Screen, pool: readonly Screen[]): { list: Element[]; rest: string[] } => {
   const fields = screen.spec.fields ?? [];
   const buttons = screen.spec.buttons ?? [];
   const validations = screen.spec.validations ?? [];
@@ -235,10 +271,17 @@ export const elementsOf = (screen: Screen): { list: Element[]; rest: string[] } 
     fields.some((one) => one.name.length >= 2 && action.includes(one.name)) ||
     (fields.length > 0 && wholeForm.test(action));
 
+  /*
+    읽는 행동은 요소가 아니다. 표시 갈래로 잡힌 기능은 세우지 않고, 그 값이 서는 영역이
+    대신한다 — 그러지 않으면 `값을 확인한다` 만 적힌 칸이 화면마다 늘어선다.
+  */
   const list = [
+    ...(screen.spec.areas ?? []).map(fromArea),
     ...fields.map((one) => fromField(one, screen, validations, used)),
     ...buttons.map((one) => fromButton(one, screen)),
-    ...screen.spec.actions.filter((one) => !covered(one)).map((one) => fromAction(one, screen)),
+    ...screen.spec.actions
+      .filter((one) => !covered(one) && kindIn(one, screen.route, screen.readOnly) !== '표시')
+      .map((one) => fromAction(one, screen, pool)),
   ];
 
   const rest = [

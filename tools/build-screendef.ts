@@ -3,6 +3,8 @@ import type { Screen } from './lib/screens';
 import type { DocProject } from './lib/doc-project';
 import { PROJECTS } from './lib/projects';
 import { elementsOf, type Element } from './lib/element';
+import { kindIn } from './lib/action-kind';
+import { DESIGN_NOTE } from './lib/design-note';
 import { table, th } from './lib/doc-html';
 import { esc, rich } from './lib/html';
 import { formal } from './lib/polite';
@@ -69,7 +71,15 @@ const splitFuture = (text: string): { item: string; now?: string } => {
  * 처럼 규칙 뒤에 까닭을 붙인다. 까닭은 설계 배경의 몫이고, 이 칸에서 필요한 것은 지켜야 할
  * 규칙이다.
  */
-const ruleOnly = (text: string): string => formal(text.split(' — ')[0] ?? text);
+const ruleOnly = (text: string): string => {
+  /*
+    까닭은 줄표 뒤에도 오고 마침표 뒤에도 온다. 정보 구조 칸에 필요한 것은 지켜야 할 규칙
+    하나이므로 **첫 문장의 줄표 앞까지만** 남긴다. 까닭은 설계 배경의 몫이다.
+  */
+  const head = text.split(' — ')[0] ?? text;
+  const first = /^(.*?[.])\s/.exec(head);
+  return formal(first ? first[1] ?? head : head);
+};
 
 const block = (one: Element): string => {
   const head = `<strong>[${esc(one.name)}]</strong><br><span class="type">- Type : ${esc(one.type)}</span>`;
@@ -83,16 +93,42 @@ const block = (one: Element): string => {
 };
 
 /**
- * 관리자 연동 — 메뉴 이름만 늘어놓지 않는다.
+ * 이 관리자 화면이 **값을 고칠 수 있는가**.
  *
- * 사이트 화면은 값이 오는 **관리자 화면과 그 화면이 관리하는 것**까지 적는다. 메뉴 이름만
- * 있으면 "그 메뉴에서 무엇을 고칠 수 있는가" 를 다시 찾아야 한다.
+ * 목록과 설정 중에는 조회만 하는 화면이 있다 — IR 의 `회사 소개` 는 홈 소개 문단과 회사
+ * 정보를 **읽기만** 하고, 실제 값은 코드에 있다. 그런데도 연동을 `O` 로 적으면 발주처는
+ * 그 문구를 관리자에서 고칠 수 있는 것으로 읽는다.
  *
- * 관리자 화면은 방향을 뒤집어 **값이 나가는 사이트 화면**을 적는다.
+ * 등록 · 수정 · 삭제 · 상태 변경 중 하나라도 하는 화면만 관리 가능으로 본다.
+ */
+const canEdit = (screen: Screen): boolean =>
+  screen.spec.actions.some((one) => {
+    const kind = kindIn(one, screen.route, screen.readOnly);
+    return kind === '등록' || kind === '수정' || kind === '삭제' || kind === '상태 변경';
+  });
+
+/** 그 화면이 실제로 다루는 항목. 화면 이름만으로는 무엇이 연동되는지 알 수 없다. */
+const managedItems = (screen: Screen): string =>
+  (screen.spec.fields ?? [])
+    .filter((one) => one.type !== '읽기 전용')
+    .map((one) => one.name)
+    .join(' · ');
+
+/**
+ * 관리자 연동 — **이 화면이 실제로 무엇을 연동하는가**.
+ *
+ * 메뉴 이름만 늘어놓으면 "그 메뉴에서 무엇을 고칠 수 있는가" 를 다시 찾아야 하고, 조회 전용
+ * 화면까지 `O` 로 묶이면 고칠 수 없는 값이 고칠 수 있는 것으로 읽힌다.
+ *
+ * 그래서 셋으로 가른다 — **관리 가능**(등록 · 수정이 되는 화면과 그 항목) · **조회 전용**
+ * (관리자에서 확인만 되고 값은 코드에 있는 것) · **연동 없음**.
  */
 const linkOf = (p: DocProject, screen: Screen): string => {
   if (screen.app === 'admin') {
     const to = p.impactOf(screen);
+    if (!canEdit(screen)) {
+      return '<span class="none">–</span><br>조회 전용 화면이며 사이트로 내보내는 값이 없다.';
+    }
     return to.length === 0
       ? '<span class="none">–</span><br>내부 관리 전용이며 사이트에 노출되지 않는다.'
       : `<strong class="yes">O</strong><br><span class="sub">사이트 반영 대상</span>${to
@@ -101,45 +137,56 @@ const linkOf = (p: DocProject, screen: Screen): string => {
   }
 
   const from = screen.spec.admin.filter((one) => !one.startsWith('없음'));
-  if (from.length === 0) return '<span class="none">–</span>';
+  if (from.length === 0) {
+    return '<span class="none">–</span><br>화면 구성과 문구가 코드에서 관리되며 연동 대상이 없다.';
+  }
 
   /*
-    값의 출처를 실제 관리자 화면까지 편다.
-
     같은 관리자 화면이 두 연결값에 함께 걸리는 일이 흔하다 — `등록 > 메뉴` 와
-    `등록 > 메뉴 > 메뉴 묶음` 은 같은 메뉴를 가리킨다. 연결값마다 화면을 다시 늘어놓으면
-    같은 줄이 두 번 서므로, 메뉴는 메뉴대로 화면은 화면대로 한 번씩만 세운다.
+    `등록 > 메뉴 > 메뉴 묶음` 은 같은 메뉴를 가리킨다. 화면은 한 번씩만 세운다.
   */
   const owners = p.adminScreens.filter((one) =>
     p.impactOf(one).some((x) => x.screen.featureId === screen.featureId),
   );
+  const editable = owners.filter(canEdit);
+  const readOnly = owners.filter((one) => !canEdit(one));
+
+  const mark =
+    editable.length > 0
+      ? '<strong class="yes">O</strong>'
+      : '<strong class="warnmark">△</strong> 조회 전용';
+
+  const editBlock =
+    editable.length === 0
+      ? ''
+      : `<br><span class="sub">관리 가능 항목</span>${editable
+          .map((one) => {
+            const items = managedItems(one);
+            return `<br>· <code>${esc(one.featureId)}</code> ${esc(one.name)}${
+              items === '' ? '' : `<br>&nbsp;&nbsp;<span class="now">${esc(items)}</span>`
+            }`;
+          })
+          .join('')}`;
+
+  const readBlock =
+    readOnly.length === 0
+      ? ''
+      : `<br><br><span class="sub">조회 전용</span>${readOnly
+          .map((one) => `<br>· <code>${esc(one.featureId)}</code> ${esc(one.name)}`)
+          .join('')}<br>&nbsp;&nbsp;<span class="now">관리자에서 확인만 가능하며, 값 변경은 코드 반영이 필요하다.</span>`;
 
   const menus = from.map((one) => `<br>· ${rich(formal(one))}`).join('');
-  const detail = owners
-    .map((one) => {
-      const what = (p.copy[one.featureId]?.features ?? [])
-        .slice(0, 2)
-        .map((each) => each.replace(/[.]$/, ''));
-      const lines =
-        what.length > 0
-          ? `<br>&nbsp;&nbsp;${what.map((each) => `<span class="now">${rich(each)}</span>`).join('<br>&nbsp;&nbsp;')}`
-          : '';
-      return `<br>· <code>${esc(one.featureId)}</code> ${esc(one.name)}${lines}`;
-    })
-    .join('');
 
-  return `<strong class="yes">O</strong><br><span class="sub">연동 관리자 메뉴</span>${menus}${
-    detail === '' ? '' : `<br><br><span class="sub">관리 대상 화면</span>${detail}`
-  }`;
+  return `${mark}<br><span class="sub">연동 메뉴</span>${menus}${editBlock}${readBlock}`;
 };
 
 /** 비고 — 설계 배경 · 정보 구조 및 UX · 확장 검토 세 갈래. 없는 갈래는 세우지 않는다. */
-const noteOf = (screen: Screen): string => {
+const noteOf = (screen: Screen, slug: string): string => {
   const parts: string[] = [];
 
-  if (screen.spec.background) {
-    parts.push(`<span class="sub">설계 배경</span><br>${rich(formal(screen.spec.background))}`);
-  }
+  /* 배경은 명세의 이야기 대신 다시 적은 판단을 쓴다 — `lib/design-note.ts` 에 까닭을 적었다. */
+  const note = DESIGN_NOTE[`${slug}/${screen.featureId}`];
+  if (note) parts.push(`<span class="sub">설계 배경</span><br>${rich(note)}`);
 
   const rules = (screen.spec.policy ?? []).map(ruleOnly);
   if (rules.length > 0) {
@@ -174,6 +221,7 @@ const EXTRA = `
   .sub { display: inline-block; font-weight: 700; color: var(--ink); border-bottom: 1px solid var(--line); }
   .sub em { font-weight: 400; font-style: normal; color: var(--faint); }
   .now { color: var(--faint); }
+  .warnmark { color: var(--warn); }
   td.flow { color: var(--muted); }
   td.flow ol { margin: 0; padding-left: 17px; }
   td.spec { padding: 6px 8px; }
@@ -201,7 +249,7 @@ export const buildScreenDef = (p: DocProject): string => {
       const copy = p.copy[screen.featureId];
       if (!copy) throw new Error(`${p.slug} 서술에 ${screen.featureId}(${screen.name}) 가 없습니다.`);
 
-      const { list, rest } = elementsOf(screen);
+      const { list, rest } = elementsOf(screen, p.screens);
       elements += list.length;
 
       const flow = (screen.spec.areas ?? []).map((one) => `<li>${esc(one.area)}</li>`).join('');
@@ -219,7 +267,7 @@ export const buildScreenDef = (p: DocProject): string => {
   <td class="memo">${rich(copy.purpose)}</td>
   <td class="spec">${spec}</td>
   <td class="memo">${linkOf(p, screen)}</td>
-  <td class="memo">${noteOf(screen)}</td>
+  <td class="memo">${noteOf(screen, p.slug)}</td>
 </tr>`;
     })
     .join('');
