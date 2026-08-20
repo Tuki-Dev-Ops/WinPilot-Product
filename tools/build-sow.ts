@@ -5,6 +5,7 @@ import { COPY } from './lib/fnb-copy';
 import {
   DATA_POLICY,
   DOMAINS,
+  OPERATION,
   DONE,
   ERRORS,
   NOT_BUILT,
@@ -125,15 +126,35 @@ const iaRows = (list: readonly Screen[]): string => {
 
 /* ── 4. 운영 정책 ──────────────────────────────────────────── */
 
-/** 화면 명세의 운영 정책을 화면별로 모은다. 정책이 적힌 화면만 세운다. */
-const policyRows = SCREENS.filter((one) => one.spec.policy?.length)
-  .map((one) =>
-    cells(
-      `<code>${esc(one.featureId)}</code> ${esc(one.name)}`,
-      esc(one.appLabel),
-      bullets((one.spec.policy ?? []).map(formal)),
-    ),
-  )
+const AREA_TITLE: Record<string, string> = {
+  공개: '4.1 콘텐츠 공개 정책',
+  노출: '4.2 노출 정책',
+  상태: '4.3 상태 관리 정책',
+  삭제: '4.4 삭제 정책',
+  데이터: '4.5 데이터 관리 정책',
+};
+
+/**
+ * 주제별로 묶어 절을 세운다.
+ *
+ * 화면 순서대로 늘어놓으면 같은 규칙이 여러 화면에 흩어져, "비공개 콘텐츠는 어떻게 되는가" 를
+ * 확인하려면 표 전체를 훑어야 한다. 운영 규칙은 화면이 아니라 주제로 묻게 된다.
+ */
+const operationBlocks = Object.entries(AREA_TITLE)
+  .filter(([area]) => OPERATION.some((one) => one.area === area))
+  .map(([area, title]) => {
+    const rows = OPERATION.filter((one) => one.area === area)
+      .map((one) =>
+        cells(
+          esc(one.target),
+          rich(one.rule),
+          one.from.map((id) => `<code>${esc(id)}</code>`).join(' '),
+        ),
+      )
+      .join('');
+    return `<h3>${esc(title)}</h3>
+${table(th('적용 대상', 116) + th('정책') + th('근거 화면', 168), rows)}`;
+  })
   .join('');
 
 /* ── 5. 책임 범위 ──────────────────────────────────────────── */
@@ -175,7 +196,7 @@ const DUTY: [string, string, string, string, string, string][] = [
     'Back-End 정의',
     '후속 서버 개발자가 화면 재분석 없이 착수할 수 있도록 요구사항과 인터페이스를 정의한다.',
     '도메인 및 관리 대상 정의 · 데이터 요구사항 정의 · 데이터 관계 정의 · API 인터페이스 요구사항 정의 · 비즈니스 규칙 및 검증 정책 정의 · 상태값 및 라이프사이클 정의 · 권한 요구사항 정의 · 예외 및 오류 응답 요구사항 정의',
-    '본 문서 6장 「Back-End 요구사항 정의」 및 4.2 「데이터 관리 정책」',
+    '본 문서 6장 「Back-End 요구사항 정의」 및 4.6 「데이터 보존 및 파기 정책」',
     '6장의 완료 기준 열 가지(6.9)를 모두 충족한 상태. 관리 대상 · 데이터 항목 · 관계 · 연산 · 인터페이스 · 검증 · 상태 · 권한 · 예외가 각각 문서화되어 있는 상태.',
     '실제 서버 코드 · 데이터베이스 · API 구현',
   ],
@@ -458,15 +479,14 @@ ${table(
 )}
 
 <h2>4. 운 영 정 책</h2>
-
-<h3>4.1 화면별 운영 정책</h3>
 <p class="lead">
-  화면에 적용되는 공개 · 노출 · 정렬 · 집계 규칙이다. 6.5 의 비즈니스 규칙은 이 정책을 서버
-  관점에서 다시 정의한 것이다.
+  서비스 운영 규칙을 주제별로 정의한다. 6.5 의 비즈니스 규칙은 이 정책을 서버 관점에서 다시
+  정의한 것이며, 화면 단위의 세부 처리 규칙은 「기능 명세서」의 화면별 「처리 규칙」에 있다.
+  「근거 화면」은 해당 정책이 적용되는 화면이다.
 </p>
-${table(th('화면', 164) + th('구분', 72) + th('운영 정책'), policyRows)}
+${operationBlocks}
 
-<h3>4.2 데이터 관리 정책</h3>
+<h3>4.6 데이터 보존 및 파기 정책</h3>
 <p class="lead">
   수집 · 보유 · 삭제 · 소멸 · 이력 · 권한 · 보안 · 백업 정책이다. 화면에 드러나지 않지만
   서버 구축 이전에 확정되어야 하는 값이므로 여기에 정의한다.
