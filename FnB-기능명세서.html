@@ -162,7 +162,7 @@
       <li>화면 47개(고객 사이트 14 · 관리자 33)를 각각 열두 절로 적었습니다. 내용이 없는 절은 세우지 않았습니다.</li>
       <li><strong>「시스템 처리」와 「결과」의 근거는 둘뿐입니다.</strong> 화면 명세에 단추 정의가 있으면 그 값을 그대로 옮겼고, 없으면 동작 유형에서 끌어낸 표준 처리를 적었습니다. <strong>끌어낸 것은 확정이 아니라 검토 대상</strong>입니다.</li>
       <li><span class="tbd">정의 필요</span> 로 표시된 칸은 <strong>현재 문서에 근거가 없는 자리</strong>입니다. 채워 넣지 않았습니다.</li>
-      <li><strong>서버 연동은 현재 범위에 없습니다.</strong> 저장 · 인증 · 발송이 필요한 기능은 화면 흐름까지만 구현되어 있으며, 그 사실을 각 절에 적었습니다. 구현된 것처럼 읽지 마십시오.</li>
+      <li><strong>이 문서는 1단계(Front-End) 구현 기준입니다.</strong> 저장 · 인증 · 발송이 필요한 기능은 화면 흐름까지 구현되어 있으며, 서버 연동은 2단계 대상입니다. 각 절에 그 사실을 적었으니 이미 연동된 것처럼 읽지 마십시오.</li>
       <li>화면을 가리지 않는 예외는 <strong>9장 「예외 처리 기준」</strong>에 한 번만 적었습니다. 화면별 절에는 그 화면에만 있는 것을 적었습니다.</li>
       <li>기능 ID 는 업무 범위 정의서와 같은 값입니다. 회신 시 <code>MENU-002</code> 처럼 ID 로 지목해 주십시오.</li>
       <li>이 문서는 저장소의 화면 등록부 · IA 묶음 · 화면 명세에서 생성합니다(<code>pnpm fsd:build</code>). 문서를 직접 고치면 다음 생성 때 지워집니다.</li>
@@ -189,7 +189,7 @@
   <tbody>
     <tr><td>고객 사이트</td><td>14</td><td>브랜드 · 메뉴 · 인테리어 · 마케팅 · 매장안내 · 창업안내 · 고객센터 · 법적 고지. 창업 상담 신청 한 곳을 제외하면 모두 읽기 전용입니다.</td></tr>
     <tr><td>관리자</td><td>33</td><td>대시보드 · 등록 · 창업 · 고객센터 · 배너 · 설정. 목록 · 상세 · 등록 세 꼴이 반복됩니다.</td></tr>
-    <tr><td>Back-End</td><td>–</td><td><strong>현재 범위에 없음.</strong> 필요한 연산 · 권한 · 항목 · 검증과 데이터 정책은 「업무 범위 정의서」에 정의되어 있습니다.</td></tr>
+    <tr><td>Back-End</td><td>–</td><td><strong>2단계 구축 대상.</strong> 필요한 연산 · 권한 · 항목 · 검증과 데이터 정책은 「업무 범위 정의서」 6장에 정의되어 있습니다.</td></tr>
   </tbody>
 </table>
 
@@ -205,7 +205,7 @@
   <h3 id="BRAND-001"><span class="fid">BRAND-001</span> 브랜드 이야기</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>BRAND-001</code></td></tr><tr><td>기능명</td><td>브랜드 이야기</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 브랜드 &gt; 브랜드 이야기</td></tr><tr><td>화면 경로</td><td><code>/brand</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 값은 공유 패키지에서 읽습니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>BRAND-001</code></td></tr><tr><td>기능명</td><td>브랜드 이야기</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 브랜드 &gt; 브랜드 이야기</td></tr><tr><td>화면 경로</td><td><code>/brand</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 값은 공유 데이터 구조에서 읽습니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>무엇을 지키는 집인지 읽습니다. 연도가 아니라 매일 지키는 것으로 브랜드를 설명합니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -238,7 +238,7 @@
   <h3 id="MENU-001"><span class="fid">MENU-001</span> 메뉴판</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>MENU-001</code></td></tr><tr><td>기능명</td><td>메뉴판</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 메뉴 &gt; 메뉴판</td></tr><tr><td>화면 경로</td><td><code>/menu</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 값은 공유 패키지에서 읽습니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>MENU-001</code></td></tr><tr><td>기능명</td><td>메뉴판</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 메뉴 &gt; 메뉴판</td></tr><tr><td>화면 경로</td><td><code>/menu</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 값은 공유 데이터 구조에서 읽습니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>파는 것을 묶음별로 훑고 한 가지를 고릅니다. 스무 가지를 한 줄로 세우지 않고 묶음 하나를 고르게 합니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -274,7 +274,7 @@
   <h3 id="MENU-002"><span class="fid">MENU-002</span> 메뉴 상세</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>MENU-002</code></td></tr><tr><td>기능명</td><td>메뉴 상세</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 메뉴 &gt; 메뉴 상세</td></tr><tr><td>화면 경로</td><td><code>/menu/[itemId]</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 값은 공유 패키지에서 읽습니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>MENU-002</code></td></tr><tr><td>기능명</td><td>메뉴 상세</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 메뉴 &gt; 메뉴 상세</td></tr><tr><td>화면 경로</td><td><code>/menu/[itemId]</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 값은 공유 데이터 구조에서 읽습니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>메뉴 한 가지의 알레르기와 열량을 확인합니다. 메뉴판에서 이미 읽은 것 말고 더 알아야 할 것만 답합니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -307,7 +307,7 @@
   <h3 id="INTERIOR-001"><span class="fid">INTERIOR-001</span> 인테리어</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>INTERIOR-001</code></td></tr><tr><td>기능명</td><td>인테리어</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 인테리어 &gt; 인테리어</td></tr><tr><td>화면 경로</td><td><code>/interior</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 값은 공유 패키지에서 읽습니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>INTERIOR-001</code></td></tr><tr><td>기능명</td><td>인테리어</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 인테리어 &gt; 인테리어</td></tr><tr><td>화면 경로</td><td><code>/interior</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 값은 공유 데이터 구조에서 읽습니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>평형별로 얼마 들고 몇 석이 나오는지 보입니다. 상담 전에 스스로 두들겨 보게 해서, 전화가 얼마 드느냐로 시작하지 않게 합니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -340,7 +340,7 @@
   <h3 id="MARKETING-001"><span class="fid">MARKETING-001</span> 마케팅</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>MARKETING-001</code></td></tr><tr><td>기능명</td><td>마케팅</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 마케팅 &gt; 마케팅</td></tr><tr><td>화면 경로</td><td><code>/marketing</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 값은 공유 패키지에서 읽습니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>MARKETING-001</code></td></tr><tr><td>기능명</td><td>마케팅</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 마케팅 &gt; 마케팅</td></tr><tr><td>화면 경로</td><td><code>/marketing</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 값은 공유 데이터 구조에서 읽습니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>본사가 밖에서 무엇을 하고 있는지를 올린 것으로 보입니다. 잘 돌고 있다는 말을 하지 않고 올라간 것으로 보입니다. 정보공개서가 항목마다 답하고 있어, 같은 내용을 두 곳에서 서로 다르게 적을 위험이 있었습니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -376,7 +376,7 @@
   <h3 id="STORE-001"><span class="fid">STORE-001</span> 매장 찾기</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>STORE-001</code></td></tr><tr><td>기능명</td><td>매장 찾기</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 매장안내 &gt; 매장 찾기</td></tr><tr><td>화면 경로</td><td><code>/stores</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 값은 공유 패키지에서 읽습니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>STORE-001</code></td></tr><tr><td>기능명</td><td>매장 찾기</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 매장안내 &gt; 매장 찾기</td></tr><tr><td>화면 경로</td><td><code>/stores</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 값은 공유 데이터 구조에서 읽습니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>가까운 매장을 찾고 거기까지 어떻게 가는지 봅니다. 지도가 판을 채우고 찾는 자리가 그 위에 떠서, 훑다가 하나를 고르는 일이 한 화면에서 끝납니다. 한때 통계청 경계선으로 시·도에서 읍·면·동까지 세 층을 그렸습니다. 매장을 찾으시는 분께 필요한 것은 행정 경계가 아니라 어느 동네에 있는지였습니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -415,7 +415,7 @@
   <h3 id="FRANCHISE-001"><span class="fid">FRANCHISE-001</span> 가맹점 개설절차</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>FRANCHISE-001</code></td></tr><tr><td>기능명</td><td>가맹점 개설절차</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 창업안내 &gt; 가맹점 개설절차</td></tr><tr><td>화면 경로</td><td><code>/franchise</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 값은 공유 패키지에서 읽습니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>FRANCHISE-001</code></td></tr><tr><td>기능명</td><td>가맹점 개설절차</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 창업안내 &gt; 가맹점 개설절차</td></tr><tr><td>화면 경로</td><td><code>/franchise</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 값은 공유 데이터 구조에서 읽습니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>얼마 드는지와 문 여는 날까지 얼마 걸리는지를 먼저 적습니다. 전화해서 물으라고 두지 않아, 아직 마음을 못 정한 사람이 창을 닫지 않습니다. 자주 묻는 질문이 이 화면 맨 아래에 함께 있었습니다. 궁금한 것이 생겨 다시 오신 분은 비용 표와 절차를 모두 지나야 그 질문들에 닿을 수 있었습니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -448,7 +448,7 @@
   <h3 id="FRANCHISE-002"><span class="fid">FRANCHISE-002</span> 가맹점 상담 신청</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>FRANCHISE-002</code></td></tr><tr><td>기능명</td><td>가맹점 상담 신청</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 창업안내 &gt; 가맹점 상담 신청</td></tr><tr><td>화면 경로</td><td><code>/franchise/apply</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>FRANCHISE-002</code></td></tr><tr><td>기능명</td><td>가맹점 상담 신청</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 창업안내 &gt; 가맹점 상담 신청</td></tr><tr><td>화면 경로</td><td><code>/franchise/apply</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>첫 통화를 걸기 위한 최소만 받습니다<br>- 성함 · 연락처 · 지역 · 예산. 평수 · 개점일까지 묻지 않아 아직 아무것도 안 정한 사람도 남기고 갑니다. 위쪽에 창업 안내로 돌아가는 링크를 따로 두었습니다. 창업 아래에 화면이 셋이 되면서 탭이 그 역할을 대신하게 되어, 같은 일을 하는 길이 둘이 되었습니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -487,7 +487,7 @@
   <h3 id="FRANCHISE-003"><span class="fid">FRANCHISE-003</span> 가맹점 개설문의</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>FRANCHISE-003</code></td></tr><tr><td>기능명</td><td>가맹점 개설문의</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 창업안내 &gt; 가맹점 개설문의</td></tr><tr><td>화면 경로</td><td><code>/franchise/faq</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 값은 공유 패키지에서 읽습니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>FRANCHISE-003</code></td></tr><tr><td>기능명</td><td>가맹점 개설문의</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 창업안내 &gt; 가맹점 개설문의</td></tr><tr><td>화면 경로</td><td><code>/franchise/faq</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 값은 공유 데이터 구조에서 읽습니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>글로 답이 안 나온 사람에게 물을 곳을 먼저 주고, 그다음 물음을 분류와 함께 폅니다. 물어볼 것이 생겨 다시 온 사람이 비용 표와 절차를 두 번 지나지 않습니다. 이 질문들은 한때 창업 안내 한 장의 맨 아래에 있었습니다. 비용 표와 절차를 모두 지나야 닿는 자리라, 궁금한 것이 생겨 다시 오신 분은 같은 표를 또 지나쳐야 했습니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -526,7 +526,7 @@
   <h3 id="SUPPORT-001"><span class="fid">SUPPORT-001</span> 공지사항</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>SUPPORT-001</code></td></tr><tr><td>기능명</td><td>공지사항</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 고객센터 &gt; 공지사항</td></tr><tr><td>화면 경로</td><td><code>/support/notices</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 값은 공유 패키지에서 읽습니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>SUPPORT-001</code></td></tr><tr><td>기능명</td><td>공지사항</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 고객센터 &gt; 공지사항</td></tr><tr><td>화면 경로</td><td><code>/support/notices</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 값은 공유 데이터 구조에서 읽습니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>값이 바뀌거나 매장이 열고 닫히는 일을 묻기 전에 읽힙니다. 제목만 훑고 읽을 것 하나만 펴므로, 넷을 읽으려고 네 번 들어갔다 나오지 않습니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -562,7 +562,7 @@
   <h3 id="SUPPORT-002"><span class="fid">SUPPORT-002</span> 자주 묻는 질문</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>SUPPORT-002</code></td></tr><tr><td>기능명</td><td>자주 묻는 질문</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 고객센터 &gt; 자주 묻는 질문</td></tr><tr><td>화면 경로</td><td><code>/support/faq</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 값은 공유 패키지에서 읽습니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>SUPPORT-002</code></td></tr><tr><td>기능명</td><td>자주 묻는 질문</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 고객센터 &gt; 자주 묻는 질문</td></tr><tr><td>화면 경로</td><td><code>/support/faq</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 값은 공유 데이터 구조에서 읽습니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>드시러 오시는 분이 자주 묻는 것을 한 자리에 모읍니다. 누구인지를 고르는 줄이 없어 들어오자마자 물음이 바로 섭니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -598,7 +598,7 @@
   <h3 id="LEGAL-001"><span class="fid">LEGAL-001</span> 서비스 이용약관</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>LEGAL-001</code></td></tr><tr><td>기능명</td><td>서비스 이용약관</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 법적 고지 &gt; 서비스 이용약관</td></tr><tr><td>화면 경로</td><td><code>/terms</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 값은 공유 패키지에서 읽습니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>LEGAL-001</code></td></tr><tr><td>기능명</td><td>서비스 이용약관</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 법적 고지 &gt; 서비스 이용약관</td></tr><tr><td>화면 경로</td><td><code>/terms</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 값은 공유 데이터 구조에서 읽습니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>약관 원고가 오기 전까지 준비 중이라는 사실과 물어볼 곳을 적습니다. 푸터에서 링크가 빠져 없는 회사로 보이는 일도, 검토 전 초안이 내건 약관이 되는 일도 막습니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -631,7 +631,7 @@
   <h3 id="LEGAL-002"><span class="fid">LEGAL-002</span> 개인정보 처리방침</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>LEGAL-002</code></td></tr><tr><td>기능명</td><td>개인정보 처리방침</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 법적 고지 &gt; 개인정보 처리방침</td></tr><tr><td>화면 경로</td><td><code>/privacy</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 값은 공유 패키지에서 읽습니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>LEGAL-002</code></td></tr><tr><td>기능명</td><td>개인정보 처리방침</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 법적 고지 &gt; 개인정보 처리방침</td></tr><tr><td>화면 경로</td><td><code>/privacy</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 값은 공유 데이터 구조에서 읽습니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>창업 상담 신청에서 무엇을 받아 어디에 쓰고 얼마나 갖고 있는지를 적습니다. 개인정보를 실제로 받고 있으면서 안 밝히는 상태를 만들지 않습니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -664,7 +664,7 @@
   <h3 id="HOME-001"><span class="fid">HOME-001</span> Home</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>HOME-001</code></td></tr><tr><td>기능명</td><td>Home</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 공통 &gt; Home</td></tr><tr><td>화면 경로</td><td><code>/</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 값은 공유 패키지에서 읽습니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>HOME-001</code></td></tr><tr><td>기능명</td><td>Home</td></tr><tr><td>서비스 구분</td><td>고객 사이트</td></tr><tr><td>메뉴 경로</td><td>고객 사이트 &gt; 공통 &gt; Home</td></tr><tr><td>화면 경로</td><td><code>/</code></td></tr><tr><td>사용자 유형</td><td>비회원</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 값은 공유 데이터 구조에서 읽습니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>무엇을 파는 집인지 한 화면에서 답하고, 손님 길과 점주 길을 갈라 보냅니다. 처음 온 사람이 한 줄과 길 둘만 보고 다음 갈래를 고릅니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -703,7 +703,7 @@
   <h3 id="ADMIN-001"><span class="fid">ADMIN-001</span> 대시보드</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>ADMIN-001</code></td></tr><tr><td>기능명</td><td>대시보드</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 대시보드 &gt; 대시보드</td></tr><tr><td>화면 경로</td><td><code>/</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>ADMIN-001</code></td></tr><tr><td>기능명</td><td>대시보드</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 대시보드 &gt; 대시보드</td></tr><tr><td>화면 경로</td><td><code>/</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>오늘 손대야 할 것 하나를 먼저 보여 줍니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -736,7 +736,7 @@
   <h3 id="MENU-003"><span class="fid">MENU-003</span> 메뉴 목록</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>MENU-003</code></td></tr><tr><td>기능명</td><td>메뉴 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 메뉴 목록</td></tr><tr><td>화면 경로</td><td><code>/menus</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>MENU-003</code></td></tr><tr><td>기능명</td><td>메뉴 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 메뉴 목록</td></tr><tr><td>화면 경로</td><td><code>/menus</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>메뉴판에 서는 것과 값·알레르기를 찾고 살핍니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -772,7 +772,7 @@
   <h3 id="MENU-004"><span class="fid">MENU-004</span> 메뉴 상세</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>MENU-004</code></td></tr><tr><td>기능명</td><td>메뉴 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 메뉴 상세</td></tr><tr><td>화면 경로</td><td><code>/menus/[menuId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>MENU-004</code></td></tr><tr><td>기능명</td><td>메뉴 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 메뉴 상세</td></tr><tr><td>화면 경로</td><td><code>/menus/[menuId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>이미 파는 메뉴의 말과 값을 고칩니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -814,7 +814,7 @@
   <h3 id="MENU-005"><span class="fid">MENU-005</span> 메뉴 등록</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>MENU-005</code></td></tr><tr><td>기능명</td><td>메뉴 등록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 메뉴 등록</td></tr><tr><td>화면 경로</td><td><code>/menus/new</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>MENU-005</code></td></tr><tr><td>기능명</td><td>메뉴 등록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 메뉴 등록</td></tr><tr><td>화면 경로</td><td><code>/menus/new</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>팔기로 한 것을 먼저 적어 둡니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -856,7 +856,7 @@
   <h3 id="MENU-006"><span class="fid">MENU-006</span> 메뉴 묶음</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>MENU-006</code></td></tr><tr><td>기능명</td><td>메뉴 묶음</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 메뉴 묶음</td></tr><tr><td>화면 경로</td><td><code>/menus/categories</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>MENU-006</code></td></tr><tr><td>기능명</td><td>메뉴 묶음</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 메뉴 묶음</td></tr><tr><td>화면 경로</td><td><code>/menus/categories</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>묶음마다 몇 가지가 서 있는지 봅니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -889,7 +889,7 @@
   <h3 id="MARKETING-002"><span class="fid">MARKETING-002</span> 마케팅 글 목록</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>MARKETING-002</code></td></tr><tr><td>기능명</td><td>마케팅 글 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 마케팅 글 목록</td></tr><tr><td>화면 경로</td><td><code>/marketing</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>MARKETING-002</code></td></tr><tr><td>기능명</td><td>마케팅 글 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 마케팅 글 목록</td></tr><tr><td>화면 경로</td><td><code>/marketing</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>창구마다 무엇을 올렸는지 찾고 상태를 봅니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -922,7 +922,7 @@
   <h3 id="MARKETING-003"><span class="fid">MARKETING-003</span> 마케팅 글 상세</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>MARKETING-003</code></td></tr><tr><td>기능명</td><td>마케팅 글 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 마케팅 글 상세</td></tr><tr><td>화면 경로</td><td><code>/marketing/[postId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>MARKETING-003</code></td></tr><tr><td>기능명</td><td>마케팅 글 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 마케팅 글 상세</td></tr><tr><td>화면 경로</td><td><code>/marketing/[postId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>이미 올린 글의 창구와 말을 고칩니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -964,7 +964,7 @@
   <h3 id="MARKETING-004"><span class="fid">MARKETING-004</span> 마케팅 글 등록</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>MARKETING-004</code></td></tr><tr><td>기능명</td><td>마케팅 글 등록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 마케팅 글 등록</td></tr><tr><td>화면 경로</td><td><code>/marketing/new</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>MARKETING-004</code></td></tr><tr><td>기능명</td><td>마케팅 글 등록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 마케팅 글 등록</td></tr><tr><td>화면 경로</td><td><code>/marketing/new</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>창구에 올린 글을 옮겨 적습니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1006,7 +1006,7 @@
   <h3 id="STORE-002"><span class="fid">STORE-002</span> 가맹점 목록</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>STORE-002</code></td></tr><tr><td>기능명</td><td>가맹점 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 가맹점 목록</td></tr><tr><td>화면 경로</td><td><code>/stores</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>STORE-002</code></td></tr><tr><td>기능명</td><td>가맹점 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 가맹점 목록</td></tr><tr><td>화면 경로</td><td><code>/stores</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>사이트 매장 찾기에 서는 것과 영업 정보를 찾고 살핍니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1039,7 +1039,7 @@
   <h3 id="STORE-003"><span class="fid">STORE-003</span> 가맹점 상세</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>STORE-003</code></td></tr><tr><td>기능명</td><td>가맹점 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 가맹점 상세</td></tr><tr><td>화면 경로</td><td><code>/stores/[storeId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>STORE-003</code></td></tr><tr><td>기능명</td><td>가맹점 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 가맹점 상세</td></tr><tr><td>화면 경로</td><td><code>/stores/[storeId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>문 연 매장의 주소·번호·시간을 고칩니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1081,7 +1081,7 @@
   <h3 id="STORE-004"><span class="fid">STORE-004</span> 가맹점 등록</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>STORE-004</code></td></tr><tr><td>기능명</td><td>가맹점 등록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 가맹점 등록</td></tr><tr><td>화면 경로</td><td><code>/stores/new</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>STORE-004</code></td></tr><tr><td>기능명</td><td>가맹점 등록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 등록 &gt; 가맹점 등록</td></tr><tr><td>화면 경로</td><td><code>/stores/new</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>새로 낼 매장을 미리 세워 둡니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1123,7 +1123,7 @@
   <h3 id="FRANCHISE-004"><span class="fid">FRANCHISE-004</span> 창업 문의 목록</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>FRANCHISE-004</code></td></tr><tr><td>기능명</td><td>창업 문의 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 창업 &gt; 창업 문의 목록</td></tr><tr><td>화면 경로</td><td><code>/inquiries</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>FRANCHISE-004</code></td></tr><tr><td>기능명</td><td>창업 문의 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 창업 &gt; 창업 문의 목록</td></tr><tr><td>화면 경로</td><td><code>/inquiries</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>차리려는 사람이 남긴 것을 받아 밀리지 않게 봅니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1159,7 +1159,7 @@
   <h3 id="FRANCHISE-005"><span class="fid">FRANCHISE-005</span> 창업 문의 상세</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>FRANCHISE-005</code></td></tr><tr><td>기능명</td><td>창업 문의 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 창업 &gt; 창업 문의 상세</td></tr><tr><td>화면 경로</td><td><code>/inquiries/[inquiryId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>FRANCHISE-005</code></td></tr><tr><td>기능명</td><td>창업 문의 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 창업 &gt; 창업 문의 상세</td></tr><tr><td>화면 경로</td><td><code>/inquiries/[inquiryId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>문의 한 건을 읽고 통화에서 알게 된 것을 쌓습니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1198,7 +1198,7 @@
   <h3 id="FRANCHISE-006"><span class="fid">FRANCHISE-006</span> 창업 FAQ 목록</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>FRANCHISE-006</code></td></tr><tr><td>기능명</td><td>창업 FAQ 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 창업 &gt; 창업 FAQ 목록</td></tr><tr><td>화면 경로</td><td><code>/franchise/faqs</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>FRANCHISE-006</code></td></tr><tr><td>기능명</td><td>창업 FAQ 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 창업 &gt; 창업 FAQ 목록</td></tr><tr><td>화면 경로</td><td><code>/franchise/faqs</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>차리려는 사람이 묻는 것을 모아 둡니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1231,7 +1231,7 @@
   <h3 id="FRANCHISE-007"><span class="fid">FRANCHISE-007</span> 창업 FAQ 상세</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>FRANCHISE-007</code></td></tr><tr><td>기능명</td><td>창업 FAQ 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 창업 &gt; 창업 FAQ 상세</td></tr><tr><td>화면 경로</td><td><code>/franchise/faqs/[faqId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>FRANCHISE-007</code></td></tr><tr><td>기능명</td><td>창업 FAQ 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 창업 &gt; 창업 FAQ 상세</td></tr><tr><td>화면 경로</td><td><code>/franchise/faqs/[faqId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>창업 물음 하나의 말과 답을 고칩니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1273,7 +1273,7 @@
   <h3 id="FRANCHISE-008"><span class="fid">FRANCHISE-008</span> 창업 FAQ 등록</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>FRANCHISE-008</code></td></tr><tr><td>기능명</td><td>창업 FAQ 등록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 창업 &gt; 창업 FAQ 등록</td></tr><tr><td>화면 경로</td><td><code>/franchise/faqs/new</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>FRANCHISE-008</code></td></tr><tr><td>기능명</td><td>창업 FAQ 등록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 창업 &gt; 창업 FAQ 등록</td></tr><tr><td>화면 경로</td><td><code>/franchise/faqs/new</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>되풀이되는 창업 물음을 새로 적습니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1315,7 +1315,7 @@
   <h3 id="FRANCHISE-009"><span class="fid">FRANCHISE-009</span> 창업 비용 · 절차</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>FRANCHISE-009</code></td></tr><tr><td>기능명</td><td>창업 비용 · 절차</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 창업 &gt; 창업 비용 · 절차</td></tr><tr><td>화면 경로</td><td><code>/settings/franchise</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>FRANCHISE-009</code></td></tr><tr><td>기능명</td><td>창업 비용 · 절차</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 창업 &gt; 창업 비용 · 절차</td></tr><tr><td>화면 경로</td><td><code>/settings/franchise</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>사이트 창업 안내에 지금 무엇이 적혀 있는지 한자리에서 봅니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1351,7 +1351,7 @@
   <h3 id="SUPPORT-003"><span class="fid">SUPPORT-003</span> 고객센터 FAQ 목록</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>SUPPORT-003</code></td></tr><tr><td>기능명</td><td>고객센터 FAQ 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 고객센터 &gt; 고객센터 FAQ 목록</td></tr><tr><td>화면 경로</td><td><code>/support/faqs</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>SUPPORT-003</code></td></tr><tr><td>기능명</td><td>고객센터 FAQ 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 고객센터 &gt; 고객센터 FAQ 목록</td></tr><tr><td>화면 경로</td><td><code>/support/faqs</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>드시러 오시는 분이 묻는 것을 모아 둡니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1384,7 +1384,7 @@
   <h3 id="SUPPORT-004"><span class="fid">SUPPORT-004</span> 고객센터 FAQ 상세</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>SUPPORT-004</code></td></tr><tr><td>기능명</td><td>고객센터 FAQ 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 고객센터 &gt; 고객센터 FAQ 상세</td></tr><tr><td>화면 경로</td><td><code>/support/faqs/[faqId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>SUPPORT-004</code></td></tr><tr><td>기능명</td><td>고객센터 FAQ 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 고객센터 &gt; 고객센터 FAQ 상세</td></tr><tr><td>화면 경로</td><td><code>/support/faqs/[faqId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>손님 물음 하나의 말과 답을 고칩니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1426,7 +1426,7 @@
   <h3 id="SUPPORT-005"><span class="fid">SUPPORT-005</span> 고객센터 FAQ 등록</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>SUPPORT-005</code></td></tr><tr><td>기능명</td><td>고객센터 FAQ 등록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 고객센터 &gt; 고객센터 FAQ 등록</td></tr><tr><td>화면 경로</td><td><code>/support/faqs/new</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>SUPPORT-005</code></td></tr><tr><td>기능명</td><td>고객센터 FAQ 등록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 고객센터 &gt; 고객센터 FAQ 등록</td></tr><tr><td>화면 경로</td><td><code>/support/faqs/new</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>되풀이되는 손님 물음을 새로 적습니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1468,7 +1468,7 @@
   <h3 id="SUPPORT-006"><span class="fid">SUPPORT-006</span> 공지사항 목록</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>SUPPORT-006</code></td></tr><tr><td>기능명</td><td>공지사항 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 고객센터 &gt; 공지사항 목록</td></tr><tr><td>화면 경로</td><td><code>/support/notices</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>SUPPORT-006</code></td></tr><tr><td>기능명</td><td>공지사항 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 고객센터 &gt; 공지사항 목록</td></tr><tr><td>화면 경로</td><td><code>/support/notices</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>손님이 사이트에서 읽는 글을 찾고 상태를 봅니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1504,7 +1504,7 @@
   <h3 id="SUPPORT-007"><span class="fid">SUPPORT-007</span> 공지사항 상세</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>SUPPORT-007</code></td></tr><tr><td>기능명</td><td>공지사항 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 고객센터 &gt; 공지사항 상세</td></tr><tr><td>화면 경로</td><td><code>/support/notices/[noticeId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>SUPPORT-007</code></td></tr><tr><td>기능명</td><td>공지사항 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 고객센터 &gt; 공지사항 상세</td></tr><tr><td>화면 경로</td><td><code>/support/notices/[noticeId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>이미 걸린 공지의 말과 자리를 고칩니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1546,7 +1546,7 @@
   <h3 id="SUPPORT-008"><span class="fid">SUPPORT-008</span> 공지사항 등록</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>SUPPORT-008</code></td></tr><tr><td>기능명</td><td>공지사항 등록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 고객센터 &gt; 공지사항 등록</td></tr><tr><td>화면 경로</td><td><code>/support/notices/new</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>SUPPORT-008</code></td></tr><tr><td>기능명</td><td>공지사항 등록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 고객센터 &gt; 공지사항 등록</td></tr><tr><td>화면 경로</td><td><code>/support/notices/new</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>알릴 것을 새로 적습니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1588,7 +1588,7 @@
   <h3 id="BANNER-001"><span class="fid">BANNER-001</span> 메인 비주얼 목록</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>BANNER-001</code></td></tr><tr><td>기능명</td><td>메인 비주얼 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 배너 &gt; 메인 비주얼 목록</td></tr><tr><td>화면 경로</td><td><code>/banners/main</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>BANNER-001</code></td></tr><tr><td>기능명</td><td>메인 비주얼 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 배너 &gt; 메인 비주얼 목록</td></tr><tr><td>화면 경로</td><td><code>/banners/main</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>사이트 첫 화면에 걸리는 것을 세우고 내립니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1621,7 +1621,7 @@
   <h3 id="BANNER-002"><span class="fid">BANNER-002</span> 메인 비주얼 상세</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>BANNER-002</code></td></tr><tr><td>기능명</td><td>메인 비주얼 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 배너 &gt; 메인 비주얼 상세</td></tr><tr><td>화면 경로</td><td><code>/banners/main/[bannerId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>BANNER-002</code></td></tr><tr><td>기능명</td><td>메인 비주얼 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 배너 &gt; 메인 비주얼 상세</td></tr><tr><td>화면 경로</td><td><code>/banners/main/[bannerId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>이미 건 배너의 말과 기간을 고칩니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1660,7 +1660,7 @@
   <h3 id="BANNER-003"><span class="fid">BANNER-003</span> 메인 비주얼 등록</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>BANNER-003</code></td></tr><tr><td>기능명</td><td>메인 비주얼 등록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 배너 &gt; 메인 비주얼 등록</td></tr><tr><td>화면 경로</td><td><code>/banners/main/new</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>BANNER-003</code></td></tr><tr><td>기능명</td><td>메인 비주얼 등록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 배너 &gt; 메인 비주얼 등록</td></tr><tr><td>화면 경로</td><td><code>/banners/main/new</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>첫 화면에 걸 것을 새로 만듭니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1699,7 +1699,7 @@
   <h3 id="BANNER-004"><span class="fid">BANNER-004</span> 팝업 목록</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>BANNER-004</code></td></tr><tr><td>기능명</td><td>팝업 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 배너 &gt; 팝업 목록</td></tr><tr><td>화면 경로</td><td><code>/banners/popups</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>BANNER-004</code></td></tr><tr><td>기능명</td><td>팝업 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 배너 &gt; 팝업 목록</td></tr><tr><td>화면 경로</td><td><code>/banners/popups</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>화면을 막고 뜨는 것을 세우고 내립니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1732,7 +1732,7 @@
   <h3 id="BANNER-005"><span class="fid">BANNER-005</span> 팝업 상세</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>BANNER-005</code></td></tr><tr><td>기능명</td><td>팝업 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 배너 &gt; 팝업 상세</td></tr><tr><td>화면 경로</td><td><code>/banners/popups/[popupId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>BANNER-005</code></td></tr><tr><td>기능명</td><td>팝업 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 배너 &gt; 팝업 상세</td></tr><tr><td>화면 경로</td><td><code>/banners/popups/[popupId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>이미 띄운 팝업의 말과 닫는 방법을 고칩니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1771,7 +1771,7 @@
   <h3 id="BANNER-006"><span class="fid">BANNER-006</span> 팝업 등록</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>BANNER-006</code></td></tr><tr><td>기능명</td><td>팝업 등록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 배너 &gt; 팝업 등록</td></tr><tr><td>화면 경로</td><td><code>/banners/popups/new</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>BANNER-006</code></td></tr><tr><td>기능명</td><td>팝업 등록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 배너 &gt; 팝업 등록</td></tr><tr><td>화면 경로</td><td><code>/banners/popups/new</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>꼭 읽혀야 하는 것을 새로 띄웁니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1810,7 +1810,7 @@
   <h3 id="SETTING-001"><span class="fid">SETTING-001</span> 브랜드 정보</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>SETTING-001</code></td></tr><tr><td>기능명</td><td>브랜드 정보</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 설정 &gt; 브랜드 정보</td></tr><tr><td>화면 경로</td><td><code>/settings/brand</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>SETTING-001</code></td></tr><tr><td>기능명</td><td>브랜드 정보</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 설정 &gt; 브랜드 정보</td></tr><tr><td>화면 경로</td><td><code>/settings/brand</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>사이트가 읽는 브랜드 값 한 벌을 고칩니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1849,7 +1849,7 @@
   <h3 id="ADMIN-002"><span class="fid">ADMIN-002</span> 관리자 목록</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>ADMIN-002</code></td></tr><tr><td>기능명</td><td>관리자 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 설정 &gt; 관리자 목록</td></tr><tr><td>화면 경로</td><td><code>/settings/admins</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>ADMIN-002</code></td></tr><tr><td>기능명</td><td>관리자 목록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 설정 &gt; 관리자 목록</td></tr><tr><td>화면 경로</td><td><code>/settings/admins</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>이 콘솔에 들어오는 사람을 봅니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1879,7 +1879,7 @@
   <h3 id="ADMIN-003"><span class="fid">ADMIN-003</span> 관리자 상세</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>ADMIN-003</code></td></tr><tr><td>기능명</td><td>관리자 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 설정 &gt; 관리자 상세</td></tr><tr><td>화면 경로</td><td><code>/settings/admins/[adminId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>ADMIN-003</code></td></tr><tr><td>기능명</td><td>관리자 상세</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 설정 &gt; 관리자 상세</td></tr><tr><td>화면 경로</td><td><code>/settings/admins/[adminId]</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>들어오는 사람의 권한과 상태를 고칩니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1918,7 +1918,7 @@
   <h3 id="ADMIN-004"><span class="fid">ADMIN-004</span> 관리자 등록</h3>
   <h4>1. 기본 정보</h4><table class="kv">
   <thead><tr><th>항목</th><th>내용</th></tr></thead>
-  <tbody><tr><td>기능 ID</td><td><code>ADMIN-004</code></td></tr><tr><td>기능명</td><td>관리자 등록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 설정 &gt; 관리자 등록</td></tr><tr><td>화면 경로</td><td><code>/settings/admins/new</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>현재 구현 기준 — 화면 구현 완료, 저장은 브라우저 안에서만 유지되며 서버 연동은 <strong>현재 범위에 없음</strong>입니다.</td></tr></tbody>
+  <tbody><tr><td>기능 ID</td><td><code>ADMIN-004</code></td></tr><tr><td>기능명</td><td>관리자 등록</td></tr><tr><td>서비스 구분</td><td>관리자</td></tr><tr><td>메뉴 경로</td><td>관리자 &gt; 설정 &gt; 관리자 등록</td></tr><tr><td>화면 경로</td><td><code>/settings/admins/new</code></td></tr><tr><td>사용자 유형</td><td>관리자</td></tr><tr><td>기능 상태</td><td>1단계 완료 — 화면 구현이 끝났고, 저장은 브라우저 안에서만 유지됩니다. 서버 연동은 <strong>2단계 대상</strong>입니다.</td></tr></tbody>
 </table>
   <h4>2. 기능 개요</h4><p>들어올 사람을 새로 들입니다.</p>
   <h4>3. 사용자 액션 및 시스템 처리</h4><table class="flow">
@@ -1976,7 +1976,7 @@
 <p class="lead">화면을 가리지 않고 같은 방식으로 처리합니다. 화면마다 되풀이해 적으면 47벌이 되고, 한 곳만 고쳐집니다.</p>
 <table>
   <thead><tr><th style="width:100px">구분</th><th style="width:230px">상황</th><th>시스템 처리 · 화면 표시</th></tr></thead>
-  <tbody><tr><td>데이터 없음</td><td>목록 조회 결과가 0건입니다.</td><td>목록 자리에 빈 상태 문구를 세웁니다. 빈 표를 그대로 두지 않습니다.</td></tr><tr><td>잘못된 식별자</td><td>주소의 식별자에 해당하는 값이 없습니다.</td><td>404 로 답하고 없는 화면임을 알립니다.</td></tr><tr><td>비공개 대상</td><td>공개가 꺼진 값을 고객 사이트 주소로 직접 열었습니다.</td><td>고객 사이트에서는 404 로 답합니다. 값 자체는 지우지 않습니다.</td></tr><tr><td>검색 결과 없음</td><td>검색어나 조건에 걸리는 값이 없습니다.</td><td>건 수 0 을 함께 보이고, 조건을 지우는 길을 함께 둡니다.</td></tr><tr><td>필수값 누락</td><td>필수 항목이 비었습니다.</td><td>저장하지 않고, 비어 있는 항목이 몇 개인지 알립니다.</td></tr><tr><td>권한 없음</td><td>관리자 화면을 인증 없이 열었습니다.</td><td>로그인 화면으로 보냅니다. <strong>서버 연동은 현재 범위에 없음</strong>이며, 지금은 화면 흐름까지만 있습니다.</td></tr><tr><td>저장 실패</td><td>등록 · 수정 · 삭제가 끝나지 않았습니다.</td><td>입력한 값을 지우지 않고 화면에 남긴 뒤 실패를 알립니다.</td></tr><tr><td>외부 서비스 오류</td><td>지도 SDK 가 응답하지 않거나 열쇠가 등록되지 않았습니다.</td><td>빈 상자 대신 설명 판을 세웁니다.</td></tr></tbody>
+  <tbody><tr><td>데이터 없음</td><td>목록 조회 결과가 0건입니다.</td><td>목록 자리에 빈 상태 문구를 세웁니다. 빈 표를 그대로 두지 않습니다.</td></tr><tr><td>잘못된 식별자</td><td>주소의 식별자에 해당하는 값이 없습니다.</td><td>404 로 답하고 없는 화면임을 알립니다.</td></tr><tr><td>비공개 대상</td><td>공개가 꺼진 값을 고객 사이트 주소로 직접 열었습니다.</td><td>고객 사이트에서는 404 로 답합니다. 값 자체는 지우지 않습니다.</td></tr><tr><td>검색 결과 없음</td><td>검색어나 조건에 걸리는 값이 없습니다.</td><td>건 수 0 을 함께 보이고, 조건을 지우는 길을 함께 둡니다.</td></tr><tr><td>필수값 누락</td><td>필수 항목이 비었습니다.</td><td>저장하지 않고, 비어 있는 항목이 몇 개인지 알립니다.</td></tr><tr><td>권한 없음</td><td>관리자 화면을 인증 없이 열었습니다.</td><td>로그인 화면으로 보냅니다. 실제 차단은 <strong>2단계 대상</strong>이며, 1단계에서는 화면 흐름까지 구현되어 있습니다.</td></tr><tr><td>저장 실패</td><td>등록 · 수정 · 삭제가 끝나지 않았습니다.</td><td>입력한 값을 지우지 않고 화면에 남긴 뒤 실패를 알립니다.</td></tr><tr><td>외부 서비스 오류</td><td>지도 SDK 가 응답하지 않거나 열쇠가 등록되지 않았습니다.</td><td>빈 상자 대신 설명 판을 세웁니다.</td></tr></tbody>
 </table>
 
 <h2>10. QA 검수 체크리스트</h2>
