@@ -1,6 +1,15 @@
 import { writeFileSync } from 'node:fs';
-import { ADMIN_SCREENS, CLIENT_SCREENS, SCREENS, type Screen } from './lib/fnb-model';
-import { BACKEND_BUILD, BACKEND_DONE, DONE } from './lib/fnb-backend';
+import type { Screen } from './lib/screens';
+import {
+  ACCEPT,
+  CHANGE,
+  dutyOf,
+  handoverOf,
+  outOf,
+  type DocProject,
+} from './lib/doc-project';
+import { PROJECTS } from './lib/projects';
+import { bullets, cells, grouped, table, th } from './lib/doc-html';
 import { esc, rich } from './lib/html';
 import { shell } from './lib/page';
 
@@ -15,48 +24,14 @@ import { shell } from './lib/page';
  * 여기 남는 것은 넷이다 — **무엇을 만드는가 · 어디까지 만드는가 · 누가 어디까지 맡는가 ·
  * 어떤 상태가 되면 완료인가.** 나머지는 세 문서로 갔다.
  *
- * - 무엇이 필요한가 → 요구사항 정의서 (`pnpm srs:build`)
- * - 무엇을 하면 무엇이 일어나는가 → 기능 명세서 (`pnpm fsd:build`)
- * - 얼마나 잘 도는가 → 비기능 명세서 (`pnpm nfr:build`)
- *
- * 네 문서는 **같은 기능 ID** 를 쓴다(`lib/fnb-model.ts`). 그래야 한 문서의 `MENU-002` 가 다른
- * 문서의 `MENU-002` 와 같은 화면을 가리킨다.
- *
  * ```
- * pnpm sow:build     # 이 문서 하나
- * pnpm docs:fnb      # 네 문서 한꺼번에
+ * pnpm sow:build     # 이 문서
+ * pnpm docs:all      # 두 프로젝트 · 네 문서
  * ```
  */
 
-const cells = (...values: string[]): string => `<tr>${values.map((one) => `<td>${one}</td>`).join('')}</tr>`;
-
-const table = (head: string, rows: string, klass = ''): string => `<table class="${klass}">
-  <thead><tr>${head}</tr></thead>
-  <tbody>${rows}</tbody>
-</table>`;
-
-const th = (label: string, width?: number): string =>
-  `<th${width ? ` style="width:${width}px"` : ''}>${esc(label)}</th>`;
-
-const bullets = (items: readonly string[]): string =>
-  `<ul>${items.map((one) => `<li>${rich(one)}</li>`).join('')}</ul>`;
-
-/** 첫 칸이 이어지면 묶는다. 같은 이름이 떨어져서 두 번 나올 때를 대비해 이어지는 만큼만 센다. */
-const grouped = (list: readonly (readonly string[])[]): string =>
-  list
-    .map((row, index) => {
-      const [area, ...rest] = row;
-      const first = list[index - 1]?.[0] !== area;
-      let span = 0;
-      while (list[index + span]?.[0] === area) span += 1;
-      const head = first ? `<td class="d1" rowspan="${span}">${esc(area ?? '')}</td>` : '';
-      return `<tr${first ? ' class="head"' : ''}>${head}${rest.map((one) => `<td class="memo">${rich(one)}</td>`).join('')}</tr>`;
-    })
-    .join('');
-
-const totalActions = SCREENS.reduce((sum, one) => sum + one.spec.actions.length, 0);
-
-/* ── 2. 과업 범위 ──────────────────────────────────────────── */
+const SCOPE_HEAD =
+  th('기능 ID', 90) + th('화면명', 150) + th('영역', 110) + th('화면 경로') + th('세부 기능 수', 96);
 
 /** 서비스 한 벌의 영역 구성. 첫 줄에만 서비스 이름을 세우고 나머지는 묶는다. */
 const iaSection = (label: string, list: readonly Screen[]): string => {
@@ -65,8 +40,7 @@ const iaSection = (label: string, list: readonly Screen[]): string => {
   const entries = [...groups];
   return entries
     .map(([group, screens], index) => {
-      const head =
-        index === 0 ? `<td class="d1" rowspan="${entries.length}">${esc(label)}</td>` : '';
+      const head = index === 0 ? `<td class="d1" rowspan="${entries.length}">${esc(label)}</td>` : '';
       const names = screens
         .map((one) => `<code>${esc(one.featureId)}</code> ${esc(one.name)}`)
         .join(' · ');
@@ -94,186 +68,36 @@ const scopeRows = (list: readonly Screen[]): string =>
     )
     .join('');
 
-const SCOPE_HEAD =
-  th('기능 ID', 90) + th('화면명', 150) + th('영역', 110) + th('화면 경로') + th('세부 기능 수', 96);
+export const buildSow = (p: DocProject): string => {
+  const totalActions = p.screens.reduce((sum, one) => sum + one.spec.actions.length, 0);
+  const duty = dutyOf(p);
 
-/* ── 3. 책임 범위 ──────────────────────────────────────────── */
+  const dutyRows = duty
+    .map(
+      ([area, why, scope, output, done, out]) =>
+        `<tr class="head"><td class="d1">${esc(area)}</td>${[why, scope, output, done, out].map((one) => `<td class="memo">${rich(one)}</td>`).join('')}</tr>`,
+    )
+    .join('');
 
-/**
- * 여섯 칸으로 적는다 — 수행 목적 · 제공 범위 · 주요 산출물 · 완료 기준 · 제외 범위.
- *
- * 「포함 / 미포함」 두 칸으로 적으면 맡았다는 것까지만 합의되고, **어디까지 하면 끝인가**에서
- * 갈린다. 완료 기준 칸이 없으면 "다 됐다" 의 뜻이 서로 다른 채로 진행된다.
- */
-const DUTY: [string, string, string, string, string, string][] = [
-  [
-    '기획',
-    '구현과 검수의 근거가 되는 서비스 정의를 확정한다.',
-    `서비스 구조 및 IA 정의 · 화면 목록 ${SCREENS.length}개 정의 · 화면별 목적 정의 · 세부 기능 ${totalActions}건 정의 · 사용자 흐름 정의 · 운영 정책 정의 · 주요 데이터 항목 정의 · 상태값 정책 정의 · 기능별 검수 기준 정의`,
-    '요구사항 정의서 · 과업범위 정의서 · 기능 명세서 · 비기능 명세서',
-    '정의된 전체 화면에 대해 화면 목적, 사용자 기능, 주요 데이터 항목, 운영 정책 및 검수 기준이 문서화되어 있으며, 구현 과정에서 기능 해석에 필요한 핵심 요구사항이 누락되지 않은 상태.',
-    '시장 조사 · 경쟁사 분석 · 브랜드 전략 수립',
-  ],
-  [
-    'UI 디자인',
-    '서비스 구현을 위한 UI 구조와 디자인 시스템을 정의한다.',
-    '디자인 토큰 정의 · 컬러 및 타이포그래피 규칙 · 간격과 레이아웃 규칙 · 공통 UI 컴포넌트 정의 · 화면별 UI 구조 정의 · 반응형 기준 정의 · 고객 서비스와 관리자 서비스 간 디자인 일관성 관리',
-    '디자인 토큰 · 공통 컴포넌트 · 화면별 UI 구조 · 반응형 기준',
-    '정의된 기준 해상도(1280 · 1024 · 768 · 390)에서 주요 화면이 정상적으로 표시되고, 의도하지 않은 가로 스크롤, 레이아웃 깨짐 또는 공통 UI 규칙의 불일치가 없는 상태.',
-    'PSD · AI 등 별도 그래픽 원본 파일 · 로고 및 BI 제작 · 인쇄물 및 패키지 디자인 · 촬영 및 영상 제작',
-  ],
-  [
-    'Front-End',
-    '정의된 화면과 기능을 실제 동작하는 사용자 인터페이스로 구현한다.',
-    `화면 ${SCREENS.length}개 구현 · 화면 간 이동 및 사용자 흐름 구현 · 검색 및 필터 · 목록 및 상세 · 등록 및 수정 · 입력값 및 필수값 검증 · 공개 및 노출 상태에 따른 UI 처리 · 빈 데이터 상태 · 오류 상태 · 기본 예외 처리 · 공통 컴포넌트 적용 · 공통 데이터 접근 구조 관리`,
-    '고객 서비스 및 관리자 서비스 소스 · 공통 컴포넌트 · 공통 데이터 접근 구조',
-    '기능 명세서의 화면별 검수 기준을 모두 통과하고 저장소의 품질 검사가 전부 통과한 상태. 화면이 사용하는 데이터 구조와 접근 방식은 공통 구조로 관리하며, 서버 연동이 필요한 영역은 향후 API 와 연결할 수 있도록 호출 지점을 일관된 구조로 구성한 상태.',
-    '서버 연동 구현 · 실제 인증 처리 · 결제 및 외부 시스템 연동',
-  ],
-  [
-    'Back-End 정의',
-    '2단계 수행자가 화면 재분석 없이 착수할 수 있도록 요구사항과 인터페이스를 정의한다.',
-    '도메인 및 관리 대상 정의 · 데이터 요구사항 정의 · 데이터 관계 정의 · API 인터페이스 요구사항 정의 · 비즈니스 규칙 및 검증 정책 정의 · 상태값 및 라이프사이클 정의 · 권한 요구사항 정의 · 예외 및 오류 응답 요구사항 정의',
-    '기능 명세서의 「Back-End 요구사항 정의」 · 비기능 명세서의 데이터 보존 및 파기 요건',
-    '5.3 의 완료 기준 열 가지를 모두 충족한 상태. 관리 대상 · 데이터 항목 · 관계 · 연산 · 인터페이스 · 검증 · 상태 · 권한 · 예외가 각각 문서화되어 있는 상태.',
-    '실제 서버 코드 · 데이터베이스 · API 구현 — 2단계에서 수행한다.',
-  ],
-  [
-    'Back-End 구현',
-    '**2단계 수행 범위.** 1단계에서 정의한 요구사항을 실제 서버로 구현하고 Front-End 를 연동한다.',
-    BACKEND_BUILD.map((one) => one.name).join(' · '),
-    '서버 애플리케이션 소스 · 데이터베이스 스키마 · API 문서 · 연동이 완료된 Front-End',
-    '5.4 의 2단계 완료 기준을 모두 충족한 상태. 화면이 공통 데이터 구조 대신 실제 API 를 호출하며, 서버 검증으로 표기된 규칙이 API 직접 호출에도 적용되는 상태.',
-    '신규 화면 추가 · 신규 데이터 항목 도입 — 정의되지 않은 것은 별도 협의 대상이다.',
-  ],
-  [
-    '인프라 및 배포',
-    '2단계 구현물이 동작할 환경을 구성한다. **환경 제공 주체는 발주처이며, 구축 지원까지 수행한다.**',
-    '서버 환경 구성 지원 · 배포 절차 정의 · 환경 변수 및 접속 정보 인계',
-    '배포 절차 문서 · 환경 변수 목록',
-    '2단계 구현물이 발주처 환경에서 기동하고, 배포 절차가 문서로 인계된 상태.',
-    '클라우드 계정 · 도메인 · 인증서 구매와 요금 부담 · CI 및 CD 파이프라인 운영',
-  ],
-  [
-    '운영 및 유지보수',
-    '**본 과업에서 제공하지 않는다.** 인수 이후의 운영은 별도 계약으로 정한다.',
-    '서비스 운영 대행 · 콘텐츠 제작 및 등록 대행 · 정기 유지보수 · 취약점 진단 미포함',
-    '해당 없음',
-    '해당 없음 — 별도 계약 대상이다.',
-    '위 전 항목',
-  ],
-];
+  const out = outOf(p);
+  const handover = handoverOf(p);
 
-const dutyRows = DUTY.map(
-  ([area, why, scope, output, done, out]) =>
-    `<tr class="head"><td class="d1">${esc(area)}</td>${[why, scope, output, done, out].map((one) => `<td class="memo">${rich(one)}</td>`).join('')}</tr>`,
-).join('');
-
-/* ── 4. 제외 범위 ──────────────────────────────────────────── */
-
-/**
- * 적어 두지 않으면 포함된 것으로 읽힌다.
- *
- * 「사유」 칸을 함께 두는 것은, 빠진 항목을 볼 때마다 왜 빠졌는지 되묻는 일을 없애기
- * 위해서다. 사유가 없으면 그 줄은 협상 대상으로 다시 올라온다.
- */
-const OUT: [string, string, string][] = [
-  ['BX', '로고 · BI 가이드 제작', '로고는 원본 파일을 제공받아 사용한다. 눈으로 보고 다시 그린 로고는 그 브랜드의 표장이 아니다.'],
-  ['BX', '패키지 · 인쇄물 · 편집 디자인', '본 과업은 웹 화면에 한정한다.'],
-  ['BX', 'SNS · 프로모션 콘텐츠 디자인', '같은 이유로 제공하지 않는다.'],
-  ['BX', '제품 · 모델 촬영 · 영상 제작', '메뉴 이미지와 영상은 발주처가 제공한다.'],
-  ['기획', '시장 조사 · 경쟁사 분석', '발주처가 제공하는 브랜드 기준을 따른다.'],
-  ['UI 디자인', '시안 파일 (PSD · AI)', '디자인은 실제로 동작하는 화면으로 인도한다. 별도 시안 파일은 만들지 않는다.'],
-  ['기능', '온라인 주문 · 결제', '이 브랜드는 주문을 전화와 매장 방문으로 받는다. **정의도 하지 않는다.**'],
-  ['기능', '고객 회원 체계', '고객은 로그인 없이 전 화면을 이용한다. 로그인은 관리자 서비스에만 둔다.'],
-  ['기능', '메일 · 문자 발송', '창업 문의는 값을 받아 관리자 목록으로 쌓는 데까지 제공한다.'],
-  ['기능', '예약 · POS 등 외부 시스템 연동', '정의하지 않는다. 지도는 화면에서 지도 SDK 를 직접 호출한다.'],
-  ['운영', '클라우드 계정 · 도메인 · 인증서', '구매와 요금은 발주처가 부담한다. 구성 지원은 수행한다.'],
-  ['운영', 'CI 및 CD 파이프라인 운영', '구축 지원 범위 밖이다.'],
-  ['운영', '취약점 진단 · 보안 점검', '포함하지 않는다. 비기능 명세서의 보안 요건은 점검이 아니라 설계 기준이다.'],
-  ['운영', '콘텐츠 제작 · 등록 대행', '메뉴 이미지와 문구는 발주처가 제공하며, 등록은 관리자 서비스에서 직접 수행한다.'],
-  ['운영', '서비스 운영 대행 · 정기 유지보수', '인수 이후의 운영은 별도 계약으로 정한다.'],
-];
-
-/* ── 5. 완료 및 인수 기준 ──────────────────────────────────── */
-
-const HANDOVER: [string, string, string][] = [
-  ['1단계', '소스 코드', `고객 서비스와 관리자 서비스 소스 일체 및 공통 패키지. 화면 ${SCREENS.length}개 · 세부 기능 ${totalActions}건.`],
-  ['1단계', '요구사항 정의서', '사업 목표 · 대상 사용자 · 요구사항 목록 · 외부 서비스 준비 사항 · 요구사항 추적표.'],
-  ['1단계', '과업범위 정의서', '본 문서. 과업 범위 · 책임 범위 · 제외 범위 · 완료 및 인수 기준 · 변경 관리 기준.'],
-  ['1단계', '기능 명세서', `화면 ${SCREENS.length}개의 기능 · 데이터 · 동작 · 조건 · 예외 · 검수 기준과 Back-End 요구사항 정의.`],
-  ['1단계', '비기능 명세서', '성능 · 반응형 · 접근성 · 보안 · 데이터 보존 및 파기 · 오류 응답 · 검증 도구.'],
-  ['1단계', '디자인 토큰 및 공통 컴포넌트', '색 · 타이포그래피 · 간격 규칙과 공통 UI 컴포넌트 일체.'],
-  ['1단계', '화면 캡처', `전 화면 ${SCREENS.length}장.`],
-  ['1단계', '품질 검사 도구', '명명 및 등록 일치 · 문서 누락 · 값의 출처 · 반응형 · 화면 무게 여섯 종.'],
-  ['2단계', '서버 산출물', '서버 애플리케이션 소스 · 데이터베이스 스키마 · API 문서 · 배포 절차 문서.'],
-];
-
-const ACCEPT_1: string[] = [
-  '정의된 전체 화면이 구현되어 있으며, 기능 명세서의 화면별 검수 기준을 모두 통과한다.',
-  '기준 해상도 네 곳에서 의도하지 않은 가로 스크롤과 레이아웃 깨짐이 없다.',
-  '저장소에 포함된 품질 검사 여섯 종이 전부 통과한다.',
-  '화면 목록 · 세부 기능 · 데이터 항목이 문서와 코드에서 일치한다.',
-  'Back-End 요구사항 정의가 5.3 의 완료 기준 열 가지를 충족한다.',
-  '1단계 인수 산출물 여덟 종이 전달되어 있다.',
-  '범위 밖으로 정의된 항목이 구현되지 않은 사실은 미완료가 아니라 **범위 제외**로 판정한다.',
-  '**2단계 구현 대상**으로 표기된 항목은 1단계 인수 판정 대상이 아니다.',
-];
-
-const CHANGE: [string, string, string][] = [
-  [
-    '접수',
-    '변경 요청은 **요구 ID 또는 기능 ID 를 지목해** 제기한다.',
-    '`REQ-C-02` · `MENU-002` 처럼 지목하면 네 문서의 같은 자리를 함께 찾을 수 있다. 화면 이름으로 지목하면 목록 · 상세 · 등록 중 어느 화면인지 특정되지 않는다.',
-  ],
-  [
-    '판단',
-    '요청을 **범위 내**와 **범위 외**로 나눈다.',
-    '이미 정의된 기능의 표현 · 배치 · 문구 조정은 범위 내 변경이다. 화면 추가, 신규 데이터 항목 도입, 4장에서 제외 범위로 정의된 항목의 수행은 범위 외이며 별도 협의 대상이다.',
-  ],
-  [
-    '반영',
-    '변경은 **화면 등록부와 화면 명세의 수정**으로 시작한다.',
-    '그 둘을 고치면 네 문서가 함께 갱신되고, 저장소의 검사 도구가 빠진 곳을 잡아낸다.',
-  ],
-  [
-    '반영',
-    '**문서만 수정하거나 코드만 수정하는 변경은 허용하지 않는다.**',
-    '한쪽만 반영되면 다른 쪽이 낡은 상태로 남고, 그 사실은 인수 시점에 드러난다.',
-  ],
-  [
-    '기록',
-    '변경 이력은 저장소의 이력으로 갈음한다.',
-    '별도 변경 관리 대장을 두지 않는다. 두 벌이 되면 한쪽만 기록되고, 그때부터 어느 쪽이 기준인지 확인할 수 없게 된다.',
-  ],
-];
-
-const body = `
+  const body = `
 <h2>1. 과 업 개 요</h2>
 
 <h3>1.1 과업 목적</h3>
-<p>
-  브랜드 사이트의 내용이 코드에 고정되어 있으면 가격 한 줄, 공지 한 건을 변경하는 데에도 개발과
-  배포가 필요하다. 그 결과 사이트는 구축 시점에 멈추고, 실제 운영은 사이트 밖에서 이루어진다.
-</p>
-<p>
-  본 과업은 <strong>고객이 이용하는 서비스</strong>와 <strong>그 내용을 운영자가 직접 관리하는
-  서비스</strong>를 한 쌍으로 구축하여, 운영 주체가 개발 의존 없이 서비스를 현행으로 유지할 수
-  있도록 하는 것을 목적으로 한다.
-</p>
+<p>${rich(p.intro.background)}</p>
+${p.intro.purpose.map((one) => `<p>${rich(one)}</p>`).join('')}
 
 <h3>1.2 서비스 구성</h3>
 <table>
   <thead><tr>${th('구분', 106)}${th('화면 수', 66)}${th('세부 기능', 72)}${th('역할')}</tr></thead>
   <tbody>
-    ${cells('고객 서비스', String(CLIENT_SCREENS.length), String(CLIENT_SCREENS.reduce((s, o) => s + o.spec.actions.length, 0)), '브랜드 정보 제공 · 메뉴 탐색 · 매장 검색 · 창업 안내 · 고객 지원. 창업 상담 신청을 제외한 전 화면이 조회 전용이다.')}
-    ${cells('관리자 서비스', String(ADMIN_SCREENS.length), String(ADMIN_SCREENS.reduce((s, o) => s + o.spec.actions.length, 0)), '고객 서비스에 노출되는 데이터의 등록 · 수정 · 삭제 · 상태 관리와 창업 문의 처리.')}
+    ${cells(esc(p.clientLabel), String(p.clientScreens.length), String(p.clientScreens.reduce((s, o) => s + o.spec.actions.length, 0)), rich(p.intro.roles[0]))}
+    ${cells(esc(p.adminLabel), String(p.adminScreens.length), String(p.adminScreens.reduce((s, o) => s + o.spec.actions.length, 0)), rich(p.intro.roles[1]))}
   </tbody>
 </table>
-<p>
-  두 서비스는 <strong>동일한 데이터를 참조</strong>한다. 데이터를 이중으로 관리하면 어느 쪽이
-  기준인지 확인할 방법이 없어지기 때문이다.
-</p>
+<p>두 서비스는 <strong>동일한 데이터를 참조</strong>한다. ${rich(p.intro.sharedData)}</p>
 
 <h3>1.3 수행 단계</h3>
 <p class="lead">
@@ -283,18 +107,13 @@ const body = `
 <table>
   <thead><tr>${th('단계', 72)}${th('수행 범위', 300)}${th('완료 기준')}</tr></thead>
   <tbody>
-    ${cells('1단계', '기획 · UI 디자인 · Front-End 구현 · Back-End 요구사항 정의', `화면 ${SCREENS.length}개가 정의대로 동작하고, Back-End 요구사항이 서버 개발에 착수할 수 있는 수준으로 확정된 상태. 상세 기준은 5.2 참조.`)}
+    ${cells('1단계', '기획 · UI 디자인 · Front-End 구현 · Back-End 요구사항 정의', `화면 ${p.screens.length}개가 정의대로 동작하고, Back-End 요구사항이 서버 개발에 착수할 수 있는 수준으로 확정된 상태. 상세 기준은 5.2 참조.`)}
     ${cells('2단계', '서버 애플리케이션 · 데이터베이스 · API · 인증 및 권한 · Front-End 연동', '정의한 규칙이 서버에서 지켜지는 상태. 상세 기준은 5.4 참조.')}
   </tbody>
 </table>
 
 <h3>1.4 전제 조건</h3>
-<ul>
-  <li><strong>1단계 시점에는 서버와 데이터베이스가 없다.</strong> 화면이 참조하는 데이터는 공통 데이터 구조로 관리하며, 관리자 서비스의 변경은 브라우저 세션 범위에서 유지된다. 2단계에서 실제 서버로 대체한다.</li>
-  <li>메뉴 이미지 및 콘텐츠 원고는 <strong>발주처가 제공</strong>한다. 본 과업은 제공된 콘텐츠를 화면에 반영하는 범위까지 수행한다.</li>
-  <li>브랜드 로고는 원본 파일을 제공받아 사용한다.</li>
-  <li>매장 찾기 화면은 카카오 지도를 사용한다. <strong>키 발급과 도메인 등록은 발주처 계정으로 수행</strong>해야 하며, 상세 준비 사항은 「요구사항 정의서」 6.1 에 있다.</li>
-</ul>
+${bullets(p.intro.premises)}
 
 <h2>2. 과 업 범 위</h2>
 <p class="lead">
@@ -305,14 +124,14 @@ const body = `
 <h3>2.1 정보 구조</h3>
 ${table(
   th('구분', 106) + th('영역', 110) + th('화면 수', 66) + th('구성 화면'),
-  iaSection('고객 서비스', CLIENT_SCREENS) + iaSection('관리자 서비스', ADMIN_SCREENS),
+  iaSection(p.clientLabel, p.clientScreens) + iaSection(p.adminLabel, p.adminScreens),
 )}
 
-<h3>2.2 고객 서비스 화면 목록</h3>
-${table(SCOPE_HEAD, scopeRows(CLIENT_SCREENS))}
+<h3>2.2 ${esc(p.clientLabel)} 화면 목록</h3>
+${table(SCOPE_HEAD, scopeRows(p.clientScreens))}
 
-<h3>2.3 관리자 서비스 화면 목록</h3>
-${table(SCOPE_HEAD, scopeRows(ADMIN_SCREENS))}
+<h3>2.3 ${esc(p.adminLabel)} 화면 목록</h3>
+${table(SCOPE_HEAD, scopeRows(p.adminScreens))}
 
 <h2>3. 책 임 범 위</h2>
 <p class="lead">
@@ -329,40 +148,43 @@ ${table(
   아래는 <strong>본 과업에 포함하지 않는다.</strong> 적어 두지 않으면 포함된 것으로 읽히므로 따로 둔다.
   「사유」를 함께 적는 것은 빠진 항목을 볼 때마다 왜 빠졌는지 되묻는 일을 없애기 위해서다.
 </p>
-${table(th('구분', 80) + th('항목', 230) + th('사유'), grouped(OUT))}
+${table(th('구분', 80) + th('항목', 230) + th('사유'), grouped(out))}
 
 <h2>5. 완 료 및 인 수 기 준</h2>
 
 <h3>5.1 인수 산출물</h3>
-${table(th('단계', 72) + th('산출물', 210) + th('내용'), grouped(HANDOVER))}
+${table(th('단계', 72) + th('산출물', 210) + th('내용'), grouped(handover))}
 
 <h3>5.2 1단계 인수 판정 기준</h3>
-${bullets(ACCEPT_1)}
+${bullets(ACCEPT)}
 
 <h3>5.3 Back-End 정의 완료 기준 (1단계)</h3>
 <p class="lead">다음 조건을 모두 충족한 경우 Back-End 정의가 완료된 것으로 판단한다. 정의 내용은 「기능 명세서」에 있다.</p>
-${bullets(DONE)}
+${bullets(p.backend.defineDone)}
 
 <h3>5.4 2단계 완료 기준</h3>
 <p class="lead">
   1단계의 완료 기준이 「화면이 정의대로 도는가」였다면, 2단계는 「정의한 규칙이 서버에서
   지켜지는가」다. 화면에서 막는 것과 서버에서 막는 것은 다른 일이므로 따로 판정한다.
 </p>
-${bullets(BACKEND_DONE)}
+${bullets(p.backend.buildDone)}
 
 <h3>5.5 2단계 구축 항목</h3>
 <p class="lead">
   각 항목의 요구사항은 「기능 명세서」의 Back-End 요구사항 정의에 이미 확정되어 있으므로,
   2단계는 화면을 새로 분석하지 않고 그대로 착수한다.
 </p>
-${table(th('구축 항목', 280) + th('근거'), BACKEND_BUILD.map((one) => cells(esc(one.name), rich(one.basis))).join(''))}
+${table(th('구축 항목', 280) + th('근거'), p.backend.build.map((one) => cells(esc(one.name), rich(one.basis))).join(''))}
 
 <h2>6. 변 경 관 리 기 준</h2>
 ${table(th('단계', 72) + th('기준', 320) + th('까닭'), grouped(CHANGE))}
 `;
 
-const out = 'FnB-과업범위정의서.html';
-writeFileSync(out, shell({ title: '과업범위 정의서', kind: '구축 범위 · 2/4', body }), 'utf8');
-console.log(
-  `${out} — 화면 ${SCREENS.length} · 세부 기능 ${totalActions} · 책임 ${DUTY.length}영역 · 제외 ${OUT.length} · 산출물 ${HANDOVER.length}`,
-);
+  const file = `${p.slug}-과업범위정의서.html`;
+  writeFileSync(file, shell({ title: '과업범위 정의서', kind: '구축 범위 · 2/4', brand: p.brand, body }), 'utf8');
+  return `${file} — 화면 ${p.screens.length} · 세부 기능 ${totalActions} · 책임 ${duty.length}영역 · 제외 ${out.length} · 산출물 ${handover.length}`;
+};
+
+if (process.argv[1]?.endsWith('build-sow.ts')) {
+  for (const project of PROJECTS) console.log(buildSow(project));
+}

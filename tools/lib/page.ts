@@ -1,4 +1,3 @@
-import { FNB_BRAND } from '@winpilot/store';
 import { esc } from './html';
 
 /**
@@ -133,6 +132,7 @@ const CSS = `
 export const shell = ({
   title,
   kind,
+  brand,
   body,
   extra = '',
 }: {
@@ -140,20 +140,22 @@ export const shell = ({
   title: string;
   /** 문서 갈래 — 한 벌로 나가므로 어느 문서인지 머리에서 갈려야 한다 */
   kind: string;
+  /** 프로젝트 이름 — 두 프로젝트가 같은 판을 쓰므로 밖에서 받는다 */
+  brand: string;
   body: string;
   extra?: string;
 }): string => `<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<title>${esc(FNB_BRAND.name)} ${esc(title)}</title>
+<title>${esc(brand)} ${esc(title)}</title>
 <style>${CSS}${extra}</style>
 </head>
 <body>
 <div class="sheet">
 
 <div class="title-row">
-  <h1>${esc(FNB_BRAND.name)} <span class="dim">${esc(title)}</span></h1>
+  <h1>${esc(brand)} <span class="dim">${esc(title)}</span></h1>
   <div class="stamp">
     ${esc(kind)}
     <em>${esc(new Date().toLocaleDateString('ko-KR', { dateStyle: 'long' }))}</em>
