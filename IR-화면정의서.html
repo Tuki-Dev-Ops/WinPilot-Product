@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>회사 홈페이지 화면 정의서</title>
+<style>
+  @page { size: A4 landscape; margin: 12mm 14mm 14mm; }
+
+  :root {
+    --ink: #1a1c20;
+    --muted: #5a6070;
+    --faint: #939aa6;
+    --line: #c9ced7;
+    --band: #eceef2;
+    --head: #f5f6f8;
+    --d1: #f2f4f7;
+    --accent: #1b5fc4;
+    --warn: #b8792a;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 26px 22px 56px;
+    background: #fff;
+    color: var(--ink);
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", system-ui, sans-serif;
+    font-size: 9pt;
+    line-height: 1.6;
+    /* 한글은 낱말 한가운데서 끊긴다. 띄어쓰기 단위로만 끊게 한다. */
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  .sheet { max-width: 269mm; margin: 0 auto; }
+
+  .title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+  h1 { font-size: 17pt; margin: 0; letter-spacing: -0.02em; }
+  h1 .dim { color: var(--faint); font-weight: 600; }
+  .stamp { color: var(--muted); font-size: 9pt; white-space: nowrap; text-align: right; }
+  .stamp em { display: block; font-style: italic; }
+
+  h2 {
+    background: var(--band);
+    border: 1px solid var(--line);
+    text-align: center;
+    font-size: 11pt;
+    letter-spacing: 0.22em;
+    padding: 6px;
+    margin: 26px 0 10px;
+    break-after: avoid;
+  }
+  h3 { font-size: 10pt; margin: 18px 0 6px; color: var(--accent); break-after: avoid; }
+  h4 { font-size: 9.5pt; margin: 14px 0 4px; break-after: avoid; }
+  h5 { font-size: 9pt; margin: 9px 0 3px; color: var(--muted); break-after: avoid; }
+  p { margin: 6px 0; }
+  .lead { color: var(--muted); margin: 0 0 8px; }
+  .from { color: var(--faint); font-size: 8.5pt; margin: 0 0 3px; }
+  .tbd { color: var(--warn); }
+
+  table { width: 100%; border-collapse: collapse; margin: 4px 0 12px; }
+  th, td { border: 1px solid var(--line); padding: 5px 7px; vertical-align: top; text-align: left; }
+  thead th { background: var(--head); font-weight: 600; text-align: center; white-space: nowrap; }
+  tbody tr { break-inside: avoid; }
+
+  td.d1 { text-align: center; vertical-align: middle; background: var(--d1); font-weight: 700; }
+  td.memo { color: var(--muted); }
+  tbody tr.head > td { border-top: 1.4px solid #9aa1ad; }
+
+  table.right td { text-align: center; }
+  table.right td:first-child { text-align: left; font-weight: 600; color: var(--ink); }
+
+  /* 화면 경로는 메뉴 경로 아래에 작게 붙인다. 한 칸에 둘이지만 읽는 차례가 갈린다. */
+  .route { display: block; margin-top: 2px; color: var(--faint); font-size: 8pt; word-break: break-all; }
+
+  ul { margin: 3px 0; padding-left: 16px; }
+  li { margin: 1.5px 0; }
+  /* 세부 기능 목록 — 번호가 기능 명세서 3절의 「기능 01 · 02」 와 같은 자리를 가리킨다. */
+  ol.fn { margin: 0; padding-left: 19px; }
+  ol.fn li { margin: 1px 0; }
+  ol.fn li::marker { color: var(--faint); font-variant-numeric: tabular-nums; font-size: 8.5pt; }
+
+  ul.check { list-style: none; padding-left: 2px; }
+  ul.check li { position: relative; padding-left: 17px; margin: 2px 0; break-inside: avoid; }
+  ul.check li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 3.5px;
+    width: 9px;
+    height: 9px;
+    border: 1px solid var(--muted);
+    border-radius: 2px;
+  }
+
+  code {
+    font-family: "Consolas", "D2Coding", ui-monospace, monospace;
+    font-size: 0.92em;
+    background: #f1f3f6;
+    padding: 0.5px 3px;
+    border-radius: 3px;
+  }
+  th code, td code, h3 code { background: transparent; padding: 0; }
+  a { color: var(--accent); text-decoration: none; }
+  .none { color: var(--faint); }
+  .yes { color: var(--accent); font-weight: 700; }
+
+  @media print { body { padding: 0; } }
+
+  /*
+    요소 하나가 한 덩어리다. 덩어리 사이에 선을 두어 어디까지가 한 요소인지 눈으로 갈리게
+    한다 — 줄만 띄우면 긴 설명이 두 요소로 읽힌다.
+  */
+  .el { padding: 4px 0; border-top: 1px dotted var(--line); }
+  .el:first-child { border-top: none; padding-top: 0; }
+  .type { color: var(--accent); font-family: "Consolas", "D2Coding", ui-monospace, monospace; font-size: 8pt; }
+  .guard { color: var(--warn); }
+  td.flow { color: var(--muted); }
+  td.flow ol { margin: 0; padding-left: 17px; }
+  td.spec { padding: 6px 8px; }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<div class="title-row">
+  <h1>회사 홈페이지 <span class="dim">화면 정의서</span></h1>
+  <div class="stamp">
+    화면 · 요소 정의
+    <em>2026년 8월 20일</em>
+  </div>
+</div>
+
+
+<h2>화 면 정 의 서</h2>
+<p class="lead">
+  화면 하나가 한 줄이며, 「기능 명세」 칸에 그 화면의 요소가 차례로 선다. 요소마다
+  <strong>이름 · Type · 동작 · 예외처리</strong>를 함께 적었다. 기능 ID 는 다른 네 문서와 같은
+  값이므로 <code>MENU-002</code> 처럼 지목하면 같은 화면을 가리킨다.
+</p>
+<p class="lead">
+  요소는 화면 명세의 <strong>입력 항목 · 단추 · 기능</strong> 세 곳에서 읽었다. 단추 정의가 있으면
+  그것이 이기고, 없는 기능만 동작 유형에서 타입을 끌어냈다. 검증 규칙은 항목 이름이 들어 있는
+  것을 그 항목에 붙였고, 이름이 없는 것은 <strong>화면 공통 예외</strong>로 맨 아래 세웠다.
+</p>
+<table class="sd">
+  <thead><tr><th style="width:58px">1Depth</th><th style="width:68px">2Depth</th><th style="width:86px">3Depth</th><th style="width:92px">Sub / Flow</th><th style="width:150px">화면 정의</th><th>기능 명세</th><th style="width:108px">관리자 연동</th><th style="width:118px">비고</th></tr></thead>
+  <tbody><tr class="head">
+  <td class="d1">회사 사이트</td>
+  <td>ABOUT</td>
+  <td><strong>회사 소개</strong><span class="route"><code>COMPANY-001</code><br><code>/about</code></span></td>
+  <td class="flow"><ol><li>머리 배너</li><li>VISION</li><li>한 문장</li><li>하는 일 넷</li><li>사업 영역</li></ol></td>
+  <td class="memo">회사가 지향하는 바, 수행하는 업무, 제공하는 제품을 순서대로 전달하는 회사 소개 화면이다. 연혁 나열이 아니라 현재 무엇을 하는 회사인지를 중심으로 구성하여, 방문자가 거래 상대로서 회사를 판단할 수 있는 근거를 제공한다.</td>
+  <td class="spec"><div class="el"><strong>지향 셋을 읽고 이 회사가 무엇을 바라보는지 확인합니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>하는 일 넷을 스크롤하며 하나씩 읽습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>하는 일 칸의 VIEW MORE 로 그 일을 하는 제품 상세로 이동합니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>사업 영역의 제품 카드로 상세 엽니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div></td>
+  <td class="memo"><strong class="yes">O</strong><br>회사 &gt; 소개<br>회사 &gt; 연혁<br>회사 &gt; 특허 및 인증<br>설정 &gt; 공급자 정보</td>
+  <td class="memo">표 한 장이 전부였습니다. 회사명과 대표, 사업자등록번호가 일곱 줄로 서 있었는데, 이는 확인하러 오신 분께 필요한 값이지 처음 방문하신 분이 읽을 내용은 아니었습니다. 지금은 지향과 한 문장, 하는 일 넷, 파는 것 넷의 순서로 서고, 확인용 값은 푸터가 맡고 있습니다.<br>확장 검토 — 대표 인사말 · 사옥 사진.<br>확장 검토 — 영문 화면. 어드민에 국문 · 영문 짝은 있고 사이트가 아직 읽지 않습니다.</td>
+</tr><tr class="head">
+  <td class="d1">회사 사이트</td>
+  <td>ABOUT</td>
+  <td><strong>연혁</strong><span class="route"><code>HISTORY-001</code><br><code>/about/history</code></span></td>
+  <td class="flow"><ol><li>제목</li><li>해 기둥</li><li>세로선과 점</li><li>그 해의 일</li><li>빈 상태</li></ol></td>
+  <td class="memo">회사의 주요 이력을 연도 단위로 제공하는 화면이다. 개별 항목을 나열하지 않고 연도로 묶어 배치하여, 어느 시기에 어떤 변화가 있었는지를 훑어볼 수 있도록 한다.</td>
+  <td class="spec"><div class="el"><strong>해를 따라 내려가며 읽습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>같은 해의 일들을 묶음으로 읽습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 연혁이 하나도 없으면 등록된 연혁이 없습니다 한 줄을 세웁니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br>회사 &gt; 연혁</td>
+  <td class="memo">해마다 큰 제목을 세우고 그 아래 한 줄씩 두었습니다. 항목이 하나뿐인 해에도 제목이 화면 절반을 차지해서, 연혁이라기보다 제목 목록처럼 읽혔습니다. 다섯 해씩 묶어 왼쪽 제목 하나가 오른쪽의 여러 줄을 거느리도록 바꿨습니다.<br>확장 검토 — 해로 건너뛰는 줄. 연혁이 스무 해를 넘으면 필요해집니다.<br>확장 검토 — 사진이 붙는 연혁 항목.</td>
+</tr><tr class="head">
+  <td class="d1">회사 사이트</td>
+  <td>ABOUT</td>
+  <td><strong>특허 및 인증</strong><span class="route"><code>CERT-001</code><br><code>/about/certifications</code></span></td>
+  <td class="flow"><ol><li>제목</li><li>왼쪽 구분</li><li>검색과 개수</li><li>목록</li><li>빈 상태</li></ol></td>
+  <td class="memo">보유한 특허와 인증을 조회하는 화면이다. 방문자가 제시받은 등록번호가 실제 이 회사의 것인지 확인할 수 있도록 검색과 분류를 제공하는 것을 목적으로 한다.</td>
+  <td class="spec"><div class="el"><strong>구분</strong><br><span class="type">- Type : SELECT</span><br>- 특허 · 인증 · 수상 중 무엇을 볼지<br>- 입력 규칙 : 전체를 맨 앞에 둡니다<br>- 되돌아오는 길이기 때문입니다</div><div class="el"><strong>검색어</strong><br><span class="type">- Type : INPUT</span><br>- 이름 · 번호 · 발급처를 함께 훑습니다<br>- 입력 규칙 : 앞뒤 공백 제거 · 대소문자 가리지 않음 · 부분 일치</div><div class="el"><strong>이름 · 번호 · 발급처로 검색합니다</strong><br><span class="type">- Type : SEARCH</span><br>- 입력한 검색어를 조회 조건에 더해 목록을 다시 조회합니다</div><div class="el"><strong>남은 개수 확인합니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 조건에 맞는 것이 없으면 조건에 맞는 특허·인증이 없습니다 한 줄을 세웁니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br>회사 &gt; 특허 및 인증</td>
+  <td class="memo">특허와 인증을 회사 소개 안의 한 문단으로 적어 두었습니다. 등록번호를 들고 와 대조하시는 분은 그 문단에서 번호를 찾지 못했습니다. 번호와 발급기관, 취득일이 나란히 서는 표가 필요한 자리였습니다.<br>확장 검토 — 증서 이미지 · PDF 내려받습니다.<br>확장 검토 — 만료일과 갱신 표시. 지금은 취득일만 있습니다.</td>
+</tr><tr class="head">
+  <td class="d1">회사 사이트</td>
+  <td>ABOUT</td>
+  <td><strong>특허 · 인증 상세</strong><span class="route"><code>CERT-002</code><br><code>/about/certifications/[credentialId]</code></span></td>
+  <td class="flow"><ol><li>돌아가는 길</li><li>제목</li><li>값 표</li><li>같은 갈래</li><li>전체 건수</li></ol></td>
+  <td class="memo">특허 또는 인증 한 건의 상세 정보를 제공하는 화면이다. 개별 항목에 고유 주소를 부여하여 해당 건을 그대로 지목하고 공유할 수 있도록 한다.</td>
+  <td class="spec"><div class="el"><strong>값 확인합니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>같은 갈래의 다른 것으로 넘어갑니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>목록으로 돌아갑니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div></td>
+  <td class="memo"><strong class="yes">O</strong><br>회사 &gt; 특허 및 인증</td>
+  <td class="memo">목록의 한 줄을 눌러도 아무 일이 일어나지 않았습니다. 특허 한 건을 다른 분께 보내려면 화면 전체 주소밖에 드릴 것이 없어, 받으신 분이 목록에서 다시 찾아야 했습니다.<br>확장 검토 — 증서 이미지 · PDF 내려받습니다.<br>확장 검토 — 만료일과 갱신 표시.</td>
+</tr><tr class="head">
+  <td class="d1">회사 사이트</td>
+  <td>SOLUTION</td>
+  <td><strong>스마트 컨설팅</strong><span class="route"><code>SOLUTION-001</code><br><code>/solutions/consulting</code></span></td>
+  <td class="flow"><ol><li>제목</li><li>문제</li><li>기능</li><li>구성</li><li>성과</li><li>업종</li><li>절차</li><li>문의</li></ol></td>
+  <td class="memo">스마트 컨설팅 서비스의 상세 정보를 제공하는 화면이다. 인력이 현장에서 수행하는 서비스이므로 무엇을 대행하는지부터 제시하여, 제품과 다른 성격임을 구분해 전달한다.</td>
+  <td class="spec"><div class="el"><strong>문제 · 기능 · 구성 · 성과 · 업종 · 절차 읽습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>맨 아래 문의 칸에서 문의하기로 이동합니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 값을 찾지 못하면 404 입니다<br>- 소개할 것이 없는데 빈 뼈대를 세우지 않습니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br>서비스 &gt; 목록<br>설정 &gt; 공급자 정보</td>
+  <td class="memo">제품 소개 화면 하나가 여섯 가지를 모두 안고 있었습니다. 컨설팅은 계약하면 그날부터 쓰는 것이 아니라 사람이 현장에 나가는 일인데, 제품 카드 사이에 섞여 있으면 몇 카피를 사면 되는지부터 묻게 됩니다.<br>확장 검토 — 사례와 고객사 이름.<br>확장 검토 — 견적 범위. 지금은 문의로 받습니다.</td>
+</tr><tr class="head">
+  <td class="d1">회사 사이트</td>
+  <td>SOLUTION</td>
+  <td><strong>인프라 서비스</strong><span class="route"><code>SOLUTION-002</code><br><code>/solutions/infra</code></span></td>
+  <td class="flow"><ol><li>제목</li><li>문제 · 기능 · 구성 · 성과 · 업종 · 절차 · 문의</li></ol></td>
+  <td class="memo">인프라 서비스의 상세 정보를 제공하는 화면이다. 인프라를 검토하러 진입한 방문자를 제품 목록으로 되돌리지 않고 해당 화면에서 판단을 완결할 수 있도록 구성한다.</td>
+  <td class="spec"><div class="el"><strong>문제 · 기능 · 구성 · 성과 · 업종 · 절차 읽습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>맨 아래 문의 칸에서 문의하기로 이동합니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 값을 찾지 못하면 404 입니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br>서비스 &gt; 목록<br>설정 &gt; 공급자 정보</td>
+  <td class="memo">메뉴의 인프라 서비스가 제품 소개 화면으로 연결되어 있었습니다. 그곳에 서 있는 것은 클라우드 제품 넷이라, 서버와 이중화를 보러 오신 분은 자신이 잘못 눌렀다고 여겼습니다.<br>확장 검토 — 구축 사례 · 규모별 참고 구성.<br>확장 검토 — 유지보수 범위 표.</td>
+</tr><tr class="head">
+  <td class="d1">회사 사이트</td>
+  <td>PRODUCT</td>
+  <td><strong>제품</strong><span class="route"><code>PRODUCT-001</code><br><code>/products</code></span></td>
+  <td class="flow"><ol><li>제목</li><li>클라우드 제품</li><li>서비스</li><li>문의 칸</li></ol></td>
+  <td class="memo">제공 제품과 서비스를 한 화면에서 조회하는 목록 화면이다. 전체 라인업을 제시하고 각 항목의 상세 화면으로 분기하는 역할을 수행한다.</td>
+  <td class="spec"><div class="el"><strong>클라우드 제품 넷 훑습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>제품 상세 엽니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>서비스 둘의 상세 엽니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>진단 문의하기로 이동합니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div></td>
+  <td class="memo"><strong class="yes">O</strong><br>제품 &gt; 목록<br>서비스 &gt; 목록<br>제품 &gt; 목록</td>
+  <td class="memo">준비 중이라는 한 줄과 솔루션으로 넘어가는 버튼뿐이었습니다. 그런데 헤더의 갈래와 홈의 카드가 모두 이곳으로 연결되어 있어서, 방문이 가장 많은 화면이 가장 비어 있는 상태였습니다.<br>확장 검토 — 견적 · 요금제.<br>확장 검토 — 제품끼리 견주는 표.</td>
+</tr><tr class="head">
+  <td class="d1">회사 사이트</td>
+  <td>PRODUCT</td>
+  <td><strong>Cloud MES</strong><span class="route"><code>SOLUTION-003</code><br><code>/solutions/mes</code></span></td>
+  <td class="flow"><ol><li>제목</li><li>문제 · 기능 · 구성 · 성과 · 업종 · 절차 · 문의</li></ol></td>
+  <td class="memo">Cloud MES 의 상세 정보를 제공하는 화면이다. 설비 신호를 단일 규격으로 수집하는 제품이 어떤 문제를 해결하는지를 중심으로 구성한다.</td>
+  <td class="spec"><div class="el"><strong>문제 · 기능 · 구성 · 성과 · 업종 · 절차 읽습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>맨 아래 문의 칸에서 문의하기로 이동합니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 값을 찾지 못하면 404 입니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br>제품 &gt; 목록<br>설정 &gt; 공급자 정보</td>
+  <td class="memo">제품 소개 화면의 카드 한 장이 전부였습니다. 카드에는 한 줄밖에 담기지 않아 무엇이 불편해서 이 제품을 쓰는지가 어디에도 남지 않았고, 검토하시는 분은 그 답을 영업 담당자에게 따로 물어야 했습니다.<br>확장 검토 — 설비 연동 목록 · 프로토콜 표.<br>확장 검토 — 체험 계정.</td>
+</tr><tr class="head">
+  <td class="d1">회사 사이트</td>
+  <td>PRODUCT</td>
+  <td><strong>Cloud ERP</strong><span class="route"><code>SOLUTION-004</code><br><code>/solutions/erp</code></span></td>
+  <td class="flow"><ol><li>제목</li><li>문제 · 기능 · 구성 · 성과 · 업종 · 절차 · 문의</li></ol></td>
+  <td class="memo">Cloud ERP 의 상세 정보를 제공하는 화면이다. 수주에서 정산까지를 단일 흐름으로 연결하는 제품이 어떤 문제를 해결하는지를 중심으로 구성한다.</td>
+  <td class="spec"><div class="el"><strong>문제 · 기능 · 구성 · 성과 · 업종 · 절차 읽습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>맨 아래 문의 칸에서 문의하기로 이동합니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 값을 찾지 못하면 404 입니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br>제품 &gt; 목록<br>설정 &gt; 공급자 정보</td>
+  <td class="memo">제품 소개 화면의 카드 한 장이 전부였습니다. 부서마다 장부가 흩어져 있는 문제는 한 줄로 줄여지지 않는데, 그 한 줄만 읽고 판단하시도록 두고 있었습니다.<br>확장 검토 — 모듈별 화면 캡처.<br>확장 검토 — 기존 시스템에서 옮겨 오는 절차.</td>
+</tr><tr class="head">
+  <td class="d1">회사 사이트</td>
+  <td>PRODUCT</td>
+  <td><strong>Cloud CRM</strong><span class="route"><code>SOLUTION-005</code><br><code>/solutions/crm</code></span></td>
+  <td class="flow"><ol><li>제목</li><li>문제 · 기능 · 구성 · 성과 · 업종 · 절차 · 문의</li></ol></td>
+  <td class="memo">Cloud CRM 의 상세 정보를 제공하는 화면이다. 생산 공정 이후 고객 접점을 이어받는 제품이 어떤 문제를 해결하는지를 중심으로 구성한다.</td>
+  <td class="spec"><div class="el"><strong>문제 · 기능 · 구성 · 성과 · 업종 · 절차 읽습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>맨 아래 문의 칸에서 문의하기로 이동합니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 값을 찾지 못하면 404 입니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br>제품 &gt; 목록<br>설정 &gt; 공급자 정보</td>
+  <td class="memo">제품 소개 화면의 카드 한 장이 전부였습니다. 담당자가 바뀌면 이력이 사라지는 문제를 설명할 자리가 없어, 이 제품이 일반적인 영업 관리 도구와 무엇이 다른지가 드러나지 않았습니다.<br>확장 검토 — 상담 이력 · 캠페인 화면 소개.<br>확장 검토 — 연동되는 채널 목록.</td>
+</tr><tr class="head">
+  <td class="d1">회사 사이트</td>
+  <td>PRODUCT</td>
+  <td><strong>Cloud DXP</strong><span class="route"><code>SOLUTION-006</code><br><code>/solutions/dxp</code></span></td>
+  <td class="flow"><ol><li>제목</li><li>문제 · 기능 · 구성 · 성과 · 업종 · 절차 · 문의</li></ol></td>
+  <td class="memo">Cloud DXP 의 상세 정보를 제공하는 화면이다. 고객이 직접 접하는 화면을 구성하는 제품이 어떤 문제를 해결하는지를 중심으로 구성한다.</td>
+  <td class="spec"><div class="el"><strong>문제 · 기능 · 구성 · 성과 · 업종 · 절차 읽습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>맨 아래 문의 칸에서 문의하기로 이동합니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 값을 찾지 못하면 404 입니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br>제품 &gt; 목록<br>설정 &gt; 공급자 정보</td>
+  <td class="memo">넷 가운데 이것만 자기 화면이 없어 메뉴가 제품 소개로 연결되어 있었습니다. 나란히 파는 넷 중 하나만 다른 곳으로 넘어가면, 눌러 보신 분은 그 제품이 아직 없는 것으로 받아들입니다.<br>확장 검토 — 만들어 둔 화면 예시.<br>확장 검토 — 템플릿 목록.</td>
+</tr><tr class="head">
+  <td class="d1">회사 사이트</td>
+  <td>CS CENTER</td>
+  <td><strong>문의하기</strong><span class="route"><code>INQUIRY-001</code><br><code>/support/contact</code></span></td>
+  <td class="flow"><ol><li>제목</li><li>왼쪽 갈래</li><li>왼쪽 창구</li><li>양식 머리줄</li><li>양식</li><li>공정공시 고지</li></ol></td>
+  <td class="memo">도입 검토 문의부터 일반 문의까지 단일 창구에서 접수하는 화면이다. 문의 유형을 먼저 선택하게 하여 접수 이후 담당 배정이 가능하도록 하며, 접수된 내용은 관리자 서비스의 문의 관리로 연계된다.</td>
+  <td class="spec"><div class="el"><strong>문의 갈래 (필수)</strong><br><span class="type">- Type : SELECT</span><br>- 받는 사람을 가릅니다<br>- 입력 규칙 : 도입 · 견적 / 기술 지원 / 주주 · 투자자 / 기관 · 애널리스트 / 언론 / 기타. 처음은 도입 · 견적입니다</div><div class="el"><strong>회사명 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 기존 상담 이력을 찾는 열쇠<br>- 입력 규칙 : 공백만으로는 통과하지 않습니다<br><span class="guard">- 예외처리 : 회사명 · 담당자명은 공백을 뺀 값이 있어야 합니다.</span></div><div class="el"><strong>지역 (필수)</strong><br><span class="type">- Type : SELECT</span><br>- 현장이 있는 시 · 도<br>- 첫 방문 일정이 달라집니다<br>- 입력 규칙 : 행정 표준 순서의 시 · 도 열일곱. 처음 값은 고르지 않음입니다<br><span class="guard">- 예외처리 : 지역은 고르지 않음인 채로는 통과하지 않습니다.</span></div><div class="el"><strong>담당자명 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 통화에서 부를 이름<br><span class="guard">- 예외처리 : 회사명 · 담당자명은 공백을 뺀 값이 있어야 합니다.</span></div><div class="el"><strong>휴대폰 번호 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 통화가 필요할 때 연락할 곳<br>- 입력 규칙 : 숫자 · 더하기 · 하이픈 · 공백 · 괄호 9~20자</div><div class="el"><strong>이메일 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 답을 받을 곳<br>- 입력 규칙 : 골뱅이와 점이 있는 주소 형식<br><span class="guard">- 예외처리 : 이메일은 골뱅이와 점이 있는 주소 형식이어야 합니다.</span></div><div class="el"><strong>문의 내용 (필수)</strong><br><span class="type">- Type : TEXTAREA</span><br>- 무엇이 궁금한지<br>- 입력 규칙 : 앞뒤 공백을 뺀 10자 이상<br><span class="guard">- 예외처리 : 문의 내용은 10자 이상이어야 합니다<br>- 한 마디만 적힌 문의는 되물어야 하고 그때 하루가 더 갑니다.</span></div><div class="el"><strong>첨부파일</strong><br><span class="type">- Type : FILE</span><br>- 도면 · 현황 자료<br>- 입력 규칙 : 파일당 20MB 까지 · 여러 개 가능</div><div class="el"><strong>파일 선택</strong><br><span class="type">- Type : BTN</span><br>- 누르면 숨겨 둔 파일 고르개를 엽니다<br>- 성공 시 한도 안의 파일이 이름과 크기와 함께 목록에 붙습니다<br><span class="guard">- 예외처리 : 20MB 를 넘는 파일 이름을 토스트로 알리고 그 파일만 빼고 담습니다</span></div><div class="el"><strong>문의 보내기</strong><br><span class="type">- Type : BTN</span><br>- 누르면 여섯을 검사합니다<br>- 성공 시 문의를 보냈다고 토스트로 알리고 고른 갈래와 메일 주소를 되비춘 뒤 양식을 비웁니다. 갈래는 그대로 남습니다<br><span class="guard">- 예외처리 : 보내지 못했습니다 토스트로 확인이 필요한 항목 수를 알리고 각 칸 아래에 이유를 적습니다</span></div><div class="el"><strong>창구와 받는 시간 확인합니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>파일 붙입니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 휴대폰은 비었을 때와 형식이 어긋날 때의 말이 다르입니다.</span><br><span class="guard">- 검사 결과는 한 번 눌러 본 뒤에만 보입니다.</span><br><span class="guard">- 필수 여섯(회사명 · 지역 · 담당자명 · 휴대폰 · 이메일 · 내용)이 어긋나면 접수되지 않고, 확인이 필요한 항목이 몇 개인지 토스트로 알립니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br>문의 &gt; 목록<br>문의 &gt; 설정<br>설정 &gt; 공급자 정보</td>
+  <td class="memo">문의 창구가 푸터의 메일 주소 한 줄이었습니다. 도입을 검토하시는 분과 주주가 같은 주소로 보내다 보니 받는 쪽에서 갈래를 나눌 수 없었고, 보내시는 분도 무엇을 적어야 할지 알기 어려웠습니다.<br>확장 검토 — 실제 접수. 어드민에 문의 목록과 상태 값은 있고 이 화면이 아직 그리로 보내지 않습니다.<br>확장 검토 — 개인정보 수집 · 이용 동의. 필수 항목을 받고 있으면서 동의 절차가 <strong>아직 없다</strong><br>- 처리방침 원고와 함께 붙일 자리입니다.<br>확장 검토 — 스팸 막기 · 중복 보내기 잠금 · 접수 번호 안내.<br>확장 검토 — 파일 개수와 총량 한도.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">회사 사이트</td>
+  <td>CS CENTER</td>
+  <td><strong>공지사항</strong><span class="route"><code>NOTICE-001</code><br><code>/support/notices</code></span></td>
+  <td class="flow"><ol><li>제목</li><li>왼쪽 갈래</li><li>검색과 건수</li><li>접히는 목록</li><li>빈 상태</li></ol></td>
+  <td class="memo">휴무 · 연락처 변경 · 약관 개정 등 사전 안내가 필요한 사항을 제공하는 화면이다. 방문자가 문의하기 이전에 확인할 수 있도록 목록과 검색을 제공한다.</td>
+  <td class="spec"><div class="el"><strong>갈래</strong><br><span class="type">- Type : SELECT</span><br>- 운영 · 서비스 · 약관 중 무엇을 볼지<br>- 입력 규칙 : 코드가 정한 셋. 없는 갈래도 0 으로 세웁니다</div><div class="el"><strong>검색어</strong><br><span class="type">- Type : INPUT</span><br>- 제목과 본문 문단을 함께 훑습니다<br>- 입력 규칙 : 앞뒤 공백 제거 · 대소문자 가리지 않음 · 부분 일치</div><div class="el"><strong>제목과 본문으로 검색합니다</strong><br><span class="type">- Type : SEARCH</span><br>- 입력한 검색어를 조회 조건에 더해 목록을 다시 조회합니다</div><div class="el"><strong>공지 펴 봅니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 조건에 맞는 것이 없으면 조건에 맞는 공지가 없습니다 한 줄을 세웁니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br>콘텐츠 &gt; 공지사항</td>
+  <td class="memo">휴무나 약관 개정을 알릴 자리가 없어 팝업으로만 띄웠습니다. 팝업은 닫으면 사라지기 때문에, 나중에 다시 확인하려는 분이 찾아갈 곳이 없었습니다.<br>확장 검토 — 공지 상세 화면과 주소. 링크로 보낼 일이 실제로 생기는 날 만듭니다.<br>확장 검토 — 첨부파일.<br>확장 검토 — 고른 갈래와 검색어를 주소에 남깁니다. 지금은 새로고침하면 처음으로 돌아갑니다.</td>
+</tr><tr class="head">
+  <td class="d1">회사 사이트</td>
+  <td>CS CENTER</td>
+  <td><strong>뉴스</strong><span class="route"><code>NEWS-001</code><br><code>/support/news</code></span></td>
+  <td class="flow"><ol><li>제목</li><li>왼쪽 갈래</li><li>검색과 건수</li><li>격자</li><li>빈 상태</li></ol></td>
+  <td class="memo">방송 · 행사 · 제품 소개 등 외부에 노출된 활동 기록을 제공하는 화면이다. 개별 소식을 찾으러 진입한 방문자가 전체를 훑어볼 수 있도록 격자 형태로 구성한다.</td>
+  <td class="spec"><div class="el"><strong>갈래</strong><br><span class="type">- Type : SELECT</span><br>- 어디에 실린 것을 볼지<br>- 입력 규칙 : 값에서 뽑습니다. 나온 차례를 지킵니다</div><div class="el"><strong>검색어</strong><br><span class="type">- Type : INPUT</span><br>- 제목과 갈래를 함께 훑습니다<br>- 입력 규칙 : 앞뒤 공백 제거 · 대소문자 가리지 않음 · 부분 일치</div><div class="el"><strong>격자 훑습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 조건에 맞는 것이 없으면 조건에 맞는 뉴스가 없습니다 한 줄을 세웁니다.</span><br><span class="guard">- 카드는 누를 수 없습니다<br>- 영상 파일이 아직 없어, 누를 수 있게 보이면 눌러 본 사람이 고장으로 읽습니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br>콘텐츠 &gt; 뉴스</td>
+  <td class="memo">영상과 보도자료가 홈 맨 아래 한 줄에만 있었습니다. 그 줄은 다섯 장만 보여 주고 옆으로 밀어야 해서, 지난 소식을 찾으러 오신 분은 끝까지 밀어 보고는 없다고 판단하셨습니다.<br>확장 검토 — 영상 파일과 재생. 값에 주소 자리가 아직 없습니다.<br>확장 검토 — 올린 날. 지금은 갈래와 제목만 있습니다.<br>확장 검토 — 뉴스 상세.</td>
+</tr><tr class="head">
+  <td class="d1">회사 사이트</td>
+  <td>CS CENTER</td>
+  <td><strong>FAQ</strong><span class="route"><code>FAQ-001</code><br><code>/support/faq</code></span></td>
+  <td class="flow"><ol><li>제목</li><li>왼쪽 갈래</li><li>검색과 건수</li><li>접히는 목록</li><li>빈 상태</li></ol></td>
+  <td class="memo">반복적으로 접수되는 질문에 대한 답변을 제공하는 화면이다. 분류와 검색으로 원하는 답변에 접근하고 해당 화면에서 바로 확인할 수 있도록 한다.</td>
+  <td class="spec"><div class="el"><strong>갈래</strong><br><span class="type">- Type : SELECT</span><br>- 도입 · 기술 · 지원 중 무엇을 볼지<br>- 입력 규칙 : 코드가 정한 셋. 없는 갈래도 0 으로 세웁니다</div><div class="el"><strong>검색어</strong><br><span class="type">- Type : INPUT</span><br>- 물음과 답을 함께 훑습니다<br>- 입력 규칙 : 앞뒤 공백 제거 · 대소문자 가리지 않음 · 부분 일치</div><div class="el"><strong>물음과 답으로 검색합니다</strong><br><span class="type">- Type : SEARCH</span><br>- 입력한 검색어를 조회 조건에 더해 목록을 다시 조회합니다</div><div class="el"><strong>물음 펴 봅니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 조건에 맞는 것이 없으면 조건에 맞는 물음이 없다고 적고 문의를 권합니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br>콘텐츠 &gt; FAQ</td>
+  <td class="memo">같은 질문이 문의로 반복해서 들어왔습니다. 답변은 이미 있는데 받는 쪽에서 매번 다시 적고 있었고, 물으신 분도 답을 기다려야 했습니다.<br>확장 검토 — 빈 상태에서 문의로 바로 가는 링크. 지금은 글자로만 권합니다.<br>확장 검토 — 도움이 되었나요 응답.<br>확장 검토 — 물음 하나를 가리키는 주소.</td>
+</tr><tr class="head">
+  <td class="d1">회사 사이트</td>
+  <td>CS CENTER</td>
+  <td><strong>오시는 길</strong><span class="route"><code>SUPPORT-001</code><br><code>/support/directions</code></span></td>
+  <td class="flow"><ol><li>제목</li><li>본사 카드</li><li>오시는 방법</li><li>방문 전에</li></ol></td>
+  <td class="memo">본사 위치와 방문 경로를 제공하는 화면이다. 방문자가 주소와 연락처를 그대로 옮겨 사용할 수 있도록 하고, 지도와 교통편 안내를 함께 제공한다.</td>
+  <td class="spec"><div class="el"><strong>주소 확인합니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>전화번호 확인합니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>지하철 · 버스 · 자가용 안내 읽습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>방문 전 안내 읽습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div></td>
+  <td class="memo"><strong class="yes">O</strong><br>설정 &gt; 공급자 정보</td>
+  <td class="memo">주소가 푸터에 한 줄로만 있었습니다. 방문하시는 분은 지하철에서 얼마나 걸리는지, 주차는 되는지를 따로 여쭤봐야 했습니다.<br>확장 검토 — 주소 복사 단추와 지도 앱으로 여는 길.<br>확장 검토 — 전화 걸기 링크.<br>확장 검토 — 층 · 호수와 주차 등록 절차.</td>
+</tr><tr class="head">
+  <td class="d1">회사 사이트</td>
+  <td>법적 고지</td>
+  <td><strong>서비스 이용약관</strong><span class="route"><code>LEGAL-001</code><br><code>/terms</code></span></td>
+  <td class="flow"><ol><li>돌아가는 길</li><li>제목</li><li>문의 상자</li></ol></td>
+  <td class="memo">서비스 이용약관을 제공하는 화면이다. 약관 원문 확정 이전 단계에서는 준비 중임을 명시하고 문의 경로를 제공하여, 검토되지 않은 초안이 약관으로 게시되는 상황을 방지한다.</td>
+  <td class="spec"><div class="el"><strong>준비 중임을 확인합니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>약관 문의 창구 확인합니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>홈으로 돌아갑니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 검토를 지나지 않은 문장을 채우지 않습니다<br>- 채워 두면 그것이 실제로 효력을 주장할 문서가 되고, 분쟁이 났을 때 근거가 되는 것도 이 화면입니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br>설정 &gt; 서비스 이용약관<br>설정 &gt; 공급자 정보</td>
+  <td class="memo">확장 검토 — 약관 본문. 어드민에 저장 자리가 있고 이 화면이 아직 그 값을 읽지 않습니다.<br>확장 검토 — 판 · 시행일과 개정 이력. 개정은 시행일 7일 전, 불리한 변경은 30일 전에 알려야 합니다.<br>확장 검토 — 문의 창구에서 문의하기 화면으로 가는 길. 지금은 메일과 번호를 글자로만 적습니다.</td>
+</tr><tr class="head">
+  <td class="d1">회사 사이트</td>
+  <td>법적 고지</td>
+  <td><strong>개인정보 처리방침</strong><span class="route"><code>LEGAL-002</code><br><code>/privacy</code></span></td>
+  <td class="flow"><ol><li>돌아가는 길</li><li>제목</li><li>책임자 상자</li></ol></td>
+  <td class="memo">개인정보 처리방침을 제공하는 화면이다. 원문 확정 이전에는 문의 경로를 안내하며, 개인정보 보호책임자를 함께 표시한다.</td>
+  <td class="spec"><div class="el"><strong>준비 중임을 확인합니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>개인정보보호책임자와 창구 확인합니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>홈으로 돌아갑니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div></td>
+  <td class="memo"><strong class="yes">O</strong><br>설정 &gt; 개인정보 처리방침<br>설정 &gt; 공급자 정보</td>
+  <td class="memo">확장 검토 — 수집 항목 · 이용 목적 · 보유 기간 표. 문의 양식이 회사명 · 지역 · 담당자명 · 휴대폰 · 이메일 · 첨부를 실제로 받고 있어, 원고가 오면 그 항목이 먼저 여기 서야 합니다.<br>확장 검토 — 문의 양식의 개인정보 수집 · 이용 동의. 지금은 그 절차가 <strong>아직 없다</strong>.<br>확장 검토 — 제3자 제공 · 위탁과 쿠키 · 분석도구 고지. 방문 통계를 실제로 재려면 이 문서에 먼저 적어야 합니다.<br>확장 검토 — 개정 이력과 시행일.</td>
+</tr><tr class="head">
+  <td class="d1">회사 사이트</td>
+  <td>공통</td>
+  <td><strong>Home</strong><span class="route"><code>HOME-001</code><br><code>/</code></span></td>
+  <td class="flow"><ol><li>팝업</li><li>헤더</li><li>첫 화면</li><li>소개</li><li>서비스 무대</li><li>솔루션</li><li>미디어</li><li>푸터</li></ol></td>
+  <td class="memo">서비스의 진입 화면으로, 어떤 회사이며 무엇을 제공하는지를 한 화면에서 제시한다. 회사 소개 · 서비스 · 제품 · 소식 네 영역의 요약을 배치하여 방문자를 각 하위 화면으로 분기하는 진입점 역할을 수행한다.</td>
+  <td class="spec"><div class="el"><strong>첫 화면의 장을 숫자로 골라 봅니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>자동 넘김 멈추고 다시 돌립니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div><div class="el"><strong>소개 칸의 자세히 보기로 회사 소개 엽니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>서비스 무대에서 여섯 중 하나를 골라 그 상세로 이동합니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>솔루션 칸을 넘겨 보고 제품 상세로 이동합니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>맨 아래 영상 줄을 밀어 보고 뉴스 전체보기로 이동합니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div></td>
+  <td class="memo"><strong class="yes">O</strong><br>설정 &gt; 공급자 정보<br>제품 &gt; 목록<br>서비스 &gt; 목록<br>배너 &gt; 메인 비주얼<br>배너 &gt; 팝업</td>
+  <td class="memo">처음에는 공시와 주가, 일정 요약이 첫 화면에 있었습니다. 상장사 홈페이지의 관례를 따른 것이었는데, 이 회사를 처음 보는 분은 무엇을 만드는 곳인지 모른 채 표부터 마주하게 되었습니다. 소개를 앞으로 내고 숫자는 뒤로 미뤘습니다.<br>확장 검토 — 첫 화면의 배너를 어드민 값(<code>SITE_BANNERS</code>)에서 읽습니다. 지금은 장 셋이 코드에 있습니다.<br>확장 검토 — 영상 파일. 지금은 갈래마다 다른 무늬와 재생 표시가 대신합니다.<br>확장 검토 — IR 로 들어가는 길. 지금 사이트 안에는 IR 아홉으로 처음 들어가는 링크가 없습니다.</td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>대시보드</td>
+  <td><strong>대시보드</strong><span class="route"><code>ADMIN-001</code><br><code>/</code></span></td>
+  <td class="flow"><ol><li>기간 고르개</li><li>숫자 여섯</li><li>지역 분포 표</li><li>지역 지도</li></ol></td>
+  <td class="memo">운영자가 문의 접수 현황을 기간 단위로 확인하는 운영 현황 화면이다. 유입량과 유입 경로 두 가지를 우선 제시하고, 지표 선택 시 해당 조건이 적용된 관리 화면으로 연결한다.</td>
+  <td class="spec"><div class="el"><strong>볼 기간을 오늘 · 최근 7일 · 이번 달에서 고릅니다</strong><br><span class="type">- Type : FILTER</span><br>- 선택한 조건만 남기도록 목록을 다시 거릅니다</div><div class="el"><strong>숫자 여섯을 한 줄에서 훑습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>지역 분포를 지도와 표로 나란히 봅니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div><div class="el"><strong>무엇을 셀지(잣대)를 바꿔 표를 다시 셉니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 색이 붙는 것은 공시 원고처럼 0 이 아니면 손대야 하는 값뿐입니다<br>- 늘 붉으면 붉은 것이 뜻을 잃습니다.</span></div></td>
+  <td class="memo"><span class="none">–</span><br>내부 관리 전용</td>
+  <td class="memo">확장 검토 — 손대야 할 카드에서 그 목록으로 바로 가는 길.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>문의</td>
+  <td><strong>문의 목록</strong><span class="route"><code>INQUIRY-002</code><br><code>/inquiries</code></span></td>
+  <td class="flow"><ol><li>머리</li><li>목록 툴바</li><li>표</li><li>빈 상태</li></ol></td>
+  <td class="memo">사이트 문의 양식으로 접수된 건을 조회하고 처리 현황을 관리하는 목록 화면이다. 미응답 건을 우선 식별할 수 있도록 검색과 상태 필터를 제공한다.</td>
+  <td class="spec"><div class="el"><strong>회사명·담당자·내용으로 검색합니다</strong><br><span class="type">- Type : SEARCH</span><br>- 입력한 검색어를 조회 조건에 더해 목록을 다시 조회합니다</div><div class="el"><strong>갈래·상태로 거릅니다</strong><br><span class="type">- Type : FILTER</span><br>- 선택한 조건만 남기도록 목록을 다시 거릅니다</div><div class="el"><strong>줄을 눌러 상세로 들어갑니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 상태를 오른쪽 끝 한 세로선 위에 세웁니다<br>- 가운데 있으면 줄마다 눈이 멈추는 자리가 달라져 끝까지 읽어야 몇 건이 남았는지 압니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>INQUIRY-001</code> 문의하기</td>
+  <td class="memo">확장 검토 — 담당자별로 나눠 봅니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>문의</td>
+  <td><strong>문의 상세</strong><span class="route"><code>INQUIRY-003</code><br><code>/inquiries/[inquiryId]</code></span></td>
+  <td class="flow"><ol><li>보낸 사람</li><li>문의 내용</li><li>답변</li><li>확인 창</li></ol></td>
+  <td class="memo">접수된 문의 한 건의 내용을 확인하고 답변과 처리 상태를 관리하는 상세 화면이다. 이 화면에서 관리하는 답변과 상태는 사이트에 노출되지 않으며, 내부 처리 관리 목적으로 사용한다.</td>
+  <td class="spec"><div class="el"><strong>상태 (필수)</strong><br><span class="type">- Type : SELECT</span><br>- 목록에서 남은 일을 세는 값<br>- 입력 규칙 : 접수 · 처리중 · 답변완료 · 보류<br><span class="guard">- 예외처리 : 상태가 <code>답변완료</code> 인데 답변 본문이 비면 막습니다.</span></div><div class="el"><strong>답변 내용</strong><br><span class="type">- Type : TEXTAREA</span><br>- 여기 적은 것이 보낸 사람의 메일로 갑니다<br>- 입력 규칙 : <code>답변완료</code> 로 갈 때만 필수</div><div class="el"><strong>저장</strong><br><span class="type">- Type : BTN</span><br>- 누르면 상태와 답을 확인하고 확인 창을 엽니다<br>- 성공 시 토스트로 알리고 문의 목록으로 보냅니다<br><span class="guard">- 예외처리 : 답변 내용이 비어 있다고 토스트에 적습니다</span></div><div class="el"><strong>목록으로</strong><br><span class="type">- Type : BTN</span><br>- 누르면 저장하지 않은 것은 반영되지 않는다고 알리고 목록으로 갑니다</div><div class="el"><strong>보낸 사람 정보 확인합니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>문의 내용 읽습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>답변 적습니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>INQUIRY-001</code> 문의하기</td>
+  <td class="memo">확장 검토 — 답변 이력<br>- 몇 번 주고받았는지.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>문의</td>
+  <td><strong>문의 설정</strong><span class="route"><code>INQUIRY-004</code><br><code>/inquiries/settings</code></span></td>
+  <td class="flow"><ol><li>받는 곳</li><li>양식이 묻는 것</li><li>접수 안내</li></ol></td>
+  <td class="memo">사이트 문의 양식의 수신 설정과 안내 문구를 관리하는 화면이다. 양식이 무엇을 묻고 접수 결과를 어디로 보내며 접수자에게 무엇을 안내할지를 한 곳에서 정한다.</td>
+  <td class="spec"><div class="el"><strong>대표 수신 메일 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 사이트에서 보낸 문의가 이 주소로 갑니다<br>- 입력 규칙 : 메일 주소 모양</div><div class="el"><strong>안내 문구 (필수)</strong><br><span class="type">- Type : TEXTAREA</span><br>- 문의를 보낸 직후 화면과 자동 회신에 그대로 적힙니다</div><div class="el"><strong>받는 곳 저장</strong><br><span class="type">- Type : BTN</span><br>- 누르면 주소 모양을 확인하고 확인 창을 엽니다<br>- 성공 시 토스트에 바뀐 주소를 함께 적습니다<br><span class="guard">- 예외처리 : 메일 주소 형식이 아니라고 토스트에 적습니다</span></div><div class="el"><strong>안내 문구 저장</strong><br><span class="type">- Type : BTN</span><br>- 누르면 확인 창을 엽니다<br>- 성공 시 토스트로 알립니다</div><div class="el"><strong>양식이 묻는 칸 확인합니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 수신 메일이 메일 주소 모양이 아니면 저장을 막습니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>INQUIRY-001</code> 문의하기</td>
+  <td class="memo">확장 검토 — 칸을 끄고 켜는 자리<br>- 처리방침을 함께 고칠 수 있게 될 때.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>콘텐츠</td>
+  <td><strong>공지사항 목록</strong><span class="route"><code>NOTICE-002</code><br><code>/contents/notices</code></span></td>
+  <td class="flow"><ol><li>목록 툴바</li><li>표</li><li>선택 줄</li></ol></td>
+  <td class="memo">사이트에 게시되는 공지를 조회하고 관리하는 목록 화면이다. 검색과 조건 필터로 관리 대상을 특정하고, 등록과 삭제로 공지의 생애주기를 관리한다.</td>
+  <td class="spec"><div class="el"><strong>제목·내용으로 검색합니다</strong><br><span class="type">- Type : SEARCH</span><br>- 입력한 검색어를 조회 조건에 더해 목록을 다시 조회합니다</div><div class="el"><strong>갈래·상태로 거릅니다</strong><br><span class="type">- Type : FILTER</span><br>- 선택한 조건만 남기도록 목록을 다시 거릅니다</div><div class="el"><strong>줄을 눌러 상세로 들어갑니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>공지 등록합니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 새 항목으로 저장합니다</div><div class="el"><strong>삭제합니다</strong><br><span class="type">- Type : BTN</span><br>- 삭제 여부를 되묻고, 확인하면 대상을 삭제 처리합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 고정한 것이 몇인지 표에서 바로 보이게 둡니다<br>- 넷을 넘으면 맨 위가 전부 고정이라 고정의 뜻이 없어집니다. 막지는 않습니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>NOTICE-001</code> 공지사항</td>
+  <td class="memo">확장 검토 — 고정이 넷을 넘을 때 등록 화면에서 먼저 알립니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>콘텐츠</td>
+  <td><strong>공지사항 등록</strong><span class="route"><code>NOTICE-003</code><br><code>/contents/notices/new</code></span></td>
+  <td class="flow"><ol><li>기본 정보</li><li>본문</li><li>노출</li></ol></td>
+  <td class="memo">사이트에 게시할 공지를 신규 등록하는 화면이다. 등록과 노출 시점을 분리하여, 작성 중인 공지가 사이트에 즉시 게시되지 않도록 한다.</td>
+  <td class="spec"><div class="el"><strong>공지 코드</strong><br><span class="type">- Type : TEXT (readonly)</span><br>- 공지를 가리키는 번호<br>- 입력 규칙 : 저장할 때 매겨집니다</div><div class="el"><strong>갈래 (필수)</strong><br><span class="type">- Type : SELECT</span><br>- 사이트 왼쪽 줄에서 고르는 이름<br>- 입력 규칙 : 운영 · 서비스 · 약관<br><span class="guard">- 예외처리 : 갈래 · 제목 · 올린 날 · 내용은 공백만으로 둘 수 없습니다.</span></div><div class="el"><strong>제목 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 목록에 서는 한 줄<br><span class="guard">- 예외처리 : 갈래 · 제목 · 올린 날 · 내용은 공백만으로 둘 수 없습니다.</span></div><div class="el"><strong>올린 날 (필수)</strong><br><span class="type">- Type : DATE</span><br>- 목록의 차례를 정하는 날짜<br><span class="guard">- 예외처리 : 갈래 · 제목 · 올린 날 · 내용은 공백만으로 둘 수 없습니다.</span></div><div class="el"><strong>내용 (필수)</strong><br><span class="type">- Type : TEXTAREA</span><br>- 문단 배열로 저장됩니다<br>- 입력 규칙 : 빈 줄로 문단을 나눕니다<br><span class="guard">- 예외처리 : 갈래 · 제목 · 올린 날 · 내용은 공백만으로 둘 수 없습니다.</span></div><div class="el"><strong>맨 위에 고정</strong><br><span class="type">- Type : SWITCH</span><br>- 사이트 목록의 차례가 바뀝니다</div><div class="el"><strong>사이트에 노출</strong><br><span class="type">- Type : SWITCH</span><br>- 끄면 사이트에서 사라집니다</div><div class="el"><strong>등록</strong><br><span class="type">- Type : BTN</span><br>- 누르면 입력을 확인하고 확인 창을 엽니다<br>- 성공 시 토스트로 무엇이 나갔는지 알립니다<br><span class="guard">- 예외처리 : 확인이 필요한 칸의 개수와 이름을 토스트에 적습니다</span></div><div class="el"><strong>본문 적습니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div><div class="el"><strong>고정과 노출 정합니다</strong><br><span class="type">- Type : SWITCH</span><br>- 해당 항목의 상태값만 바꿉니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 공지 코드를 화면 밖에서 세어 넘깁니다<br>- 폼 안에서 세면 화면을 다시 그릴 때마다 코드가 흔들립니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>NOTICE-001</code> 공지사항</td>
+  <td class="memo">확장 검토 — 미리봅니다<br>- 사이트에 어떻게 서는지.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>콘텐츠</td>
+  <td><strong>공지사항 상세</strong><span class="route"><code>NOTICE-004</code><br><code>/contents/notices/[noticeId]</code></span></td>
+  <td class="flow"><ol><li>기본 정보</li><li>본문</li><li>노출</li><li>확인 창</li></ol></td>
+  <td class="memo">등록된 공지의 내용과 노출 상태를 수정하는 상세 관리 화면이다. 이 화면에서 관리하는 값은 사이트 공지 목록에 반영된다.</td>
+  <td class="spec"><div class="el"><strong>갈래·제목·올린 날 고칩니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 기존 항목을 덮어씁니다</div><div class="el"><strong>본문 고칩니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 기존 항목을 덮어씁니다</div><div class="el"><strong>고정과 노출 끄고 켭니다</strong><br><span class="type">- Type : SWITCH</span><br>- 해당 항목의 상태값만 바꿉니다</div><div class="el"><strong>저장합니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>NOTICE-001</code> 공지사항</td>
+  <td class="memo">확장 검토 — 고친 이력<br>- 언제 무엇을 바꿨는지.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>콘텐츠</td>
+  <td><strong>뉴스 목록</strong><span class="route"><code>NEWS-002</code><br><code>/contents/news</code></span></td>
+  <td class="flow"><ol><li>목록 툴바</li><li>표</li></ol></td>
+  <td class="memo">사이트에 게시되는 소식을 조회하고 관리하는 목록 화면이다. 방송 · 행사 · 제품 소개 등 외부 노출 기록을 관리한다.</td>
+  <td class="spec"><div class="el"><strong>제목으로 검색합니다</strong><br><span class="type">- Type : SEARCH</span><br>- 입력한 검색어를 조회 조건에 더해 목록을 다시 조회합니다</div><div class="el"><strong>갈래·상태로 거릅니다</strong><br><span class="type">- Type : FILTER</span><br>- 선택한 조건만 남기도록 목록을 다시 거릅니다</div><div class="el"><strong>줄을 눌러 상세로 들어갑니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>뉴스 등록합니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 새 항목으로 저장합니다</div><div class="el"><strong>삭제합니다</strong><br><span class="type">- Type : BTN</span><br>- 삭제 여부를 되묻고, 확인하면 대상을 삭제 처리합니다</div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>NEWS-001</code> 뉴스</td>
+  <td class="memo">확장 검토 — 영상 파일과 미리보기 그림 올립니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>콘텐츠</td>
+  <td><strong>뉴스 등록</strong><span class="route"><code>NEWS-003</code><br><code>/contents/news/new</code></span></td>
+  <td class="flow"><ol><li>기본 정보</li><li>썸네일</li></ol></td>
+  <td class="memo">사이트에 게시할 소식을 신규 등록하는 화면이다. 등록과 노출 시점을 분리하여 관리한다.</td>
+  <td class="spec"><div class="el"><strong>뉴스 코드</strong><br><span class="type">- Type : TEXT (readonly)</span><br>- 뉴스를 가리키는 번호<br>- 입력 규칙 : 저장할 때 매겨집니다</div><div class="el"><strong>갈래 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 목록에서 나누는 이름<br><span class="guard">- 예외처리 : 갈래와 제목은 공백만으로 둘 수 없습니다.</span></div><div class="el"><strong>제목 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 목록과 홈 카드에 서는 한 줄<br><span class="guard">- 예외처리 : 갈래와 제목은 공백만으로 둘 수 없습니다.</span></div><div class="el"><strong>썸네일 무늬</strong><br><span class="type">- Type : CHECKBOX (multi)</span><br>- 목록에서 어느 것이 어느 것인지 갈라 보이게 합니다<br>- 입력 규칙 : 일곱을 넘기면 무늬가 되풀이됩니다</div><div class="el"><strong>사이트에 노출</strong><br><span class="type">- Type : SWITCH</span><br>- 끄면 사이트에서 사라집니다</div><div class="el"><strong>등록</strong><br><span class="type">- Type : BTN</span><br>- 누르면 입력을 확인하고 확인 창을 엽니다<br>- 성공 시 토스트로 알립니다<br><span class="guard">- 예외처리 : 확인이 필요한 칸을 토스트에 적습니다</span></div><div class="el"><strong>노출 정합니다</strong><br><span class="type">- Type : SWITCH</span><br>- 해당 항목의 상태값만 바꿉니다</div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>NEWS-001</code> 뉴스</td>
+  <td class="memo">확장 검토 — 영상 링크와 실제 미리보기 그림.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>콘텐츠</td>
+  <td><strong>뉴스 상세</strong><span class="route"><code>NEWS-004</code><br><code>/contents/news/[newsId]</code></span></td>
+  <td class="flow"><ol><li>기본 정보</li><li>썸네일</li><li>확인 창</li></ol></td>
+  <td class="memo">등록된 소식의 제목과 표시 형태를 수정하는 상세 관리 화면이다. 이 화면에서 관리하는 값은 사이트 소식 목록에 반영된다.</td>
+  <td class="spec"><div class="el"><strong>갈래·제목 고칩니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 기존 항목을 덮어씁니다</div><div class="el"><strong>썸네일 무늬 바꿉니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 기존 항목을 덮어씁니다</div><div class="el"><strong>노출 끄고 켭니다</strong><br><span class="type">- Type : SWITCH</span><br>- 해당 항목의 상태값만 바꿉니다</div><div class="el"><strong>저장합니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>NEWS-001</code> 뉴스</td>
+  <td class="memo">확장 검토 — 영상 링크와 실제 미리보기 그림.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>콘텐츠</td>
+  <td><strong>FAQ 목록</strong><span class="route"><code>FAQ-002</code><br><code>/contents/faqs</code></span></td>
+  <td class="flow"><ol><li>목록 툴바</li><li>표</li></ol></td>
+  <td class="memo">반복 접수되는 질문과 답변을 조회하고 관리하는 목록 화면이다. 여기서 관리하는 분류 체계는 사이트 FAQ 화면의 분류 구성으로 사용된다.</td>
+  <td class="spec"><div class="el"><strong>물음·답으로 검색합니다</strong><br><span class="type">- Type : SEARCH</span><br>- 입력한 검색어를 조회 조건에 더해 목록을 다시 조회합니다</div><div class="el"><strong>갈래·상태로 거릅니다</strong><br><span class="type">- Type : FILTER</span><br>- 선택한 조건만 남기도록 목록을 다시 거릅니다</div><div class="el"><strong>줄을 눌러 상세로 들어갑니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>FAQ 등록합니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 새 항목으로 저장합니다</div><div class="el"><strong>삭제합니다</strong><br><span class="type">- Type : BTN</span><br>- 삭제 여부를 되묻고, 확인하면 대상을 삭제 처리합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 답을 목록에서도 보여 줍니다<br>- 물음만 늘어놓으면 같은 물음이 두 번 적혔는지 알 수 없습니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>FAQ-001</code> FAQ</td>
+  <td class="memo">확장 검토 — 같은 답을 묶어 하나로 줄이는 자리.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>콘텐츠</td>
+  <td><strong>FAQ 등록</strong><span class="route"><code>FAQ-003</code><br><code>/contents/faqs/new</code></span></td>
+  <td class="flow"><ol><li>물음과 답</li><li>비슷한 물음</li></ol></td>
+  <td class="memo">반복 접수되는 질문을 신규 등록하는 화면이다. 문의로 이어지는 질문을 사전 답변으로 전환하여 접수량을 줄이는 것을 목적으로 한다.</td>
+  <td class="spec"><div class="el"><strong>FAQ 코드</strong><br><span class="type">- Type : TEXT (readonly)</span><br>- FAQ 를 가리키는 번호<br>- 입력 규칙 : 저장할 때 매겨집니다</div><div class="el"><strong>갈래 (필수)</strong><br><span class="type">- Type : SELECT</span><br>- 사이트 FAQ 화면 왼쪽 줄이 됩니다<br>- 입력 규칙 : 도입 · 기술 · 지원<br><span class="guard">- 예외처리 : 갈래 · 물음 · 답은 공백만으로 둘 수 없습니다.</span></div><div class="el"><strong>물음 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 사람이 실제로 묻는 말 그대로<br><span class="guard">- 예외처리 : 갈래 · 물음 · 답은 공백만으로 둘 수 없습니다.</span></div><div class="el"><strong>답 (필수)</strong><br><span class="type">- Type : TEXTAREA</span><br>- 되묻지 않아도 되게 적습니다<br>- 입력 규칙 : 글상자를 열두 줄로 엽니다</div><div class="el"><strong>사이트에 노출</strong><br><span class="type">- Type : SWITCH</span><br>- 끄면 사이트에서 사라집니다</div><div class="el"><strong>등록</strong><br><span class="type">- Type : BTN</span><br>- 누르면 입력을 확인하고 확인 창을 엽니다<br>- 성공 시 토스트로 알립니다<br><span class="guard">- 예외처리 : 확인이 필요한 칸을 토스트에 적습니다</span></div><div class="el"><strong>답 적습니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div><div class="el"><strong>노출 정합니다</strong><br><span class="type">- Type : SWITCH</span><br>- 해당 항목의 상태값만 바꿉니다</div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>FAQ-001</code> FAQ</td>
+  <td class="memo">확장 검토 — 비슷한 물음을 눌러 그리로 넘어갑니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>콘텐츠</td>
+  <td><strong>FAQ 상세</strong><span class="route"><code>FAQ-004</code><br><code>/contents/faqs/[faqId]</code></span></td>
+  <td class="flow"><ol><li>물음과 답</li><li>비슷한 물음</li><li>확인 창</li></ol></td>
+  <td class="memo">등록된 질문과 답변을 수정하는 상세 관리 화면이다. 이 화면에서 관리하는 값은 사이트 FAQ 화면에 반영된다.</td>
+  <td class="spec"><div class="el"><strong>갈래·물음·답 고칩니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 기존 항목을 덮어씁니다</div><div class="el"><strong>노출 끄고 켭니다</strong><br><span class="type">- Type : SWITCH</span><br>- 해당 항목의 상태값만 바꿉니다</div><div class="el"><strong>저장합니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>FAQ-001</code> FAQ</td>
+  <td class="memo">확장 검토 — 같은 답끼리 묶습니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>제품</td>
+  <td><strong>제품 목록</strong><span class="route"><code>PRODUCT-002</code><br><code>/products</code></span></td>
+  <td class="flow"><ol><li>목록 툴바</li><li>표</li></ol></td>
+  <td class="memo">사이트에 노출되는 제품 정보를 조회하고 관리하는 목록 화면이다. 제품별 소개 문구가 채워졌는지와 노출 상태를 확인한다.</td>
+  <td class="spec"><div class="el"><strong>이름·소개로 검색합니다</strong><br><span class="type">- Type : SEARCH</span><br>- 입력한 검색어를 조회 조건에 더해 목록을 다시 조회합니다</div><div class="el"><strong>상태로 거릅니다</strong><br><span class="type">- Type : FILTER</span><br>- 선택한 조건만 남기도록 목록을 다시 거릅니다</div><div class="el"><strong>줄을 눌러 상세로 들어갑니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>PRODUCT-001</code> 제품<br><code>SOLUTION-003</code> Cloud MES<br><code>SOLUTION-004</code> Cloud ERP<br><code>SOLUTION-005</code> Cloud CRM<br><code>SOLUTION-006</code> Cloud DXP<br><code>HOME-001</code> Home</td>
+  <td class="memo">확장 검토 — 제품을 늘리는 자리<br>- 상세 화면을 함께 만들 때.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>제품</td>
+  <td><strong>제품 상세</strong><span class="route"><code>PRODUCT-003</code><br><code>/products/[productId]</code></span></td>
+  <td class="flow"><ol><li>말</li><li>구조</li><li>확인 창</li></ol></td>
+  <td class="memo">제품 소개 문구를 수정하는 상세 관리 화면이다. 화면 구조는 고정되어 있으며 문구만 관리한다. 이 화면에서 관리하는 값은 사이트의 제품 상세 화면과 홈 제품 영역에 반영된다.</td>
+  <td class="spec"><div class="el"><strong>코드</strong><br><span class="type">- Type : TEXT (readonly)</span><br>- 제품을 가리키는 값</div><div class="el"><strong>상세 주소</strong><br><span class="type">- Type : TEXT (readonly)</span><br>- 라우트가 정합니다</div><div class="el"><strong>화면 이름 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 카드와 메뉴에 서는 이름</div><div class="el"><strong>짧은 이름 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 목록과 카드가 쓰는 줄임말<br>- 입력 규칙 : 제품에만 있는 칸</div><div class="el"><strong>한 줄 소개 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 카드가 그대로 싣습니다<br>- 입력 규칙 : 세 문장이면 석 줄이 되어 카드 높이가 어긋납니다</div><div class="el"><strong>무엇을 푸는가 (필수)</strong><br><span class="type">- Type : TEXTAREA</span><br>- 문제</div><div class="el"><strong>어떻게 푸는가 (필수)</strong><br><span class="type">- Type : TEXTAREA</span><br>- 제품은 홈 카드와 제품 목록 카드에 그대로 들어갑니다</div><div class="el"><strong>사이트에 노출</strong><br><span class="type">- Type : SWITCH</span><br>- 끄면 메뉴에서 사라지고 상세도 열리지 않습니다<br>- 입력 규칙 : 제품에만 있는 칸</div><div class="el"><strong>저장</strong><br><span class="type">- Type : BTN</span><br>- 누르면 입력을 확인하고 확인 창을 엽니다<br>- 성공 시 토스트로 무엇이 나갔는지 알립니다<br><span class="guard">- 예외처리 : 확인이 필요한 칸을 토스트에 적습니다</span></div><div class="el"><strong>사이트 노출 끄고 켭니다</strong><br><span class="type">- Type : SWITCH</span><br>- 해당 항목의 상태값만 바꿉니다</div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>PRODUCT-001</code> 제품<br><code>SOLUTION-003</code> Cloud MES<br><code>SOLUTION-004</code> Cloud ERP<br><code>SOLUTION-005</code> Cloud CRM<br><code>SOLUTION-006</code> Cloud DXP<br><code>HOME-001</code> Home</td>
+  <td class="memo">확장 검토 — 구조를 고치는 자리<br>- 화면을 함께 손볼 때.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>제품</td>
+  <td><strong>제품 설정</strong><span class="route"><code>PRODUCT-004</code><br><code>/products/settings</code></span></td>
+  <td class="flow"><ol><li>메뉴 차례</li><li>확인 창</li></ol></td>
+  <td class="memo">사이트 제품 메뉴의 구성과 노출 순서를 관리하는 화면이다. 여기서 정한 순서가 사이트 상단 메뉴와 제품 목록의 배치 순서가 된다.</td>
+  <td class="spec"><div class="el"><strong>위로 · 아래로</strong><br><span class="type">- Type : BTN</span><br>- 누르면 한 칸씩 옮깁니다</div><div class="el"><strong>저장</strong><br><span class="type">- Type : BTN</span><br>- 누르면 확인 창을 엽니다<br>- 성공 시 토스트로 알립니다</div><div class="el"><strong>차례를 한 칸씩 올리고 내립니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div><div class="el"><strong>메뉴에서 내리고 다시 올립니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 새 항목으로 저장합니다</div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>PRODUCT-001</code> 제품<br><code>SOLUTION-003</code> Cloud MES<br><code>SOLUTION-004</code> Cloud ERP<br><code>SOLUTION-005</code> Cloud CRM<br><code>SOLUTION-006</code> Cloud DXP<br><code>HOME-001</code> Home</td>
+  <td class="memo">확장 검토 — 메뉴 이름을 여기서 바꿉니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>문제 · 해법</td>
+  <td><strong>문제 · 해법 목록</strong><span class="route"><code>SOLUTION-007</code><br><code>/solutions</code></span></td>
+  <td class="flow"><ol><li>목록 툴바</li><li>표</li></ol></td>
+  <td class="memo">제품별 문제 정의와 해결 방식이 작성되었는지 조회하는 목록 화면이다. 사이트의 솔루션 상세 화면이 참조하는 값의 작성 현황을 확인한다.</td>
+  <td class="spec"><div class="el"><strong>이름·문제로 검색합니다</strong><br><span class="type">- Type : SEARCH</span><br>- 입력한 검색어를 조회 조건에 더해 목록을 다시 조회합니다</div><div class="el"><strong>상태로 거릅니다</strong><br><span class="type">- Type : FILTER</span><br>- 선택한 조건만 남기도록 목록을 다시 거릅니다</div><div class="el"><strong>줄을 눌러 상세로 들어갑니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div></td>
+  <td class="memo"><span class="none">–</span><br>내부 관리 전용</td>
+  <td class="memo">확장 검토 — 비어 있는 상세를 먼저 세워 보여 줍니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>문제 · 해법</td>
+  <td><strong>문제 · 해법 상세</strong><span class="route"><code>SOLUTION-008</code><br><code>/solutions/[solutionId]</code></span></td>
+  <td class="flow"><ol><li>말</li><li>구조</li><li>확인 창</li></ol></td>
+  <td class="memo">문제 정의와 해결 방식의 문구를 수정하는 상세 관리 화면이다. 제품 상세 관리 화면과 동일한 입력 구성을 사용한다.</td>
+  <td class="spec"><div class="el"><strong>이름·한 줄 소개 고칩니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 기존 항목을 덮어씁니다</div><div class="el"><strong>무엇을 푸는가·어떻게 푸는가 고칩니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 기존 항목을 덮어씁니다</div><div class="el"><strong>사이트 노출 끄고 켭니다</strong><br><span class="type">- Type : SWITCH</span><br>- 해당 항목의 상태값만 바꿉니다</div><div class="el"><strong>저장합니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div></td>
+  <td class="memo"><span class="none">–</span><br>내부 관리 전용</td>
+  <td class="memo">확장 검토 — 구조를 고치는 자리.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>문제 · 해법</td>
+  <td><strong>홈 무대 차례</strong><span class="route"><code>SOLUTION-009</code><br><code>/solutions/settings</code></span></td>
+  <td class="flow"><ol><li>공정의 차례</li></ol></td>
+  <td class="memo">홈 화면 서비스 영역에 배치되는 여섯 항목의 순서를 확인하는 화면이다. 조회 전용이며, 각 항목이 연결하는 주소를 함께 확인할 수 있다.</td>
+  <td class="spec"><div class="el"><strong>시계 방향 차례 읽습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>각각이 여는 주소 확인합니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div></td>
+  <td class="memo"><span class="none">–</span><br>내부 관리 전용</td>
+  <td class="memo">확장 검토 — 그림과 차례를 함께 바꾸는 자리.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>서비스</td>
+  <td><strong>서비스 목록</strong><span class="route"><code>SERVICE-001</code><br><code>/services</code></span></td>
+  <td class="flow"><ol><li>목록 툴바</li><li>표</li></ol></td>
+  <td class="memo">인력이 현장에서 수행하는 서비스 항목의 소개 문구가 작성되었는지 조회하는 목록 화면이다.</td>
+  <td class="spec"><div class="el"><strong>이름으로 검색합니다</strong><br><span class="type">- Type : SEARCH</span><br>- 입력한 검색어를 조회 조건에 더해 목록을 다시 조회합니다</div><div class="el"><strong>줄을 눌러 상세로 들어갑니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 거르개를 두지 않습니다<br>- 서비스에는 켜고 끄는 값이 없어, 걸 것이 없는 거르개를 세우면 눌러 본 사람이 목록이 고장 났다고 여깁니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>SOLUTION-001</code> 스마트 컨설팅<br><code>SOLUTION-002</code> 인프라 서비스<br><code>PRODUCT-001</code> 제품<br><code>HOME-001</code> Home</td>
+  <td class="memo">확장 검토 — 서비스를 늘리는 자리<br>- 상세 화면을 함께 만들 때.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>서비스</td>
+  <td><strong>서비스 상세</strong><span class="route"><code>SERVICE-002</code><br><code>/services/[serviceId]</code></span></td>
+  <td class="flow"><ol><li>말</li><li>구조</li><li>확인 창</li></ol></td>
+  <td class="memo">서비스 소개 문구를 수정하는 상세 관리 화면이다. 제품 상세 관리 화면과 동일한 입력 구성을 사용한다.</td>
+  <td class="spec"><div class="el"><strong>이름·한 줄 소개 고칩니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 기존 항목을 덮어씁니다</div><div class="el"><strong>무엇을 푸는가·어떻게 푸는가 고칩니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 기존 항목을 덮어씁니다</div><div class="el"><strong>저장합니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 제품에만 있는 칸 둘(짧은 이름 · 사이트에 노출)은 폼이 알아서 접습니다<br>- 여기서 <code>서비스라서 빼야 할 것</code>을 세어 두면 칸이 하나 늘 때마다 그 목록도 고쳐야 하고, 그러다 한 번 빠뜨립니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>SOLUTION-001</code> 스마트 컨설팅<br><code>SOLUTION-002</code> 인프라 서비스<br><code>PRODUCT-001</code> 제품<br><code>HOME-001</code> Home</td>
+  <td class="memo">확장 검토 — 구조를 고치는 자리.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>서비스</td>
+  <td><strong>서비스 설정</strong><span class="route"><code>SERVICE-003</code><br><code>/services/settings</code></span></td>
+  <td class="flow"><ol><li>나가는 자리</li><li>적힌 말</li></ol></td>
+  <td class="memo">서비스 항목이 사이트의 어느 위치에 어떤 문구로 노출되는지를 한 화면에서 확인하는 화면이다. 동일한 서비스가 여러 위치에 서로 다른 문구로 노출되는 상황을 점검하기 위한 것이다.</td>
+  <td class="spec"><div class="el"><strong>나가는 자리 셋 확인합니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>홈 카드의 말과 상세의 말 견줍니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>SOLUTION-001</code> 스마트 컨설팅<br><code>SOLUTION-002</code> 인프라 서비스<br><code>PRODUCT-001</code> 제품<br><code>HOME-001</code> Home</td>
+  <td class="memo">확장 검토 — 두 문구가 어긋났을 때 먼저 알립니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>회사</td>
+  <td><strong>회사 소개</strong><span class="route"><code>COMPANY-002</code><br><code>/company/about</code></span></td>
+  <td class="flow"><ol><li>첫 화면 소개</li><li>회사 정보</li></ol></td>
+  <td class="memo">홈과 회사 소개 화면에 노출되는 소개 문단과 회사 정보를 조회하는 화면이다. 현재 게시된 값을 확인하는 용도이며 수정 기능은 제공하지 않는다.</td>
+  <td class="spec"><div class="el"><strong>첫 화면 소개 읽습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>회사 정보 읽습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>COMPANY-001</code> 회사 소개</td>
+  <td class="memo">확장 검토 — 검토를 지난 값만 반영하는 고치기 자리.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>회사</td>
+  <td><strong>연혁 목록</strong><span class="route"><code>HISTORY-002</code><br><code>/company/history</code></span></td>
+  <td class="flow"><ol><li>머리</li><li>목록 툴바</li><li>표</li></ol></td>
+  <td class="memo">사이트 연혁에 노출되는 항목을 조회하고 관리하는 목록 화면이다.</td>
+  <td class="spec"><div class="el"><strong>제목·설명으로 검색합니다</strong><br><span class="type">- Type : SEARCH</span><br>- 입력한 검색어를 조회 조건에 더해 목록을 다시 조회합니다</div><div class="el"><strong>상태로 거릅니다</strong><br><span class="type">- Type : FILTER</span><br>- 선택한 조건만 남기도록 목록을 다시 거릅니다</div><div class="el"><strong>줄을 눌러 상세로 들어갑니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>연혁 등록합니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 새 항목으로 저장합니다</div><div class="el"><strong>삭제합니다</strong><br><span class="type">- Type : BTN</span><br>- 삭제 여부를 되묻고, 확인하면 대상을 삭제 처리합니다</div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>COMPANY-001</code> 회사 소개<br><code>HISTORY-001</code> 연혁</td>
+  <td class="memo">확장 검토 — 연도별로 접어 봅니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>회사</td>
+  <td><strong>연혁 등록</strong><span class="route"><code>HISTORY-003</code><br><code>/company/history/new</code></span></td>
+  <td class="flow"><ol><li>때</li><li>한 일</li></ol></td>
+  <td class="memo">사이트 연혁에 노출할 항목을 신규 등록하는 화면이다.</td>
+  <td class="spec"><div class="el"><strong>코드</strong><br><span class="type">- Type : TEXT (readonly)</span><br>- 연혁 줄을 가리키는 번호<br>- 입력 규칙 : 저장할 때 매겨집니다</div><div class="el"><strong>연도 (필수)</strong><br><span class="type">- Type : INPUT (number)</span><br>- 네 자리<br><span class="guard">- 예외처리 : 연도는 네 자리 숫자여야 합니다.</span></div><div class="el"><strong>월</strong><br><span class="type">- Type : SELECT</span><br>- 비우면 그 해의 일로 섭니다</div><div class="el"><strong>제목 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 연혁 한 줄에 서는 말<br><span class="guard">- 예외처리 : 제목은 공백만으로 둘 수 없습니다.</span></div><div class="el"><strong>설명</strong><br><span class="type">- Type : TEXTAREA</span><br>- 제목만으로 뜻이 통하면 비워 둡니다</div><div class="el"><strong>사이트에 노출</strong><br><span class="type">- Type : SWITCH</span><br>- 끄면 사이트 연혁에서 사라집니다</div><div class="el"><strong>등록</strong><br><span class="type">- Type : BTN</span><br>- 누르면 연도와 제목을 확인하고 확인 창을 엽니다<br>- 성공 시 토스트로 알립니다<br><span class="guard">- 예외처리 : 확인이 필요한 칸을 토스트에 적습니다</span></div><div class="el"><strong>노출 정합니다</strong><br><span class="type">- Type : SWITCH</span><br>- 해당 항목의 상태값만 바꿉니다</div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>COMPANY-001</code> 회사 소개<br><code>HISTORY-001</code> 연혁</td>
+  <td class="memo">확장 검토 — 같은 해의 줄을 묶어 보여 줍니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>회사</td>
+  <td><strong>연혁 상세</strong><span class="route"><code>HISTORY-004</code><br><code>/company/history/[milestoneId]</code></span></td>
+  <td class="flow"><ol><li>때</li><li>한 일</li><li>확인 창</li></ol></td>
+  <td class="memo">등록된 연혁 항목을 수정하는 상세 관리 화면이다.</td>
+  <td class="spec"><div class="el"><strong>연도·월 고칩니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 기존 항목을 덮어씁니다</div><div class="el"><strong>제목·설명 고칩니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 기존 항목을 덮어씁니다</div><div class="el"><strong>노출 끄고 켭니다</strong><br><span class="type">- Type : SWITCH</span><br>- 해당 항목의 상태값만 바꿉니다</div><div class="el"><strong>저장합니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>COMPANY-001</code> 회사 소개<br><code>HISTORY-001</code> 연혁</td>
+  <td class="memo">확장 검토 — 고친 이력.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>회사</td>
+  <td><strong>특허 및 인증 목록</strong><span class="route"><code>CERT-003</code><br><code>/company/credentials</code></span></td>
+  <td class="flow"><ol><li>목록 툴바</li><li>표</li></ol></td>
+  <td class="memo">보유한 특허와 인증을 조회하고 관리하는 목록 화면이다. 등록번호로 조회할 수 있어야 하므로 번호 기반 검색을 제공한다.</td>
+  <td class="spec"><div class="el"><strong>이름·번호로 검색합니다</strong><br><span class="type">- Type : SEARCH</span><br>- 입력한 검색어를 조회 조건에 더해 목록을 다시 조회합니다</div><div class="el"><strong>구분·상태로 거릅니다</strong><br><span class="type">- Type : FILTER</span><br>- 선택한 조건만 남기도록 목록을 다시 거릅니다</div><div class="el"><strong>줄을 눌러 상세로 들어갑니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>특허 · 인증 등록합니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 새 항목으로 저장합니다</div><div class="el"><strong>삭제합니다</strong><br><span class="type">- Type : BTN</span><br>- 삭제 여부를 되묻고, 확인하면 대상을 삭제 처리합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 등록번호를 반드시 적습니다<br>- 밖에서 조회할 수 있는 값이라 번호가 없으면 확인할 방법이 없어 적어 둔 뜻이 없습니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>COMPANY-001</code> 회사 소개<br><code>CERT-001</code> 특허 및 인증<br><code>CERT-002</code> 특허 · 인증 상세</td>
+  <td class="memo">확장 검토 — 만료일 알림.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>회사</td>
+  <td><strong>특허 및 인증 등록</strong><span class="route"><code>CERT-004</code><br><code>/company/credentials/new</code></span></td>
+  <td class="flow"><ol><li>기본 정보</li></ol></td>
+  <td class="memo">취득한 특허 또는 인증을 사이트에 게시하기 위해 신규 등록하는 화면이다.</td>
+  <td class="spec"><div class="el"><strong>코드</strong><br><span class="type">- Type : TEXT (readonly)</span><br>- 가리키는 번호<br>- 입력 규칙 : 저장할 때 매겨집니다</div><div class="el"><strong>구분 (필수)</strong><br><span class="type">- Type : SELECT</span><br>- 목록에서 갈래로 쓰입니다</div><div class="el"><strong>이름 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 등록증에 적힌 이름 그대로</div><div class="el"><strong>등록번호 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 밖에서 조회할 수 있는 값<br>- 입력 규칙 : 고정폭으로 받습니다<br><span class="guard">- 예외처리 : 등록번호가 비면 막습니다.</span></div><div class="el"><strong>발급 기관 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 어디서 받았는지</div><div class="el"><strong>취득일 (필수)</strong><br><span class="type">- Type : DATE</span><br>- 받은 날<br>- 입력 규칙 : 미래는 막습니다<br><span class="guard">- 예외처리 : 취득일이 오늘보다 뒤면 막습니다.</span></div><div class="el"><strong>사이트에 노출</strong><br><span class="type">- Type : SWITCH</span><br>- 끄면 사이트에서 사라집니다</div><div class="el"><strong>등록</strong><br><span class="type">- Type : BTN</span><br>- 누르면 번호와 취득일을 확인하고 확인 창을 엽니다<br>- 성공 시 토스트로 알립니다<br><span class="guard">- 예외처리 : 확인이 필요한 칸을 토스트에 적습니다</span></div><div class="el"><strong>노출 정합니다</strong><br><span class="type">- Type : SWITCH</span><br>- 해당 항목의 상태값만 바꿉니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 취득일이 미래면 막습니다. 사이트는 날짜를 따지지 않고 그대로 세우므로 심사 중인 것이 받은 것으로 실립니다.</span><br><span class="guard">- 오늘은 화면 밖에서 받습니다<br>- 조각 안에서 읽으면 서버와 브라우저 값이 어긋납니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>COMPANY-001</code> 회사 소개<br><code>CERT-001</code> 특허 및 인증<br><code>CERT-002</code> 특허 · 인증 상세</td>
+  <td class="memo">확장 검토 — 등록증 파일 올립니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>회사</td>
+  <td><strong>특허 및 인증 상세</strong><span class="route"><code>CERT-005</code><br><code>/company/credentials/[credentialId]</code></span></td>
+  <td class="flow"><ol><li>기본 정보</li><li>확인 창</li></ol></td>
+  <td class="memo">등록된 특허 또는 인증을 수정하는 상세 관리 화면이다.</td>
+  <td class="spec"><div class="el"><strong>이름·번호·기관·취득일 고칩니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 기존 항목을 덮어씁니다</div><div class="el"><strong>노출 끄고 켭니다</strong><br><span class="type">- Type : SWITCH</span><br>- 해당 항목의 상태값만 바꿉니다</div><div class="el"><strong>저장합니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 취득일이 미래면 막습니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>COMPANY-001</code> 회사 소개<br><code>CERT-001</code> 특허 및 인증<br><code>CERT-002</code> 특허 · 인증 상세</td>
+  <td class="memo">확장 검토 — 등록증 파일 올립니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>배너</td>
+  <td><strong>메인 비주얼 목록</strong><span class="route"><code>BANNER-001</code><br><code>/banners</code></span></td>
+  <td class="flow"><ol><li>목록 툴바</li><li>표</li></ol></td>
+  <td class="memo">홈 상단에 노출되는 메인 비주얼을 조회하고 관리하는 목록 화면이다. 노출 상태와 노출 기간을 함께 관리하여 게시 시점을 통제한다.</td>
+  <td class="spec"><div class="el"><strong>제목으로 검색합니다</strong><br><span class="type">- Type : SEARCH</span><br>- 입력한 검색어를 조회 조건에 더해 목록을 다시 조회합니다</div><div class="el"><strong>상태로 거릅니다</strong><br><span class="type">- Type : FILTER</span><br>- 선택한 조건만 남기도록 목록을 다시 거릅니다</div><div class="el"><strong>줄을 눌러 상세로 들어갑니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>배너 등록합니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 새 항목으로 저장합니다</div><div class="el"><strong>삭제합니다</strong><br><span class="type">- Type : BTN</span><br>- 삭제 여부를 되묻고, 확인하면 대상을 삭제 처리합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 기간을 반드시 적습니다<br>- 끝을 비워 두면 행사가 끝난 뒤에도 계속 서 있고, 그 사실은 대개 밖에서 먼저 발견됩니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>HOME-001</code> Home</td>
+  <td class="memo">확장 검토 — 배너 그림 올립니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>배너</td>
+  <td><strong>메인 비주얼 등록</strong><span class="route"><code>BANNER-002</code><br><code>/banners/new</code></span></td>
+  <td class="flow"><ol><li>기본 정보</li></ol></td>
+  <td class="memo">홈 상단에 게시할 메인 비주얼을 신규 등록하는 화면이다. 노출 상태와 기간을 분리하여 관리함으로써 사전 등록과 예약 게시를 지원한다.</td>
+  <td class="spec"><div class="el"><strong>배너 코드</strong><br><span class="type">- Type : TEXT (readonly)</span><br>- 배너를 가리키는 번호<br>- 입력 규칙 : 저장할 때 매겨집니다</div><div class="el"><strong>서는 자리</strong><br><span class="type">- Type : TEXT (readonly)</span><br>- 메인 비주얼인지 팝업인지<br>- 입력 규칙 : 메뉴가 정합니다</div><div class="el"><strong>제목 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 배너에 서는 큰 글씨 한 줄<br><span class="guard">- 예외처리 : 제목과 시작일은 비울 수 없습니다.</span></div><div class="el"><strong>시작일 (필수)</strong><br><span class="type">- Type : DATE</span><br>- 이 날부터 섭니다<br><span class="guard">- 예외처리 : 제목과 시작일은 비울 수 없습니다.</span></div><div class="el"><strong>종료일</strong><br><span class="type">- Type : DATE</span><br>- 비우면 계속 섭니다<br><span class="guard">- 예외처리 : 종료일이 이미 지났으면 그 자리에서 알립니다.</span></div><div class="el"><strong>사이트에 노출</strong><br><span class="type">- Type : SWITCH</span><br>- 기간과 상관없이 지금 내립니다</div><div class="el"><strong>등록</strong><br><span class="type">- Type : BTN</span><br>- 누르면 제목과 기간을 확인하고 확인 창을 엽니다<br>- 성공 시 토스트로 알립니다<br><span class="guard">- 예외처리 : 확인이 필요한 칸을 토스트에 적습니다</span></div><div class="el"><strong>기간 정합니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 새 항목으로 저장합니다</div><div class="el"><strong>노출 정합니다</strong><br><span class="type">- Type : SWITCH</span><br>- 해당 항목의 상태값만 바꿉니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 끝을 비우면 계속 선다고 적어 둡니다<br>- 상시 배너가 실제로 있어 막지는 않되, 비운 것이 뜻이라는 것을 적게 합니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>HOME-001</code> Home</td>
+  <td class="memo">확장 검토 — 배너 그림 올립니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>배너</td>
+  <td><strong>메인 비주얼 상세</strong><span class="route"><code>BANNER-003</code><br><code>/banners/[bannerId]</code></span></td>
+  <td class="flow"><ol><li>기본 정보</li><li>확인 창</li></ol></td>
+  <td class="memo">등록된 메인 비주얼의 문구와 노출 기간을 수정하는 상세 관리 화면이다.</td>
+  <td class="spec"><div class="el"><strong>제목 고칩니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 기존 항목을 덮어씁니다</div><div class="el"><strong>기간 고칩니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 기존 항목을 덮어씁니다</div><div class="el"><strong>노출 끄고 켭니다</strong><br><span class="type">- Type : SWITCH</span><br>- 해당 항목의 상태값만 바꿉니다</div><div class="el"><strong>저장합니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 끝난 날을 적으면 그 자리에서 알립니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>HOME-001</code> Home</td>
+  <td class="memo">확장 검토 — 배너 그림 올립니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>배너</td>
+  <td><strong>팝업 목록</strong><span class="route"><code>BANNER-004</code><br><code>/banners/popups</code></span></td>
+  <td class="flow"><ol><li>목록 툴바</li><li>표</li></ol></td>
+  <td class="memo">사이트 진입 시 표시되는 팝업을 조회하고 관리하는 목록 화면이다. 노출 상태와 노출 기간을 함께 관리한다.</td>
+  <td class="spec"><div class="el"><strong>제목으로 검색합니다</strong><br><span class="type">- Type : SEARCH</span><br>- 입력한 검색어를 조회 조건에 더해 목록을 다시 조회합니다</div><div class="el"><strong>상태로 거릅니다</strong><br><span class="type">- Type : FILTER</span><br>- 선택한 조건만 남기도록 목록을 다시 거릅니다</div><div class="el"><strong>줄을 눌러 상세로 들어갑니다</strong><br><span class="type">- Type : LINK</span><br>- 선택한 대상의 식별자를 주소에 담아 대상 화면을 요청합니다</div><div class="el"><strong>팝업 등록합니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 새 항목으로 저장합니다</div><div class="el"><strong>삭제합니다</strong><br><span class="type">- Type : BTN</span><br>- 삭제 여부를 되묻고, 확인하면 대상을 삭제 처리합니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 기간이 겹치는 것이 있는지 목록에서 바로 보이게 기간을 한 칸에 둡니다<br>- 창이 둘이면 들어온 사람이 하는 일은 둘 다 닫는 것이고, 그러면 알리려던 것도 읽히지 않습니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>HOME-001</code> Home</td>
+  <td class="memo">확장 검토 — 겹치는 기간을 화면이 먼저 알립니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>배너</td>
+  <td><strong>팝업 등록</strong><span class="route"><code>BANNER-005</code><br><code>/banners/popups/new</code></span></td>
+  <td class="flow"><ol><li>기본 정보</li></ol></td>
+  <td class="memo">반드시 전달해야 하는 고지 사항을 팝업으로 신규 등록하는 화면이다. 노출 기간을 함께 설정하여 게시 시점을 통제한다.</td>
+  <td class="spec"><div class="el"><strong>팝업 코드</strong><br><span class="type">- Type : TEXT (readonly)</span><br>- 팝업을 가리키는 번호<br>- 입력 규칙 : 저장할 때 매겨집니다</div><div class="el"><strong>제목 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 창의 첫 줄<br><span class="guard">- 예외처리 : 제목과 시작일은 비울 수 없습니다.</span></div><div class="el"><strong>본문 (필수)</strong><br><span class="type">- Type : TEXTAREA</span><br>- 팝업은 본문이 전부입니다<br><span class="guard">- 예외처리 : 팝업은 본문이 비면 막습니다.</span></div><div class="el"><strong>자세히 보기 주소</strong><br><span class="type">- Type : INPUT</span><br>- 비우면 단추가 서지 않습니다<br>- 입력 규칙 : 사이트 안의 주소</div><div class="el"><strong>시작일 (필수)</strong><br><span class="type">- Type : DATE</span><br>- 이 날부터 뜹니다<br><span class="guard">- 예외처리 : 제목과 시작일은 비울 수 없습니다.</span></div><div class="el"><strong>종료일</strong><br><span class="type">- Type : DATE</span><br>- 비우면 계속 뜹니다</div><div class="el"><strong>사이트에 노출</strong><br><span class="type">- Type : SWITCH</span><br>- 기간과 상관없이 지금 내립니다</div><div class="el"><strong>등록</strong><br><span class="type">- Type : BTN</span><br>- 누르면 제목·본문·기간을 확인하고 확인 창을 엽니다<br>- 성공 시 토스트로 알립니다<br><span class="guard">- 예외처리 : 확인이 필요한 칸을 토스트에 적습니다</span></div><div class="el"><strong>기간 정합니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 새 항목으로 저장합니다</div><div class="el"><strong>노출 정합니다</strong><br><span class="type">- Type : SWITCH</span><br>- 해당 항목의 상태값만 바꿉니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 링크를 비우면 단추가 서지 않는다고 적어 둡니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>HOME-001</code> Home</td>
+  <td class="memo">확장 검토 — 하루 감추기 기본값을 여기서 정합니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>배너</td>
+  <td><strong>팝업 상세</strong><span class="route"><code>BANNER-006</code><br><code>/banners/popups/[popupId]</code></span></td>
+  <td class="flow"><ol><li>기본 정보</li><li>확인 창</li></ol></td>
+  <td class="memo">게시 중인 팝업의 문구와 노출 기간을 수정하는 상세 관리 화면이다.</td>
+  <td class="spec"><div class="el"><strong>제목·본문·링크 고칩니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 기존 항목을 덮어씁니다</div><div class="el"><strong>기간 고칩니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 기존 항목을 덮어씁니다</div><div class="el"><strong>노출 끄고 켭니다</strong><br><span class="type">- Type : SWITCH</span><br>- 해당 항목의 상태값만 바꿉니다</div><div class="el"><strong>저장합니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 끝난 날을 적으면 그 자리에서 알립니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>HOME-001</code> Home</td>
+  <td class="memo">확장 검토 — 겹치는 기간을 화면이 먼저 알립니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>통계</td>
+  <td><strong>통계 홈</strong><span class="route"><code>STAT-001</code><br><code>/statistics</code></span></td>
+  <td class="flow"><ol><li>달마다</li><li>많이 본 화면</li></ol></td>
+  <td class="memo">사이트 방문과 문의 접수를 한 화면에서 나란히 확인하는 통계 요약 화면이다. 두 지표를 함께 배치하여 유입이 접수로 이어졌는지를 판단할 수 있도록 한다.</td>
+  <td class="spec"><div class="el"><strong>달마다의 방문과 문의를 훑습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>많이 방문한 화면을 확인합니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div></td>
+  <td class="memo"><span class="none">–</span><br>내부 관리 전용</td>
+  <td class="memo">확장 검토 — 실제로 세는 곳<br>- 지금 숫자는 씨앗입니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>통계</td>
+  <td><strong>기간별 분석</strong><span class="route"><code>STAT-002</code><br><code>/statistics/period</code></span></td>
+  <td class="flow"><ol><li>기간별 표</li></ol></td>
+  <td class="memo">월 단위 방문과 문의를 비교하여 변동이 있었던 기간을 식별하는 화면이다.</td>
+  <td class="spec"><div class="el"><strong>달별 방문 수 읽습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>같은 달의 문의 수와 견줍니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div></td>
+  <td class="memo"><span class="none">–</span><br>내부 관리 전용</td>
+  <td class="memo">확장 검토 — 기간을 직접 고릅니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>통계</td>
+  <td><strong>많이 방문한 페이지</strong><span class="route"><code>STAT-003</code><br><code>/statistics/pages</code></span></td>
+  <td class="flow"><ol><li>화면별 표</li></ol></td>
+  <td class="memo">화면별 방문 현황을 확인하여 실제로 읽히는 화면을 식별하는 화면이다.</td>
+  <td class="spec"><div class="el"><strong>화면별 방문 수 읽습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>머문 시간과 함께 견줍니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div></td>
+  <td class="memo"><span class="none">–</span><br>내부 관리 전용</td>
+  <td class="memo">확장 검토 — 들어온 길(검색어 · 유입처)까지 봅니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>설정</td>
+  <td><strong>공급자 정보</strong><span class="route"><code>SETTING-001</code><br><code>/settings/supplier</code></span></td>
+  <td class="flow"><ol><li>손으로 적는 칸</li><li>고르는 칸</li><li>확인 창</li></ol></td>
+  <td class="memo">사이트 하단에 표시되는 사업자 정보를 관리하는 화면이다. 법령이 표시를 요구하는 항목이므로 누락 없이 관리되어야 한다.</td>
+  <td class="spec"><div class="el"><strong>상호 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 사업자등록증에 적힌 그대로</div><div class="el"><strong>대표자 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 등록증의 대표자</div><div class="el"><strong>사업자등록번호 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 법이 적으라고 한 값</div><div class="el"><strong>통신판매업 신고번호</strong><br><span class="type">- Type : INPUT</span><br>- 소개글에는 들지 않는 값</div><div class="el"><strong>주소 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 등록증의 주소</div><div class="el"><strong>전화번호 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 표시 의무가 있는 연락처</div><div class="el"><strong>이메일 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 표시 의무가 있는 연락처</div><div class="el"><strong>업태 (필수)</strong><br><span class="type">- Type : SELECT</span><br>- 고르는 값<br>- 업종이 여기에 딸려 있습니다</div><div class="el"><strong>업종 (필수)</strong><br><span class="type">- Type : SELECT</span><br>- 업태를 바꾸면 첫 값으로 되돌아갑니다</div><div class="el"><strong>저장</strong><br><span class="type">- Type : BTN</span><br>- 누르면 필수 칸을 세고 확인 창을 엽니다<br>- 성공 시 토스트로 알립니다<br><span class="guard">- 예외처리 : 비어 있는 칸의 개수를 토스트에 적습니다</span></div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- <code>required</code> 로 표시된 칸은 공백만으로 둘 수 없습니다<br>- 취향이 아니라 법이 적으라고 한 것입니다.</span><br><span class="guard">- 업태를 바꾸면 업종을 그 아래 첫 값으로 되돌립니다<br>- 등록증에 있을 수 없는 짝(<code>건설업 · 소프트웨어 개발업</code>)이 남지 않게.</span><br><span class="guard">- 필수 칸이 비면 몇 개가 남았는지 토스트로 알리고 확인 창을 열지 않습니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>COMPANY-001</code> 회사 소개<br><code>SOLUTION-001</code> 스마트 컨설팅<br><code>SOLUTION-002</code> 인프라 서비스<br><code>SOLUTION-003</code> Cloud MES<br><code>SOLUTION-004</code> Cloud ERP<br><code>SOLUTION-005</code> Cloud CRM<br><code>SOLUTION-006</code> Cloud DXP<br><code>INQUIRY-001</code> 문의하기<br><code>SUPPORT-001</code> 오시는 길<br><code>LEGAL-001</code> 서비스 이용약관<br><code>LEGAL-002</code> 개인정보 처리방침<br><code>HOME-001</code> Home</td>
+  <td class="memo">확장 검토 — 등록증 사본을 붙여 둡니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>설정</td>
+  <td><strong>SEO 정보</strong><span class="route"><code>SETTING-002</code><br><code>/settings/seo</code></span></td>
+  <td class="flow"><ol><li>검색 결과</li><li>공유 카드</li><li>확인 창</li></ol></td>
+  <td class="memo">검색 결과와 링크 공유 시 표시되는 정보를 관리하는 화면이다. 외부에서 이 사이트가 처음 보이는 형태를 결정한다.</td>
+  <td class="spec"><div class="el"><strong>제목 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 검색 결과 한 줄에 그대로 나갑니다<br>- 입력 규칙 : 길면 뒤가 잘립니다<br>- 남은 글자를 세어 줍니다</div><div class="el"><strong>설명 (필수)</strong><br><span class="type">- Type : TEXTAREA</span><br>- 제목 아래 두 줄<br>- 입력 규칙 : 길면 잘립니다</div><div class="el"><strong>대표 주소</strong><br><span class="type">- Type : INPUT</span><br>- 같은 화면이 여러 주소로 뜰 때 어느 것이 원본인지 알립니다</div><div class="el"><strong>그림 경로</strong><br><span class="type">- Type : INPUT</span><br>- 비우면 링크가 글자만으로 뜹니다</div><div class="el"><strong>저장</strong><br><span class="type">- Type : BTN</span><br>- 누르면 확인 창을 엽니다<br>- 성공 시 토스트로 알립니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 공유 그림을 비우면 링크가 글자만으로 떠서 눌리지 않는다고 그 자리에 적습니다.</span></div></td>
+  <td class="memo"><span class="none">–</span><br>내부 관리 전용</td>
+  <td class="memo">확장 검토 — 검색 결과 미리봅니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>설정</td>
+  <td><strong>서비스 이용약관</strong><span class="route"><code>LEGAL-003</code><br><code>/settings/terms</code></span></td>
+  <td class="flow"><ol><li>본문</li><li>공개</li><li>확인 창</li></ol></td>
+  <td class="memo">사이트 하단의 서비스 이용약관 링크가 여는 본문을 작성하고 게시하는 화면이다. 작성과 게시를 분리하여, 검토 중인 초안이 약관으로 노출되지 않도록 한다.</td>
+  <td class="spec"><div class="el"><strong>서비스 이용약관 (필수)</strong><br><span class="type">- Type : TEXTAREA</span><br>- 적히는 순간 우리가 효력을 주장하는 문서가 됩니다<br>- 입력 규칙 : 걸려면 비어 있을 수 없습니다</div><div class="el"><strong>공개</strong><br><span class="type">- Type : SWITCH</span><br>- 사이트에 걸지 초안으로 둘지</div><div class="el"><strong>저장</strong><br><span class="type">- Type : BTN</span><br>- 누르면 공개 여부에 맞는 확인 창을 엽니다<br>- 성공 시 건 것인지 초안인지 토스트에 갈라 적습니다<br><span class="guard">- 예외처리 : 본문이 비어 있으면 걸 수 없다고 토스트에 적습니다</span></div><div class="el"><strong>본문 적습니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div><div class="el"><strong>사이트에 겁니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 본문이 비면 걸 수 없습니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>LEGAL-001</code> 서비스 이용약관</td>
+  <td class="memo">확장 검토 — 개정 이력<br>- 약관은 고치는 것이 아니라 개정하는 것입니다.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>설정</td>
+  <td><strong>개인정보 처리방침</strong><span class="route"><code>LEGAL-004</code><br><code>/settings/privacy</code></span></td>
+  <td class="flow"><ol><li>본문</li><li>공개</li><li>확인 창</li></ol></td>
+  <td class="memo">사이트 하단의 개인정보 처리방침 링크가 여는 본문을 작성하고 게시하는 화면이다. 작성과 게시를 분리하여 관리한다.</td>
+  <td class="spec"><div class="el"><strong>개인정보 처리방침 (필수)</strong><br><span class="type">- Type : TEXTAREA</span><br>- 서버가 실제로 하는 일과 맞춰 적습니다</div><div class="el"><strong>공개</strong><br><span class="type">- Type : SWITCH</span><br>- 사이트에 걸지 초안으로 둘지</div><div class="el"><strong>저장</strong><br><span class="type">- Type : BTN</span><br>- 누르면 공개 여부에 맞는 확인 창을 엽니다<br>- 성공 시 건 것인지 초안인지 토스트에 갈라 적습니다<br><span class="guard">- 예외처리 : 본문이 비어 있으면 걸 수 없다고 토스트에 적습니다</span></div><div class="el"><strong>본문 적습니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div><div class="el"><strong>사이트에 겁니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 본문이 비면 걸 수 없습니다.</span></div></td>
+  <td class="memo"><strong class="yes">O</strong><br><code>LEGAL-002</code> 개인정보 처리방침</td>
+  <td class="memo">확장 검토 — 개정 이력.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>설정</td>
+  <td><strong>국문 · 영문</strong><span class="route"><code>SETTING-003</code><br><code>/settings/locales</code></span></td>
+  <td class="flow"><ol><li>문구 목록</li><li>고치는 창</li><li>확인 창</li></ol></td>
+  <td class="memo">사이트 문구를 국문과 영문 한 쌍으로 관리하는 화면이다. 한쪽만 작성된 항목을 식별할 수 있도록 쌍 단위로 제시한다.</td>
+  <td class="spec"><div class="el"><strong>국문 (필수)</strong><br><span class="type">- Type : INPUT</span><br>- 사이트의 원문<br><span class="guard">- 예외처리 : 국문이 비면 저장을 막습니다.</span></div><div class="el"><strong>영문</strong><br><span class="type">- Type : INPUT</span><br>- 비워 두면 국문으로 대신 보여 줍니다</div><div class="el"><strong>저장</strong><br><span class="type">- Type : BTN</span><br>- 누르면 국문이 찼는지 보고 확인 창을 엽니다<br>- 성공 시 토스트에 영문이 아직 없는지까지 함께 적습니다<br><span class="guard">- 예외처리 : 저장하지 못했다고 토스트에 적습니다</span></div><div class="el"><strong>짝 목록에서 아직 안 된 것 찾습니다</strong><br><span class="type">- Type : ELEMENT</span><br>- 정의 필요</div><div class="el"><strong>줄을 눌러 창에서 고칩니다</strong><br><span class="type">- Type : BTN</span><br>- 입력값을 검증한 뒤 기존 항목을 덮어씁니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- 국문은 지울 수 없습니다<br>- 영문이 비면 원문으로 대신하지만 국문이 비면 사이트의 그 자리가 통째로 사라집니다.</span></div></td>
+  <td class="memo"><span class="none">–</span><br>내부 관리 전용</td>
+  <td class="memo">확장 검토 — 영문이 빠진 자리를 한 번에 훑는 거르개.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr><tr class="head">
+  <td class="d1">관리자</td>
+  <td>시스템</td>
+  <td><strong>처리 결과</strong><span class="route"><code>ADMIN-002</code><br><code>/result</code></span></td>
+  <td class="flow"><ol><li>결과</li><li>처리 번호</li></ol></td>
+  <td class="memo">등록 · 수정 · 삭제 등 처리 결과를 알리고 다음 경로를 제공하는 공통 화면이다. 처리 결과를 개별 화면마다 다르게 표시하지 않고 한 곳에서 처리한다.</td>
+  <td class="spec"><div class="el"><strong>돌아가기</strong><br><span class="type">- Type : BTN</span><br>- 누르면 <code>kind</code> 에 맞는 목록으로 갑니다</div><div class="el"><strong>홈으로</strong><br><span class="type">- Type : BTN</span><br>- 누르면 대시보드로 갑니다</div><div class="el"><strong>결과 읽습니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>처리 번호 확인합니다</strong><br><span class="type">- Type : TEXT</span><br>- 해당 값을 화면에 표시합니다</div><div class="el"><strong>돌아갈 곳 고릅니다</strong><br><span class="type">- Type : FILTER</span><br>- 선택한 조건만 남기도록 목록을 다시 거릅니다</div><div class="el"><strong>화면 공통 예외</strong><br><span class="guard">- <code>state=failed</code> 면 실패 문구와 붉은 표시로 그립니다.</span></div></td>
+  <td class="memo"><span class="none">–</span><br>내부 관리 전용</td>
+  <td class="memo">확장 검토 — 처리 이력으로 가는 길.<br><strong>저장은 2단계에서 서버로 대체된다.</strong></td>
+</tr></tbody>
+</table>
+
+
+</div>
+</body>
+</html>
