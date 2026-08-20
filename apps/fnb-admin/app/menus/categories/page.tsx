@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 export default function FnbCategoryListPage() {
   return (
     <FnbShell sectionId="register" trail={['등록', '메뉴', '묶음']} activeChildId="register-menu">
-      <PageHeading title="메뉴 묶음" description="메뉴판이 이 순서대로 세로로 이어 붙습니다." />
+      <PageHeading title="메뉴 카테고리" description="고객 사이트 메뉴 목록이 이 순서대로 표시됩니다." />
 
       <Panel
         title="먹는 순서"

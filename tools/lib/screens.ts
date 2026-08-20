@@ -182,7 +182,7 @@ export const makeImpact = (
 ): ((admin: Screen) => { screen: Screen; via: string }[]) => {
   const clients = screens.filter((one) => one.app === 'client');
 
-  /** `등록 > 메뉴 (목록 · 등록 · 상세)` · `등록 > 메뉴 > 메뉴 묶음` — 둘 다 `등록 > 메뉴` 로 줄인다. */
+  /** `등록 > 메뉴 (목록 · 등록 · 상세)` · `등록 > 메뉴 > 메뉴 카테고리` — 둘 다 `등록 > 메뉴` 로 줄인다. */
   const hrefOf = (binding: string): string | undefined => {
     const clean = binding.replace(/\s*[(（].*$/, '').trim();
     const parts = clean.split('>').map((one) => one.trim());

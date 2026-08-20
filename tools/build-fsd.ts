@@ -306,17 +306,17 @@ export const buildFsd = (p: DocProject): string => {
   <table>
     <thead><tr><th style="width:110px">구분</th><th style="width:90px">화면 수</th><th>범위</th></tr></thead>
     <tbody>
-      ${cells('고객 사이트', String(p.clientScreens.length), '브랜드 · 메뉴 · 인테리어 · 마케팅 · 매장안내 · 창업안내 · 고객센터 · 법적 고지. 창업 상담 신청 한 곳을 제외하면 모두 읽기 전용입니다.')}
-      ${cells('관리자', String(p.adminScreens.length), '대시보드 · 등록 · 창업 · 고객센터 · 배너 · 설정. 목록 · 상세 · 등록 세 꼴이 반복됩니다.')}
+      ${cells('고객 사이트', String(p.clientScreens.length), '브랜드 · 메뉴 · 인테리어 · 마케팅 · 매장안내 · 창업안내 · 고객센터 · 법적 고지. 가맹 상담 신청을 제외한 전 화면은 조회 전용입니다.')}
+      ${cells('관리자', String(p.adminScreens.length), '대시보드 · 등록 · 창업 · 고객센터 · 배너 · 설정. 목록 · 상세 · 등록 3개 유형의 화면으로 구성됩니다.')}
       ${cells('Back-End', '–', '<strong>2단계 구축 대상.</strong> 필요한 연산 · 권한 · 항목 · 검증은 본 문서 8장에, 데이터 보존 · 파기 정책은 「비기능 명세서」에 정의되어 있습니다.')}
     </tbody>
   </table>
 
   <h2>2. 기능 명세</h2>
   <p class="lead">
-    한 줄이 화면 하나입니다. <strong>세부 사항</strong>은 여섯 갈래로 고정하여, 화면을 세로로 훑으며
-    빠진 것을 찾을 수 있도록 하였습니다. <strong>개발 구분</strong>의 어드민은 해당 화면의 값을
-    관리자에서 관리하는지를 뜻하며, 디자인 · 개발은 1단계 수행 범위입니다.
+    1개 행이 1개 화면에 해당합니다. <strong>세부 사항</strong>은 6개 항목으로 고정하여 화면 간
+    비교와 누락 확인이 가능하도록 구성하였습니다. <strong>개발 구분</strong>의 어드민은 해당 화면의
+    데이터를 관리자에서 관리하는지 여부를 의미하며, 디자인 · 개발은 1단계 수행 범위입니다.
   </p>
   <table class="sheet">
     <!--
@@ -344,14 +344,14 @@ export const buildFsd = (p: DocProject): string => {
 
   <h2>3. 공통 기능</h2>
   <p class="lead">
-    화면을 가리지 않고 전 화면에 걸리는 제작 기준입니다. 성능 · 반응형 · 접근성 · 보안 등
-    <strong>비기능 요건 전체는 별도 문서 「비기능 명세서」</strong>에 있으며, 여기에는 화면 제작에
-    직접 걸리는 것만 옮겨 둡니다.
+    전 화면에 공통으로 적용되는 구현 기준입니다. 성능 · 반응형 · 접근성 · 보안 등
+    <strong>비기능 요건 전체는 「비기능 명세서」</strong>에 정의되어 있으며, 본 장에는 화면 구현에
+    직접 적용되는 항목만 기재합니다.
   </p>
   ${note(p.commonNonFunctional)}
 
   <h2>4. 상태값 정의</h2>
-  <p class="lead">노출 · 고정 · 판매 여부처럼 값에 따라 화면 처리가 갈리는 항목을 모았습니다.</p>
+  <p class="lead">노출 · 상단 고정 · 판매 여부 등 값에 따라 화면 처리가 달라지는 항목입니다.</p>
   ${
     stateRows === ''
       ? '<p class="none">상태값을 가진 항목이 명세에 없습니다.</p>'
@@ -362,14 +362,14 @@ export const buildFsd = (p: DocProject): string => {
   }
 
   <h2>5. 데이터 변경 영향도</h2>
-  <p class="lead">관리자에서 값을 고쳤을 때 달라지는 고객 화면입니다. 고객 화면이 적어 둔 값의 출처를 뒤집어 만들었습니다.</p>
+  <p class="lead">관리자에서 데이터를 변경할 때 영향을 받는 고객 화면입니다. 각 고객 화면에 정의된 데이터 출처를 기준으로 작성하였습니다.</p>
   <table>
     <thead><tr>${NO}<th style="width:190px">변경 대상 (관리자)</th><th style="width:190px">영향 기능 (고객 사이트)</th><th>연결된 값</th></tr></thead>
     <tbody>${numbered(impactRows)}</tbody>
   </table>
 
   <h2>6. 예외 처리 기준</h2>
-  <p class="lead">화면을 가리지 않고 같은 방식으로 처리합니다. 화면마다 되풀이해 적으면 ${p.screens.length}벌이 되고, 한 곳만 고쳐집니다.</p>
+  <p class="lead">전 화면에 동일한 방식으로 적용합니다. 화면별로 개별 정의할 경우 기준이 분산되어 일부만 갱신되는 문제가 발생합니다.</p>
   <table>
     <thead><tr>${NO}<th style="width:100px">구분</th><th style="width:230px">상황</th><th>시스템 처리 · 화면 표시</th></tr></thead>
     <tbody>${numbered(commonExceptionRows)}</tbody>
@@ -377,8 +377,9 @@ export const buildFsd = (p: DocProject): string => {
 
   <h2>7. QA 검수 체크리스트</h2>
   <p class="lead">
-    검수 항목은 <strong>화면별 세부 사항</strong>에 각각 있습니다. 아래는 화면마다 몇 항목인지를 모은
-    것으로, 전체 <strong>${qaTotal}항목</strong>입니다. 기능 ID 를 누르면 해당 화면의 검수 기준으로 갑니다.
+    검수 항목의 상세 내용은 <strong>2장 기능 명세</strong>의 화면별 세부 사항에 있습니다. 아래는 화면별
+    검수 항목 수를 집계한 것으로 전체 <strong>${qaTotal}항목</strong>입니다. 화면 경로를 선택하면 해당
+    화면의 명세 행으로 이동합니다.
   </p>
   <table>
     <thead><tr>${NO}<th style="width:88px">기능 ID</th><th style="width:150px">화면</th><th>화면 경로</th><th style="width:70px">검수 항목</th></tr></thead>
