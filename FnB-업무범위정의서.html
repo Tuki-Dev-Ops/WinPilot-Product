@@ -68,13 +68,6 @@
   td.memo ul { margin: 0; padding-left: 15px; }
   tbody tr.head > td { border-top: 1.4px solid #9aa1ad; }
 
-  .common { margin-bottom: 16px; border: 1px solid var(--line); }
-  .common th { background: var(--band); text-align: center; font-weight: 700; font-size: 10pt; padding: 5px; }
-  .common td { padding: 10px 14px; }
-  .common ol { margin: 0; padding-left: 18px; color: var(--muted); }
-  .common li { margin: 2px 0; }
-  .common li strong { color: var(--ink); }
-
   code {
     font-family: "Consolas", "D2Coding", ui-monospace, monospace;
     font-size: 0.92em;
@@ -103,24 +96,6 @@
   <h1>어쭈구리왕문어 <span class="dim">업무 범위 정의서</span></h1>
   <div class="date">2026년 8월 20일</div>
 </div>
-
-<table class="common">
-  <tr><th>공통사항</th></tr>
-  <tr><td>
-    <ol>
-      <li>이 문서는 <strong>계약 · 범위 · 책임 · 제외 범위</strong>를 정하는 문서입니다. 화면 안에서 무슨 일이 벌어지는가는 <strong>별도 문서 「기능 명세서」</strong>에 있습니다.</li>
-      <li>두 문서는 <strong>같은 기능 ID</strong> 를 씁니다. 회신 시 <code>MENU-002</code> 처럼 ID 로 지목해 주십시오. 화면 이름으로 부르면 목록 · 상세 · 등록 중 어느 것인지 갈리지 않습니다.</li>
-      <li><strong>대상</strong> — F&amp;B 고객 사이트(<code>apps/fnb-client-a</code>)와 관리자(<code>apps/fnb-admin</code>) 한 쌍입니다.</li>
-      <li><strong>범위 기준</strong> — 화면 47개(고객 사이트 14 · 관리자 33) · 세부 기능 170건입니다.</li>
-      <li>본 문서의 화면 목록은 <strong>현재 구현된 것을 읽어 만든 값</strong>입니다. 예정이 아니라 저장소의 화면 등록부에서 기계로 뽑았습니다.</li>
-      <li><strong>Back-End 는 정의만 제공하고 구현하지 않습니다.</strong> 필요한 연산 · 권한 · 항목 · 검증은 「기능 명세서」에, 보존 · 삭제 · 소멸 기준은 이 문서 5장 「데이터 정책」에 있습니다.</li>
-      <li>5장에서 <strong>권고</strong>라고 적은 기간과 값은 <strong>확정된 것이 아닙니다.</strong> 근거로 삼은 법령을 함께 적었으나 실제 값은 발주처가 정합니다.</li>
-      <li><strong>BX(로고 · BI · 패키지 · 촬영 · SNS 콘텐츠)는 제공하지 않습니다.</strong> 4장 「제외 범위」를 확인해 주십시오.</li>
-      <li>메뉴 사진과 문구 등 <strong>콘텐츠는 발주처가 제공</strong>합니다. 본 과업은 받은 값을 화면에 세우는 일까지입니다.</li>
-      <li>범위를 더하거나 빼는 절차는 6장 「변경 관리 기준」에 있습니다.</li>
-    </ol>
-  </td></tr>
-</table>
 
 <h2>1. 개 요</h2>
 
@@ -157,7 +132,6 @@
   <tbody>
     <tr><td>고객 사이트</td><td>14</td><td>43</td><td>브랜드 · 메뉴 · 인테리어 · 마케팅 · 매장안내 · 창업안내 · 고객센터 · 법적 고지. 창업 상담 신청 한 곳을 제외하면 모두 읽기 전용입니다.</td></tr>
     <tr><td>관리자</td><td>33</td><td>127</td><td>대시보드 · 등록 · 창업 · 고객센터 · 배너 · 설정. 목록 · 상세 · 등록 세 꼴이 반복됩니다.</td></tr>
-    <tr><td>Back-End</td><td><span class="none">–</span></td><td><span class="none">–</span></td><td><strong>정의만 포함하고 구현은 포함하지 않습니다.</strong> 3장 「책임 범위」와 5장 「데이터 정책」을 확인해 주십시오.</td></tr>
   </tbody>
 </table>
 
