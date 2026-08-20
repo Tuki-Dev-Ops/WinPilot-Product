@@ -37,3 +37,20 @@ export const note = (
 /** 값이 없는 칸. 빈칸으로 두면 적기를 잊은 것인지 없는 것인지 구분되지 않는다. */
 export const NONE = '<span class="none">해당 없음</span>';
 export const TBD = '<span class="tbd">정의 필요</span>';
+
+/**
+ * 세부 기능 명칭을 번호와 함께 편다.
+ *
+ * 화면 목록에 기능 **수**만 적으면 `4` 가 무엇인지 알 수 없어, 확인하려면 매번 화면을 열어야
+ * 한다. 범위를 정하는 자리에서 그 넷이 무엇인지가 곧 범위다.
+ *
+ * 번호는 기능 명세서 3절의 `기능 01 · 02` 와 같게 매긴다. 두 문서를 나란히 놓고
+ * `MENU-002 의 기능 03` 으로 짚을 수 있어야 한다.
+ *
+ * 말투는 원문 그대로 둔다. 이 칸은 문장이 아니라 **이름**이라, `묶음 고르기` 를
+ * `묶음 고릅니다` 로 바꾸면 목록이 아니라 설명이 된다.
+ */
+export const namedList = (items: readonly string[]): string =>
+  items.length === 0
+    ? NONE
+    : `<ol class="fn">${items.map((one) => `<li>${rich(one)}</li>`).join('')}</ol>`;

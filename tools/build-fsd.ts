@@ -9,7 +9,7 @@ import {
   type Screen,
 } from './lib/fnb-model';
 import { condition, handlingOf, kindIn, sectionOf, SECTION_ORDER } from './lib/action-kind';
-import { esc, note, NONE, rich, TBD } from './lib/html';
+import { esc, namedList, note, NONE, rich, TBD } from './lib/html';
 import { formal, formalAction } from './lib/polite';
 
 /**
@@ -294,10 +294,9 @@ const listRows = SCREENS.map((one) =>
   cells(
     `<code>${esc(one.featureId)}</code>`,
     esc(one.name),
-    esc(one.appLabel),
     esc(one.menuPath),
     `<code>${esc(one.route)}</code>`,
-    String(one.spec.actions.length),
+    namedList(one.spec.actions),
   ),
 ).join('');
 
@@ -458,6 +457,11 @@ const html = `<!doctype html>
   .none { color: var(--faint); }
   .tbd { color: var(--warn); font-weight: 600; }
 
+  /* 세부 기능 목록 — 번호가 기능 명세서 3절의 「기능 01 · 02」 와 같은 자리를 가리킨다. */
+  ol.fn { margin: 0; padding-left: 20px; }
+  ol.fn li { margin: 1px 0; }
+  ol.fn li::marker { color: var(--faint); font-variant-numeric: tabular-nums; font-size: 8.5pt; }
+
   ul { margin: 3px 0; padding-left: 17px; }
   li { margin: 1px 0; }
 
@@ -546,7 +550,7 @@ const html = `<!doctype html>
 
 <h2>3. 기능 목록</h2>
 <table>
-  <thead><tr><th style="width:88px">기능 ID</th><th style="width:104px">기능명</th><th style="width:74px">서비스</th><th>메뉴 경로</th><th style="width:130px">화면 경로</th><th style="width:50px">기능 수</th></tr></thead>
+  <thead><tr><th style="width:82px">기능 ID</th><th style="width:92px">화면명</th><th style="width:146px">메뉴 경로</th><th style="width:114px">화면 경로</th><th>세부 기능</th></tr></thead>
   <tbody>${listRows}</tbody>
 </table>
 

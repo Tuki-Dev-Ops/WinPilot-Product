@@ -1,7 +1,7 @@
 import { writeFileSync } from 'node:fs';
 import { FNB_BRAND } from '@winpilot/store';
 import { ADMIN_SCREENS, CLIENT_SCREENS, SCREENS } from './lib/fnb-model';
-import { esc, note, rich } from './lib/html';
+import { esc, namedList, note, rich } from './lib/html';
 
 /**
  * F&B 두 앱의 **업무 범위 정의서**를 만든다 — 계약 · 범위 · 책임 · 제외.
@@ -56,10 +56,9 @@ const scopeRows = SCREENS.map((one) =>
   cells(
     `<code>${esc(one.featureId)}</code>`,
     esc(one.name),
-    esc(one.appLabel),
     esc(one.menuPath),
     `<code>${esc(one.route)}</code>`,
-    String(one.spec.actions.length),
+    namedList(one.spec.actions),
   ),
 ).join('');
 
@@ -347,6 +346,11 @@ const html = `<!doctype html>
   th code, td code { background: transparent; }
   .none { color: var(--faint); }
 
+  /* 세부 기능 목록 — 번호가 기능 명세서 3절의 「기능 01 · 02」 와 같은 자리를 가리킨다. */
+  ol.fn { margin: 0; padding-left: 20px; }
+  ol.fn li { margin: 1px 0; }
+  ol.fn li::marker { color: var(--faint); font-variant-numeric: tabular-nums; font-size: 8.5pt; }
+
   ul { margin: 4px 0; padding-left: 17px; }
   li { margin: 2px 0; }
 
@@ -420,7 +424,7 @@ const html = `<!doctype html>
 
 <h3>2.1 화면 목록</h3>
 <table>
-  <thead><tr><th style="width:88px">기능 ID</th><th style="width:110px">화면명</th><th style="width:74px">서비스</th><th>메뉴 경로</th><th style="width:130px">화면 경로</th><th style="width:52px">기능 수</th></tr></thead>
+  <thead><tr><th style="width:82px">기능 ID</th><th style="width:92px">화면명</th><th style="width:146px">메뉴 경로</th><th style="width:114px">화면 경로</th><th>세부 기능</th></tr></thead>
   <tbody>${scopeRows}</tbody>
 </table>
 
