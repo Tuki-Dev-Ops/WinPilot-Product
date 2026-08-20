@@ -249,19 +249,6 @@ const CHANGE: [string, string, string][] = [
 ];
 
 const body = `
-<table class="kit">
-  <tr><th>문서 구성</th></tr>
-  <tr><td>
-    <ol>
-      <li>이 문서는 <strong>계약 · 범위 · 책임 · 제외 범위</strong>를 정한다. 화면 안에서 무슨 일이 벌어지는가는 다른 문서에 있다.</li>
-      <li>본 과업의 문서는 네 벌이다 — <strong>요구사항 정의서</strong>(무엇이 필요한가) · <strong>과업범위 정의서</strong>(누가 어디까지 맡는가, 본 문서) · <strong>기능 명세서</strong>(무엇을 하면 무엇이 일어나는가) · <strong>비기능 명세서</strong>(얼마나 잘 도는가).</li>
-      <li>네 문서는 <strong>같은 기능 ID</strong> 를 쓴다. 회신 시 <code>MENU-002</code> 처럼 ID 로 지목해 주십시오.</li>
-      <li><strong>대상</strong> — F&amp;B 고객 서비스(<code>apps/fnb-client-a</code>)와 관리자 서비스(<code>apps/fnb-admin</code>) 한 쌍.</li>
-      <li>본 문서의 화면 목록은 <strong>현재 구현된 것을 읽어 만든 값</strong>이다. 예정이 아니라 저장소의 화면 등록부에서 기계로 뽑았다.</li>
-    </ol>
-  </td></tr>
-</table>
-
 <h2>1. 과 업 개 요</h2>
 
 <h3>1.1 과업 목적</h3>

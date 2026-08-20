@@ -130,19 +130,6 @@ const traceRows = [...CLIENT_REQ, ...ADMIN_REQ]
   .join('');
 
 const body = `
-<table class="kit">
-  <tr><th>문서 사용 안내</th></tr>
-  <tr><td>
-    <ol>
-      <li>이 문서는 <strong>발주처가 검토하고 확정하는 요구사항 목록</strong>입니다. 구현 방식이 아니라 <strong>무엇이 필요한가</strong>를 적었습니다.</li>
-      <li>본 과업의 문서는 네 벌입니다 — <strong>요구사항 정의서</strong>(무엇이 필요한가) · <strong>과업범위 정의서</strong>(누가 어디까지 맡는가) · <strong>기능 명세서</strong>(무엇을 하면 무엇이 일어나는가) · <strong>비기능 명세서</strong>(얼마나 잘 도는가).</li>
-      <li>요구 ID 로 지목해 회신해 주십시오 — <code>REQ-C-02</code>. 기능 ID(<code>MENU-001</code>)와 다른 체계이며, 둘의 연결은 6장 추적표에 있습니다.</li>
-      <li><strong>5장 「외부 서비스 및 준비 사항」은 발주처가 준비해야 하는 것</strong>입니다. 준비되지 않으면 해당 기능이 동작하지 않으므로 착수 시점에 확인이 필요합니다.</li>
-      <li>본 문서의 요구사항은 <strong>현재 1단계(Front-End) 구현 기준</strong>으로 정리한 것입니다. 추가 요구는 과업범위 정의서의 변경 관리 기준에 따라 처리합니다.</li>
-    </ol>
-  </td></tr>
-</table>
-
 <h2>1. 사 업 배 경 과 목 표</h2>
 
 <h3>1.1 배경</h3>

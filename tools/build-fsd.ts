@@ -490,22 +490,6 @@ ${plain(th('기능', 116) + th('Method', 58) + th('Endpoint 예시', 150) + th('
 const lifecycleRows = STATES.map((one) => [one.domain, one.name, one.values, one.actor, one.effect, one.flow]);
 
 const body = `
-<table class="kit">
-  <tr><th>문서 사용 안내</th></tr>
-  <tr><td>
-    <ol>
-      <li>이 문서는 <strong>개발 · QA · 운영이 구현과 검수에 쓰는 작업 문서</strong>입니다. 계약 · 책임 · 제외 범위는 별도 문서 「과업범위 정의서」에 있습니다.</li>
-      <li>화면 ${SCREENS.length}개(고객 사이트 ${CLIENT_SCREENS.length} · 관리자 ${ADMIN_SCREENS.length})를 각각 열두 절로 적었습니다. 내용이 없는 절은 세우지 않았습니다.</li>
-      <li><strong>「시스템 처리」와 「결과」의 근거는 둘뿐입니다.</strong> 화면 명세에 단추 정의가 있으면 그 값을 그대로 옮겼고, 없으면 동작 유형에서 끌어낸 표준 처리를 적었습니다. <strong>끌어낸 것은 확정이 아니라 검토 대상</strong>입니다.</li>
-      <li><span class="tbd">정의 필요</span> 로 표시된 칸은 <strong>현재 문서에 근거가 없는 자리</strong>입니다. 채워 넣지 않았습니다.</li>
-      <li><strong>이 문서는 1단계(Front-End) 구현 기준입니다.</strong> 저장 · 인증 · 발송이 필요한 기능은 화면 흐름까지 구현되어 있으며, 서버 연동은 2단계 대상입니다. 각 절에 그 사실을 적었으니 이미 연동된 것처럼 읽지 마십시오.</li>
-      <li>화면을 가리지 않는 예외는 <strong>9장 「예외 처리 기준」</strong>에 한 번만 적었습니다. 화면별 절에는 그 화면에만 있는 것을 적었습니다.</li>
-      <li>기능 ID 는 업무 범위 정의서와 같은 값입니다. 회신 시 <code>MENU-002</code> 처럼 ID 로 지목해 주십시오.</li>
-      <li>이 문서는 저장소의 화면 등록부 · IA 묶음 · 화면 명세에서 생성합니다(<code>pnpm fsd:build</code>). 문서를 직접 고치면 다음 생성 때 지워집니다.</li>
-    </ol>
-  </td></tr>
-</table>
-
 <h2>1. 서비스 개요</h2>
 <p>
   본 서비스는 <strong>고객 사이트</strong>와 <strong>관리자</strong> 한 쌍으로

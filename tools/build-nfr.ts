@@ -253,19 +253,6 @@ const CHECKS: [string, string, string][] = [
 ];
 
 const body = `
-<table class="kit">
-  <tr><th>문서 사용 안내</th></tr>
-  <tr><td>
-    <ol>
-      <li>이 문서는 <strong>얼마나 잘 도는가</strong>를 정의합니다. 무엇을 하는가는 「기능 명세서」에 있습니다.</li>
-      <li>모든 요건에 <strong>검증 방법</strong>을 함께 적었습니다. 재는 방법이 없는 요건은 검수 자리에서 통과와 미통과를 가를 수 없어, 인수가 결국 인상으로 판정됩니다.</li>
-      <li>기준값은 <strong>실제로 재어 정한 것만</strong> 적었습니다. <span class="tbd">발주처 확인이 필요한 항목은 그렇게 표시</span>했으며, 임의로 채우지 않았습니다.</li>
-      <li><strong>2단계 구현 대상</strong>으로 표기한 항목은 서버 구축 시점에 적용됩니다. 1단계 인수 시점의 판정 대상이 아닙니다.</li>
-      <li>본 과업의 문서는 네 벌입니다 — 요구사항 정의서 · 과업범위 정의서 · 기능 명세서 · <strong>비기능 명세서</strong>.</li>
-    </ol>
-  </td></tr>
-</table>
-
 <h2>1. 적 용 범 위</h2>
 <p>
   본 문서는 F&amp;B 고객 서비스와 관리자 서비스 <strong>전 화면 ${SCREENS.length}개</strong>에 적용된다.

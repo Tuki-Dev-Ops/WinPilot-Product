@@ -121,13 +121,6 @@ const CSS = `
   .none { color: var(--faint); }
   .yes { color: var(--accent); font-weight: 700; }
 
-  .kit { margin-bottom: 16px; border: 1px solid var(--line); }
-  .kit th { background: var(--band); text-align: center; font-weight: 700; font-size: 10pt; padding: 5px; }
-  .kit td { padding: 10px 14px; }
-  .kit ol { margin: 0; padding-left: 18px; color: var(--muted); }
-  .kit li { margin: 2px 0; }
-  .kit li strong { color: var(--ink); }
-
   @media print { body { padding: 0; } }
 `;
 
