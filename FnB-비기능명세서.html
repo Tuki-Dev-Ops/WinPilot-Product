@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>어쭈구리왕문어 비기능 명세서</title>
+<style>
+  @page { size: A4 landscape; margin: 12mm 14mm 14mm; }
+
+  :root {
+    --ink: #1a1c20;
+    --muted: #5a6070;
+    --faint: #939aa6;
+    --line: #c9ced7;
+    --band: #eceef2;
+    --head: #f5f6f8;
+    --d1: #f2f4f7;
+    --accent: #1b5fc4;
+    --warn: #b8792a;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 26px 22px 56px;
+    background: #fff;
+    color: var(--ink);
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", system-ui, sans-serif;
+    font-size: 9pt;
+    line-height: 1.6;
+    /* 한글은 낱말 한가운데서 끊긴다. 띄어쓰기 단위로만 끊게 한다. */
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  .sheet { max-width: 269mm; margin: 0 auto; }
+
+  .title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+  h1 { font-size: 17pt; margin: 0; letter-spacing: -0.02em; }
+  h1 .dim { color: var(--faint); font-weight: 600; }
+  .stamp { color: var(--muted); font-size: 9pt; white-space: nowrap; text-align: right; }
+  .stamp em { display: block; font-style: italic; }
+
+  h2 {
+    background: var(--band);
+    border: 1px solid var(--line);
+    text-align: center;
+    font-size: 11pt;
+    letter-spacing: 0.22em;
+    padding: 6px;
+    margin: 26px 0 10px;
+    break-after: avoid;
+  }
+  h3 { font-size: 10pt; margin: 18px 0 6px; color: var(--accent); break-after: avoid; }
+  h4 { font-size: 9.5pt; margin: 14px 0 4px; break-after: avoid; }
+  h5 { font-size: 9pt; margin: 9px 0 3px; color: var(--muted); break-after: avoid; }
+  p { margin: 6px 0; }
+  .lead { color: var(--muted); margin: 0 0 8px; }
+  .from { color: var(--faint); font-size: 8.5pt; margin: 0 0 3px; }
+  .tbd { color: var(--warn); }
+
+  table { width: 100%; border-collapse: collapse; margin: 4px 0 12px; }
+  th, td { border: 1px solid var(--line); padding: 5px 7px; vertical-align: top; text-align: left; }
+  thead th { background: var(--head); font-weight: 600; text-align: center; white-space: nowrap; }
+  tbody tr { break-inside: avoid; }
+
+  td.d1 { text-align: center; vertical-align: middle; background: var(--d1); font-weight: 700; }
+  td.memo { color: var(--muted); }
+  tbody tr.head > td { border-top: 1.4px solid #9aa1ad; }
+
+  table.right td { text-align: center; }
+  table.right td:first-child { text-align: left; font-weight: 600; color: var(--ink); }
+
+  /* 화면 경로는 메뉴 경로 아래에 작게 붙인다. 한 칸에 둘이지만 읽는 차례가 갈린다. */
+  .route { display: block; margin-top: 2px; color: var(--faint); font-size: 8pt; word-break: break-all; }
+
+  ul { margin: 3px 0; padding-left: 16px; }
+  li { margin: 1.5px 0; }
+  /* 세부 기능 목록 — 번호가 기능 명세서 3절의 「기능 01 · 02」 와 같은 자리를 가리킨다. */
+  ol.fn { margin: 0; padding-left: 19px; }
+  ol.fn li { margin: 1px 0; }
+  ol.fn li::marker { color: var(--faint); font-variant-numeric: tabular-nums; font-size: 8.5pt; }
+
+  ul.check { list-style: none; padding-left: 2px; }
+  ul.check li { position: relative; padding-left: 17px; margin: 2px 0; break-inside: avoid; }
+  ul.check li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 3.5px;
+    width: 9px;
+    height: 9px;
+    border: 1px solid var(--muted);
+    border-radius: 2px;
+  }
+
+  code {
+    font-family: "Consolas", "D2Coding", ui-monospace, monospace;
+    font-size: 0.92em;
+    background: #f1f3f6;
+    padding: 0.5px 3px;
+    border-radius: 3px;
+  }
+  th code, td code, h3 code { background: transparent; padding: 0; }
+  a { color: var(--accent); text-decoration: none; }
+  .none { color: var(--faint); }
+  .yes { color: var(--accent); font-weight: 700; }
+
+  .kit { margin-bottom: 16px; border: 1px solid var(--line); }
+  .kit th { background: var(--band); text-align: center; font-weight: 700; font-size: 10pt; padding: 5px; }
+  .kit td { padding: 10px 14px; }
+  .kit ol { margin: 0; padding-left: 18px; color: var(--muted); }
+  .kit li { margin: 2px 0; }
+  .kit li strong { color: var(--ink); }
+
+  @media print { body { padding: 0; } }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<div class="title-row">
+  <h1>어쭈구리왕문어 <span class="dim">비기능 명세서</span></h1>
+  <div class="stamp">
+    비기능 요건 · 4/4
+    <em>2026년 8월 20일</em>
+  </div>
+</div>
+
+
+<table class="kit">
+  <tr><th>문서 사용 안내</th></tr>
+  <tr><td>
+    <ol>
+      <li>이 문서는 <strong>얼마나 잘 도는가</strong>를 정의합니다. 무엇을 하는가는 「기능 명세서」에 있습니다.</li>
+      <li>모든 요건에 <strong>검증 방법</strong>을 함께 적었습니다. 재는 방법이 없는 요건은 검수 자리에서 통과와 미통과를 가를 수 없어, 인수가 결국 인상으로 판정됩니다.</li>
+      <li>기준값은 <strong>실제로 재어 정한 것만</strong> 적었습니다. <span class="tbd">발주처 확인이 필요한 항목은 그렇게 표시</span>했으며, 임의로 채우지 않았습니다.</li>
+      <li><strong>2단계 구현 대상</strong>으로 표기한 항목은 서버 구축 시점에 적용됩니다. 1단계 인수 시점의 판정 대상이 아닙니다.</li>
+      <li>본 과업의 문서는 네 벌입니다 — 요구사항 정의서 · 과업범위 정의서 · 기능 명세서 · <strong>비기능 명세서</strong>.</li>
+    </ol>
+  </td></tr>
+</table>
+
+<h2>1. 적 용 범 위</h2>
+<p>
+  본 문서는 F&amp;B 고객 서비스와 관리자 서비스 <strong>전 화면 47개</strong>에 적용된다.
+  화면 하나에만 걸리는 요건은 3장 「화면별 비기능 요건」에 따로 두었다.
+</p>
+<p>
+  1단계(Front-End)에서 판정 가능한 요건과 2단계(Back-End)에서 판정하는 요건을 구분해 표기한다.
+  구분하지 않으면 서버가 없는 상태에서 보안 요건이 미충족으로 잡히고, 실제로는 아직 만들 차례가
+  아닌 것을 결함으로 다루게 된다.
+</p>
+
+<h2>2. 공 통 비 기 능 요 건</h2>
+<p class="lead">
+  주제별로 정리한다. 요건마다 <strong>기준값</strong>과 <strong>검증 방법</strong>을 함께 적었으며,
+  저장소에 검사 도구가 있는 항목은 그 도구를 적었다.
+</p>
+<table class="">
+  <thead><tr><th style="width:74px">구분</th><th>요건</th><th>기준</th><th style="width:260px">검증 방법</th></tr></thead>
+  <tbody><tr class="head"><td class="d1" rowspan="3">성능</td><td class="memo">화면 하나가 내려받는 자원 크기를 예산 안으로 관리한다.</td><td class="memo">JavaScript 700KB · CSS 120KB · 이미지 400KB (전송 기준). 문서 화면은 JavaScript 1600KB 를 적용한다.</td><td class="memo">저장소의 <code>weight:check</code> 가 전 화면을 실제로 열어 전송 바이트를 잰다.</td></tr><tr><td class="memo">목록 화면은 조회 조건이 바뀔 때 화면 전체를 다시 그리지 않는다.</td><td class="memo">조건 변경 시 목록 영역만 갱신되며, 헤더 · 필터 상태는 유지된다.</td><td class="memo">화면별 검수 기준으로 확인한다.</td></tr><tr><td class="memo">지도는 매장 수와 무관하게 좌표 변환 요청을 발생시키지 않는다.</td><td class="memo">좌표는 가맹점 데이터가 보유한다. 화면에서 주소를 좌표로 변환하지 않는다.</td><td class="memo">네트워크 요청 확인<br>- 지도 SDK 외 외부 호출이 없어야 한다.</td></tr><tr class="head"><td class="d1" rowspan="2">반응형</td><td class="memo">정의된 기준 해상도에서 의도하지 않은 가로 스크롤이 발생하지 않는다.</td><td class="memo">1280 · 1024 · 768 · 390 네 너비. 화면 <strong>47개 × 4</strong> 지점을 모두 검사한다.</td><td class="memo">저장소의 <code>overflow:check</code> 가 자동으로 검사한다.</td></tr><tr><td class="memo">표와 넓은 콘텐츠는 화면 밖으로 넘치지 않고 자체 영역에서 스크롤한다.</td><td class="memo">좁은 너비에서 표는 가로 스크롤 영역을 가지며, 페이지 본문은 가로로 움직이지 않는다.</td><td class="memo"><code>overflow:check</code> · 육안 확인.</td></tr><tr class="head"><td class="d1" rowspan="4">접근성</td><td class="memo">색만으로 상태를 알리지 않는다.</td><td class="memo">공개 · 비공개 등 상태 표시는 색과 함께 <strong>모양 또는 글자</strong>를 둔다.</td><td class="memo">상태 표시 요소를 흑백으로 두고 구분 가능한지 확인한다.</td></tr><tr><td class="memo">모션 감소를 켠 사용자에게는 자동 전환이 동작하지 않는다.</td><td class="memo">캐러셀 자동 넘김과 흐르는 띠가 멈춘다. 사용자가 직접 조작하는 이동은 유지한다.</td><td class="memo">운영체제의 모션 줄이기 설정을 켜고 확인한다.</td></tr><tr><td class="memo">자동 전환은 사용자 조작 중에 멈춘다.</td><td class="memo">마우스가 올라가거나 포커스가 들어오거나 직접 밀면 자동 넘김이 멈춘다.</td><td class="memo">화면별 검수 기준으로 확인한다.</td></tr><tr><td class="memo">화면 밖으로 벗어난 영역의 자동 전환은 동작하지 않는다.</td><td class="memo">보이지 않는 영역에서 타이머가 돌지 않는다.</td><td class="memo">스크롤 후 동작 확인.</td></tr><tr class="head"><td class="d1" rowspan="3">사용성</td><td class="memo">알림은 한 자리에서만 표시한다.</td><td class="memo">토스트는 화면 하단 정중앙 한 곳에서만 뜬다.</td><td class="memo">전 화면 공통 확인.</td></tr><tr><td class="memo">데이터가 없는 상태를 빈 화면으로 두지 않는다.</td><td class="memo">목록 결과가 0건이면 빈 상태 문구를 세우고, 조건이 걸려 있으면 조건을 지우는 경로를 함께 둔다.</td><td class="memo">「기능 명세서」 9장 예외 처리 기준으로 확인한다.</td></tr><tr><td class="memo">입력 오류는 미입력과 형식 오류를 구분해 안내한다.</td><td class="memo">「형식이 아닙니다」는 빈 칸에 대한 답이 아니다. 항목별로 사유를 구분한다.</td><td class="memo">양식이 있는 화면의 검수 기준으로 확인한다.</td></tr><tr class="head"><td class="d1" rowspan="2">호환성</td><td class="memo">최신 브라우저에서 동작한다.</td><td class="memo">Chrome · Edge · Safari · Firefox 의 <strong>최신 두 개 버전</strong>과 iOS · Android 기본 브라우저.</td><td class="memo">대상 브라우저에서 주요 화면 육안 확인. <strong>지원 범위는 발주처 확인이 필요하다.</strong></td></tr><tr><td class="memo">이미지가 없는 상태에서도 화면 구조가 무너지지 않는다.</td><td class="memo">이미지 미제공 영역은 대체 표기로 자리를 유지한다.</td><td class="memo">이미지 차단 상태로 확인한다.</td></tr><tr class="head"><td class="d1" rowspan="5">보안</td><td class="memo">고객 서비스와 관리자 서비스 모두 HTTPS 로만 제공한다.</td><td class="memo">창업 문의는 개인정보가 오가는 경로다.</td><td class="memo">배포 환경 설정 확인. <strong>2단계 · 배포 시점 적용.</strong></td></tr><tr><td class="memo">관리자 서비스는 인증된 운영자만 접근한다.</td><td class="memo">권한 등급은 <strong>대표 · 운영 · 조회</strong> 세 가지이며, 등급별 연산 범위는 4장에 정리한다.</td><td class="memo"><strong>2단계 구현 대상.</strong> 1단계에서는 화면 흐름까지 구현되어 있다.</td></tr><tr><td class="memo">개인정보가 포함된 데이터는 접근 권한을 분리한다.</td><td class="memo">창업 문의는 메뉴 · 콘텐츠 관리와 다른 권한으로 다룬다. <strong>분리 수준은 발주처 확인이 필요하다.</strong></td><td class="memo"><strong>2단계 구현 대상.</strong></td></tr><tr><td class="memo">연락처는 저장 시 암호화하고 목록에서는 일부를 가린다.</td><td class="memo"><strong>권고 사항이며 적용 여부는 발주처가 정한다.</strong> 목록 화면은 여러 사람이 함께 보는 자리다.</td><td class="memo"><strong>2단계 구현 대상.</strong></td></tr><tr><td class="memo">화면 검증에 의존하지 않는다.</td><td class="memo">「기능 명세서」에서 <strong>서버 검증</strong>으로 표기된 규칙은 API 직접 호출에도 적용되어야 한다.</td><td class="memo"><strong>2단계 완료 기준.</strong> API 를 직접 호출해 확인한다.</td></tr><tr class="head"><td class="d1" rowspan="3">데이터</td><td class="memo">동일한 값을 두 곳에서 관리하지 않는다.</td><td class="memo">고객 서비스와 관리자 서비스는 같은 데이터를 참조한다. 합계 · 건수 · 지역 목록은 저장하지 않고 계산한다.</td><td class="memo">「기능 명세서」의 데이터 변경 영향도로 확인한다.</td></tr><tr><td class="memo">노출 중단과 데이터 삭제를 구분한다.</td><td class="memo">공개 · 노출 상태를 해제해도 데이터는 유지된다. 삭제는 더 이상 사용하지 않는 데이터에 한정한다.</td><td class="memo">상태 변경 후 관리자 목록에 값이 남아 있는지 확인한다.</td></tr><tr><td class="memo">삭제는 사본까지 함께 처리한다.</td><td class="memo">본문뿐 아니라 첨부 · 검색 색인 · 캐시에 남은 사본을 함께 제거한다.</td><td class="memo"><strong>2단계 구현 대상.</strong></td></tr><tr class="head"><td class="d1" rowspan="2">운영</td><td class="memo">변경 이력을 남긴다.</td><td class="memo">등록 · 수정 · 삭제마다 <strong>누가 · 언제 · 무엇을</strong> 바꿨는지 기록한다.</td><td class="memo"><strong>2단계 구현 대상.</strong> 보존 기간은 5장 참조.</td></tr><tr><td class="memo">개인정보 열람 기록을 남긴다.</td><td class="memo">창업 문의를 열어 본 기록을 남긴다. 변경 기록만으로는 누가 들여다봤는지 알 수 없다.</td><td class="memo"><strong>2단계 구현 대상.</strong></td></tr><tr class="head"><td class="d1" rowspan="2">외부 연동</td><td class="memo">지도를 이용할 수 없어도 매장 정보는 조회된다.</td><td class="memo">키 미설정 · 도메인 미등록 · 쿼터 초과 시 지도 영역은 대체 안내를 표시하며, 매장 목록과 검색은 정상 동작한다.</td><td class="memo">키를 비운 상태로 매장 찾기 화면을 확인한다.</td></tr><tr><td class="memo">외부 서비스 사용량을 관리한다.</td><td class="memo">카카오 지도는 개발자 계정당 앱 1개에 무료 쿼터가 부여된다. 사용량은 개발자 콘솔에서 확인한다.</td><td class="memo">「요구사항 정의서」 6.1 참조. 운영 주체는 발주처다.</td></tr><tr class="head"><td class="d1" rowspan="1">문서</td><td class="memo">문서와 코드가 어긋난 상태로 남지 않는다.</td><td class="memo">화면이 등록되었는데 명세가 비어 있거나, 명세가 가리키는 화면이 사라진 상태를 허용하지 않는다.</td><td class="memo"><code>spec:check</code> · <code>sync:check</code> · <code>docs:check</code> · <code>bind:check</code></td></tr></tbody>
+</table>
+
+<h3>2.1 전 화면 공통 제작 기준</h3>
+<p class="lead">화면을 가리지 않고 전 화면 제작에 적용되는 기준이다.</p>
+<ul><li>데스크톱 1440 · 태블릿 768 · 모바일 375 세 너비에서 가로 스크롤이 생기지 않습니다.</li><li>placeholder·option·input value 는 추출되지 않으므로 화면 문구로 쓰지 않는다 (겹친 글자·직접 그린 목록으로 대체).</li><li>차트·아이콘·삽화는 전부 인라인 SVG 입니다. 비트맵은 Figma 에서 벡터로 복원되지 않습니다.</li><li>모션 감소를 켠 사용자에게는 자동 넘김·전환이 돌지 않습니다.</li><li>색만으로 상태를 알리지 않습니다<br>- 모양이나 글자를 함께 둡니다.</li><li>토스트는 화면 하단 정중앙 한 곳에서만 뜹니다.</li></ul>
+
+<h2>3. 화 면 별 비 기 능 요 건</h2>
+<p class="lead">
+  해당 화면에만 걸리는 요건이다. 전 화면에 걸리는 것은 2장에 한 번만 적었으므로 여기서 되풀이하지
+  않는다. 총 <strong>67항목</strong>.
+</p>
+<table class="">
+  <thead><tr><th style="width:88px">기능 ID</th><th style="width:128px">화면</th><th style="width:78px">구분</th><th>요건</th></tr></thead>
+  <tbody><tr><td><code>BRAND-001</code></td><td>브랜드 이야기</td><td>고객 사이트</td><td><ul><li>브랜드명 · 창업 연도 · 매장 수를 글자로 적지 않습니다<br>- 전부 값에서 읽습니다.</li></ul></td></tr><tr><td><code>MENU-001</code></td><td>메뉴판</td><td>고객 사이트</td><td><ul><li>묶음별 개수는 모듈이 처음 불릴 때 한 번만 셉니다<br>- 렌더 안에서 세면 묶음을 바꿀 때마다 메뉴 전체를 다시 훑습니다.</li><li>기둥은 좁은 화면에서 가로로 접힙니다. 세로로 두면 첫 화면이 고르는 줄로 채워집니다.</li><li>매운 정도는 표가 아니라 불꽃 개수로 알립니다<br>- 맵다는 말만으로는 얼마나 매운지가 빠집니다.</li></ul></td></tr><tr><td><code>MENU-002</code></td><td>메뉴 상세</td><td>고객 사이트</td><td><ul><li>알레르기는 문장이 아니라 목록으로 받습니다<br>- 우유 조금 같은 말은 검색도 대조도 되지 않습니다.</li><li>메뉴 카드는 메뉴판 · 상세 · 홈이 한 조각을 함께 씁니다.</li></ul></td></tr><tr><td><code>INTERIOR-001</code></td><td>인테리어</td><td>고객 사이트</td><td><ul><li>굴림 규칙은 홈의 대표 메뉴와 같은 조각을 씁니다<br>- 두 벌이면 한쪽만 고쳐지는 날이 옵니다.</li><li>숫자는 고정폭입니다. 세 안을 넘겨 볼 때 자릿수가 같은 자리에 서야 견줘집니다.</li><li>모자이크는 넓이의 합이 열여섯 칸이라 두 열에서도 네 열에서도 줄이 떨어집니다.</li></ul></td></tr><tr><td><code>MARKETING-001</code></td><td>마케팅</td><td>고객 사이트</td><td><ul><li>카드에 hover 를 넣지 않습니다<br>- 움직이지 않는 것이 누를 수 없다는 말이 됩니다.</li><li>기둥은 좁은 화면에서 가로로 접힙니다.</li></ul></td></tr><tr><td><code>STORE-001</code></td><td>매장 찾기</td><td>고객 사이트</td><td><ul><li>표식을 다시 만들지 않고 보일지 말지만 바꿉니다<br>- 걸러질 때마다 새로 만들면 지도가 깜빡입니다.</li><li>걸러 낸 목록을 기억해 둡니다. 렌더마다 새로 만들면 검색창에 다섯 글자를 칠 때 지도 맞춤이 다섯 번 일어납니다.</li><li>지도가 없어도 목록과 검색은 그대로 씁니다.</li><li>줄 전체가 단추이며 <code>aria-pressed</code> 로 눌린 상태를 알립니다<br>- 지도가 움직인 것은 낭독기에 전해지지 않습니다.</li></ul></td></tr><tr><td><code>FRANCHISE-001</code></td><td>가맹점 개설절차</td><td>고객 사이트</td><td><ul><li>탭은 밑줄입니다<br>- 채워진 알약은 지금 보고 있는 자리가 아니라 지금 눌러야 할 자리로 읽힙니다.</li><li>금액은 고정폭 숫자로 세로가 맞습니다.</li></ul></td></tr><tr><td><code>FRANCHISE-002</code></td><td>가맹점 상담 신청</td><td>고객 사이트</td><td><ul><li>고르개는 생 <code>&lt;select&gt;</code> 가 아니라 공유 조각을 씁니다<br>- 다른 화면의 고르개와 생김새가 갈리지 않게.</li><li>동의 문구가 무엇을 얼마나 보관하는지를 함께 적습니다. 한 줄만 두면 그 동의는 실제로 동의가 아닙니다.</li><li>지역과 예산이 같은 첫 값(고르지 않음)을 씁니다.</li></ul></td></tr><tr><td><code>FRANCHISE-003</code></td><td>가맹점 개설문의</td><td>고객 사이트</td><td><ul><li>접힌 본문은 높이가 0 이면서 <code>invisible</code> 이라 낭독기와 탭 이동에서 빠집니다.</li><li>펴고 접히는 것은 <code>grid-rows</code> 로 움직입니다<br>- 본문 높이를 미리 알 수 없어 <code>max-height</code> 로는 잘리거나 느려집니다.</li></ul></td></tr><tr><td><code>SUPPORT-001</code></td><td>공지사항</td><td>고객 사이트</td><td><ul><li>왼쪽 기둥은 목록을 읽는 내내 같은 자리에 남습니다<br>- 가로 탭이면 조금만 내려도 화면 밖으로 나갑니다.</li><li>고정 공지는 색이 아니라 딱지 글자로 알립니다.</li><li>기둥은 좁은 화면에서 가로로 접힙니다.</li></ul></td></tr><tr><td><code>SUPPORT-002</code></td><td>자주 묻는 질문</td><td>고객 사이트</td><td><ul><li>같은 <code>FNB_FAQS</code> 를 갈래로 걸러 씁니다<br>- 두 벌로 적어 두지 않습니다.</li><li>접힌 본문은 낭독기와 탭 이동에서 빠집니다.</li></ul></td></tr><tr><td><code>LEGAL-001</code></td><td>서비스 이용약관</td><td>고객 사이트</td><td><ul><li>비워 두는 이유를 화면에 적습니다<br>- 준비 중이라는 말만 두면 만들다 만 화면으로 보입니다.</li></ul></td></tr><tr><td><code>LEGAL-002</code></td><td>개인정보 처리방침</td><td>고객 사이트</td><td><ul><li>표의 머리줄은 넓은 화면에서만 뜹니다. 좁은 화면에서는 줄마다 이름표가 붙어 값이 무엇의 값인지 남습니다.</li><li>양식이 받는 항목을 늘리면 이 표도 함께 늘립니다.</li></ul></td></tr><tr><td><code>HOME-001</code></td><td>Home</td><td>고객 사이트</td><td><ul><li>첫 화면에 사진이 없습니다<br>- 빈 회색 상자가 첫 화면이 되는 것보다 큰 글자와 결이 낫습니다.</li><li>굴림판은 마우스를 올리거나 포커스가 들어오거나 손으로 밀면 멈춥니다.</li><li>공지 줄은 목록 끝에 첫 글을 한 장 더 붙여 되감기 없이 위로만 올라갑니다.</li><li>움직임을 끈 사용자에게는 굴림판도 공지 줄도 저절로 넘어가지 않습니다.</li></ul></td></tr><tr><td><code>ADMIN-001</code></td><td>대시보드</td><td>관리자</td><td><ul><li>카드 수치는 그 목록 화면의 같은 조건과 항상 같은 값입니다.</li></ul></td></tr><tr><td><code>MENU-003</code></td><td>메뉴 목록</td><td>관리자</td><td><ul><li>묶음 코드를 이름으로 바꾸는 표는 앱이 뜰 때 한 번만 만듭니다<br>- 줄마다 배열을 훑지 않습니다.</li></ul></td></tr><tr><td><code>MENU-004</code></td><td>메뉴 상세</td><td>관리자</td><td><ul><li>등록 화면과 한 폼을 씁니다. 갈리는 것은 셋뿐입니다<br>- 단추 말, 확인 창이 묻는 말, 저장 뒤 토스트.</li></ul></td></tr><tr><td><code>MENU-005</code></td><td>메뉴 등록</td><td>관리자</td><td><ul><li>상세 화면과 한 폼을 씁니다<br>- 나누면 칸이 하나 늘 때 두 곳을 고쳐야 하고, 그러다 등록에만 없는 칸이 생깁니다.</li></ul></td></tr><tr><td><code>MENU-006</code></td><td>메뉴 묶음</td><td>관리자</td><td><ul><li>가짓수를 글로 박아 두지 않습니다<br>- 메뉴가 하나 늘면 이 화면만 옛 숫자로 남습니다.</li></ul></td></tr><tr><td><code>MARKETING-002</code></td><td>마케팅 글 목록</td><td>관리자</td><td><ul><li>창구 이름표는 앱이 뜰 때 한 번만 만듭니다. 지금은 둘뿐이라 티가 안 나지만 이 표는 글이 늘어나는 표입니다.</li></ul></td></tr><tr><td><code>MARKETING-003</code></td><td>마케팅 글 상세</td><td>관리자</td><td><ul><li>등록 화면과 한 폼을 씁니다<br>- 갈리는 것은 단추 말, 확인 창이 묻는 말, 저장 뒤 토스트 셋뿐입니다.</li></ul></td></tr><tr><td><code>MARKETING-004</code></td><td>마케팅 글 등록</td><td>관리자</td><td><ul><li>상세 화면과 한 폼을 씁니다.</li></ul></td></tr><tr><td><code>STORE-002</code></td><td>가맹점 목록</td><td>관리자</td><td><ul><li>지역 거르개는 매장 목록에서 뽑아 만듭니다<br>- 손으로 적으면 매장이 새 지역에 생길 때 거르개만 옛것으로 남습니다.</li></ul></td></tr><tr><td><code>STORE-003</code></td><td>가맹점 상세</td><td>관리자</td><td><ul><li>등록 화면과 한 폼을 씁니다.</li></ul></td></tr><tr><td><code>STORE-004</code></td><td>가맹점 등록</td><td>관리자</td><td><ul><li>상세 화면과 한 폼을 씁니다.</li></ul></td></tr><tr><td><code>FRANCHISE-004</code></td><td>창업 문의 목록</td><td>관리자</td><td><ul><li>상태 목록과 색 표는 이 화면이 갖습니다<br>- 상세가 그것을 읽어 씁니다. 두 곳에 적으면 상태가 하나 늘 때 한쪽만 고쳐지고, 그때는 색만 빠진 배지로 보여 알아차리기 어렵습니다.</li></ul></td></tr><tr><td><code>FRANCHISE-005</code></td><td>창업 문의 상세</td><td>관리자</td><td><ul><li>읽는 칸과 쓰는 칸이 카드로 갈려 있습니다<br>- 어느 것이 원본인지 화면에서 드러나야 합니다.</li></ul></td></tr><tr><td><code>FRANCHISE-006</code></td><td>창업 FAQ 목록</td><td>관리자</td><td><ul><li>갈래는 화면이 정해서 넘깁니다<br>- 목록 조각은 자기가 어느 갈래인지 인자로 받습니다.</li></ul></td></tr><tr><td><code>FRANCHISE-007</code></td><td>창업 FAQ 상세</td><td>관리자</td><td><ul><li>고객센터 FAQ 와 폼 한 벌을 씁니다<br>- 갈리는 것은 <code>누가 묻나</code> 하나입니다.</li></ul></td></tr><tr><td><code>FRANCHISE-008</code></td><td>창업 FAQ 등록</td><td>관리자</td><td><ul><li>상세 화면과 한 폼을 씁니다.</li></ul></td></tr><tr><td><code>FRANCHISE-009</code></td><td>창업 비용 · 절차</td><td>관리자</td><td><ul><li>인테리어 항목 금액은 평당 단가에서 계산해 냅니다<br>- 두 곳에 적으면 단가를 올릴 때 한쪽만 옛 숫자로 남습니다.</li></ul></td></tr><tr><td><code>SUPPORT-003</code></td><td>고객센터 FAQ 목록</td><td>관리자</td><td><ul><li>갈래는 화면이 정해서 넘깁니다.</li></ul></td></tr><tr><td><code>SUPPORT-004</code></td><td>고객센터 FAQ 상세</td><td>관리자</td><td><ul><li>창업 FAQ 와 폼 한 벌을 씁니다.</li></ul></td></tr><tr><td><code>SUPPORT-005</code></td><td>고객센터 FAQ 등록</td><td>관리자</td><td><ul><li>상세 화면과 한 폼을 씁니다.</li></ul></td></tr><tr><td><code>SUPPORT-006</code></td><td>공지사항 목록</td><td>관리자</td><td><ul><li>요청받은 갈래 표에는 없던 화면입니다. 사이트가 이 값을 읽고 있어 여기서 빼면 공지를 고칠 자리가 어디에도 없어집니다.</li></ul></td></tr><tr><td><code>SUPPORT-007</code></td><td>공지사항 상세</td><td>관리자</td><td><ul><li>잘리는 길이는 세어 알리기만 합니다<br>- 잘리는 것은 여기서 저장한 사람 눈에 안 보이므로 알리기는 합니다.</li></ul></td></tr><tr><td><code>SUPPORT-008</code></td><td>공지사항 등록</td><td>관리자</td><td><ul><li>상세 화면과 한 폼을 씁니다.</li></ul></td></tr><tr><td><code>BANNER-001</code></td><td>메인 비주얼 목록</td><td>관리자</td><td><ul><li>지금 걸렸는지는 <code>bannerState()</code> 하나가 정합니다<br>- 화면마다 계산하면 배너 목록과 팝업 목록이 다른 답을 내는 날이 옵니다.</li></ul></td></tr><tr><td><code>BANNER-002</code></td><td>메인 비주얼 상세</td><td>관리자</td><td><ul><li>기간 두 칸은 팝업과 한 벌을 씁니다<br>- 화면마다 적으면 한쪽만 앞뒤 검사가 빠지고, 거꾸로 적힌 배너는 목록에서 그냥 <code>종료</code> 로 보입니다.</li></ul></td></tr><tr><td><code>BANNER-003</code></td><td>메인 비주얼 등록</td><td>관리자</td><td><ul><li>상세 화면과 한 폼을 씁니다.</li></ul></td></tr><tr><td><code>BANNER-004</code></td><td>팝업 목록</td><td>관리자</td><td><ul><li>지금 뜨는지는 <code>bannerState()</code> 하나가 정합니다<br>- 배너 목록과 같은 함수입니다.</li></ul></td></tr><tr><td><code>BANNER-005</code></td><td>팝업 상세</td><td>관리자</td><td><ul><li>기간 두 칸은 배너와 한 벌을 씁니다.</li></ul></td></tr><tr><td><code>BANNER-006</code></td><td>팝업 등록</td><td>관리자</td><td><ul><li>상세 화면과 한 폼을 씁니다.</li></ul></td></tr><tr><td><code>SETTING-001</code></td><td>브랜드 정보</td><td>관리자</td><td><ul><li>목록이 없는 설정 화면이라 저장해도 돌아갈 곳이 없습니다<br>- 같은 화면에 머물고 토스트로만 알립니다.</li></ul></td></tr><tr><td><code>ADMIN-002</code></td><td>관리자 목록</td><td>관리자</td><td><ul><li>권한을 셋으로만 나눕니다<br>- 조합이 늘면 누가 무엇을 할 수 있는지 아무도 설명하지 못하게 됩니다.</li></ul></td></tr><tr><td><code>ADMIN-003</code></td><td>관리자 상세</td><td>관리자</td><td><ul><li>등록 화면과 한 폼을 씁니다.</li></ul></td></tr><tr><td><code>ADMIN-004</code></td><td>관리자 등록</td><td>관리자</td><td><ul><li>상세 화면과 한 폼을 씁니다.</li></ul></td></tr></tbody>
+</table>
+
+<h2>4. 권 한 요 건</h2>
+<p class="lead">
+  권한 등급은 현재 데이터에 정의된 <strong>대표 · 운영 · 조회</strong> 세 등급을 사용한다.
+  각 등급의 연산 범위는 현재 문서에 정의되어 있지 않으므로 아래 배분은
+  <strong class="tbd">제안이며 확정은 발주처가 한다.</strong>
+  실제 인증 및 접근 통제 구현은 <strong>2단계 대상</strong>이다.
+</p>
+<table class="right">
+  <thead><tr><th>등급</th><th>콘텐츠 조회</th><th>콘텐츠 등록 · 수정</th><th>콘텐츠 삭제</th><th>창업 문의 조회 · 상태 변경</th><th>관리자 계정 관리</th></tr></thead>
+  <tbody><tr><td>대표</td><td><strong>O</strong></td><td><strong>O</strong></td><td><strong>O</strong></td><td><strong>O</strong></td><td><strong>O</strong></td></tr><tr><td>운영</td><td><strong>O</strong></td><td><strong>O</strong></td><td><strong>O</strong></td><td><strong>O</strong></td><td>–</td></tr><tr><td>조회</td><td><strong>O</strong></td><td>–</td><td>–</td><td>조회만</td><td>–</td></tr></tbody>
+</table>
+
+<h2>5. 데 이 터 보 존 및 파 기 요 건</h2>
+<p class="lead">
+  수집 · 보유 · 삭제 · 소멸 · 이력 · 권한 · 보안 · 백업 정책이다. 화면에 드러나지 않지만 서버
+  구축 이전에 확정되어야 하는 값이므로 여기에 정의한다.
+  <strong class="tbd">「권고」로 표기한 기간과 값은 확정된 것이 아니며</strong>, 근거 법령을 함께
+  적었으나 실제 값은 발주처가 정한다.
+</p>
+<table class="">
+  <thead><tr><th style="width:62px">구분</th><th style="width:146px">항목</th><th>정의 · 기준</th></tr></thead>
+  <tbody><tr class="head"><td class="d1" rowspan="3">수집</td><td class="memo">수집 항목</td><td class="memo">창업 상담 신청에서 받는 값<br>- 성함 · 연락처 · 지역 · 예산 · 하고 싶은 말. 실제 항목과 검증 규칙은 「기능 명세서」 <code>FRANCHISE-002</code> 의 「입력 데이터」와 같습니다.</td></tr><tr><td class="memo">수집 근거</td><td class="memo">정보주체의 동의입니다. 신청 화면에 동의 여부를 따로 받는 칸이 있으며, 동의하지 않으면 접수되지 않습니다.</td></tr><tr><td class="memo">최소 수집</td><td class="memo">상담에 필요하지 않은 값은 받지 않습니다. 항목을 늘릴 때에는 동의 문구도 함께 고쳐야 합니다.</td></tr><tr class="head"><td class="d1" rowspan="2">보유</td><td class="memo">보유 · 이용 기간</td><td class="memo"><strong>권고<br>- 상담 종료 후 3년.</strong> 「전자상거래 등에서의 소비자보호에 관한 법률」 시행령이 소비자 불만 · 분쟁 처리 기록을 3년간 보존하도록 하는 것을 근거로 삼았습니다. 발주처 확인이 필요합니다.</td></tr><tr><td class="memo">기간의 기산점</td><td class="memo">접수일이 아니라 <strong>상담이 끝난 날</strong>부터 셉니다. 접수일 기준으로 하면 상담이 길어진 건이 진행 중에 지워집니다.</td></tr><tr class="head"><td class="d1" rowspan="3">삭제</td><td class="memo">정보주체의 삭제 요청</td><td class="memo">요청을 받으면 지체 없이 지웁니다. <strong>권고<br>- 접수 후 10일 이내</strong>, 「개인정보 보호법」의 열람 · 정정 · 삭제 처리 기한을 따랐습니다. 처리 결과를 요청인에게 알립니다.</td></tr><tr><td class="memo">운영자의 삭제</td><td class="memo">목록에서는 즉시 감추되 바로 지우지 않습니다. <strong>권고<br>- 감춘 뒤 30일 보관 후 완전 삭제.</strong> 잘못 지운 것을 되돌릴 창구가 없으면 운영자가 삭제 단추를 못 누릅니다.</td></tr><tr><td class="memo">삭제 대상의 범위</td><td class="memo">본문뿐 아니라 첨부 · 검색 색인 · 캐시에 남은 사본까지 함께 지웁니다. 한 곳만 지우면 검색 결과에는 계속 뜹니다.</td></tr><tr class="head"><td class="d1" rowspan="4">소멸</td><td class="memo">보유 기간 만료</td><td class="memo">기간이 지난 값은 <strong>자동으로 파기</strong>합니다. 사람이 지우기로 하면 잊습니다. <strong>권고<br>- 하루 한 번 정해진 시각에 도는 일괄 처리</strong>로 그날 만료된 것을 처리합니다.</td></tr><tr><td class="memo">미처리 문의의 자동 종결</td><td class="memo">연락이 닿지 않아 멈춘 문의를 열린 채로 두면 처리 건수가 실제와 달라집니다. <strong>권고<br>- 마지막 접촉일로부터 1년이 지나면 「종결」로 자동 전환</strong>하고, 그때부터 보유 기간을 셉니다.</td></tr><tr><td class="memo">파기 방법</td><td class="memo">전자적 파일은 복구할 수 없는 방법으로 지웁니다. 출력물이 있다면 파쇄하거나 소각합니다.</td></tr><tr><td class="memo">파기 기록</td><td class="memo">무엇을 언제 몇 건 파기했는지 남깁니다. 개인정보 자체는 남기지 않고 건수와 시각만 남깁니다.</td></tr><tr class="head"><td class="d1" rowspan="2">이력</td><td class="memo">변경 이력</td><td class="memo">등록 · 수정 · 삭제마다 <strong>누가 · 언제 · 무엇을 바꿨는지</strong>를 남깁니다. 값이 왜 이렇게 되어 있는지를 나중에 물을 곳이 여기뿐입니다. <strong>권고<br>- 1년 보관.</strong></td></tr><tr><td class="memo">접근 기록</td><td class="memo">개인정보가 담긴 창업 문의를 <strong>열어 본 기록</strong>을 남깁니다. 바꾼 기록만으로는 누가 들여다봤는지 알 수 없습니다.</td></tr><tr class="head"><td class="d1" rowspan="2">권한</td><td class="memo">운영자 권한</td><td class="memo">콘솔은 인증된 운영자만 씁니다. <strong>권고<br>- 창업 문의는 권한을 따로 나눕니다.</strong> 메뉴 값을 고치는 일과 손님의 연락처를 보는 일은 같은 무게가 아닙니다.</td></tr><tr><td class="memo">권한 회수</td><td class="memo">퇴사 · 담당 변경 시 계정을 즉시 막습니다. 콘솔에 운영자 관리 화면이 있으므로 그 화면에서 처리합니다.</td></tr><tr class="head"><td class="d1" rowspan="2">보안</td><td class="memo">전송 구간</td><td class="memo">사이트와 콘솔 모두 HTTPS 로만 엽니다. 창업 문의는 개인정보가 오가는 길입니다.</td></tr><tr><td class="memo">저장 시 암호화</td><td class="memo"><strong>권고<br>- 연락처는 암호화해 저장</strong>하고, 목록에서는 일부를 가려 보여 줍니다. 목록 화면은 여러 사람이 함께 보는 자리입니다.</td></tr><tr class="head"><td class="d1" rowspan="1">백업</td><td class="memo">백업 주기 · 보관</td><td class="memo"><strong>권고<br>- 하루 한 번, 30일 보관.</strong> 백업본에도 같은 파기 정책이 걸립니다. 본체에서 지운 값이 백업에 남아 있으면 지운 것이 아닙니다.</td></tr></tbody>
+</table>
+
+<h2>6. 오 류 응 답 요 건</h2>
+<p class="lead">
+  화면을 가리지 않고 같은 방식으로 처리한다. 화면마다 되풀이해 적으면 47벌이 되고,
+  한 곳만 고쳐진다.
+</p>
+<table class="">
+  <thead><tr><th style="width:136px">상황</th><th style="width:260px">발생 조건</th><th>시스템 처리 · 화면 표시</th></tr></thead>
+  <tbody><tr><td>존재하지 않는 데이터 조회</td><td>요청한 식별자에 해당하는 데이터가 없습니다.</td><td>서버는 404 로 응답한다. 화면은 목록으로 돌아가는 경로와 함께 없는 대상임을 안내한다.</td></tr><tr><td>비공개 데이터의 고객 서비스 접근</td><td>공개 상태가 아닌 데이터를 고객 서비스 주소로 직접 요청했습니다.</td><td>서버는 404 로 응답한다. 데이터의 존재 여부를 드러내지 않는다. 다만 메뉴는 판매 중지 안내와 함께 응답한다.</td></tr><tr><td>삭제된 데이터 접근</td><td>삭제 처리된 데이터를 요청했습니다.</td><td>서버는 404 로 응답한다. 삭제 이후 보관 기간 동안의 복구 요청은 관리자 경로로만 처리한다.</td></tr><tr><td>필수값 누락</td><td>필수 항목이 비어 있는 상태로 저장을 요청했습니다.</td><td>서버는 400 과 함께 누락 항목 목록을 응답한다. 화면은 입력값을 유지한 채 항목별로 안내한다.</td></tr><tr><td>형식 오류</td><td>연락처 · 날짜 등 형식이 정해진 항목의 값이 규칙에 맞지 않습니다.</td><td>서버는 400 과 함께 항목별 사유를 응답한다. 미입력과 형식 오류를 구분하여 응답한다.</td></tr><tr><td>허용되지 않은 상태값</td><td>정의되지 않은 상태값으로의 변경을 요청했습니다.</td><td>서버는 400 으로 응답하며 상태를 변경하지 않는다.</td></tr><tr><td>중복 데이터 등록</td><td>이미 존재하는 값으로 등록을 요청했습니다. 관리자 계정의 이메일이 이에 해당합니다.</td><td>서버는 409 로 응답한다. 화면은 중복 항목을 지목하여 안내한다.</td></tr><tr><td>권한 없는 접근</td><td>인증되지 않았거나 등급이 부족한 요청입니다.</td><td>미인증은 401, 등급 부족은 403 으로 구분하여 응답한다. 인증 구현은 <strong>2단계 대상</strong>이다.</td></tr><tr><td>검색 결과 없음</td><td>조건에 해당하는 데이터가 없습니다.</td><td>서버는 200 과 함께 빈 목록 및 총 건수 0 을 응답한다. 오류로 처리하지 않는다. 화면은 조건 초기화 경로를 함께 제공한다.</td></tr><tr><td>외부 서비스 오류</td><td>지도 SDK 가 응답하지 않거나 인증 키가 유효하지 않습니다.</td><td>화면은 빈 영역 대신 대체 안내를 표시한다. 매장 목록은 지도와 무관하게 조회 가능해야 한다.</td></tr></tbody>
+</table>
+
+<h2>7. 검 증 도 구</h2>
+<p class="lead">
+  아래 검사는 저장소에 포함되어 있으며, 인수 시점에 <strong>모두 통과한 상태</strong>로 인도한다.
+  검사를 여럿 두는 것은 하나가 나머지를 대신하지 못하기 때문이다.
+</p>
+<table class="">
+  <thead><tr><th style="width:160px">검사</th><th>확인하는 것</th><th style="width:90px">적용 단계</th></tr></thead>
+  <tbody><tr><td><code>spec:check</code></td><td>이름 · 주소 · 화면 등록부가 기능 레지스트리와 일치하는가</td><td>1단계</td></tr><tr><td><code>sync:check</code></td><td>레지스트리에 적힌 컴포넌트 이름이 실제 파일에도 그대로인가</td><td>1단계</td></tr><tr><td><code>docs:check</code></td><td>화면은 있는데 명세가 비어 있는 자리가 있는가</td><td>1단계</td></tr><tr><td><code>bind:check</code></td><td>화면이 적어 둔 값의 출처가 아직 존재하는가</td><td>1단계</td></tr><tr><td><code>overflow:check</code></td><td>네 너비에서 가로로 넘치는 곳이 있는가</td><td>1단계</td></tr><tr><td><code>weight:check</code></td><td>화면 하나가 실제로 내려받는 바이트가 예산 안인가</td><td>1단계</td></tr></tbody>
+</table>
+
+
+</div>
+</body>
+</html>

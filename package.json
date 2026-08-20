@@ -33,7 +33,10 @@
     "pages:shoot": "tsx tools/shoot-pages.ts",
     "readme:build": "tsx tools/build-readme.ts",
     "sow:build": "tsx tools/build-sow.ts",
-    "fsd:build": "tsx tools/build-fsd.ts"
+    "fsd:build": "tsx tools/build-fsd.ts",
+    "srs:build": "tsx tools/build-srs.ts",
+    "nfr:build": "tsx tools/build-nfr.ts",
+    "docs:fnb": "pnpm srs:build && pnpm sow:build && pnpm fsd:build && pnpm nfr:build"
   },
   "devDependencies": {
     "playwright": "^1.62.1",

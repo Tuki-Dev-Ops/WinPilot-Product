@@ -1,5 +1,4 @@
 import { writeFileSync } from 'node:fs';
-import { FNB_BRAND } from '@winpilot/store';
 import {
   ADMIN_SCREENS,
   CLIENT_SCREENS,
@@ -9,7 +8,18 @@ import {
   type Screen,
 } from './lib/fnb-model';
 import { condition, handlingOf, kindIn, sectionOf, SECTION_ORDER } from './lib/action-kind';
+import {
+  DOMAINS,
+  ERRORS,
+  RELATIONS,
+  ROLES,
+  RULES,
+  STATES,
+  endpointsOf,
+  screenOf,
+} from './lib/fnb-backend';
 import { esc, namedList, note, NONE, rich, TBD } from './lib/html';
+import { shell } from './lib/page';
 import { formal, formalAction } from './lib/polite';
 
 /**
@@ -361,69 +371,20 @@ const qaTotal = SCREENS.reduce(
   0,
 );
 
-const today = new Date().toLocaleDateString('ko-KR', { dateStyle: 'long' });
 
-const html = `<!doctype html>
-<html lang="ko">
-<head>
-<meta charset="utf-8">
-<title>F&amp;B 기능 명세서</title>
-<style>
-  /*
-    A4 를 눕힌다. 이 문서의 표는 여섯 칸까지 가고(책임 범위 · API 요구사항), 세로 A4 에서는
-    칸마다 두세 글자에서 줄이 꺾여 읽는 속도가 떨어진다. 눕히면 가로 여유가 100mm 늘어
-    한 칸이 한 줄로 앉는다.
-  */
-  @page { size: A4 landscape; margin: 12mm 14mm 14mm; }
-
-  :root {
-    --ink: #1a1c20;
-    --muted: #5a6070;
-    --faint: #939aa6;
-    --line: #c9ced7;
-    --band: #eceef2;
-    --head: #f5f6f8;
-    --accent: #1b5fc4;
-    --warn: #b8792a;
-  }
-
-  * { box-sizing: border-box; }
-
-  body {
-    margin: 0;
-    padding: 26px 22px 56px;
-    background: #fff;
-    color: var(--ink);
-    font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", system-ui, sans-serif;
-    font-size: 9.5pt;
-    line-height: 1.62;
-    word-break: keep-all;
-    overflow-wrap: break-word;
-  }
-
-  .sheet { max-width: 269mm; margin: 0 auto; }
-
-  .title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
-  h1 { font-size: 17pt; margin: 0; letter-spacing: -0.02em; }
-  h1 .dim { color: var(--faint); font-weight: 600; }
-  .date { color: var(--muted); font-size: 9pt; font-style: italic; white-space: nowrap; }
-
-  h2 {
-    background: var(--band);
-    border: 1px solid var(--line);
-    text-align: center;
-    font-size: 11pt;
-    letter-spacing: 0.24em;
-    padding: 6px;
-    margin: 26px 0 12px;
-    break-after: avoid;
-  }
+/**
+ * 이 문서에만 필요한 규칙. 공통 판은 `lib/page.ts` 에 있다.
+ *
+ * 화면 하나가 열두 절로 이어지므로 **화면의 경계**가 눈에 보여야 한다. 기능 ID 를 검은 딱지로
+ * 세우고 제목 아래에 굵은 선을 둔다 — 그 선이 없으면 47개 화면이 한 덩어리로 흐른다.
+ */
+const EXTRA = `
   h3 {
+    color: var(--ink);
     font-size: 11pt;
     margin: 22px 0 8px;
     padding-bottom: 5px;
     border-bottom: 1.6px solid var(--ink);
-    break-after: avoid;
   }
   h3 .fid {
     display: inline-block;
@@ -436,26 +397,14 @@ const html = `<!doctype html>
     margin-right: 7px;
     vertical-align: 1px;
   }
-  h4 { font-size: 9.5pt; margin: 13px 0 5px; color: var(--accent); break-after: avoid; }
-  h5 { font-size: 9pt; margin: 9px 0 3px; color: var(--muted); break-after: avoid; }
-  p { margin: 5px 0; }
+  h4 { color: var(--accent); }
 
-  table { width: 100%; border-collapse: collapse; margin: 4px 0 10px; }
-  th, td { border: 1px solid var(--line); padding: 4px 7px; vertical-align: top; text-align: left; }
-  thead th { background: var(--head); font-weight: 600; text-align: center; white-space: nowrap; }
-  tbody tr { break-inside: avoid; }
-
-  /*
-    가로로 눕히면서 두 칸짜리 표가 종이 폭만큼 늘어났다. 「기능 ID」 옆에 빈 공간이 한 뼘
-    생기면 값이 어디까지인지 눈으로 좇게 된다. 좁은 표는 폭을 따로 잡는다.
-  */
+  /* 가로로 눕히면서 두 칸짜리 표가 종이 폭만큼 늘어났다. 좁은 표는 폭을 따로 잡는다. */
   table.kv { max-width: 560px; }
   table.kv th, table.kv td:first-child { width: 92px; background: #fafbfc; font-weight: 600; color: var(--muted); }
   table.flow td:first-child { width: 30px; text-align: center; color: var(--faint); }
   table.flow td:last-child { width: 62px; text-align: center; color: var(--muted); white-space: nowrap; }
   table.rule td:first-child { width: 220px; }
-  table.right td { text-align: center; }
-  table.right td:first-child { text-align: left; width: 96px; }
 
   .kw {
     font-family: "Consolas", "D2Coding", ui-monospace, monospace;
@@ -463,67 +412,89 @@ const html = `<!doctype html>
     color: var(--accent);
     margin-right: 3px;
   }
-  .yes { color: var(--accent); font-weight: 700; }
-  .none { color: var(--faint); }
-  .tbd { color: var(--warn); font-weight: 600; }
-
-  /* 세부 기능 목록 — 번호가 기능 명세서 3절의 「기능 01 · 02」 와 같은 자리를 가리킨다. */
-  ol.fn { margin: 0; padding-left: 20px; }
-  ol.fn li { margin: 1px 0; }
-  ol.fn li::marker { color: var(--faint); font-variant-numeric: tabular-nums; font-size: 8.5pt; }
-
-  ul { margin: 3px 0; padding-left: 17px; }
-  li { margin: 1px 0; }
-
-  ul.check { list-style: none; padding-left: 2px; }
-  ul.check li { position: relative; padding-left: 17px; margin: 2px 0; break-inside: avoid; }
-  ul.check li::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 3.5px;
-    width: 9px;
-    height: 9px;
-    border: 1px solid var(--muted);
-    border-radius: 2px;
-  }
-
-  code {
-    font-family: "Consolas", "D2Coding", ui-monospace, monospace;
-    font-size: 0.92em;
-    background: #f1f3f6;
-    padding: 0.5px 3px;
-    border-radius: 3px;
-  }
-  th code, td code, h3 code { background: transparent; }
-  a { color: var(--accent); text-decoration: none; }
-
   .screen { break-inside: auto; margin-bottom: 4px; }
-  .lead { color: var(--muted); margin: 0 0 10px; }
+`;
 
-  .common { margin-bottom: 16px; border: 1px solid var(--line); }
-  .common th { background: var(--band); text-align: center; font-weight: 700; font-size: 10pt; padding: 5px; }
-  .common td { padding: 10px 14px; }
-  .common ol { margin: 0; padding-left: 18px; color: var(--muted); }
-  .common li { margin: 2px 0; }
-  .common li strong { color: var(--ink); }
 
-  @media print { body { padding: 0; } }
-</style>
-</head>
-<body>
-<div class="sheet">
+/* ── 11. Back-End 요구사항 ─────────────────────────────────── */
 
-<div class="title-row">
-  <h1>${esc(FNB_BRAND.name)} <span class="dim">기능 명세서</span></h1>
-  <div class="date">${esc(today)}</div>
-</div>
+const th = (label: string, width?: number): string =>
+  `<th${width ? ` style="width:${width}px"` : ''}>${esc(label)}</th>`;
 
-<table class="common">
+const plain = (head: string, rows: string, klass = ''): string => `<table class="${klass}">
+  <thead><tr>${head}</tr></thead>
+  <tbody>${rows}</tbody>
+</table>`;
+
+const grouped = (list: readonly (readonly string[])[]): string =>
+  list
+    .map((row, index) => {
+      const [area, ...rest] = row;
+      const first = list[index - 1]?.[0] !== area;
+      let span = 0;
+      while (list[index + span]?.[0] === area) span += 1;
+      const head = first ? `<td class="d1" rowspan="${span}">${esc(area ?? '')}</td>` : '';
+      return `<tr${first ? ' class="head"' : ''}>${head}${rest.map((one) => `<td class="memo">${rich(one)}</td>`).join('')}</tr>`;
+    })
+    .join('');
+
+const domainRows = DOMAINS.map((one) =>
+  cells(
+    esc(one.name),
+    rich(one.purpose),
+    one.screens.map((id) => `<code>${esc(id)}</code>`).join(' '),
+    rich(one.exposed),
+  ),
+).join('');
+
+/** 데이터 요구사항 — 관리자 상세 화면의 입력 항목이 곧 그 대상의 속성이다. */
+const dataBlocks = DOMAINS.map((domain) => {
+  const source = screenOf(domain.fieldsFrom);
+  const fields = source?.spec.fields ?? [];
+  if (fields.length === 0) {
+    return `<h4>${esc(domain.name)}</h4>
+<p class="tbd">데이터 항목이 화면 명세에 정의되어 있지 않습니다 — <strong>정의 필요</strong>. 현재는 조회 전용 화면만 존재하므로, 등록 및 수정 기능을 도입하는 시점에 항목을 함께 정의합니다.</p>`;
+  }
+  const rows = fields
+    .map((one) =>
+      cells(
+        esc(one.name),
+        rich(formal(one.desc)),
+        one.required ? '필수' : '선택',
+        one.rule ? rich(formal(one.rule)) : `<span class="none">${esc(one.type)}</span>`,
+      ),
+    )
+    .join('');
+  return `<h4>${esc(domain.name)}</h4>
+<p class="from">항목 정의 출처 — <code>${esc(domain.fieldsFrom)}</code> ${esc(source?.name ?? '')} <code>${esc(source?.route ?? '')}</code></p>
+${plain(th('항목', 118) + th('설명') + th('필수 여부', 64) + th('입력 형태 · 정책', 210), rows)}`;
+}).join('');
+
+const apiBlocks = DOMAINS.map((domain) => {
+  const rows = endpointsOf(domain)
+    .map((one) =>
+      cells(
+        esc(one.action),
+        `<code>${esc(one.method)}</code>`,
+        `<code>${esc(one.path)}</code>`,
+        rich(one.request),
+        rich(one.response),
+        rich(one.note),
+      ),
+    )
+    .join('');
+  return `<h4>${esc(domain.name)}</h4>
+${plain(th('기능', 116) + th('Method', 58) + th('Endpoint 예시', 150) + th('요청 데이터', 142) + th('응답 데이터', 142) + th('비고'), rows)}`;
+}).join('');
+
+const lifecycleRows = STATES.map((one) => [one.domain, one.name, one.values, one.actor, one.effect, one.flow]);
+
+const body = `
+<table class="kit">
   <tr><th>문서 사용 안내</th></tr>
   <tr><td>
     <ol>
-      <li>이 문서는 <strong>개발 · QA · 운영이 구현과 검수에 쓰는 작업 문서</strong>입니다. 계약 · 책임 · 제외 범위는 별도 문서 「업무 범위 정의서」에 있습니다.</li>
+      <li>이 문서는 <strong>개발 · QA · 운영이 구현과 검수에 쓰는 작업 문서</strong>입니다. 계약 · 책임 · 제외 범위는 별도 문서 「과업범위 정의서」에 있습니다.</li>
       <li>화면 ${SCREENS.length}개(고객 사이트 ${CLIENT_SCREENS.length} · 관리자 ${ADMIN_SCREENS.length})를 각각 열두 절로 적었습니다. 내용이 없는 절은 세우지 않았습니다.</li>
       <li><strong>「시스템 처리」와 「결과」의 근거는 둘뿐입니다.</strong> 화면 명세에 단추 정의가 있으면 그 값을 그대로 옮겼고, 없으면 동작 유형에서 끌어낸 표준 처리를 적었습니다. <strong>끌어낸 것은 확정이 아니라 검토 대상</strong>입니다.</li>
       <li><span class="tbd">정의 필요</span> 로 표시된 칸은 <strong>현재 문서에 근거가 없는 자리</strong>입니다. 채워 넣지 않았습니다.</li>
@@ -537,7 +508,7 @@ const html = `<!doctype html>
 
 <h2>1. 서비스 개요</h2>
 <p>
-  ${esc(FNB_BRAND.name)}의 웹 서비스는 <strong>고객 사이트</strong>와 <strong>관리자</strong> 한 쌍으로
+  본 서비스는 <strong>고객 사이트</strong>와 <strong>관리자</strong> 한 쌍으로
   이루어집니다. 고객 사이트는 손님에게 무엇을 파는 집인지를, 예비 점주에게 얼마가 들고 얼마나
   걸리는지를 각각의 길에서 답합니다. 관리자는 그 사이트에 나가는 값을 운영자가 직접 고치는
   자리입니다.
@@ -571,7 +542,11 @@ ${CLIENT_SCREENS.map(article).join('')}
 ${ADMIN_SCREENS.map(article).join('')}
 
 <h2>6. 공통 기능</h2>
-<p class="lead">화면을 가리지 않고 전 화면에 걸리는 동작 요건입니다. 화면별 절에 되풀이해 적지 않았습니다.</p>
+<p class="lead">
+  화면을 가리지 않고 전 화면에 걸리는 제작 기준입니다. 성능 · 반응형 · 접근성 · 보안 등
+  <strong>비기능 요건 전체는 별도 문서 「비기능 명세서」</strong>에 있으며, 여기에는 화면 제작에
+  직접 걸리는 것만 옮겨 둡니다.
+</p>
 ${note(COMMON_NON_FUNCTIONAL)}
 
 <h2>7. 상태값 정의</h2>
@@ -609,11 +584,68 @@ ${
   <tbody>${qaRows}</tbody>
 </table>
 
-</div>
-</body>
-</html>
-`;
+<h2>11. Back-End 요구사항 정의</h2>
+<p class="lead">
+  <strong>Back-End 는 2단계 수행 범위</strong>이며, 본 장이 그 착수 명세입니다. 후속 수행자가
+  화면을 다시 분석하지 않고 서버 개발에 들어갈 수 있도록 요구사항과 인터페이스를 정의합니다.
+  엔드포인트는 구현을 강제하는 확정 사양이 아니라 인터페이스 요구사항입니다.
+</p>
 
+<h3>11.1 도메인 및 관리 대상 정의</h3>
+${plain(th('관리 대상', 102) + th('데이터의 목적') + th('관련 화면', 146) + th('고객 서비스 노출'), domainRows)}
+
+<h3>11.2 데이터 요구사항 정의</h3>
+<p class="lead">
+  각 관리 대상의 데이터 항목입니다. 항목은 관리자 상세 화면의 입력 항목에서 도출하였습니다 —
+  운영자가 관리하는 값이 곧 해당 대상의 속성이기 때문입니다. 실제 테이블 설계, 인덱스 및 ORM
+  구현은 포함하지 않습니다.
+</p>
+${dataBlocks}
+
+<h3>11.3 데이터 관계 정의</h3>
+<p class="lead">후속 개발자가 데이터 모델을 설계할 수 있는 요구사항 수준으로 정의합니다. 물리 ERD 는 포함하지 않습니다.</p>
+${plain(th('관계', 164) + th('정의'), RELATIONS.map(([a, b]) => cells(esc(a), rich(b))).join(''))}
+
+<h3>11.4 API 요구사항 정의</h3>
+<p class="lead">
+  화면에서 필요한 서버 기능입니다. 연산은 화면 주소 규칙에서 도출하였습니다 — 목록 · 단건 ·
+  등록 화면의 존재가 곧 필요한 연산을 결정합니다.
+</p>
+${apiBlocks}
+
+<h3>11.5 비즈니스 규칙 및 검증 정책</h3>
+<p class="lead">
+  <strong>화면 검증과 서버 검증을 구분하여 정의합니다.</strong> 화면에서 막는 것은 사용자를 돕기
+  위한 것이고, 서버에서 막는 것은 데이터를 지키기 위한 것입니다. 화면에만 검증을 두면 API 를
+  직접 호출하는 요청에는 적용되지 않습니다.
+</p>
+${plain(th('관리 대상', 102) + th('규칙') + th('적용 위치', 196), grouped(RULES))}
+
+<h3>11.6 상태값 및 라이프사이클 정의</h3>
+${plain(
+  th('관리 대상', 90) + th('상태 항목', 80) + th('값', 102) + th('변경 주체', 104) + th('고객 서비스 영향') + th('전이 규칙', 162),
+  grouped(lifecycleRows),
+)}
+
+<h3>11.7 권한 요구사항 정의</h3>
+<p class="lead">
+  권한 등급은 현재 데이터에 정의된 <strong>대표 · 운영 · 조회</strong> 세 등급을 사용합니다.
+  각 등급의 연산 범위는 현재 문서에 정의되어 있지 않으므로 아래 배분은
+  <strong class="tbd">제안이며 확정은 발주처가 합니다.</strong>
+</p>
+${plain(
+  ROLES[0]!.map((one) => th(one)).join(''),
+  ROLES.slice(1).map((row) => cells(...row.map((one) => (one === 'O' ? '<strong>O</strong>' : esc(one))))).join(''),
+  'right',
+)}
+
+<h3>11.8 예외 및 오류 응답 요구사항</h3>
+${plain(
+  th('상황', 136) + th('발생 조건', 224) + th('시스템 처리 · 화면 표시'),
+  ERRORS.map(([a, b, c]) => cells(esc(a), rich(b), rich(c))).join(''),
+)}
+
+`;
 const out = 'FnB-기능명세서.html';
-writeFileSync(out, html, 'utf8');
+writeFileSync(out, shell({ title: '기능 명세서', kind: '기능 정의 · 3/4', body, extra: EXTRA }), 'utf8');
 console.log(`${out} — 화면 ${SCREENS.length} · 검수 항목 ${qaTotal}`);
