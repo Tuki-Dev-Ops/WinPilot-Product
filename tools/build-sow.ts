@@ -1,29 +1,41 @@
 import { writeFileSync } from 'node:fs';
 import { FNB_BRAND } from '@winpilot/store';
-import { ADMIN_SCREENS, CLIENT_SCREENS, SCREENS } from './lib/fnb-model';
-import { esc, namedList, note, rich } from './lib/html';
+import { ADMIN_SCREENS, CLIENT_SCREENS, SCREENS, impactOf, type Screen } from './lib/fnb-model';
+import { COPY } from './lib/fnb-copy';
+import {
+  DATA_POLICY,
+  DOMAINS,
+  DONE,
+  ERRORS,
+  NOT_BUILT,
+  RELATIONS,
+  ROLES,
+  RULES,
+  STATES,
+  endpointsOf,
+  screenOf,
+} from './lib/fnb-backend';
+import { esc, rich } from './lib/html';
+import { formal } from './lib/polite';
 
 /**
- * F&B 두 앱의 **업무 범위 정의서**를 만든다 — 계약 · 범위 · 책임 · 제외.
+ * F&B 두 앱의 **업무 범위 정의서**를 만든다 — 구축 범위 · 책임 · 완료 기준.
  *
- * ## 기능 명세서와 나눈 까닭
- * 한 파일에 다 담았더니 60쪽이 넘었고, 그중 대부분이 화면별 세부 항목이었다. 그러면 계약을
- * 맞추는 자리에서 화면 명세를 넘기게 되고, 개발자는 계약 조항 사이에서 자기 화면을 찾게 된다.
+ * ## 이 문서가 답하는 것
+ * 무엇을 제공하는가 · 각 화면의 목적은 무엇인가 · 사용자와 운영자가 무엇을 할 수 있는가 ·
+ * Front-End 는 어디까지 구현하는가 · Back-End 는 구현하지 않더라도 무엇을 정의하는가 ·
+ * 무엇이 제외되는가 · 각 영역은 어떤 상태가 되면 끝인가 · 인수 시점에 무엇이 제공되는가.
  *
- * 읽는 사람이 다르면 문서도 나뉜다. 이 문서가 답하는 것은 넷이다 — **무엇을 만드는가 ·
- * 어디까지 만드는가 · 무엇을 제공하지 않는가 · 누가 어디까지 맡는가.** 화면 안에서 무슨 일이
- * 벌어지는가는 「기능 명세서」(`pnpm fsd:build`)가 답한다.
+ * 한 문장으로 줄이면 이렇다 — **누가 어디까지 책임지며, 어떤 상태가 되면 완료인가.**
  *
- * 두 문서는 **같은 기능 ID** 를 쓴다. 그래야 범위 정의서의 `MENU-002` 와 기능 명세서의
- * `MENU-002` 가 같은 화면을 가리킨다(`lib/fnb-model.ts`).
+ * ## 무엇을 어디서 읽는가
+ * - 기능 ID · 화면명 · 메뉴 경로 · 화면 경로 · 데이터 항목 : 화면 등록부와 화면 명세
+ * - 화면 목적 · 주요 기능 : `lib/fnb-copy.ts` — 사람이 적고, 기능 수가 바뀌면 생성기가 잡는다
+ * - 도메인 · 관계 · 규칙 · 상태 · 권한 · 예외 · 데이터 정책 : `lib/fnb-backend.ts`
+ * - API 요구사항 : 화면 주소에서 끌어낸다
  *
- * ## 손으로 적지 않는다
- * 화면 목록을 옮겨 적으면 화면이 하나 늘 때 고칠 곳이 둘이 되고, 실제로는 한쪽만 고친다.
- * 그러면 계약 자리에서 코드와 문서가 다른 말을 한다. 여기 목록은 화면 등록부에서 읽는다.
- *
- * ## 범위 밖은 0 이 아니라 —
- * 이 과업에 없는 것에 `0` 을 적으면 **하기로 했는데 아직 안 한 것**으로 읽힌다. 따로 표를
- * 두고 왜 없는지를 적는다.
+ * 화면 목록을 손으로 옮겨 적으면 화면이 하나 늘 때 고칠 곳이 둘이 되고, 실제로는 한쪽만
+ * 고친다. 그러면 계약 자리에서 코드와 문서가 다른 말을 한다.
  *
  * ```
  * pnpm sow:build
@@ -32,231 +44,250 @@ import { esc, namedList, note, rich } from './lib/html';
 
 const cells = (...values: string[]): string => `<tr>${values.map((one) => `<td>${one}</td>`).join('')}</tr>`;
 
+const table = (head: string, rows: string, klass = ''): string => `<table class="${klass}">
+  <thead><tr>${head}</tr></thead>
+  <tbody>${rows}</tbody>
+</table>`;
+
+const th = (label: string, width?: number): string =>
+  `<th${width ? ` style="width:${width}px"` : ''}>${esc(label)}</th>`;
+
+const bullets = (items: readonly string[]): string =>
+  `<ul>${items.map((one) => `<li>${rich(one)}</li>`).join('')}</ul>`;
+
 /**
- * 세 칸짜리 표를 편다 — 첫 칸이 이어지면 묶는다.
- *
- * 「구분」이 줄마다 되풀이되면 어디서 갈래가 바뀌는지 눈으로 셈해야 한다. 갈래가 서너 줄로
- * 짧아 인쇄해도 한 쪽 안에 들어가므로, 묶어도 빈칸이 생기지 않는다.
+ * 첫 칸이 이어지면 묶는다. 「구분」이 줄마다 되풀이되면 어디서 갈래가 바뀌는지 눈으로 셈해야
+ * 한다. 같은 이름이 떨어져서 두 번 나올 때를 대비해 **이어지는 만큼만** 센다.
  */
-const grouped = (list: readonly [string, string, string][]): string =>
+const grouped = (list: readonly (readonly string[])[]): string =>
   list
-    .map(([area, what, why], index) => {
+    .map((row, index) => {
+      const [area, ...rest] = row;
       const first = list[index - 1]?.[0] !== area;
-      /* 같은 이름이 떨어져서 두 번 나올 때를 대비해 **이어지는 만큼만** 센다. */
       let span = 0;
       while (list[index + span]?.[0] === area) span += 1;
-      const head = first ? `<td class="d1" rowspan="${span}">${esc(area)}</td>` : '';
-      return `<tr${first ? ' class="head"' : ''}>${head}<td class="d4">${rich(what)}</td><td class="memo">${note(why)}</td></tr>`;
+      const head = first ? `<td class="d1" rowspan="${span}">${esc(area ?? '')}</td>` : '';
+      return `<tr${first ? ' class="head"' : ''}>${head}${rest.map((one) => `<td class="memo">${rich(one)}</td>`).join('')}</tr>`;
     })
     .join('');
 
-/* ── 2. 과업 범위 ──────────────────────────────────────────── */
+/* ── 3. 화면 및 기능 정의 ──────────────────────────────────── */
 
-const scopeRows = SCREENS.map((one) =>
-  cells(
-    `<code>${esc(one.featureId)}</code>`,
-    esc(one.name),
-    esc(one.menuPath),
-    `<code>${esc(one.route)}</code>`,
-    namedList(one.spec.actions),
-  ),
-).join('');
+/**
+ * 손으로 적은 서술이 명세를 따라가고 있는지 본다.
+ *
+ * 항목이 아예 없으면 화면이 문서에서 통째로 빠지므로 만들다 멈춘다. 기능 수만 달라진 것은
+ * 문서가 낡았다는 뜻이라 알리기만 하고 계속 만든다 — 그 화면을 빼는 것보다 낫다.
+ */
+const copyOf = (screen: Screen) => {
+  const copy = COPY[screen.featureId];
+  if (!copy) throw new Error(`fnb-copy.ts 에 ${screen.featureId}(${screen.name}) 가 없습니다.`);
+  if (copy.from !== screen.spec.actions.length) {
+    console.warn(
+      `  [낡음] ${screen.featureId} ${screen.name} — 적을 당시 ${copy.from}건, 지금 ${screen.spec.actions.length}건`,
+    );
+  }
+  return copy;
+};
+
+const screenRows = (list: readonly Screen[]): string =>
+  list
+    .map((one) => {
+      const copy = copyOf(one);
+      /* 메뉴 경로와 화면 경로를 한 칸에 겹쳐 둔다 — 둘을 갈라 두면 목적과 기능 칸이 좁아진다. */
+      return cells(
+        `<code>${esc(one.featureId)}</code>`,
+        esc(one.name),
+        `${esc(one.menuPath)}<span class="route"><code>${esc(one.route)}</code></span>`,
+        rich(copy.purpose),
+        bullets(copy.features),
+      );
+    })
+    .join('');
+
+const SCREEN_HEAD = th('기능 ID', 74) + th('화면명', 84) + th('경로', 138) + th('화면 목적') + th('주요 기능');
+
+/* ── 2. 정보 구조 ──────────────────────────────────────────── */
+
+const iaRows = (list: readonly Screen[]): string => {
+  const groups = new Map<string, Screen[]>();
+  for (const one of list) groups.set(one.group, [...(groups.get(one.group) ?? []), one]);
+  return [...groups]
+    .map(([group, screens]) =>
+      cells(
+        esc(group),
+        String(screens.length),
+        screens.map((one) => `<code>${esc(one.featureId)}</code> ${esc(one.name)}`).join(' · '),
+      ),
+    )
+    .join('');
+};
+
+/* ── 4. 운영 정책 ──────────────────────────────────────────── */
+
+/** 화면 명세의 운영 정책을 화면별로 모은다. 정책이 적힌 화면만 세운다. */
+const policyRows = SCREENS.filter((one) => one.spec.policy?.length)
+  .map((one) =>
+    cells(
+      `<code>${esc(one.featureId)}</code> ${esc(one.name)}`,
+      esc(one.appLabel),
+      bullets((one.spec.policy ?? []).map(formal)),
+    ),
+  )
+  .join('');
+
+/* ── 5. 책임 범위 ──────────────────────────────────────────── */
 
 const totalActions = SCREENS.reduce((sum, one) => sum + one.spec.actions.length, 0);
 
-/* ── 3. 책임 범위 ──────────────────────────────────────────── */
-
 /**
- * 갈래마다 **어디서 끝나는가**를 적는다.
+ * 여섯 칸으로 적는다 — 수행 목적 · 제공 범위 · 주요 산출물 · 완료 기준 · 제외 범위.
  *
- * 책임 범위에서 다투는 것은 맡았는가 아닌가가 아니라 **어디까지 하면 끝인가**다. 그래서
- * 「완료 기준」 칸을 따로 둔다 — 그 칸이 없으면 "다 됐다" 의 뜻이 서로 다른 채로 진행된다.
+ * 「포함 / 미포함」 두 칸으로 적으면 맡았다는 것까지만 합의되고, **어디까지 하면 끝인가**에서
+ * 갈린다. 완료 기준 칸이 없으면 "다 됐다" 의 뜻이 서로 다른 채로 진행된다.
  */
-const DUTY: [string, string, string][] = [
+const DUTY: [string, string, string, string, string, string][] = [
   [
     '기획',
-    '화면 정의 · 세부 기능 정의 · 운영 정책 · IA · 화면 흐름',
-    `화면 ${SCREENS.length}개에 대해 목적 · 세부 기능 · 정책이 「기능 명세서」에 적히고, 저장소의 문서 검사(\`docs:check\`)가 빈 자리 없이 통과한 상태입니다.`,
+    '구현과 검수의 근거가 되는 서비스 정의를 확정한다.',
+    `서비스 구조 및 IA 정의 · 화면 목록 ${SCREENS.length}개 정의 · 화면별 목적 정의 · 세부 기능 ${totalActions}건 정의 · 사용자 흐름 정의 · 운영 정책 정의 · 주요 데이터 항목 정의 · 상태값 정책 정의 · 기능별 검수 기준 정의`,
+    '업무 범위 정의서 · 기능 명세서 · IA 및 화면 흐름 정의 · 화면별 검수 기준',
+    '정의된 전체 화면에 대해 화면 목적, 사용자 기능, 주요 데이터 항목, 운영 정책 및 검수 기준이 문서화되어 있으며, 구현 과정에서 기능 해석에 필요한 핵심 요구사항이 누락되지 않은 상태.',
+    '시장 조사 · 경쟁사 분석 · 브랜드 전략 수립',
   ],
   [
     'UI 디자인',
-    '디자인 토큰 · 공통 컴포넌트 · 화면별 구성 영역 · 반응형',
-    '네 너비(1280 · 1024 · 768 · 390)에서 가로 스크롤이 없고, 저장소의 넘침 검사(`overflow:check`)가 통과한 상태입니다. 별도 시안 파일(PSD · AI)은 산출물이 아닙니다.',
+    '서비스 구현을 위한 UI 구조와 디자인 시스템을 정의한다.',
+    '디자인 토큰 정의 · 컬러 및 타이포그래피 규칙 · 간격과 레이아웃 규칙 · 공통 UI 컴포넌트 정의 · 화면별 UI 구조 정의 · 반응형 기준 정의 · 고객 서비스와 관리자 서비스 간 디자인 일관성 관리',
+    '디자인 토큰 · 공통 컴포넌트 · 화면별 UI 구조 · 반응형 기준',
+    '정의된 기준 해상도(1280 · 1024 · 768 · 390)에서 주요 화면이 정상적으로 표시되고, 의도하지 않은 가로 스크롤, 레이아웃 깨짐 또는 공통 UI 규칙의 불일치가 없는 상태.',
+    'PSD · AI 등 별도 그래픽 원본 파일 · 로고 및 BI 제작 · 인쇄물 및 패키지 디자인 · 촬영 및 영상 제작',
   ],
   [
     'Front-End',
-    `화면 ${SCREENS.length}개 구현 · 세부 기능 ${totalActions}건 · 입력 검증 · 예외 화면 처리`,
-    '「기능 명세서」의 화면별 검수 기준을 모두 통과한 상태입니다. 값은 공유 패키지에서 읽으며, 서버 호출 지점은 한 곳으로 모아 둡니다.',
+    '정의된 화면과 기능을 실제 동작하는 사용자 인터페이스로 구현한다.',
+    `화면 ${SCREENS.length}개 구현 · 화면 간 이동 및 사용자 흐름 구현 · 검색 및 필터 · 목록 및 상세 · 등록 및 수정 · 입력값 및 필수값 검증 · 공개 및 노출 상태에 따른 UI 처리 · 빈 데이터 상태 · 오류 상태 · 기본 예외 처리 · 공통 컴포넌트 적용 · 공통 데이터 접근 구조 관리`,
+    '고객 서비스 및 관리자 서비스 소스 · 공통 컴포넌트 · 공통 데이터 접근 구조',
+    '기능 명세서의 화면별 검수 기준을 모두 통과하고 저장소의 품질 검사가 전부 통과한 상태. 화면이 사용하는 데이터 구조와 접근 방식은 공통 구조로 관리하며, 서버 연동이 필요한 영역은 향후 API 와 연결할 수 있도록 호출 지점을 일관된 구조로 구성한 상태.',
+    '서버 연동 구현 · 실제 인증 처리 · 결제 및 외부 시스템 연동',
   ],
   [
-    'Back-End',
-    '**정의만 제공하고 구현은 제공하지 않습니다.** 화면별 데이터 연산 · 권한 · 항목 · 검증과 데이터 정책',
-    '뒤에 맡는 쪽이 화면을 눌러 보지 않고도 착수할 수 있는 상태입니다. 실제 서버 · 데이터베이스 · API 구축은 **본 과업의 범위가 아닙니다.**',
+    'Back-End 정의',
+    '후속 서버 개발자가 화면 재분석 없이 착수할 수 있도록 요구사항과 인터페이스를 정의한다.',
+    '도메인 및 관리 대상 정의 · 데이터 요구사항 정의 · 데이터 관계 정의 · API 인터페이스 요구사항 정의 · 비즈니스 규칙 및 검증 정책 정의 · 상태값 및 라이프사이클 정의 · 권한 요구사항 정의 · 예외 및 오류 응답 요구사항 정의',
+    '본 문서 6장 「Back-End 요구사항 정의」 및 4.2 「데이터 관리 정책」',
+    '6장의 완료 기준 열 가지(6.9)를 모두 충족한 상태. 관리 대상 · 데이터 항목 · 관계 · 연산 · 인터페이스 · 검증 · 상태 · 권한 · 예외가 각각 문서화되어 있는 상태.',
+    '실제 서버 코드 · 데이터베이스 · API 구현',
   ],
   [
-    '운영',
-    '**제공하지 않습니다.**',
-    '인수 시점의 산출물은 소스와 문서입니다. 호스팅 · 배포 · 콘텐츠 등록 대행은 포함하지 않습니다.',
+    'Back-End 구현',
+    '**본 과업에서 제공하지 않는다.**',
+    `${NOT_BUILT.join(' · ')} 미포함`,
+    '해당 없음',
+    '해당 없음 — 후속 과업으로 분리한다.',
+    '위 전 항목',
+  ],
+  [
+    '인프라 및 배포',
+    '**본 과업에서 제공하지 않는다.**',
+    '서버 인프라 구성 · CI 및 CD 구축 · 운영 환경 배포 · 도메인 및 인증서 관리 미포함',
+    '해당 없음',
+    '해당 없음 — 인수 시점의 산출물은 소스와 문서다.',
+    '위 전 항목',
+  ],
+  [
+    '운영 및 유지보수',
+    '**본 과업에서 제공하지 않는다.**',
+    '서비스 운영 대행 · 콘텐츠 제작 및 등록 대행 · 정기 유지보수 · 취약점 진단 미포함',
+    '해당 없음',
+    '해당 없음 — 별도 계약 대상이다.',
+    '위 전 항목',
   ],
 ];
 
-/* ── 6. 변경 관리 기준 ─────────────────────────────────────── */
+const dutyRows = DUTY.map(
+  ([area, why, scope, output, done, out]) =>
+    `<tr class="head"><td class="d1">${esc(area)}</td>${[why, scope, output, done, out].map((one) => `<td class="memo">${rich(one)}</td>`).join('')}</tr>`,
+).join('');
 
-const CHANGE: [string, string, string][] = [
+/* ── 6. Back-End 요구사항 ──────────────────────────────────── */
+
+const domainRows = DOMAINS.map((one) =>
+  cells(
+    esc(one.name),
+    rich(one.purpose),
+    one.screens.map((id) => `<code>${esc(id)}</code>`).join(' '),
+    rich(one.exposed),
+  ),
+).join('');
+
+/** 데이터 요구사항 — 관리자 상세 화면의 입력 항목이 곧 그 대상의 속성이다. */
+const dataBlocks = DOMAINS.map((domain) => {
+  const source = screenOf(domain.fieldsFrom);
+  const fields = source?.spec.fields ?? [];
+  if (fields.length === 0) {
+    return `<h4>${esc(domain.name)}</h4>
+<p class="tbd">데이터 항목이 화면 명세에 정의되어 있지 않습니다 — <strong>정의 필요</strong>. 현재는 조회 전용 화면만 존재하므로, 등록 및 수정 기능을 도입하는 시점에 항목을 함께 정의합니다.</p>`;
+  }
+  const rows = fields
+    .map((one) =>
+      cells(
+        esc(one.name),
+        rich(formal(one.desc)),
+        one.required ? '필수' : '선택',
+        one.rule ? rich(formal(one.rule)) : `<span class="none">${esc(one.type)}</span>`,
+      ),
+    )
+    .join('');
+  return `<h4>${esc(domain.name)}</h4>
+<p class="from">항목 정의 출처 — <code>${esc(domain.fieldsFrom)}</code> ${esc(source?.name ?? '')} <code>${esc(source?.route ?? '')}</code></p>
+${table(th('항목', 118) + th('설명') + th('필수 여부', 64) + th('입력 형태 · 정책', 210), rows)}`;
+}).join('');
+
+const apiBlocks = DOMAINS.map((domain) => {
+  const rows = endpointsOf(domain)
+    .map((one) =>
+      cells(
+        esc(one.action),
+        `<code>${esc(one.method)}</code>`,
+        `<code>${esc(one.path)}</code>`,
+        rich(one.request),
+        rich(one.response),
+        rich(one.note),
+      ),
+    )
+    .join('');
+  return `<h4>${esc(domain.name)}</h4>
+${table(th('기능', 116) + th('Method', 58) + th('Endpoint 예시', 150) + th('요청 데이터', 142) + th('응답 데이터', 142) + th('비고'), rows)}`;
+}).join('');
+
+const stateRows = STATES.map((one) => [one.domain, one.name, one.values, one.actor, one.effect, one.flow]);
+
+/* ── 7. 완료 및 인수 기준 ──────────────────────────────────── */
+
+const HANDOVER: [string, string][] = [
   [
-    '접수',
-    '변경 요청은 **기능 ID 를 지목해** 제기합니다.',
-    '`MENU-002` 처럼 ID 로 지목하면 두 문서의 같은 자리를 함께 찾을 수 있습니다. 화면 이름으로 부르면 목록 · 상세 · 등록 중 어느 것인지 갈리지 않습니다.',
+    '소스 코드',
+    `고객 서비스와 관리자 서비스 소스 일체 및 공통 패키지. 화면 ${SCREENS.length}개 · 세부 기능 ${totalActions}건.`,
   ],
-  [
-    '판단',
-    '요청을 **범위 안**과 **범위 밖**으로 나눕니다.',
-    '이미 정의된 기능의 표현 · 배치 · 문구를 고치는 것은 범위 안입니다. 화면이 늘거나, 새 데이터 항목이 생기거나, 4장 「제외 범위」에 적힌 것을 하기로 하는 것은 범위 밖이며 별도 협의 대상입니다.',
-  ],
-  [
-    '반영',
-    '변경은 **화면 등록부와 화면 명세를 고치는 것**으로 시작합니다.',
-    '그 둘을 고치면 본 문서와 기능 명세서가 함께 갱신되고, 저장소의 검사 도구가 빠진 곳을 잡아냅니다.',
-  ],
-  [
-    '반영',
-    '**문서만 고치거나 코드만 고치는 변경은 받지 않습니다.**',
-    '한쪽만 고쳐 두면 다른 쪽이 조용히 낡은 상태로 남고, 그 사실은 한참 뒤 인수 자리에서 드러납니다.',
-  ],
-  [
-    '기록',
-    '변경 이력은 저장소의 이력으로 갈음합니다.',
-    '별도 변경 관리 대장을 두지 않습니다. 두 벌이 되면 한쪽만 적히고, 그때부터 어느 쪽이 맞는지 확인할 방법이 없어집니다.',
-  ],
+  ['업무 범위 정의서', '본 문서. 구축 범위 · 책임 범위 · Back-End 요구사항 · 완료 및 인수 기준.'],
+  ['기능 명세서', `화면 ${SCREENS.length}개의 기능 · 데이터 · 동작 · 조건 · 예외 · 검수 기준.`],
+  ['IA 및 화면 흐름 정의', '서비스 구조와 화면 간 연결 관계.'],
+  ['디자인 토큰 및 공통 컴포넌트', '색 · 타이포그래피 · 간격 규칙과 공통 UI 컴포넌트 일체.'],
+  ['화면 캡처', `전 화면 ${SCREENS.length}장.`],
+  ['품질 검사 도구', '명명 및 등록 일치 · 문서 누락 · 값의 출처 · 반응형 · 화면 무게 여섯 종.'],
 ];
 
-
-/* ── 4. 제외 범위 ──────────────────────────────────────────── */
-
-const OUT: [string, string, string][] = [
-  ['BX', '로고 · BI 가이드 제작', '**BX 는 제공하지 않는 서비스입니다.** 로고는 원본 파일을 받아 그대로 씁니다 — 눈으로 보고 다시 그린 로고는 그 브랜드의 표장이 아닙니다.'],
-  ['BX', '패키지 · 인쇄물 · 편집 디자인', 'BX 범위이므로 제공하지 않습니다. 본 과업은 웹 화면에 한정합니다.'],
-  ['BX', 'SNS · 프로모션 콘텐츠 디자인', '같은 이유로 제공하지 않습니다.'],
-  ['BX', '제품 · 모델 촬영 · 영상 제작', '메뉴 사진과 영상은 발주처가 제공합니다.'],
-  ['기획', '경쟁사 분석 · 시장 조사', '발주처가 제공하는 브랜드 기준을 따릅니다.'],
-  ['UI 디자인', '시안 파일 (PSD · AI)', '디자인은 실제로 동작하는 화면으로 인도합니다. 별도 시안 파일은 만들지 않습니다.'],
-  ['Back-End', '서버 · 데이터베이스 **구현**', '**정의는 제공하고 구현은 제공하지 않습니다.** 화면별 데이터 연산 · 권한 · 항목 · 검증은 「기능 명세서」에, 보존 · 삭제 · 소멸 기준은 이 문서 5장에 있습니다. 그 둘이 뒤에 맡는 쪽의 착수 명세가 됩니다.'],
-  ['Back-End', 'API 개발 · 배포', '같은 구분입니다. 화면이 필요로 하는 연산 · 권한 · 항목 · 검증은 「기능 명세서」에 정의해 두었습니다.'],
-  ['Back-End', '회원 · 로그인 · 권한 **구현**', '화면까지만 만듭니다. 입력한 값은 지금은 어디로도 전송되지 않습니다.'],
-  ['Back-End', '온라인 주문 · 결제', '**정의도 하지 않습니다.** 이 브랜드는 주문을 전화와 매장 방문으로 받습니다.'],
-  ['Back-End', '메일 · 문자 발송', '정의하지 않습니다. 창업 문의는 값을 받는 양식까지 제공합니다.'],
-  ['Back-End', '지도 · 예약 · POS 등 외부 연동', '정의하지 않습니다. 지도는 화면에서 지도 SDK 를 직접 부릅니다.'],
-  ['운영', '서버 구성 · 배포 · 호스팅', '인수 시점의 산출물은 소스와 문서입니다.'],
-  ['운영', '취약점 진단 · 보안 점검', '포함하지 않습니다. 「데이터 정책」의 보안 항목은 점검이 아니라 설계 기준입니다.'],
-  ['운영', '콘텐츠 제작 · 등록 대행', '메뉴 사진과 문구는 발주처가 제공하며, 등록은 콘솔에서 직접 하십니다.'],
+const ACCEPT: string[] = [
+  '정의된 전체 화면이 구현되어 있으며, 기능 명세서의 화면별 검수 기준을 모두 통과한다.',
+  '기준 해상도 네 곳에서 의도하지 않은 가로 스크롤과 레이아웃 깨짐이 없다.',
+  '저장소에 포함된 품질 검사 여섯 종이 전부 통과한다.',
+  '화면 목록 · 세부 기능 · 데이터 항목이 문서와 코드에서 일치한다.',
+  'Back-End 요구사항 정의가 6.9 의 완료 기준 열 가지를 충족한다.',
+  '인수 산출물 일곱 종이 전달되어 있다.',
+  '범위 밖으로 정의된 항목이 구현되지 않은 사실은 미완료가 아니라 <strong>범위 제외</strong>로 판정한다.',
 ];
 
-
-/* ── 5. 데이터 정책 ────────────────────────────────────────── */
-
-const POLICY: [string, string, string][] = [
-  [
-    '수집',
-    '수집 항목',
-    '창업 상담 신청에서 받는 값 — 성함 · 연락처 · 지역 · 예산 · 하고 싶은 말. 실제 항목과 검증 규칙은 「기능 명세서」 `FRANCHISE-002` 의 「입력 데이터」와 같습니다.',
-  ],
-  [
-    '수집',
-    '수집 근거',
-    '정보주체의 동의입니다. 신청 화면에 동의 여부를 따로 받는 칸이 있으며, 동의하지 않으면 접수되지 않습니다.',
-  ],
-  [
-    '수집',
-    '최소 수집',
-    '상담에 필요하지 않은 값은 받지 않습니다. 항목을 늘릴 때에는 동의 문구도 함께 고쳐야 합니다.',
-  ],
-  [
-    '보유',
-    '보유 · 이용 기간',
-    '**권고 — 상담 종료 후 3년.** 「전자상거래 등에서의 소비자보호에 관한 법률」 시행령이 소비자 불만 · 분쟁 처리 기록을 3년간 보존하도록 하는 것을 근거로 삼았습니다. 발주처 확인이 필요합니다.',
-  ],
-  [
-    '보유',
-    '기간의 기산점',
-    '접수일이 아니라 **상담이 끝난 날**부터 셉니다. 접수일 기준으로 하면 상담이 길어진 건이 진행 중에 지워집니다.',
-  ],
-  [
-    '삭제',
-    '정보주체의 삭제 요청',
-    '요청을 받으면 지체 없이 지웁니다. **권고 — 접수 후 10일 이내**, 「개인정보 보호법」의 열람 · 정정 · 삭제 처리 기한을 따랐습니다. 처리 결과를 요청인에게 알립니다.',
-  ],
-  [
-    '삭제',
-    '운영자의 삭제',
-    '목록에서는 즉시 감추되 바로 지우지 않습니다. **권고 — 감춘 뒤 30일 보관 후 완전 삭제.** 잘못 지운 것을 되돌릴 창구가 없으면 운영자가 삭제 단추를 못 누릅니다.',
-  ],
-  [
-    '삭제',
-    '삭제 대상의 범위',
-    '본문뿐 아니라 첨부 · 검색 색인 · 캐시에 남은 사본까지 함께 지웁니다. 한 곳만 지우면 검색 결과에는 계속 뜹니다.',
-  ],
-  [
-    '소멸',
-    '보유 기간 만료',
-    '기간이 지난 값은 **자동으로 파기**합니다. 사람이 지우기로 하면 잊습니다. **권고 — 하루 한 번 정해진 시각에 도는 일괄 처리**로 그날 만료된 것을 처리합니다.',
-  ],
-  [
-    '소멸',
-    '미처리 문의의 자동 종결',
-    '연락이 닿지 않아 멈춘 문의를 열린 채로 두면 처리 건수가 실제와 달라집니다. **권고 — 마지막 접촉일로부터 1년이 지나면 「종결」로 자동 전환**하고, 그때부터 보유 기간을 셉니다.',
-  ],
-  [
-    '소멸',
-    '파기 방법',
-    '전자적 파일은 복구할 수 없는 방법으로 지웁니다. 출력물이 있다면 파쇄하거나 소각합니다.',
-  ],
-  [
-    '소멸',
-    '파기 기록',
-    '무엇을 언제 몇 건 파기했는지 남깁니다. 개인정보 자체는 남기지 않고 건수와 시각만 남깁니다.',
-  ],
-  [
-    '이력',
-    '변경 이력',
-    '등록 · 수정 · 삭제마다 **누가 · 언제 · 무엇을 바꿨는지**를 남깁니다. 값이 왜 이렇게 되어 있는지를 나중에 물을 곳이 여기뿐입니다. **권고 — 1년 보관.**',
-  ],
-  [
-    '이력',
-    '접근 기록',
-    '개인정보가 담긴 창업 문의를 **열어 본 기록**을 남깁니다. 바꾼 기록만으로는 누가 들여다봤는지 알 수 없습니다.',
-  ],
-  [
-    '권한',
-    '운영자 권한',
-    '콘솔은 인증된 운영자만 씁니다. **권고 — 창업 문의는 권한을 따로 나눕니다.** 메뉴 값을 고치는 일과 손님의 연락처를 보는 일은 같은 무게가 아닙니다.',
-  ],
-  [
-    '권한',
-    '권한 회수',
-    '퇴사 · 담당 변경 시 계정을 즉시 막습니다. 콘솔에 운영자 관리 화면이 있으므로 그 화면에서 처리합니다.',
-  ],
-  [
-    '보안',
-    '전송 구간',
-    '사이트와 콘솔 모두 HTTPS 로만 엽니다. 창업 문의는 개인정보가 오가는 길입니다.',
-  ],
-  [
-    '보안',
-    '저장 시 암호화',
-    '**권고 — 연락처는 암호화해 저장**하고, 목록에서는 일부를 가려 보여 줍니다. 목록 화면은 여러 사람이 함께 보는 자리입니다.',
-  ],
-  [
-    '백업',
-    '백업 주기 · 보관',
-    '**권고 — 하루 한 번, 30일 보관.** 백업본에도 같은 파기 정책이 걸립니다. 본체에서 지운 값이 백업에 남아 있으면 지운 것이 아닙니다.',
-  ],
-];
-
-
-/**
- * 만든 날. 문서가 생성물이라 **언제 기준인가**가 곧 유효기간이다 — 날짜가 없으면 받는 쪽이
- * 지난 판을 최신으로 읽는다.
- */
 const today = new Date().toLocaleDateString('ko-KR', { dateStyle: 'long' });
 
 const html = `<!doctype html>
@@ -265,10 +296,7 @@ const html = `<!doctype html>
 <meta charset="utf-8">
 <title>F&amp;B 업무 범위 정의서</title>
 <style>
-  /*
-    인쇄를 먼저 생각한 판이다. 화면에서 예쁘게 보이는 것보다, A4 로 뽑았을 때 줄이 페이지
-    사이에서 잘리지 않는 것이 중요하다.
-  */
+  /* 인쇄를 먼저 생각한 판이다. A4 로 뽑았을 때 줄이 페이지 사이에서 잘리지 않는 것이 중요하다. */
   @page { size: A4; margin: 14mm 12mm 16mm; }
 
   :root {
@@ -280,6 +308,7 @@ const html = `<!doctype html>
     --head: #f5f6f8;
     --d1: #f2f4f7;
     --accent: #1b5fc4;
+    --warn: #b8792a;
   }
 
   * { box-sizing: border-box; }
@@ -290,8 +319,8 @@ const html = `<!doctype html>
     background: #fff;
     color: var(--ink);
     font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", system-ui, sans-serif;
-    font-size: 9.5pt;
-    line-height: 1.62;
+    font-size: 9pt;
+    line-height: 1.6;
     /* 한글은 낱말 한가운데서 끊긴다. 띄어쓰기 단위로만 끊게 한다. */
     word-break: keep-all;
     overflow-wrap: break-word;
@@ -299,7 +328,7 @@ const html = `<!doctype html>
 
   .sheet { max-width: 200mm; margin: 0 auto; }
 
-  .title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+  .title-row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
   h1 { font-size: 17pt; margin: 0; letter-spacing: -0.02em; }
   h1 .dim { color: var(--faint); font-weight: 600; }
   .date { color: var(--muted); font-size: 9pt; font-style: italic; white-space: nowrap; }
@@ -309,14 +338,19 @@ const html = `<!doctype html>
     border: 1px solid var(--line);
     text-align: center;
     font-size: 11pt;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.22em;
     padding: 6px;
     margin: 26px 0 10px;
     break-after: avoid;
   }
-  h3 { font-size: 10pt; margin: 16px 0 6px; color: var(--accent); break-after: avoid; }
+  h3 { font-size: 10pt; margin: 18px 0 6px; color: var(--accent); break-after: avoid; }
+  h4 { font-size: 9.5pt; margin: 14px 0 4px; break-after: avoid; }
   p { margin: 6px 0; }
   .lead { color: var(--muted); margin: 0 0 8px; }
+  .from { color: var(--faint); font-size: 8.5pt; margin: 0 0 3px; }
+  /* 화면 경로는 메뉴 경로 아래에 작게 붙인다. 한 칸에 둘이지만 읽는 차례가 갈린다. */
+  .route { display: block; margin-top: 2px; color: var(--faint); font-size: 8pt; word-break: break-all; }
+  .tbd { color: var(--warn); }
 
   table { width: 100%; border-collapse: collapse; margin: 4px 0 12px; }
   th, td { border: 1px solid var(--line); padding: 5px 7px; vertical-align: top; text-align: left; }
@@ -324,10 +358,14 @@ const html = `<!doctype html>
   tbody tr { break-inside: avoid; }
 
   td.d1 { text-align: center; vertical-align: middle; background: var(--d1); font-weight: 700; }
-  td.d4 { font-weight: 600; }
   td.memo { color: var(--muted); }
-  td.memo ul { margin: 0; padding-left: 15px; }
   tbody tr.head > td { border-top: 1.4px solid #9aa1ad; }
+
+  table.right td { text-align: center; }
+  table.right td:first-child { text-align: left; font-weight: 600; color: var(--ink); }
+
+  ul { margin: 3px 0; padding-left: 16px; }
+  li { margin: 1.5px 0; }
 
   code {
     font-family: "Consolas", "D2Coding", ui-monospace, monospace;
@@ -336,16 +374,8 @@ const html = `<!doctype html>
     padding: 0.5px 3px;
     border-radius: 3px;
   }
-  th code, td code { background: transparent; }
+  th code, td code { background: transparent; padding: 0; }
   .none { color: var(--faint); }
-
-  /* 세부 기능 목록 — 번호가 기능 명세서 3절의 「기능 01 · 02」 와 같은 자리를 가리킨다. */
-  ol.fn { margin: 0; padding-left: 20px; }
-  ol.fn li { margin: 1px 0; }
-  ol.fn li::marker { color: var(--faint); font-variant-numeric: tabular-nums; font-size: 8.5pt; }
-
-  ul { margin: 4px 0; padding-left: 17px; }
-  li { margin: 2px 0; }
 
   @media print { body { padding: 0; } }
 </style>
@@ -358,83 +388,193 @@ const html = `<!doctype html>
   <div class="date">${esc(today)}</div>
 </div>
 
-<h2>1. 개 요</h2>
+<h2>1. 프 로 젝 트 개 요</h2>
 
-<h3>1.1 배경</h3>
+<h3>1.1 프로젝트 목적</h3>
 <p>
-  브랜드 사이트의 내용이 코드에 적혀 있으면 메뉴 가격 한 줄, 공지 한 건을 고치는 데에도
-  개발자와 배포가 필요합니다. 그 결과 사이트는 만들어진 시점에 멈춰 있고, 실제 운영은 전화와
-  종이로 돌아갑니다.
-</p>
-
-<h3>1.2 무엇을 만드는가</h3>
-<p>
-  <strong>고객 사이트</strong>와 <strong>그 내용을 고치는 관리자</strong> 한 쌍을 만듭니다.
-  고객 사이트는 손님에게 무엇을 파는 집인지를, 예비 점주에게 얼마가 들고 얼마나 걸리는지를
-  각각의 길에서 답합니다. 관리자는 사이트에 나가는 값을 운영자가 직접 고치는 자리입니다.
+  브랜드 사이트의 내용이 코드에 고정되어 있으면 가격 한 줄, 공지 한 건을 변경하는 데에도 개발과
+  배포가 필요하다. 그 결과 사이트는 구축 시점에 멈추고, 실제 운영은 사이트 밖에서 이루어진다.
 </p>
 <p>
-  두 앱은 <strong>같은 값 한 곳</strong>을 읽습니다. 값을 두 벌로 두면 어느 쪽이 맞는지 확인할
-  방법이 없어지기 때문입니다.
+  본 과업은 <strong>고객이 이용하는 서비스</strong>와 <strong>그 내용을 운영자가 직접 관리하는
+  서비스</strong>를 한 쌍으로 구축하여, 운영 주체가 개발 의존 없이 서비스를 현행으로 유지할 수
+  있도록 하는 것을 목적으로 한다.
 </p>
 
-<h3>1.3 전제</h3>
-<ul>
-  <li>본 단계에는 <strong>서버와 데이터베이스가 없습니다.</strong> 화면이 읽는 값은 공유 패키지에 담기며, 관리자에서 고친 값은 브라우저 안에서만 유지됩니다.</li>
-  <li>메뉴 사진과 문구 등 콘텐츠는 <strong>발주처가 제공</strong>합니다.</li>
-  <li>브랜드 로고는 <strong>원본 파일을 받아 그대로</strong> 사용합니다. 눈으로 보고 다시 그린 로고는 그 브랜드의 표장이 아닙니다.</li>
-</ul>
-
-<h2>2. 과 업 범 위</h2>
-<p class="lead">어디까지 만드는가 — 화면 단위로 확정된 범위입니다. 이 표에 없는 화면은 범위 밖입니다.</p>
-
+<h3>1.2 서비스 구성</h3>
 <table>
-  <thead><tr><th style="width:110px">구분</th><th style="width:80px">화면 수</th><th style="width:80px">기능 수</th><th>범위</th></tr></thead>
+  <thead><tr>${th('구분', 96)}${th('화면 수', 64)}${th('세부 기능', 70)}${th('역할')}</tr></thead>
   <tbody>
-    ${cells('고객 사이트', String(CLIENT_SCREENS.length), String(CLIENT_SCREENS.reduce((sum, one) => sum + one.spec.actions.length, 0)), '브랜드 · 메뉴 · 인테리어 · 마케팅 · 매장안내 · 창업안내 · 고객센터 · 법적 고지. 창업 상담 신청 한 곳을 제외하면 모두 읽기 전용입니다.')}
-    ${cells('관리자', String(ADMIN_SCREENS.length), String(ADMIN_SCREENS.reduce((sum, one) => sum + one.spec.actions.length, 0)), '대시보드 · 등록 · 창업 · 고객센터 · 배너 · 설정. 목록 · 상세 · 등록 세 꼴이 반복됩니다.')}
+    ${cells('고객 서비스', String(CLIENT_SCREENS.length), String(CLIENT_SCREENS.reduce((s, o) => s + o.spec.actions.length, 0)), '브랜드 정보 제공 · 메뉴 탐색 · 매장 검색 · 창업 안내 · 고객 지원. 창업 상담 신청을 제외한 전 화면이 조회 전용이다.')}
+    ${cells('관리자 서비스', String(ADMIN_SCREENS.length), String(ADMIN_SCREENS.reduce((s, o) => s + o.spec.actions.length, 0)), '고객 서비스에 노출되는 데이터의 등록 · 수정 · 삭제 · 상태 관리와 창업 문의 처리.')}
   </tbody>
 </table>
-
-<h3>2.1 화면 목록</h3>
-<table>
-  <thead><tr><th style="width:82px">기능 ID</th><th style="width:92px">화면명</th><th style="width:146px">메뉴 경로</th><th style="width:114px">화면 경로</th><th>세부 기능</th></tr></thead>
-  <tbody>${scopeRows}</tbody>
-</table>
-
-<h2>3. 책 임 범 위</h2>
-<p class="lead">
-  책임 범위에서 다투는 것은 맡았는가 아닌가가 아니라 <strong>어디까지 하면 끝인가</strong>입니다.
-  그래서 「완료 기준」을 함께 적었습니다.
+<p>
+  두 서비스는 <strong>동일한 데이터를 참조</strong>한다. 데이터를 이중으로 관리하면 어느 쪽이
+  기준인지 확인할 방법이 없어지기 때문이다. 따라서 관리자 서비스의 변경은 고객 서비스에 그대로
+  반영되며, 반영 범위는 3.3 「데이터 변경 영향도」에 정의한다.
 </p>
-<table>
-  <thead><tr><th style="width:82px">갈래</th><th style="width:240px">맡는 일</th><th>완료 기준</th></tr></thead>
-  <tbody>${grouped(DUTY)}</tbody>
-</table>
 
-<h2>4. 제 외 범 위</h2>
-<p class="lead">아래는 <strong>이번 과업에 포함하지 않습니다.</strong> 적어 두지 않으면 포함된 것으로 읽히기 때문에 따로 둡니다.</p>
-<table>
-  <thead><tr><th style="width:82px">갈래</th><th style="width:200px">항목</th><th>사유 · 지금 상태</th></tr></thead>
-  <tbody>${grouped(OUT)}</tbody>
-</table>
+<h3>1.3 전제 조건</h3>
+<ul>
+  <li>본 단계에는 <strong>서버와 데이터베이스가 없다.</strong> 화면이 참조하는 데이터는 공통 데이터 구조로 관리하며, 관리자 서비스의 변경은 브라우저 세션 범위에서 유지된다.</li>
+  <li>메뉴 이미지 및 콘텐츠 원고는 <strong>발주처가 제공</strong>한다. 본 과업은 제공된 콘텐츠를 화면에 반영하는 범위까지 수행한다.</li>
+  <li>브랜드 로고는 원본 파일을 제공받아 사용한다.</li>
+</ul>
 
-<h2>5. 데 이 터 정 책</h2>
+<h2>2. 정 보 구 조</h2>
+<p class="lead">서비스 영역별 화면 구성이다. 이 구조는 고객 서비스의 상단 내비게이션 및 관리자 서비스의 좌측 메뉴 구성과 동일하다.</p>
+
+<h3>2.1 고객 서비스 구조</h3>
+${table(th('영역', 100) + th('화면 수', 64) + th('구성 화면'), iaRows(CLIENT_SCREENS))}
+
+<h3>2.2 관리자 서비스 구조</h3>
+${table(th('영역', 100) + th('화면 수', 64) + th('구성 화면'), iaRows(ADMIN_SCREENS))}
+
+<h2>3. 화 면 및 기 능 정 의</h2>
+
+<h3>3.1 고객 서비스</h3>
+${table(SCREEN_HEAD, screenRows(CLIENT_SCREENS))}
+
+<h3>3.2 관리자 서비스</h3>
+${table(SCREEN_HEAD, screenRows(ADMIN_SCREENS))}
+
+<h3>3.3 데이터 변경 영향도</h3>
 <p class="lead">
-  Back-End 를 맡는 쪽이 <strong>정해 놓고 시작해야 하는 것</strong>들입니다. 기능은 화면에서
-  끌어낼 수 있지만 보존 기간과 파기 시점은 화면에 드러나지 않습니다.
-  <strong>「권고」라고 적은 값은 확정된 것이 아니며</strong>, 근거로 삼은 법령을 함께 적었습니다.
+  관리자 서비스에서 데이터를 변경했을 때 반영되는 고객 서비스 화면이다.
+  <code>등록 → 저장 → 상태 관리 → 고객 서비스 노출</code> 흐름의 마지막 단계에 해당한다.
 </p>
-<table>
-  <thead><tr><th style="width:64px">구분</th><th style="width:150px">항목</th><th>정의 · 기준</th></tr></thead>
-  <tbody>${grouped(POLICY)}</tbody>
-</table>
+${table(
+  th('변경 대상 (관리자)', 186) + th('영향 기능 (고객 서비스)', 186) + th('연결된 데이터'),
+  ADMIN_SCREENS.flatMap((admin) =>
+    impactOf(admin).map(({ screen: client, via }) =>
+      cells(
+        `<code>${esc(admin.featureId)}</code> ${esc(admin.name)}`,
+        `<code>${esc(client.featureId)}</code> ${esc(client.name)}`,
+        rich(formal(via)),
+      ),
+    ),
+  ).join(''),
+)}
 
-<h2>6. 변 경 관 리 기 준</h2>
-<table>
-  <thead><tr><th style="width:64px">단계</th><th style="width:240px">기준</th><th>까닭</th></tr></thead>
-  <tbody>${grouped(CHANGE)}</tbody>
-</table>
+<h2>4. 운 영 정 책</h2>
+
+<h3>4.1 화면별 운영 정책</h3>
+<p class="lead">
+  화면에 적용되는 공개 · 노출 · 정렬 · 집계 규칙이다. 6.5 의 비즈니스 규칙은 이 정책을 서버
+  관점에서 다시 정의한 것이다.
+</p>
+${table(th('화면', 164) + th('구분', 72) + th('운영 정책'), policyRows)}
+
+<h3>4.2 데이터 관리 정책</h3>
+<p class="lead">
+  수집 · 보유 · 삭제 · 소멸 · 이력 · 권한 · 보안 · 백업 정책이다. 화면에 드러나지 않지만
+  서버 구축 이전에 확정되어야 하는 값이므로 여기에 정의한다.
+  <strong class="tbd">「권고」로 표기한 기간과 값은 확정된 것이 아니며</strong>, 근거 법령을 함께
+  적었으나 실제 값은 발주처가 정한다.
+</p>
+${table(th('구분', 62) + th('항목', 146) + th('정의 · 기준'), grouped(DATA_POLICY))}
+
+<h2>5. 책 임 범 위</h2>
+<p class="lead">
+  책임 범위에서 실제로 다투는 것은 담당 여부가 아니라 <strong>어디까지 수행하면 완료인가</strong>이다.
+  따라서 각 영역에 대해 수행 목적 · 제공 범위 · 주요 산출물 · 완료 기준 · 제외 범위를 함께 정의한다.
+</p>
+${table(
+  th('구분', 76) + th('수행 목적', 146) + th('제공 범위') + th('주요 산출물', 136) + th('완료 기준') + th('제외 범위', 126),
+  dutyRows,
+)}
+
+<h2>6. B a c k - E n d 요 구 사 항 정 의</h2>
+<p class="lead">
+  <strong>Back-End 정의는 제공하고, Back-End 실제 구현은 제공하지 않는다.</strong>
+  본 장은 후속 서버 개발자가 Front-End 화면을 다시 분석하지 않고 서버 개발에 착수할 수 있도록
+  요구사항과 인터페이스를 정의한 것이다. 엔드포인트는 구현을 강제하는 확정 사양이 아니라
+  인터페이스 요구사항이다.
+</p>
+
+<h3>6.1 도메인 및 관리 대상 정의</h3>
+${table(th('관리 대상', 102) + th('데이터의 목적') + th('관련 화면', 146) + th('고객 서비스 노출'), domainRows)}
+
+<h3>6.2 데이터 요구사항 정의</h3>
+<p class="lead">
+  각 관리 대상의 데이터 항목이다. 항목은 관리자 서비스 상세 화면의 입력 항목에서 도출하였다 —
+  운영자가 관리하는 값이 곧 해당 대상의 속성이기 때문이다. 실제 테이블 설계, 인덱스 및 ORM
+  구현은 포함하지 않는다.
+</p>
+${dataBlocks}
+
+<h3>6.3 데이터 관계 정의</h3>
+<p class="lead">후속 개발자가 데이터 모델을 설계할 수 있는 요구사항 수준으로 정의한다. 물리 ERD 는 포함하지 않는다.</p>
+${table(th('관계', 164) + th('정의'), RELATIONS.map(([a, b]) => cells(esc(a), rich(b))).join(''))}
+
+<h3>6.4 API 요구사항 정의</h3>
+<p class="lead">
+  화면에서 필요한 서버 기능이다. 연산은 화면 주소 규칙에서 도출하였다 — 목록 · 단건 · 등록
+  화면의 존재가 곧 필요한 연산을 결정한다.
+</p>
+${apiBlocks}
+
+<h3>6.5 비즈니스 규칙 및 검증 정책</h3>
+<p class="lead">
+  <strong>화면 검증과 서버 검증을 구분하여 정의한다.</strong> 화면에서 막는 것은 사용자를 돕기 위한
+  것이고, 서버에서 막는 것은 데이터를 지키기 위한 것이다. 화면에만 검증을 두면 API 를 직접
+  호출하는 요청에는 적용되지 않는다.
+</p>
+${table(th('관리 대상', 102) + th('규칙') + th('적용 위치', 196), grouped(RULES))}
+
+<h3>6.6 상태값 및 라이프사이클 정의</h3>
+${table(
+  th('관리 대상', 90) + th('상태 항목', 80) + th('값', 102) + th('변경 주체', 104) + th('고객 서비스 영향') + th('전이 규칙', 162),
+  grouped(stateRows),
+)}
+
+<h3>6.7 권한 요구사항 정의</h3>
+<p class="lead">
+  권한 등급은 현재 데이터에 정의된 <strong>대표 · 운영 · 조회</strong> 세 등급을 사용한다.
+  각 등급의 연산 범위는 현재 문서에 정의되어 있지 않으므로, 아래 배분은
+  <strong class="tbd">제안이며 확정은 발주처가 한다.</strong>
+  실제 인증 시스템, 접근 통제 구현 및 세션 관리는 본 과업 범위에서 제외한다.
+</p>
+${table(
+  ROLES[0]!.map((one) => th(one)).join(''),
+  ROLES.slice(1)
+    .map((row) => cells(...row.map((one) => (one === 'O' ? '<strong>O</strong>' : esc(one)))))
+    .join(''),
+  'right',
+)}
+
+<h3>6.8 예외 및 오류 요구사항 정의</h3>
+<p class="lead">화면에서 고려해야 하는 예외 상황과 서버 응답 요구사항을 함께 정의한다.</p>
+${table(
+  th('상황', 136) + th('발생 조건', 224) + th('시스템 처리 · 화면 표시'),
+  ERRORS.map(([a, b, c]) => cells(esc(a), rich(b), rich(c))).join(''),
+)}
+
+<h3>6.9 Back-End 정의 완료 기준</h3>
+<p class="lead">다음 조건을 모두 충족한 경우 Back-End 정의가 완료된 것으로 판단한다.</p>
+${bullets(DONE)}
+
+<h3>6.10 Back-End 구현 제외 범위</h3>
+<p class="lead">아래 항목은 <strong>본 과업에서 제외</strong>한다. 다만 향후 개발이 가능하도록 6.1부터 6.8까지의 요구사항을 문서로 제공한다.</p>
+${bullets(NOT_BUILT)}
+
+<h2>7. 완 료 및 인 수 기 준</h2>
+
+<h3>7.1 인수 산출물</h3>
+${table(th('산출물', 164) + th('내용'), HANDOVER.map(([a, b]) => cells(esc(a), rich(b))).join(''))}
+
+<h3>7.2 인수 판정 기준</h3>
+${bullets(ACCEPT)}
+
+<h3>7.3 변경 관리 기준</h3>
+<ul>
+  <li>변경 요청은 <strong>기능 ID 를 지목하여</strong> 제기한다. 화면 이름으로 지목하면 목록 · 상세 · 등록 중 어느 화면인지 특정되지 않는다.</li>
+  <li>이미 정의된 기능의 표현 · 배치 · 문구 조정은 <strong>범위 내 변경</strong>으로 처리한다.</li>
+  <li>화면 추가, 신규 데이터 항목 도입, 5장에서 제외 범위로 정의된 항목의 수행은 <strong>범위 외 변경</strong>이며 별도 협의 대상이다.</li>
+  <li>변경은 화면 등록부와 화면 명세의 수정으로 시작하며, 본 문서와 기능 명세서가 함께 갱신된다.</li>
+  <li>문서만 수정하거나 코드만 수정하는 변경은 허용하지 않는다. 한쪽만 반영되면 다른 쪽이 낡은 상태로 남고, 그 사실은 인수 시점에 드러난다.</li>
+</ul>
 
 </div>
 </body>
@@ -443,4 +583,6 @@ const html = `<!doctype html>
 
 const out = 'FnB-업무범위정의서.html';
 writeFileSync(out, html, 'utf8');
-console.log(`${out} — 화면 ${SCREENS.length} · 세부 기능 ${totalActions} · 제외 ${OUT.length} · 정책 ${POLICY.length}`);
+console.log(
+  `${out} — 화면 ${SCREENS.length} · 세부 기능 ${totalActions} · 도메인 ${DOMAINS.length} · 규칙 ${RULES.length} · 상태 ${STATES.length} · 예외 ${ERRORS.length}`,
+);
