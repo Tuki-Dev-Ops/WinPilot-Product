@@ -1,7 +1,7 @@
 import { writeFileSync } from 'node:fs';
 import { CHECKS, nfrOf, type DocProject } from './lib/doc-project';
 import { PROJECTS } from './lib/projects';
-import { bullets, cells, grouped, table, th } from './lib/doc-html';
+import { NO, bullets, cells, grouped, numbered, table, th } from './lib/doc-html';
 import { esc, rich } from './lib/html';
 import { formal } from './lib/polite';
 import { shell } from './lib/page';
@@ -63,7 +63,7 @@ export const buildNfr = (p: DocProject): string => {
   주제별로 정리한다. 요건마다 <strong>기준값</strong>과 <strong>검증 방법</strong>을 함께 적었으며,
   저장소에 검사 도구가 있는 항목은 그 도구를 적었다.
 </p>
-${table(th('구분', 74) + th('요건') + th('기준') + th('검증 방법', 260), grouped(nfr))}
+${table(NO + th('구분', 74) + th('요건') + th('기준') + th('검증 방법', 260), numbered(grouped(nfr)))}
 
 <h3>2.1 전 화면 공통 제작 기준</h3>
 <p class="lead">화면을 가리지 않고 전 화면 제작에 적용되는 기준이다.</p>
@@ -74,7 +74,7 @@ ${bullets(p.commonNonFunctional.map(formal))}
   해당 화면에만 걸리는 요건이다. 전 화면에 걸리는 것은 2장에 한 번만 적었으므로 여기서 되풀이하지
   않는다. 총 <strong>${screenTotal}항목</strong>.
 </p>
-${table(th('기능 ID', 88) + th('화면', 128) + th('구분', 78) + th('요건'), screenRows)}
+${table(NO + th('기능 ID', 88) + th('화면', 128) + th('구분', 78) + th('요건'), numbered(screenRows))}
 
 <h2>4. 권 한 요 건</h2>
 <p class="lead">
@@ -98,7 +98,7 @@ ${table(
   <strong class="tbd">「권고」로 표기한 기간과 값은 확정된 것이 아니며</strong>, 근거 법령을 함께
   적었으나 실제 값은 발주처가 정한다.
 </p>
-${table(th('구분', 62) + th('항목', 146) + th('정의 · 기준'), grouped(p.backend.dataPolicy))}
+${table(NO + th('구분', 62) + th('항목', 146) + th('정의 · 기준'), numbered(grouped(p.backend.dataPolicy)))}
 
 <h2>6. 오 류 응 답 요 건</h2>
 <p class="lead">
@@ -106,8 +106,8 @@ ${table(th('구분', 62) + th('항목', 146) + th('정의 · 기준'), grouped(p
   한 곳만 고쳐진다.
 </p>
 ${table(
-  th('상황', 136) + th('발생 조건', 260) + th('시스템 처리 · 화면 표시'),
-  p.backend.errors.map(([a, b, c]) => cells(esc(a), rich(b), rich(c))).join(''),
+  NO + th('상황', 136) + th('발생 조건', 260) + th('시스템 처리 · 화면 표시'),
+  numbered(p.backend.errors.map(([a, b, c]) => cells(esc(a), rich(b), rich(c))).join('')),
 )}
 
 <h2>7. 검 증 도 구</h2>
@@ -116,8 +116,8 @@ ${table(
   검사를 여럿 두는 것은 하나가 나머지를 대신하지 못하기 때문이다.
 </p>
 ${table(
-  th('검사', 160) + th('확인하는 것') + th('적용 단계', 90),
-  CHECKS.map(([a, b, c]) => cells(rich(a), rich(b), esc(c))).join(''),
+  NO + th('검사', 160) + th('확인하는 것') + th('적용 단계', 90),
+  numbered(CHECKS.map(([a, b, c]) => cells(rich(a), rich(b), esc(c))).join('')),
 )}
 `;
 

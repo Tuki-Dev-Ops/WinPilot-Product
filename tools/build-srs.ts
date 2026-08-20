@@ -3,7 +3,7 @@ import type { Screen } from './lib/screens';
 import type { DocProject } from './lib/doc-project';
 import type { Prep } from './lib/fnb-external';
 import { PROJECTS } from './lib/projects';
-import { bullets, cells, grouped, table, th } from './lib/doc-html';
+import { NO, bullets, cells, grouped, numbered, table, th } from './lib/doc-html';
 import { esc, rich } from './lib/html';
 import { shell } from './lib/page';
 
@@ -116,10 +116,10 @@ export const buildSrs = (p: DocProject): string => {
 <p>${rich(p.intro.background)}</p>
 
 <h3>1.2 목표</h3>
-${table(th('구분', 96) + th('목표') + th('판단 기준', 300), grouped(p.intro.goals))}
+${table(NO + th('구분', 96) + th('목표') + th('판단 기준', 300), numbered(grouped(p.intro.goals)))}
 
 <h3>1.3 대상 사용자</h3>
-${table(th('사용자', 108) + th('상황') + th('이 서비스에서 하는 일', 340), grouped(p.intro.actors))}
+${table(NO + th('사용자', 108) + th('상황') + th('이 서비스에서 하는 일', 340), numbered(grouped(p.intro.actors)))}
 
 <h2>2. 서 비 스 구 성 과 정 보 구 조</h2>
 <table>
@@ -136,18 +136,18 @@ ${table(th('사용자', 108) + th('상황') + th('이 서비스에서 하는 일
 
 <h2>3. ${esc(p.clientLabel)} 요 구 사 항</h2>
 <p class="lead">방문자가 서비스에서 해결해야 하는 것을 화면 단위로 정리한다. 「대응 기능」은 이 요구를 구현한 기능 명세서의 항목이다.</p>
-${table(REQ_HEAD, reqRows(clientReq))}
+${table(NO + REQ_HEAD, numbered(reqRows(clientReq)))}
 
 <h2>4. ${esc(p.adminLabel)} 요 구 사 항</h2>
 <p class="lead">운영자가 서비스를 유지하기 위해 필요한 관리 기능을 정리한다.</p>
-${table(REQ_HEAD, reqRows(adminReq))}
+${table(NO + REQ_HEAD, numbered(reqRows(adminReq)))}
 
 <h2>5. 운 영 요 구 사 항</h2>
 <p class="lead">
   공개 · 노출 · 상태 · 삭제 · 데이터 관리에 적용되는 운영 규칙이다. 화면 하나에 매이지 않고
   서비스 전반에 걸리므로 따로 정리한다.
 </p>
-${table(th('요구 ID', 90) + th('주제', 62) + th('적용 대상', 112) + th('요구사항') + th('관련 기능', 160), opRows)}
+${table(NO + th('요구 ID', 90) + th('주제', 62) + th('적용 대상', 112) + th('요구사항') + th('관련 기능', 160), numbered(opRows))}
 
 <h2>6. 외 부 서 비 스 및 준 비 사 항</h2>
 
@@ -156,7 +156,7 @@ ${table(th('요구 ID', 90) + th('주제', 62) + th('적용 대상', 112) + th('
   ${rich(p.intro.mapNote)} <strong>키와 도메인 등록은 발주처 계정으로 발급받아야 하는 값</strong>이라,
   개발이 끝나도 이 값이 없으면 지도가 표시되지 않는다. 착수 시점에 준비를 시작해야 한다.
 </p>
-${table(PREP_HEAD, prepRows(p.external.kakao, 'REQ-EX'))}
+${table(NO + PREP_HEAD, numbered(prepRows(p.external.kakao, 'REQ-EX')))}
 <p>
   <strong>연동 방식</strong> — 브라우저에서 <code>https://dapi.kakao.com/v2/maps/sdk.js</code> 를
   <code>appkey</code> 와 함께 내려받아 지도를 그린다. 서버를 거치지 않으므로 2단계 Back-End 구축
@@ -164,7 +164,7 @@ ${table(PREP_HEAD, prepRows(p.external.kakao, 'REQ-EX'))}
 </p>
 
 <h3>6.2 그 밖의 준비 사항</h3>
-${table(PREP_HEAD, prepRows(p.external.other, 'REQ-PR'))}
+${table(NO + PREP_HEAD, numbered(prepRows(p.external.other, 'REQ-PR')))}
 
 <h3>6.3 조사 근거</h3>
 <p class="lead">
@@ -172,8 +172,8 @@ ${table(PREP_HEAD, prepRows(p.external.other, 'REQ-PR'))}
   출처이며, 계약 시점에 재확인이 필요하다.
 </p>
 ${table(
-  th('내용', 460) + th('출처'),
-  p.external.sources.map(([label, url]) => cells(esc(label), `<a href="${esc(url)}">${esc(url)}</a>`)).join(''),
+  NO + th('내용', 460) + th('출처'),
+  numbered(p.external.sources.map(([label, url]) => cells(esc(label), `<a href="${esc(url)}">${esc(url)}</a>`)).join('')),
 )}
 
 <h2>7. 제 약 사 항 과 전 제</h2>
@@ -185,8 +185,8 @@ ${bullets(p.intro.constraints)}
   해당 기능의 검수 기준은 「기능 명세서」의 같은 ID 항목에 있다.
 </p>
 ${table(
-  th('요구 ID', 90) + th('화면', 140) + th('대응 기능', 96) + th('화면 경로', 180) + th('세부 기능 수', 92),
-  traceRows,
+  NO + th('요구 ID', 90) + th('화면', 140) + th('대응 기능', 96) + th('화면 경로', 180) + th('세부 기능 수', 92),
+  numbered(traceRows),
 )}
 `;
 

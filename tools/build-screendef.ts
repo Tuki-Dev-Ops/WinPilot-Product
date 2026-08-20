@@ -5,7 +5,7 @@ import { PROJECTS } from './lib/projects';
 import { elementsOf, type Element } from './lib/element';
 import { kindIn } from './lib/action-kind';
 import { DESIGN_NOTE } from './lib/design-note';
-import { table, th } from './lib/doc-html';
+import { NO, numbered, table, th } from './lib/doc-html';
 import { esc, rich } from './lib/html';
 import { formal } from './lib/polite';
 import { shell } from './lib/page';
@@ -232,6 +232,7 @@ const EXTRA = `
   줄마다 두세 글자로 꺾인다. 앞뒤 칸을 좁히고 본문에 남은 폭을 몰아 준다.
 */
 const HEAD =
+  NO +
   th('Depth 1', 56) +
   th('Depth 2', 64) +
   th('Depth 3', 84) +
@@ -279,7 +280,7 @@ export const buildScreenDef = (p: DocProject): string => {
       title: '화면 정의서',
       kind: '화면 · 요소 정의',
       brand: p.brand,
-      body: `\n${table(HEAD, rows, 'sd')}\n`,
+      body: `\n${table(HEAD, numbered(rows), 'sd')}\n`,
       extra: EXTRA,
     }),
     'utf8',

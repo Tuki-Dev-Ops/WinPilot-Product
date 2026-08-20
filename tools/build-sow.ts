@@ -1,16 +1,9 @@
 import { writeFileSync } from 'node:fs';
 import type { Screen } from './lib/screens';
-import {
-  ACCEPT,
-  CHANGE,
-  dutyOf,
-  handoverOf,
-  outOf,
-  type DocProject,
-} from './lib/doc-project';
+import { CHANGE, outOf, type DocProject } from './lib/doc-project';
 import { PROJECTS } from './lib/projects';
-import { bullets, cells, grouped, table, th } from './lib/doc-html';
-import { esc, rich } from './lib/html';
+import { NO, bullets, cells, grouped, numbered, table, th } from './lib/doc-html';
+import { TBD, esc, rich } from './lib/html';
 import { shell } from './lib/page';
 
 /**
@@ -21,8 +14,13 @@ import { shell } from './lib/page';
  * 담았다. 40쪽이 넘었고 그중 대부분이 범위가 아니라 명세였다. 계약을 맞추는 자리에서 데이터
  * 항목 표를 넘기게 되고, 정작 **어디까지 맡는가**는 그 사이에 묻힌다.
  *
- * 여기 남는 것은 넷이다 — **무엇을 만드는가 · 어디까지 만드는가 · 누가 어디까지 맡는가 ·
- * 어떤 상태가 되면 완료인가.** 나머지는 세 문서로 갔다.
+ * 여기 남는 것은 셋이다 — **무엇을 만드는가 · 어디까지 만드는가 · 무엇이 범위 밖인가.**
+ * 나머지는 세 문서로 갔다.
+ *
+ * ## 책임 범위와 인수 기준을 뺀 자리
+ * 한때 영역별 책임 범위표와 인수 판정 기준을 여기 두었다. 둘 다 **수행사가 스스로 적은 완료
+ * 선언**이라, 계약 자리에서 합의할 것이 아니라 통보하는 것처럼 읽혔다. 무엇을 만드는지와 무엇을
+ * 안 만드는지만 남기고, 완료 판정은 검수 문서가 맡는다.
  *
  * ```
  * pnpm sow:build     # 이 문서
@@ -30,8 +28,7 @@ import { shell } from './lib/page';
  * ```
  */
 
-const SCOPE_HEAD =
-  th('기능 ID', 90) + th('화면명', 150) + th('영역', 110) + th('화면 경로') + th('세부 기능 수', 96);
+const SCOPE_HEAD = NO + th('기능 ID', 92) + th('화면명', 168) + th('영역', 124) + th('화면 정의');
 
 /** 서비스 한 벌의 영역 구성. 첫 줄에만 서비스 이름을 세우고 나머지는 묶는다. */
 const iaSection = (label: string, list: readonly Screen[]): string => {
@@ -52,35 +49,28 @@ const iaSection = (label: string, list: readonly Screen[]): string => {
 /**
  * 화면 목록은 **범위를 확정하는 목록**이다. 여기 없는 화면은 범위 밖이다.
  *
- * 세부 기능을 적지 않는 것은, 계약 자리에서 필요한 것이 "몇 개를 어디까지" 이고 그 안에서
- * 무엇을 하는가는 기능 명세서가 답하기 때문이다. 대신 세부 기능 수를 적어 규모를 가늠하게 한다.
+ * ## 수 대신 정의를 적는다
+ * 앞선 판은 화면 경로와 세부 기능 수를 적었다. 그런데 `47개 화면 · 170건` 이라는 수는 규모를
+ * 알려 줄 뿐 **그 화면이 무엇인지는 알려 주지 않는다.** 범위를 다투는 자리에서 오가는 말은
+ * 언제나 "이 화면이 무엇을 하는 화면인가" 이고, 그때마다 다른 문서를 펴게 된다.
+ *
+ * 경로도 뺀다. 주소는 만드는 쪽의 값이지 범위를 가르는 값이 아니며, 그 자리를 화면 정의에 준다.
  */
-const scopeRows = (list: readonly Screen[]): string =>
+const scopeRows = (p: DocProject, list: readonly Screen[]): string =>
   list
     .map((one) =>
       cells(
         `<code>${esc(one.featureId)}</code>`,
         esc(one.name),
         esc(one.group),
-        `<code>${esc(one.route)}</code>`,
-        String(one.spec.actions.length),
+        `<span class="memo">${rich(p.copy[one.featureId]?.purpose ?? TBD)}</span>`,
       ),
     )
     .join('');
 
 export const buildSow = (p: DocProject): string => {
   const totalActions = p.screens.reduce((sum, one) => sum + one.spec.actions.length, 0);
-  const duty = dutyOf(p);
-
-  const dutyRows = duty
-    .map(
-      ([area, why, scope, output, done, out]) =>
-        `<tr class="head"><td class="d1">${esc(area)}</td>${[why, scope, output, done, out].map((one) => `<td class="memo">${rich(one)}</td>`).join('')}</tr>`,
-    )
-    .join('');
-
   const out = outOf(p);
-  const handover = handoverOf(p);
 
   const body = `
 <h2>1. 과 업 개 요</h2>
@@ -107,8 +97,8 @@ ${p.intro.purpose.map((one) => `<p>${rich(one)}</p>`).join('')}
 <table>
   <thead><tr>${th('단계', 72)}${th('수행 범위', 300)}${th('완료 기준')}</tr></thead>
   <tbody>
-    ${cells('1단계', '기획 · UI 디자인 · Front-End 구현 · Back-End 요구사항 정의', `화면 ${p.screens.length}개가 정의대로 동작하고, Back-End 요구사항이 서버 개발에 착수할 수 있는 수준으로 확정된 상태. 상세 기준은 5.2 참조.`)}
-    ${cells('2단계', '서버 애플리케이션 · 데이터베이스 · API · 인증 및 권한 · Front-End 연동', '정의한 규칙이 서버에서 지켜지는 상태. 상세 기준은 5.4 참조.')}
+    ${cells('1단계', '기획 · UI 디자인 · Front-End 구현 · Back-End 요구사항 정의', `화면 ${p.screens.length}개가 정의대로 동작하고, Back-End 요구사항이 서버 개발에 착수할 수 있는 수준으로 확정된 상태.`)}
+    ${cells('2단계', '서버 애플리케이션 · 데이터베이스 · API · 인증 및 권한 · Front-End 연동', '정의한 규칙이 서버에서 지켜지는 상태.')}
   </tbody>
 </table>
 
@@ -128,61 +118,25 @@ ${table(
 )}
 
 <h3>2.2 ${esc(p.clientLabel)} 화면 목록</h3>
-${table(SCOPE_HEAD, scopeRows(p.clientScreens))}
+${table(SCOPE_HEAD, numbered(scopeRows(p, p.clientScreens)))}
 
 <h3>2.3 ${esc(p.adminLabel)} 화면 목록</h3>
-${table(SCOPE_HEAD, scopeRows(p.adminScreens))}
+${table(SCOPE_HEAD, numbered(scopeRows(p, p.adminScreens)))}
 
-<h2>3. 책 임 범 위</h2>
-<p class="lead">
-  책임 범위에서 실제로 다투는 것은 담당 여부가 아니라 <strong>어디까지 수행하면 완료인가</strong>다.
-  따라서 각 영역에 대해 수행 목적 · 제공 범위 · 주요 산출물 · 완료 기준 · 제외 범위를 함께 정의한다.
-</p>
-${table(
-  th('구분', 76) + th('수행 목적', 146) + th('제공 범위') + th('주요 산출물', 136) + th('완료 기준') + th('제외 범위', 126),
-  dutyRows,
-)}
-
-<h2>4. 제 외 범 위</h2>
+<h2>3. 제 외 범 위</h2>
 <p class="lead">
   아래는 <strong>본 과업에 포함하지 않는다.</strong> 적어 두지 않으면 포함된 것으로 읽히므로 따로 둔다.
   「사유」를 함께 적는 것은 빠진 항목을 볼 때마다 왜 빠졌는지 되묻는 일을 없애기 위해서다.
 </p>
-${table(th('구분', 80) + th('항목', 230) + th('사유'), grouped(out))}
+${table(NO + th('구분', 80) + th('항목', 230) + th('사유'), numbered(grouped(out)))}
 
-<h2>5. 완 료 및 인 수 기 준</h2>
-
-<h3>5.1 인수 산출물</h3>
-${table(th('단계', 72) + th('산출물', 210) + th('내용'), grouped(handover))}
-
-<h3>5.2 1단계 인수 판정 기준</h3>
-${bullets(ACCEPT)}
-
-<h3>5.3 Back-End 정의 완료 기준 (1단계)</h3>
-<p class="lead">다음 조건을 모두 충족한 경우 Back-End 정의가 완료된 것으로 판단한다. 정의 내용은 「기능 명세서」에 있다.</p>
-${bullets(p.backend.defineDone)}
-
-<h3>5.4 2단계 완료 기준</h3>
-<p class="lead">
-  1단계의 완료 기준이 「화면이 정의대로 도는가」였다면, 2단계는 「정의한 규칙이 서버에서
-  지켜지는가」다. 화면에서 막는 것과 서버에서 막는 것은 다른 일이므로 따로 판정한다.
-</p>
-${bullets(p.backend.buildDone)}
-
-<h3>5.5 2단계 구축 항목</h3>
-<p class="lead">
-  각 항목의 요구사항은 「기능 명세서」의 Back-End 요구사항 정의에 이미 확정되어 있으므로,
-  2단계는 화면을 새로 분석하지 않고 그대로 착수한다.
-</p>
-${table(th('구축 항목', 280) + th('근거'), p.backend.build.map((one) => cells(esc(one.name), rich(one.basis))).join(''))}
-
-<h2>6. 변 경 관 리 기 준</h2>
-${table(th('단계', 72) + th('기준', 320) + th('까닭'), grouped(CHANGE))}
+<h2>4. 변 경 관 리 기 준</h2>
+${table(NO + th('단계', 88) + th('기준'), numbered(grouped(CHANGE)))}
 `;
 
   const file = `${p.slug}-과업범위정의서.html`;
   writeFileSync(file, shell({ title: '과업범위 정의서', kind: '구축 범위 · 2/4', brand: p.brand, body }), 'utf8');
-  return `${file} — 화면 ${p.screens.length} · 세부 기능 ${totalActions} · 책임 ${duty.length}영역 · 제외 ${out.length} · 산출물 ${handover.length}`;
+  return `${file} — 화면 ${p.screens.length} · 세부 기능 ${totalActions} · 제외 ${out.length}`;
 };
 
 if (process.argv[1]?.endsWith('build-sow.ts')) {

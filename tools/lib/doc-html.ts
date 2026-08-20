@@ -22,6 +22,25 @@ export const th = (label: string, width?: number): string =>
 export const bullets = (items: readonly string[]): string =>
   `<ul>${items.map((one) => `<li>${rich(one)}</li>`).join('')}</ul>`;
 
+/** 순번 칸의 머리. 표마다 같은 너비로 서야 여러 표를 나란히 볼 때 눈이 흔들리지 않는다. */
+export const NO = th('순번', 46);
+
+/**
+ * 표의 줄마다 순번을 앞에 붙인다.
+ *
+ * ## 왜 줄을 만드는 쪽을 고치지 않나
+ * 줄을 만드는 방식이 표마다 다르다 — 어떤 것은 `cells`, 어떤 것은 `grouped`, 어떤 것은 rowspan 을
+ * 직접 쓴다. 만드는 쪽을 전부 고치면 같은 수정을 여섯 군데에 하게 되고, **그중 하나를 빠뜨린
+ * 표만 번호가 없는** 상태가 만들어진다. 다 만들어진 줄에 칸 하나를 밀어 넣으면 한 곳에서 끝난다.
+ *
+ * 세는 것은 `<tr` 이라 rowspan 이 섞인 표에서도 줄 수와 번호가 어긋나지 않는다. 다만 칸 안에
+ * 표가 다시 들어가는 자리에는 쓰지 않는다 — 안쪽 표의 줄까지 세어 번호가 건너뛴다.
+ */
+export const numbered = (rows: string): string => {
+  let n = 0;
+  return rows.replace(/<tr(?:\s[^>]*)?>/g, (tag) => `${tag}<td class="no">${(n += 1)}</td>`);
+};
+
 /**
  * 첫 칸이 이어지면 묶는다.
  *

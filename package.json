@@ -37,7 +37,8 @@
     "srs:build": "tsx tools/build-srs.ts",
     "nfr:build": "tsx tools/build-nfr.ts",
     "screendef:build": "tsx tools/build-screendef.ts",
-    "docs:all": "pnpm srs:build && pnpm sow:build && pnpm fsd:build && pnpm nfr:build && pnpm screendef:build"
+    "qa:build": "tsx tools/build-qa.ts",
+    "docs:all": "pnpm srs:build && pnpm sow:build && pnpm fsd:build && pnpm nfr:build && pnpm screendef:build && pnpm qa:build"
   },
   "devDependencies": {
     "playwright": "^1.62.1",
