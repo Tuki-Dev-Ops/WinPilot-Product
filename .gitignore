@@ -15,3 +15,6 @@ artifacts/
 .env*.local
 .DS_Store
 Thumbs.db
+
+# 개발 서버 로그 — 실행할 때마다 새로 쌓인다
+.fnb-*.log
