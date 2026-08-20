@@ -58,6 +58,8 @@ export type Screen = {
   readOnly: boolean;
   spec: ScreenSpecLike;
   data: readonly string[];
+  /** 이 화면에서 나가는 이동 — 화면 정의서가 LINK 의 이동 대상을 여기서 읽는다 */
+  links: { id: string; name: string; route: string }[];
 };
 
 export type PageLike = { id: string; name: string; route: string };
@@ -67,6 +69,8 @@ export type IaLike = {
   label?: string;
   screens: readonly { screen: string; ko: string }[];
   data: readonly string[];
+  /** 갈래 안의 이동 — `[출발 screen, 도착 screen]`. 화면 정의서의 LINK 이동 대상이 된다. */
+  edges?: readonly (readonly [string, string])[];
 };
 
 export type AppSource = {
@@ -112,6 +116,7 @@ export const collectScreens = (sources: readonly AppSource[], rules: readonly Pr
       placed.add(id);
       rows.push({
         id,
+        links: [],
         name: ko,
         route: page.route,
         app: source.app,
@@ -131,6 +136,23 @@ export const collectScreens = (sources: readonly AppSource[], rules: readonly Pr
     }
     for (const page of source.pages) {
       if (!placed.has(page.id)) push(page.id, page.name, '공통', []);
+    }
+  }
+
+  /*
+    갈래의 이동선을 화면에 붙인다. 도면(`edges`)이 이미 갖고 있는 값이라 새로 적지 않는다 —
+    손으로 적으면 도면과 문서가 서로 다른 이동을 말하게 된다.
+  */
+  const nameOf = new Map(rows.map((one) => [one.id, one]));
+  for (const source of sources) {
+    for (const group of source.ia) {
+      for (const [from, to] of group.edges ?? []) {
+        const start = nameOf.get(from);
+        const end = nameOf.get(to);
+        if (start && end && start.app === end.app) {
+          start.links.push({ id: end.id, name: end.name, route: end.route });
+        }
+      }
     }
   }
 
