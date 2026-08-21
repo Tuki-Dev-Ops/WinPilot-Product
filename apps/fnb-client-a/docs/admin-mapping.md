@@ -29,7 +29,7 @@ flowchart LR
 | 홈 — 본사가 하는 것 | `BRAND_POINTS` | (어드민 화면 없음) |
 | 홈 — 성장 · 매장별 실적 | `GROWTH_FIGURES` · `STORE_SALES` | (어드민 화면 없음) |
 | 브랜드 | `FNB_BRAND` · `openStores()` | 설정 > 브랜드 정보 |
-| 메뉴판 · 메뉴 상세 | `MENU_CATEGORIES` · `publicMenuItems()` | 등록 > 메뉴 · 등록 > 메뉴 > 묶음 |
+| 메뉴판 · 메뉴 상세 | `MENU_CATEGORIES` · `publicMenuItems()` | 등록 > 메뉴 · 등록 > 메뉴 > 메뉴 카테고리 |
 | 인테리어 | `INTERIOR_PLANS` · `INTERIOR_PER_PYEONG` · `INTERIOR_GALLERY` | 창업 > 비용 · 절차 |
 | 마케팅 | `MARKETING_CHANNELS` · `postsOfChannel()` | 등록 > 마케팅 |
 | 매장안내 | `publicStores()` · `STORE_REGIONS` | 등록 > 가맹점 |

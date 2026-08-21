@@ -1,5 +1,7 @@
 import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { handlingOf, kindIn } from '../lib/action-kind';
+import { featureName } from '../lib/feature-name';
 
 /**
  * 기획 명세(FSD)를 **만들어 낸다** — 여덟 절짜리 문서를 화면 수만큼 손으로 적지 않는다.
@@ -45,6 +47,8 @@ export type PageLike = { id: string; name: string; route: string; sampleUrl?: st
 export type FsdApp = {
   /** 레포 기준 앱 폴더 */
   dir: string;
+  /** 값을 쌓지 않는 서비스인가 — 같은 낱말도 사이트와 콘솔에서 다른 동작이라 함께 넘긴다. */
+  readOnly: boolean;
   /** 문서 머리에 적히는 앱 이름 */
   label: string;
   pages: PageLike[];
@@ -137,12 +141,21 @@ ${table(
 ## 3. 기능 명세
 
 ${table(
-    ['기능', '사용자 동작', '시스템 동작'],
-    spec.actions.map((action) => [
-      action,
-      '해당 요소를 누르거나 값을 넣는다',
-      '조건을 확인하고 결과를 화면에 반영한다',
-    ]),
+    ['기능', '사용자 동작', '시스템 처리', '결과'],
+    /*
+      한때 이 표의 뒤 두 칸이 모든 기능에 같은 말을 적었다 — `해당 요소를 누르거나 값을 넣는다`.
+      절이 채워져 있으니 빠진 것으로 보이지 않았고, 그래서 오래 남았다. HTML 기능 명세서가
+      쓰는 것과 **같은 규칙**으로 뽑는다. 두 문서가 같은 표에서 다른 말을 하지 않게.
+    */
+    spec.actions.map((action) => {
+      const kind = kindIn(action, page.route, app.readOnly);
+      const button = (spec.buttons ?? []).find((one) => action === one.label)
+        ?? (spec.buttons ?? []).find((one) => action.endsWith(one.label));
+      const fallback = handlingOf(kind);
+      const result =
+        [button?.onSuccess, button?.onFail].filter((one) => one !== undefined).join(' / ') || fallback.result;
+      return [featureName(action, kind), action, button?.onClick ?? fallback.handle, result];
+    }),
     '읽기만 하는 화면입니다.',
   )}
 ### 데이터 항목

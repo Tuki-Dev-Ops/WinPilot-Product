@@ -314,7 +314,7 @@ export const SCREEN_SPECS: ScreenSpec[] = [
       { name: '뉴스 코드', desc: '뉴스 식별자', type: '읽기 전용', rule: '저장 시점에 부여', example: 'MC-006' },
       { name: '분류', desc: '목록 분류 기준', type: '텍스트', required: true, example: '기업 브랜드 영상' },
       { name: '제목', desc: '목록과 메인 페이지 카드에 표시되는 제목', type: '텍스트', required: true },
-      { name: '미리보기 패턴', desc: '목록에서 항목을 구분하기 위한 패턴', type: '고르개', rule: '7개를 초과하면 패턴이 반복됩니다' },
+      { name: '미리보기 패턴', desc: '목록에서 항목을 구분하기 위한 패턴', type: '다중 선택', rule: '7개를 초과하면 패턴이 반복됩니다' },
       { name: '노출', desc: '비활성화 시 고객 사이트에서 제외', type: '스위치' },
     ],
     buttons: [

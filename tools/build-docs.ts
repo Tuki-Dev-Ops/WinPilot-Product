@@ -50,6 +50,7 @@ type App = FsdApp & NfsApp;
 
 const client: App = {
   dir: 'apps/b2c-client-a',
+  readOnly: true,
   label: 'B2C Client 템플릿 A',
   pages: clientPages,
   specs: CLIENT_SPECS,
@@ -111,6 +112,7 @@ function menuLocator(menu: MenuLike, pages: readonly { id: string; route: string
 
 const admin: App = {
   dir: 'apps/b2c-admin',
+  readOnly: false,
   label: 'B2C Admin',
   pages: adminPages,
   specs: ADMIN_SPECS,
@@ -131,6 +133,7 @@ const admin: App = {
  */
 const internal: App = {
   dir: 'apps/internal-admin',
+  readOnly: false,
   label: 'Internal Admin',
   pages: internalPages,
   specs: INTERNAL_SPECS,
@@ -152,6 +155,7 @@ const internal: App = {
  */
 const fnbClient: App = {
   dir: 'apps/fnb-client-a',
+  readOnly: true,
   label: 'F&B Client 템플릿 A',
   pages: fnbClientPages,
   specs: FNB_CLIENT_SPECS,
@@ -169,6 +173,7 @@ const fnbClient: App = {
 
 const fnbAdmin: App = {
   dir: 'apps/fnb-admin',
+  readOnly: false,
   label: 'F&B Admin',
   pages: fnbAdminPages,
   specs: FNB_ADMIN_SPECS,
@@ -191,6 +196,7 @@ const fnbAdmin: App = {
  */
 const irClient: App = {
   dir: 'apps/ir-client-a',
+  readOnly: true,
   label: 'IR Client 템플릿 A',
   pages: irClientPages,
   specs: IR_CLIENT_SPECS,
@@ -208,6 +214,7 @@ const irClient: App = {
 
 const irAdmin: App = {
   dir: 'apps/ir-admin',
+  readOnly: false,
   label: 'IR Admin',
   pages: irAdminPages,
   specs: IR_ADMIN_SPECS,
