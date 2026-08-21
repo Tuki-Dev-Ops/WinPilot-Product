@@ -250,21 +250,21 @@ pnpm pages:shoot     # 앱마다 화면 사진을 한 장씩 찍습니다 (개�
 pnpm readme:build    # 이 파일을 다시 만듭니다
 \`\`\`
 
-이 README 는 **생성물**입니다. 화면 목록과 숫자를 손으로 옮겨 적으면 화면이 하나 늘 때
-고칠 곳이 둘이 되고, 실제로는 한쪽만 고칩니다.
+본 README 는 **생성 문서**입니다. 화면 목록과 집계 수치를 직접 작성하면 화면 추가 시 수정
+대상이 두 곳이 되며, 일부만 갱신되는 문제가 발생합니다.
 
-## 떼어 낸 저장소
+## 분리 배포 저장소
 
-IR 한 쌍은 별도 저장소로도 나가 있습니다.
+IR 한 쌍은 별도 저장소로도 배포합니다.
 
-| 저장소 | 담긴 것 |
+| 저장소 | 포함 범위 |
 |---|---|
-| \`spaceplanning-ai/spaceplanning-client\` | \`apps/ir-client-a\` + 그 앱이 쓰는 패키지 5 |
-| \`spaceplanning-ai/spaceplanning-admin\` | \`apps/ir-admin\` + 그 앱이 쓰는 패키지 7 |
+| \`spaceplanning-ai/spaceplanning-client\` | \`apps/ir-client-a\` 와 해당 앱이 사용하는 패키지 5개 |
+| \`spaceplanning-ai/spaceplanning-admin\` | \`apps/ir-admin\` 과 해당 앱이 사용하는 패키지 7개 |
 
-공유 패키지가 세 저장소에 같은 사본으로 들어 있습니다. 특히 \`@winpilot/store\` 는 사이트와
-콘솔이 **같은 값을 읽는다는 전제**로 만든 패키지라, 어느 쪽을 원본으로 볼지 먼저 정해야
-합니다. 양쪽에서 따로 고치면 이 저장소가 처음부터 막으려던 문제가 그대로 생깁니다.
+공유 패키지가 3개 저장소에 동일한 사본으로 포함됩니다. \`@winpilot/store\` 는 사이트와 콘솔이
+**동일한 데이터를 조회하는 것을 전제**로 설계한 패키지이므로 원본 저장소를 먼저 확정해야
+합니다. 양쪽에서 개별 수정하면 본 저장소가 방지하려는 데이터 불일치가 발생합니다.
 `;
 
 writeFileSync('README.md', doc, 'utf8');

@@ -78,239 +78,239 @@
 
 | 주소 | 화면 | 목적 |
 |---|---|---|
-| `/` | Index | 무엇을 파는 곳인지와 지금 밀고 있는 것을 한 화면에서 보여 줍니다. |
-| `/products` | Product List | 파는 것 전부를 한 자리에서 좁혀 가며 고릅니다. |
-| `/products/[productId]` | Product Detail | 이 상품을 살지 결정하는 데 필요한 것만 모아 둡니다. |
-| `/notices` | Notices | 운영자가 알리는 것을 최신 순으로 봅니다. |
-| `/notices/[noticeId]` | Notice Detail | 공지 한 건을 읽습니다. |
-| `/faqs` | FAQ | 자주 묻는 것을 분류와 함께 훑습니다. |
-| `/faqs/[faqId]` | FAQ Detail | 문답 한 건을 읽는다. |
-| `/news` | News | 회사 소식을 최신 순으로 본다. |
-| `/news/[newsId]` | News Detail | 뉴스 한 건의 요약을 읽고 원문으로 간다. |
-| `/portfolios` | Portfolios | 무엇을 만들어 왔는지 훑습니다. |
-| `/cart` | Cart | 담아 둔 것을 확인하고 주문으로 넘깁니다. |
-| `/alarms` | Alarms | 읽지 않은 소식을 먼저 봅니다. |
-| `/orders` | Orders | 내 주문이 지금 어디까지 왔는지 봅니다. |
-| `/orders/new` | Checkout | 무엇을·어디로·얼마에 세 가지를 한 화면에서 확정합니다. |
-| `/orders/[orderId]` | Order Detail | 한 주문의 결제·배송·운송장을 확인합니다. |
-| `/mypage` | My Page | 내 정보를 확인하고 필요할 때만 고칩니다. |
-| `/mypage/inquiries` | My Page Inquiries | 내가 보낸 문의와 운영자의 답변을 한 자리에서 봅니다. |
-| `/mypage/coupons` | My Page Coupons | 가진 쿠폰과 받을 수 있는 쿠폰을 나눠 봅니다. |
-| `/login` | Login | 계정으로 들어옵니다. |
-| `/signup` | Signup | 계정을 만듭니다. |
-| `/company` | Company | 무엇을 하는 회사인지 읽습니다. |
-| `/company/history` | Company History | 어떻게 커 왔는지 봅니다. |
-| `/contact` | Contact | 문의를 보냅니다. |
-| `/terms` | Terms | 이용약관을 읽는다. |
-| `/privacy` | Privacy | 개인정보 처리방침을 읽는다. |
-| `/result` | Result | 방금 한 일이 끝났는지 알립니다. |
+| `/` | Index | 주요 상품과 진행 중인 프로모션을 요약하여 제공하는 메인 페이지입니다. |
+| `/products` | Product List | 전체 상품을 분류 · 검색 · 가격 조건으로 조회하는 상품 목록 페이지입니다. |
+| `/products/[productId]` | Product Detail | 상품 구매 판단에 필요한 정보와 구매 기능을 제공하는 상품 상세 페이지입니다. |
+| `/notices` | Notices | 운영 공지사항을 조회하는 공지사항 목록 페이지입니다. |
+| `/notices/[noticeId]` | Notice Detail | 개별 공지의 본문을 제공하는 공지사항 상세 페이지입니다. |
+| `/faqs` | FAQ | 자주 묻는 질문을 분류별로 조회하는 FAQ 목록 페이지입니다. |
+| `/faqs/[faqId]` | FAQ Detail | 개별 질문과 답변을 제공하는 FAQ 상세 페이지입니다. |
+| `/news` | News | 회사 소식을 조회하는 뉴스 목록 페이지입니다. |
+| `/news/[newsId]` | News Detail | 개별 뉴스의 요약을 제공하고 원문으로 연결하는 뉴스 상세 페이지입니다. |
+| `/portfolios` | Portfolios | 수행 프로젝트를 연도별로 조회하는 포트폴리오 페이지입니다. |
+| `/cart` | Cart | 장바구니에 담은 상품을 확인하고 주문서로 이동하는 장바구니 페이지입니다. |
+| `/alarms` | Alarms | 수신한 알림을 확인하는 알림 목록 페이지입니다. |
+| `/orders` | Orders | 주문 내역과 배송 진행 상태를 조회하는 주문 목록 페이지입니다. |
+| `/orders/new` | Checkout | 주문 상품 · 배송지 · 결제 금액을 확정하는 주문서 페이지입니다. |
+| `/orders/[orderId]` | Order Detail | 개별 주문의 결제 · 배송 · 운송장 정보를 제공하는 주문 상세 페이지입니다. |
+| `/mypage` | My Page | 회원 정보를 조회하고 수정하는 마이페이지입니다. |
+| `/mypage/inquiries` | My Page Inquiries | 접수한 문의와 운영자 답변을 조회하는 문의 내역 페이지입니다. |
+| `/mypage/coupons` | My Page Coupons | 보유 쿠폰과 발급 가능한 쿠폰을 조회하는 쿠폰함 페이지입니다. |
+| `/login` | Login | 계정으로 로그인하는 페이지입니다. |
+| `/signup` | Signup | 신규 계정을 등록하는 회원가입 페이지입니다. |
+| `/company` | Company | 회사 소개 정보를 제공하는 회사 소개 페이지입니다. |
+| `/company/history` | Company History | 회사 연혁을 연도별로 제공하는 연혁 페이지입니다. |
+| `/contact` | Contact | 문의를 접수하는 문의하기 페이지입니다. |
+| `/terms` | Terms | 이용약관을 제공하는 페이지입니다. |
+| `/privacy` | Privacy | 개인정보 처리방침을 제공하는 페이지입니다. |
+| `/result` | Result | 처리 결과를 안내하고 이동 경로를 제공하는 처리 결과 페이지입니다. |
 
 ### B2C 콘솔 — `apps/b2c-admin` · 화면 44개
 
 | 주소 | 화면 | 목적 |
 |---|---|---|
-| `/` | Dashboard | 오늘 봐야 할 것을 한 화면에 모읍니다. |
-| `/login` | Login | 운영자만 들어오게 합니다. |
-| `/users` | Users | 가입한 사람을 찾고 상태를 봅니다. |
-| `/users/admins` | Users Staff | 운영자 계정을 만들고 거둡니다. |
-| `/users/grades` | Users Grades | 등급과 혜택을 정합니다. |
-| `/products/categories` | Product Categories | 상품을 담을 서랍을 만듭니다. |
-| `/products` | Product List | 파는 것을 찾고 상태를 바꿉니다. |
-| `/products/new` | Product Create | 팔 것을 새로 올립니다. |
-| `/products/[productId]` | Product Detail | 올린 상품을 고칩니다. |
-| `/products/sales` | Product Sales | 들어온 주문을 처리합니다. |
-| `/products/sales/[orderId]` | Product Sale Detail | 주문 한 건을 자세히 봅니다. |
-| `/inquiries` | Inquiries | 들어온 문의에 답합니다. |
-| `/inquiries/settings` | Inquiry Settings | 문의 분류와 안내문을 정합니다. |
-| `/contents/notices` | Content Notices | 공지사항을(를) 찾고 상태를 봅니다. |
-| `/contents/notices/new` | Content Notice Create | 공지사항을(를) 새로 씁니다. |
-| `/contents/notices/[noticeId]` | Content Notice Detail | 공지사항을(를) 고칩니다. |
-| `/contents/faqs` | Content FAQ | FAQ을(를) 찾고 상태를 봅니다. |
-| `/contents/news` | Content News | 뉴스을(를) 찾고 상태를 봅니다. |
-| `/contents/news/new` | Content News Create | 뉴스을(를) 새로 씁니다. |
-| `/contents/news/[newsId]` | Content News Detail | 뉴스을(를) 고칩니다. |
-| `/contents/portfolios` | Content Portfolios | 포트폴리오을(를) 찾고 상태를 봅니다. |
-| `/contents/portfolios/new` | Content Portfolio Create | 포트폴리오을(를) 새로 씁니다. |
-| `/contents/portfolios/[portfolioId]` | Content Portfolio Detail | 포트폴리오을(를) 고칩니다. |
-| `/banners` | Banners | 홈 맨 위에 무엇을 걸지 정합니다. |
-| `/banners/new` | Banner Create | 배너를 새로 만듭니다. |
-| `/banners/[bannerId]` | Banner Detail | 배너를 고칩니다. |
-| `/banners/popups` | Banner Popups | 띄울 팝업을 정합니다. |
-| `/banners/popups/new` | Banner Popup Create | 팝업을 새로 만듭니다. |
-| `/banners/popups/[popupId]` | Banner Popup Detail | 팝업을 고칩니다. |
-| `/company/about` | Company About | 회사 소개 글과 대표 이미지를 넣습니다. |
-| `/company/history` | Company History | 연혁을 쌓습니다. |
-| `/statistics` | Statistics Home | 오늘의 지표를 봅니다. |
-| `/statistics/periods` | Statistics Periods | 기간별 흐름를 봅니다. |
-| `/statistics/pages` | Statistics Pages | 많이 방문한 페이지를 봅니다. |
-| `/statistics/revenue` | Statistics Revenue | 매출를 봅니다. |
-| `/settings/supplier` | Settings Supplier | 공급자 정보를 정합니다. |
-| `/settings/seo` | Settings SEO | SEO 정보를 정합니다. |
-| `/settings/terms` | Settings Terms | 서비스 이용약관를 정합니다. |
-| `/settings/privacy` | Settings Privacy | 개인정보 처리방침를 정합니다. |
-| `/support` | Support | 이 콘솔에서 직접 바꿀 수 없는 것을 스페이스플래닝에 묻습니다. |
-| `/products/reviews` | Product Reviews | 고객이 남긴 리뷰를 관리합니다. |
-| `/products/coupons` | Product Coupons | 할인 쿠폰을 만들고 거둡니다. |
-| `/ssot/components` | Components | 쓰고 있는 컴포넌트를 실제로 그려 봅니다. |
-| `/result` | Result | 방금 한 일이 끝났음을 알립니다. |
+| `/` | Dashboard | 당일 처리 대상 항목을 요약하여 제공하는 운영 현황 페이지입니다. |
+| `/login` | Login | 운영자 계정으로 로그인하는 페이지입니다. |
+| `/users` | Users | 가입 회원을 조회하고 상태를 관리하는 회원 목록 페이지입니다. |
+| `/users/admins` | Users Staff | 운영자 계정을 등록하고 관리하는 운영자 관리 페이지입니다. |
+| `/users/grades` | Users Grades | 회원 등급과 등급별 혜택을 관리하는 등급 관리 페이지입니다. |
+| `/products/categories` | Product Categories | 상품 분류를 관리하는 카테고리 관리 페이지입니다. |
+| `/products` | Product List | 등록 상품을 조회하고 판매 상태를 관리하는 상품 목록 페이지입니다. |
+| `/products/new` | Product Create | 신규 상품을 등록하는 상품 등록 페이지입니다. |
+| `/products/[productId]` | Product Detail | 등록된 상품 정보를 수정하는 상품 상세 페이지입니다. |
+| `/products/sales` | Product Sales | 접수된 주문을 조회하고 배송을 처리하는 주문 관리 페이지입니다. |
+| `/products/sales/[orderId]` | Product Sale Detail | 개별 주문의 상세 정보를 제공하는 주문 상세 페이지입니다. |
+| `/inquiries` | Inquiries | 고객이 접수한 문의에 답변하는 문의 관리 페이지입니다. |
+| `/inquiries/settings` | Inquiry Settings | 문의 분류와 안내 문구를 관리하는 문의 설정 페이지입니다. |
+| `/contents/notices` | Content Notices | 공지사항을 조회하고 관리하는 공지사항 목록 페이지입니다. |
+| `/contents/notices/new` | Content Notice Create | 공지사항을 등록하는 페이지입니다. |
+| `/contents/notices/[noticeId]` | Content Notice Detail | 등록된 공지사항을 수정하는 페이지입니다. |
+| `/contents/faqs` | Content FAQ | 자주 묻는 질문을 조회하고 관리하는 FAQ 목록 페이지입니다. |
+| `/contents/news` | Content News | 뉴스를 조회하고 관리하는 뉴스 목록 페이지입니다. |
+| `/contents/news/new` | Content News Create | 뉴스를 등록하는 페이지입니다. |
+| `/contents/news/[newsId]` | Content News Detail | 등록된 뉴스를 수정하는 페이지입니다. |
+| `/contents/portfolios` | Content Portfolios | 포트폴리오를 조회하고 관리하는 포트폴리오 목록 페이지입니다. |
+| `/contents/portfolios/new` | Content Portfolio Create | 포트폴리오를 등록하는 페이지입니다. |
+| `/contents/portfolios/[portfolioId]` | Content Portfolio Detail | 등록된 포트폴리오를 수정하는 페이지입니다. |
+| `/banners` | Banners | 메인 배너를 조회하고 관리하는 배너 목록 페이지입니다. |
+| `/banners/new` | Banner Create | 메인 배너를 등록하는 페이지입니다. |
+| `/banners/[bannerId]` | Banner Detail | 등록된 메인 배너를 수정하는 페이지입니다. |
+| `/banners/popups` | Banner Popups | 팝업을 조회하고 관리하는 팝업 목록 페이지입니다. |
+| `/banners/popups/new` | Banner Popup Create | 팝업을 등록하는 페이지입니다. |
+| `/banners/popups/[popupId]` | Banner Popup Detail | 등록된 팝업을 수정하는 페이지입니다. |
+| `/company/about` | Company About | 회사 소개 본문과 대표 이미지를 관리하는 회사 소개 설정 페이지입니다. |
+| `/company/history` | Company History | 회사 연혁을 관리하는 연혁 관리 페이지입니다. |
+| `/statistics` | Statistics Home | 주요 운영 지표를 조회하는 통계 페이지입니다. |
+| `/statistics/periods` | Statistics Periods | 기간별 지표 추이를 조회하는 기간별 통계 페이지입니다. |
+| `/statistics/pages` | Statistics Pages | 화면별 방문 현황을 조회하는 화면별 통계 페이지입니다. |
+| `/statistics/revenue` | Statistics Revenue | 매출 현황을 조회하는 매출 통계 페이지입니다. |
+| `/settings/supplier` | Settings Supplier | 고객 화면 하단에 표시되는 사업자 정보를 관리하는 설정 페이지입니다. |
+| `/settings/seo` | Settings SEO | 검색 결과와 링크 공유 시 표시되는 정보를 관리하는 SEO 설정 페이지입니다. |
+| `/settings/terms` | Settings Terms | 고객 화면에 게시하는 이용약관을 관리하는 설정 페이지입니다. |
+| `/settings/privacy` | Settings Privacy | 고객 화면에 게시하는 개인정보 처리방침을 관리하는 설정 페이지입니다. |
+| `/support` | Support | 본 콘솔에서 직접 처리할 수 없는 사항을 운영사에 문의하는 지원 요청 페이지입니다. |
+| `/products/reviews` | Product Reviews | 고객이 등록한 상품 리뷰를 관리하는 리뷰 관리 페이지입니다. |
+| `/products/coupons` | Product Coupons | 할인 쿠폰을 등록하고 관리하는 쿠폰 관리 페이지입니다. |
+| `/ssot/components` | Components | 사용 중인 공통 컴포넌트를 확인하는 개발 지원 페이지입니다. |
+| `/result` | Result | 처리 결과를 안내하고 이동 경로를 제공하는 처리 결과 페이지입니다. |
 
 ### IR 회사 홈페이지 — `apps/ir-client-a` · 화면 19개
 
 | 주소 | 화면 | 목적 |
 |---|---|---|
-| `/` | Home | 처음 방문하신 분께 어떤 회사이고 무엇을 파는지를 한 화면에서 답합니다. |
-| `/about` | About | 어떤 곳을 바라보고 무슨 일을 하며 무엇을 파는 회사인지를 순서대로 말씀드립니다. |
-| `/about/history` | History | 언제 어떤 일이 있었는지를 연도 단위로 훑어보실 수 있게 합니다. |
-| `/about/certifications` | Certifications | 가지고 오신 등록번호가 실제로 이 회사의 것인지 확인하실 수 있게 합니다. |
-| `/about/certifications/[credentialId]` | Certification Detail | 특허 한 건을 그대로 가리키는 주소를 드립니다. |
-| `/solutions/consulting` | Smart Consulting | 사람이 직접 하는 일이라는 점을, 무엇을 해 드리는지부터 읽히게 합니다. |
-| `/solutions/infra` | Infra Service | 인프라를 보러 오신 분을 제품 목록으로 돌려보내지 않고 그 자리에서 답합니다. |
-| `/solutions/mes` | Cloud MES | 설비 신호를 하나의 규격으로 모으는 제품이 어떤 문제를 푸는지 보여 드립니다. |
-| `/solutions/erp` | Cloud ERP | 수주에서 정산까지를 한 줄로 잇는 제품이 어떤 문제를 푸는지 보여 드립니다. |
-| `/solutions/crm` | Cloud CRM | 공정의 끝에서 고객을 이어받는 제품이 어떤 문제를 푸는지 보여 드립니다. |
-| `/solutions/dxp` | Cloud DXP | 고객이 만나는 화면을 만드는 제품이 어떤 문제를 푸는지 보여 드립니다. |
-| `/products` | Products | 무엇을 파는지 한눈에 훑어보시고, 하나를 골라 상세로 들어가실 수 있습니다. |
-| `/support/contact` | Contact | 도입 검토부터 주주 문의까지 한 자리에서 받습니다. |
-| `/support/notices` | Notices | 휴무와 연락처, 약관 개정처럼 미리 알려 드려야 하는 내용을 확인하실 수 있게 합니다. |
-| `/support/news` | Support News | 방송과 행사, 제품 소개로 남은 자료를 찾으러 오신 분께 전부 펼쳐 드립니다. |
-| `/support/faq` | FAQ | 자주 받는 질문을 분류와 검색으로 찾아, 그 자리에서 펼쳐 읽으실 수 있게 합니다. |
-| `/support/directions` | Directions | 본사 주소와 찾아오시는 방법을 그대로 가져가실 수 있게 합니다. |
-| `/terms` | Terms | 약관 원고가 도착하기 전까지, 준비 중이라는 사실과 문의하실 곳을 안내합니다. |
-| `/privacy` | Privacy | 처리방침 원고가 도착하기 전까지, 어디에 문의하시면 되는지를 안내합니다. |
+| `/` | Home | 회사 소개와 주요 제품 정보를 요약하여 제공하는 메인 페이지입니다. |
+| `/about` | About | 회사의 비전, 핵심 메시지, 주요 사업 및 사업 영역을 소개하는 회사 소개 페이지입니다. |
+| `/about/history` | History | 회사의 주요 연혁을 연도순으로 제공하는 연혁 페이지입니다. |
+| `/about/certifications` | Certifications | 보유 특허 및 인증을 등록번호와 함께 조회할 수 있는 목록 페이지입니다. |
+| `/about/certifications/[credentialId]` | Certification Detail | 개별 특허 · 인증의 상세 정보를 제공하는 상세 페이지입니다. |
+| `/solutions/consulting` | Smart Consulting | 스마트 컨설팅 서비스의 도입 대상 과제와 제공 범위를 안내하는 서비스 상세 페이지입니다. |
+| `/solutions/infra` | Infra Service | 인프라 서비스의 도입 대상 과제와 제공 범위를 안내하는 서비스 상세 페이지입니다. |
+| `/solutions/mes` | Cloud MES | 설비 데이터를 표준 규격으로 수집하는 제품의 도입 대상 과제와 제공 범위를 안내하는 제품 상세 페이지입니다. |
+| `/solutions/erp` | Cloud ERP | 수주부터 정산까지의 업무를 통합 관리하는 제품의 도입 대상 과제와 제공 범위를 안내하는 제품 상세 페이지입니다. |
+| `/solutions/crm` | Cloud CRM | 고객 정보와 상담 이력을 관리하는 제품의 도입 대상 과제와 제공 범위를 안내하는 제품 상세 페이지입니다. |
+| `/solutions/dxp` | Cloud DXP | 고객 접점 화면을 구성하는 제품의 도입 대상 과제와 제공 범위를 안내하는 제품 상세 페이지입니다. |
+| `/products` | Products | 제공 제품과 서비스를 조회하고 개별 상세 페이지로 이동할 수 있는 제품 목록 페이지입니다. |
+| `/support/contact` | Contact | 도입 검토부터 주주 문의까지 문의 유형별로 접수하는 문의하기 페이지입니다. |
+| `/support/notices` | Notices | 휴무 · 연락처 변경 · 약관 개정 등 사전 안내 사항을 제공하는 공지사항 페이지입니다. |
+| `/support/news` | Support News | 방송 · 행사 · 제품 소개 등 회사 관련 소식을 제공하는 뉴스 목록 페이지입니다. |
+| `/support/faq` | FAQ | 반복적으로 제기되는 질문에 대한 답변을 제공하는 자주 묻는 질문 페이지입니다. |
+| `/support/directions` | Directions | 본사 주소와 방문 경로를 안내하는 오시는 길 페이지입니다. |
+| `/terms` | Terms | 이용약관 원문 확정 전까지 준비 중임을 안내하고 문의 경로를 제공합니다. |
+| `/privacy` | Privacy | 개인정보 처리방침 원문 확정 전까지 문의 경로를 제공합니다. |
 
 ### IR 콘솔 — `apps/ir-admin` · 화면 44개
 
 | 주소 | 화면 | 목적 |
 |---|---|---|
-| `/` | Dashboard | 아침에 여는 사람이 묻는 둘에 답한다 — 얼마나 들어왔는가, 어디서 들어왔는가. |
-| `/inquiries` | Inquiries | 사이트 양식으로 들어온 것 중 **아직 답하지 않은 것**을 찾습니다. |
-| `/inquiries/[inquiryId]` | Inquiry Detail | 들어온 문의를 읽고 답을 적어 상태를 옮깁니다. |
-| `/inquiries/settings` | Inquiry Settings | 사이트 문의 양식이 **무엇을 묻고 어디로 보내고 무엇을 안내할지**를 정합니다. |
-| `/contents/notices` | Notices | 회사 홈페이지의 공지를 찾고 살핍니다. |
-| `/contents/notices/new` | Notice Create | 사이트에 걸 공지를 새로 적습니다. |
-| `/contents/notices/[noticeId]` | Notice Detail | 이미 걸린 공지의 말과 노출을 고칩니다. |
-| `/contents/news` | News | 방송·행사·제품 소개로 남은 것들을 찾고 살핍니다. |
-| `/contents/news/new` | News Create | 새 소식 한 건을 적어 사이트에 겁니다. |
-| `/contents/news/[newsId]` | News Detail | 이미 걸린 소식의 제목과 무늬를 고칩니다. |
-| `/contents/faqs` | FAQ | 자주 받는 물음과 답을 찾고 살핍니다. |
-| `/contents/faqs/new` | FAQ Create | 되풀이되는 물음 하나를 옮겨 적어 문의를 줄입니다. |
-| `/contents/faqs/[faqId]` | FAQ Detail | 이미 걸린 물음과 답을 고칩니다. |
-| `/products` | Products | 계약하면 그날부터 쓰는 클라우드 제품 넷의 이름과 기능을 살핍니다. |
-| `/products/[productId]` | Product Detail | 제품 하나를 소개하는 **말**을 고친다 — 구조는 못 고칩니다. |
-| `/products/settings` | Product Settings | 사이트 PRODUCT 메뉴에 무엇이 어떤 차례로 서는지 정합니다. |
-| `/solutions` | Problem & Approach | 제품 넷이 **어떤 문제를 어떻게 푸는지**가 채워졌는지 살핍니다. |
-| `/solutions/[solutionId]` | Problem & Approach Detail | 문제와 해법의 **말**을 고친다 — 제품 상세와 같은 폼입니다. |
-| `/solutions/settings` | Home Stage Order | 홈 화면 무대에 서는 여섯의 차례를 **확인한다**. |
-| `/services` | Services | 사람이 현장에 가서 하는 일 둘의 상세가 채워졌는지 살핍니다. |
-| `/services/[serviceId]` | Service Detail | 서비스 하나를 소개하는 말을 고친다 — 제품 상세와 같은 폼입니다. |
-| `/services/settings` | Service Settings | 서비스 둘이 **사이트 어디에 어떤 말로 서는지**를 한자리에서 봅니다. |
-| `/company/about` | Company Profile | 홈 소개 문단과 회사 정보가 지금 무엇으로 서 있는지 **확인한다**. |
-| `/company/history` | Milestones | 사이트 연혁에 서는 줄들을 찾고 살핍니다. |
-| `/company/history/new` | Milestone Create | 연혁 한 줄을 새로 적습니다. |
-| `/company/history/[milestoneId]` | Milestone Detail | 이미 적힌 연혁 한 줄을 고칩니다. |
-| `/company/credentials` | Credentials | 특허와 인증을 등록번호로 찾고 살핍니다. |
-| `/company/credentials/new` | Credential Create | 받은 특허 · 인증을 사이트에 세웁니다. |
-| `/company/credentials/[credentialId]` | Credential Detail | 이미 세운 특허 · 인증을 고칩니다. |
-| `/banners` | Hero Banners | 첫 화면 위에 기간을 갖고 서는 배너를 찾고 살핍니다. |
-| `/banners/new` | Banner Create | 첫 화면에 걸 배너를 새로 만듭니다. |
-| `/banners/[bannerId]` | Banner Detail | 걸린 배너의 말과 기간을 고칩니다. |
-| `/banners/popups` | Popups | 들어오자마자 뜨는 창을 찾고 살핍니다. |
-| `/banners/popups/new` | Popup Create | 들어온 사람이 반드시 읽어야 하는 고지를 창으로 띄웁니다. |
-| `/banners/popups/[popupId]` | Popup Detail | 뜨고 있는 창의 말과 기간을 고칩니다. |
-| `/statistics` | Statistics | 사이트 방문과 문의를 한 화면에서 나란히 봅니다. |
-| `/statistics/period` | Period Analysis | 달마다의 방문과 문의를 나란히 놓고 어느 달이 달랐는지 봅니다. |
-| `/statistics/pages` | Page Visits | 어느 화면이 실제로 읽히는지 봅니다. |
-| `/settings/supplier` | Supplier Info | 사이트 아래에 **법이 적으라고 정한** 사업자 표시를 정합니다. |
-| `/settings/seo` | SEO | 검색 결과와 링크를 붙였을 때 뜨는 카드에 적히는 값을 정합니다. |
-| `/settings/terms` | Terms | 사이트 아래의 서비스 이용약관 링크가 여는 글을 적고 겁니다. |
-| `/settings/privacy` | Privacy Policy | 사이트 아래의 개인정보 처리방침 링크가 여는 글을 적고 겁니다. |
-| `/settings/locales` | Locales | 사이트 문구를 국문 · 영문 **짝으로** 관리합니다. |
-| `/result` | Result | 방금 한 일의 결말을 알리고 돌아갈 길을 줍니다. |
+| `/` | Dashboard | 기간별 문의 현황과 지역 분포를 확인하는 운영 현황 페이지입니다. |
+| `/inquiries` | Inquiries | 고객 사이트 문의 폼으로 접수된 문의를 조회하고 처리 현황을 관리하는 목록 페이지입니다. |
+| `/inquiries/[inquiryId]` | Inquiry Detail | 접수된 문의를 확인하고 답변을 작성하여 처리 상태를 변경하는 상세 페이지입니다. |
+| `/inquiries/settings` | Inquiry Settings | 고객 사이트 문의 폼의 수집 항목과 수신 정보를 관리하는 설정 페이지입니다. |
+| `/contents/notices` | Notices | 고객 사이트 공지사항을 조회하고 관리하는 목록 페이지입니다. |
+| `/contents/notices/new` | Notice Create | 고객 사이트에 게시할 공지를 등록하는 페이지입니다. |
+| `/contents/notices/[noticeId]` | Notice Detail | 등록된 공지의 내용과 노출 설정을 수정하는 상세 페이지입니다. |
+| `/contents/news` | News | 고객 사이트 뉴스를 조회하고 관리하는 목록 페이지입니다. |
+| `/contents/news/new` | News Create | 고객 사이트에 게시할 뉴스를 등록하는 페이지입니다. |
+| `/contents/news/[newsId]` | News Detail | 등록된 뉴스의 제목과 미리보기 설정을 수정하는 상세 페이지입니다. |
+| `/contents/faqs` | FAQ | 고객 사이트 자주 묻는 질문을 조회하고 관리하는 목록 페이지입니다. |
+| `/contents/faqs/new` | FAQ Create | 반복 접수되는 질문에 대한 답변을 등록하는 FAQ 등록 페이지입니다. |
+| `/contents/faqs/[faqId]` | FAQ Detail | 등록된 질문과 답변을 수정하는 FAQ 상세 페이지입니다. |
+| `/products` | Products | 클라우드 제품 4종의 명칭과 노출 상태를 조회하는 제품 목록 페이지입니다. |
+| `/products/[productId]` | Product Detail | 제품 소개 문구를 수정하는 제품 상세 페이지입니다. 구성 항목은 조회 전용입니다. |
+| `/products/settings` | Product Settings | 고객 사이트 PRODUCT 메뉴의 구성과 노출 순서를 설정하는 페이지입니다. |
+| `/solutions` | Problem & Approach | 제품별 해결 과제와 해결 방식의 등록 여부를 조회하는 문제 · 해법 목록 페이지입니다. |
+| `/solutions/[solutionId]` | Problem & Approach Detail | 해결 과제와 해결 방식을 수정하는 상세 페이지입니다. 제품 상세와 동일한 폼을 사용합니다. |
+| `/solutions/settings` | Home Stage Order | 메인 페이지 사업 구조 영역에 표시되는 6개 항목의 순서를 조회하는 페이지입니다. |
+| `/services` | Services | 인력이 수행하는 서비스 2종의 상세 콘텐츠 등록 여부를 조회하는 서비스 목록 페이지입니다. |
+| `/services/[serviceId]` | Service Detail | 서비스 소개 문구를 수정하는 상세 페이지입니다. 제품 상세와 동일한 폼을 사용합니다. |
+| `/services/settings` | Service Settings | 서비스 2종이 고객 사이트에 노출되는 위치와 문구를 조회하는 페이지입니다. |
+| `/company/about` | Company Profile | 메인 페이지 회사 소개 문구와 회사 기본 정보를 조회하는 페이지입니다. |
+| `/company/history` | Milestones | 고객 사이트 연혁을 조회하고 관리하는 목록 페이지입니다. |
+| `/company/history/new` | Milestone Create | 연혁 항목을 등록하는 페이지입니다. |
+| `/company/history/[milestoneId]` | Milestone Detail | 등록된 연혁 항목을 수정하는 상세 페이지입니다. |
+| `/company/credentials` | Credentials | 보유 특허 및 인증을 조회하고 관리하는 목록 페이지입니다. |
+| `/company/credentials/new` | Credential Create | 취득한 특허 및 인증을 등록하는 페이지입니다. |
+| `/company/credentials/[credentialId]` | Credential Detail | 등록된 특허 및 인증을 수정하는 상세 페이지입니다. |
+| `/banners` | Hero Banners | 메인 페이지 배너를 조회하고 관리하는 목록 페이지입니다. |
+| `/banners/new` | Banner Create | 메인 페이지 배너를 등록하는 페이지입니다. |
+| `/banners/[bannerId]` | Banner Detail | 등록된 배너의 내용과 게시 기간을 수정하는 상세 페이지입니다. |
+| `/banners/popups` | Popups | 고객 사이트 팝업을 조회하고 관리하는 목록 페이지입니다. |
+| `/banners/popups/new` | Popup Create | 고객 사이트 진입 시 표시할 팝업을 등록하는 페이지입니다. |
+| `/banners/popups/[popupId]` | Popup Detail | 등록된 팝업의 내용과 게시 기간을 수정하는 상세 페이지입니다. |
+| `/statistics` | Statistics | 고객 사이트 방문 수와 문의 건수를 함께 조회하는 통계 페이지입니다. |
+| `/statistics/period` | Period Analysis | 월별 방문 수와 문의 건수를 비교 조회하는 기간별 통계 페이지입니다. |
+| `/statistics/pages` | Page Visits | 화면별 방문 수와 체류 시간을 조회하는 화면별 통계 페이지입니다. |
+| `/settings/supplier` | Supplier Info | 고객 사이트 하단에 표시되는 사업자 정보를 관리하는 설정 페이지입니다. |
+| `/settings/seo` | SEO | 검색 결과와 링크 공유 시 표시되는 정보를 관리하는 설정 페이지입니다. |
+| `/settings/terms` | Terms | 고객 사이트 이용약관 본문을 관리하고 게시 여부를 설정하는 페이지입니다. |
+| `/settings/privacy` | Privacy Policy | 고객 사이트 개인정보 처리방침 본문을 관리하고 게시 여부를 설정하는 페이지입니다. |
+| `/settings/locales` | Locales | 고객 사이트 문구를 국문 · 영문 쌍으로 관리하는 다국어 설정 페이지입니다. |
+| `/result` | Result | 처리 결과를 안내하고 이동 경로를 제공하는 처리 결과 페이지입니다. |
 
 ### F&B 브랜드 사이트 — `apps/fnb-client-a` · 화면 14개
 
 | 주소 | 화면 | 목적 |
 |---|---|---|
-| `/` | Home | 무엇을 파는 집인지 한 화면에서 답하고, 손님 길과 점주 길을 갈라 보냅니다. |
-| `/brand` | Brand | 무엇을 지키는 집인지 읽습니다. |
-| `/menu` | Menu | 파는 것을 묶음별로 훑고 한 가지를 고릅니다. |
-| `/menu/[itemId]` | Menu Detail | 메뉴 한 가지의 알레르기와 열량을 확인합니다. |
-| `/interior` | Interior | 평형별로 얼마 들고 몇 석이 나오는지 보입니다. |
-| `/marketing` | Marketing | 본사가 밖에서 무엇을 하고 있는지를 올린 것으로 보입니다. |
-| `/stores` | Store Finder | 가까운 매장을 찾고 거기까지 어떻게 가는지 봅니다. |
-| `/franchise` | Franchise | 얼마 드는지와 문 여는 날까지 얼마 걸리는지를 먼저 적습니다. |
-| `/franchise/apply` | Franchise Apply | 첫 통화를 걸기 위한 최소만 받는다 — 성함 · 연락처 · 지역 · 예산. |
-| `/franchise/faq` | Franchise FAQ | 글로 답이 안 나온 사람에게 물을 곳을 먼저 주고, 그다음 물음을 분류와 함께 폅니다. |
-| `/support/notices` | Notices | 값이 바뀌거나 매장이 열고 닫히는 일을 묻기 전에 읽힙니다. |
-| `/support/faq` | FAQ | 드시러 오시는 분이 자주 묻는 것을 한 자리에 모읍니다. |
-| `/terms` | Terms | 약관 원고가 오기 전까지 준비 중이라는 사실과 물어볼 곳을 적습니다. |
-| `/privacy` | Privacy | 창업 상담 신청에서 무엇을 받아 어디에 쓰고 얼마나 갖고 있는지를 적습니다. |
+| `/` | Home | 브랜드의 주요 정보를 한 페이지에 요약하여 제공하고, 일반 고객과 창업 검토자를 각각의 경로로 안내합니다. |
+| `/brand` | Brand | 브랜드가 지향하는 운영 원칙을 소개합니다. |
+| `/menu` | Menu | 판매 중인 메뉴를 카테고리 기준으로 조회할 수 있는 메뉴 목록 페이지입니다. |
+| `/menu/[itemId]` | Menu Detail | 개별 메뉴의 알레르기 유발 재료와 열량 정보를 제공하는 메뉴 상세 페이지입니다. |
+| `/interior` | Interior | 평형별 인테리어 비용과 좌석 수, 공사 기간을 안내하는 인테리어 정보 페이지입니다. |
+| `/marketing` | Marketing | 본사가 운영하는 마케팅 채널의 게시물을 채널별로 제공합니다. |
+| `/stores` | Store Finder | 가맹점 위치와 영업 정보를 지도 및 목록으로 조회할 수 있는 매장 찾기 페이지입니다. |
+| `/franchise` | Franchise | 가맹 창업에 필요한 비용 구조와 개설 절차를 안내하는 창업 안내 페이지입니다. |
+| `/franchise/apply` | Franchise Apply | 가맹 창업 상담을 신청받는 페이지입니다. 최초 상담 연결에 필요한 최소 항목만 수집합니다. |
+| `/franchise/faq` | Franchise FAQ | 창업 검토 단계에서 반복적으로 제기되는 질문에 대한 답변을 제공합니다. |
+| `/support/notices` | Notices | 가격 변경 · 매장 개점 및 휴점 등 고객 문의로 이어질 수 있는 사항을 사전에 안내합니다. |
+| `/support/faq` | FAQ | 매장 이용 고객이 반복적으로 제기하는 질문에 대한 답변을 제공합니다. |
+| `/terms` | Terms | 이용약관 원문 확정 전까지 준비 중임을 안내하고 문의 경로를 제공합니다. |
+| `/privacy` | Privacy | 가맹 상담 신청에서 수집하는 개인정보의 항목 · 이용 목적 · 보유 기간을 안내합니다. |
 
 ### F&B 콘솔 — `apps/fnb-admin` · 화면 33개
 
 | 주소 | 화면 | 목적 |
 |---|---|---|
-| `/` | Dashboard | 오늘 손대야 할 것 하나를 먼저 보여 줍니다. |
-| `/menus` | Menus | 메뉴판에 서는 것과 값·알레르기를 찾고 살핍니다. |
-| `/menus/[menuId]` | Menu Detail | 이미 파는 메뉴의 말과 값을 고칩니다. |
-| `/menus/new` | Menu Create | 팔기로 한 것을 먼저 적어 둡니다. |
-| `/menus/categories` | Menu Categories | 묶음마다 몇 가지가 서 있는지 봅니다. |
-| `/marketing` | Marketing Posts | 창구마다 무엇을 올렸는지 찾고 상태를 봅니다. |
-| `/marketing/[postId]` | Marketing Post Detail | 이미 올린 글의 창구와 말을 고칩니다. |
-| `/marketing/new` | Marketing Post Create | 창구에 올린 글을 옮겨 적습니다. |
-| `/stores` | Stores | 사이트 매장 찾기에 서는 것과 영업 정보를 찾고 살핍니다. |
-| `/stores/[storeId]` | Store Detail | 문 연 매장의 주소·번호·시간을 고칩니다. |
-| `/stores/new` | Store Create | 새로 낼 매장을 미리 세워 둡니다. |
-| `/inquiries` | Franchise Inquiries | 차리려는 사람이 남긴 것을 받아 밀리지 않게 봅니다. |
-| `/inquiries/[inquiryId]` | Inquiry Detail | 문의 한 건을 읽고 통화에서 알게 된 것을 쌓습니다. |
-| `/franchise/faqs` | Franchise FAQ | 차리려는 사람이 묻는 것을 모아 둡니다. |
-| `/franchise/faqs/[faqId]` | Franchise FAQ Detail | 창업 물음 하나의 말과 답을 고칩니다. |
-| `/franchise/faqs/new` | Franchise FAQ Create | 되풀이되는 창업 물음을 새로 적습니다. |
-| `/settings/franchise` | Franchise Cost | 사이트 창업 안내에 지금 무엇이 적혀 있는지 한자리에서 봅니다. |
-| `/support/faqs` | Support FAQ | 드시러 오시는 분이 묻는 것을 모아 둡니다. |
-| `/support/faqs/[faqId]` | Support FAQ Detail | 손님 물음 하나의 말과 답을 고칩니다. |
-| `/support/faqs/new` | Support FAQ Create | 되풀이되는 손님 물음을 새로 적습니다. |
-| `/support/notices` | Notices | 손님이 사이트에서 읽는 글을 찾고 상태를 봅니다. |
-| `/support/notices/[noticeId]` | Notice Detail | 이미 걸린 공지의 말과 자리를 고칩니다. |
-| `/support/notices/new` | Notice Create | 알릴 것을 새로 적습니다. |
-| `/banners/main` | Main Visuals | 사이트 첫 화면에 걸리는 것을 세우고 내립니다. |
-| `/banners/main/[bannerId]` | Main Visual Detail | 이미 건 배너의 말과 기간을 고칩니다. |
-| `/banners/main/new` | Main Visual Create | 첫 화면에 걸 것을 새로 만듭니다. |
-| `/banners/popups` | Popups | 화면을 막고 뜨는 것을 세우고 내립니다. |
-| `/banners/popups/[popupId]` | Popup Detail | 이미 띄운 팝업의 말과 닫는 방법을 고칩니다. |
-| `/banners/popups/new` | Popup Create | 꼭 읽혀야 하는 것을 새로 띄웁니다. |
-| `/settings/brand` | Brand Settings | 사이트가 읽는 브랜드 값 한 벌을 고칩니다. |
-| `/settings/admins` | Admins | 이 콘솔에 들어오는 사람을 봅니다. |
-| `/settings/admins/[adminId]` | Admin Detail | 들어오는 사람의 권한과 상태를 고칩니다. |
-| `/settings/admins/new` | Admin Create | 들어올 사람을 새로 들입니다. |
+| `/` | Dashboard | 당일 처리해야 할 항목을 우선 확인할 수 있는 운영 현황 페이지입니다. |
+| `/menus` | Menus | 고객 사이트에 노출되는 메뉴와 가격 · 알레르기 정보를 조회하는 메뉴 목록 페이지입니다. |
+| `/menus/[menuId]` | Menu Detail | 등록된 메뉴의 정보와 가격을 수정하는 메뉴 상세 페이지입니다. |
+| `/menus/new` | Menu Create | 신규 메뉴를 등록하는 메뉴 등록 페이지입니다. |
+| `/menus/categories` | Menu Categories | 메뉴 카테고리 구성과 카테고리별 등록 건수를 조회하는 페이지입니다. |
+| `/marketing` | Marketing Posts | 채널별 마케팅 게시물과 노출 상태를 조회하는 마케팅 게시물 목록 페이지입니다. |
+| `/marketing/[postId]` | Marketing Post Detail | 등록된 마케팅 게시물의 채널과 내용을 수정하는 상세 페이지입니다. |
+| `/marketing/new` | Marketing Post Create | 채널에 게시한 마케팅 게시물을 등록하는 페이지입니다. |
+| `/stores` | Stores | 고객 사이트 매장 찾기에 노출되는 가맹점과 영업 정보를 조회하는 가맹점 목록 페이지입니다. |
+| `/stores/[storeId]` | Store Detail | 등록된 가맹점의 주소 · 전화번호 · 영업시간을 수정하는 가맹점 상세 페이지입니다. |
+| `/stores/new` | Store Create | 신규 개점 예정 가맹점을 등록하는 가맹점 등록 페이지입니다. |
+| `/inquiries` | Franchise Inquiries | 고객 사이트에서 접수된 가맹 창업 상담 신청을 조회하고 처리 현황을 관리하는 목록 페이지입니다. |
+| `/inquiries/[inquiryId]` | Inquiry Detail | 접수된 창업 상담 문의를 확인하고 상담 이력을 기록하는 상세 페이지입니다. |
+| `/franchise/faqs` | Franchise FAQ | 창업 검토자를 대상으로 하는 자주 묻는 질문을 관리하는 목록 페이지입니다. |
+| `/franchise/faqs/[faqId]` | Franchise FAQ Detail | 등록된 창업 관련 질문과 답변을 수정하는 상세 페이지입니다. |
+| `/franchise/faqs/new` | Franchise FAQ Create | 창업 검토자를 대상으로 하는 자주 묻는 질문을 등록하는 페이지입니다. |
+| `/settings/franchise` | Franchise Cost | 고객 사이트 창업 안내에 게시된 비용 항목과 개설 절차를 조회하는 페이지입니다. |
+| `/support/faqs` | Support FAQ | 매장 이용 고객을 대상으로 하는 자주 묻는 질문을 관리하는 목록 페이지입니다. |
+| `/support/faqs/[faqId]` | Support FAQ Detail | 등록된 고객 문의 질문과 답변을 수정하는 상세 페이지입니다. |
+| `/support/faqs/new` | Support FAQ Create | 매장 이용 고객을 대상으로 하는 자주 묻는 질문을 등록하는 페이지입니다. |
+| `/support/notices` | Notices | 고객 사이트에 게시하는 공지사항을 관리하는 목록 페이지입니다. |
+| `/support/notices/[noticeId]` | Notice Detail | 게시된 공지의 내용과 노출 설정을 수정하는 공지사항 상세 페이지입니다. |
+| `/support/notices/new` | Notice Create | 신규 공지사항을 등록하는 페이지입니다. |
+| `/banners/main` | Main Visuals | 고객 사이트 메인 배너를 관리하는 목록 페이지입니다. |
+| `/banners/main/[bannerId]` | Main Visual Detail | 등록된 메인 배너의 내용과 게시 기간을 수정하는 상세 페이지입니다. |
+| `/banners/main/new` | Main Visual Create | 고객 사이트 메인 배너를 등록하는 페이지입니다. |
+| `/banners/popups` | Popups | 고객 사이트 팝업을 관리하는 목록 페이지입니다. |
+| `/banners/popups/[popupId]` | Popup Detail | 등록된 팝업의 내용과 노출 방식을 수정하는 상세 페이지입니다. |
+| `/banners/popups/new` | Popup Create | 고객 사이트 팝업을 등록하는 페이지입니다. |
+| `/settings/brand` | Brand Settings | 고객 사이트가 조회하는 브랜드 기본 정보를 관리하는 설정 페이지입니다. |
+| `/settings/admins` | Admins | 관리자 콘솔 접속 계정을 조회하는 관리자 목록 페이지입니다. |
+| `/settings/admins/[adminId]` | Admin Detail | 관리자 계정의 권한 등급과 상태를 수정하는 상세 페이지입니다. |
+| `/settings/admins/new` | Admin Create | 관리자 콘솔 접속 계정을 등록하는 페이지입니다. |
 
 ### 사내 콘솔 — `apps/internal-admin` · 화면 23개
 
 | 주소 | 화면 | 목적 |
 |---|---|---|
-| `/` | Dashboard | 오늘 손대야 할 것을 한 화면에 모읍니다. |
-| `/tenants` | Tenants | 지금 맡고 있는 고객사를 찾고 상태를 봅니다. |
-| `/tenants/pipeline` | Pipeline | 아직 고객사가 아닌 곳까지 한 줄에 세워 도입 단계를 봅니다. |
-| `/tenants/activities` | Activities | 언제 누구와 무엇을 했는지를 남깁니다. |
-| `/tenants/contacts` | Contacts | 고객사 쪽 사람을 역할별로 나눠 둡니다. |
-| `/tenants/churned` | Churned Tenants | 떠난 고객사와 그 이유를 남깁니다. |
-| `/tenants/[tenantId]` | Tenant Detail | 고객사 하나의 계약·배포·청구를 한 화면에서 봅니다. |
-| `/subscriptions/plans` | Plans | 도메인마다 등급 셋이 무엇을 여는지 정합니다. |
-| `/subscriptions/roles` | Roles | 고객사 콘솔의 역할이 도메인마다 몇 개이고 누가 무엇을 맡는지 봅니다. |
-| `/subscriptions/roles/[roleId]` | Role Detail | 역할 하나가 자원마다 어디까지 하는지를 켜고 끕니다. |
-| `/inquiries` | Inquiries | 고객사가 우리에게 보낸 문의를 받아 답합니다. |
-| `/integrations/pg` | Integration PG | 고객사의 결제 연동을 우리가 대신 잡습니다. |
-| `/integrations/oauth` | Integration OAuth | 고객사의 소셜 로그인 연동을 우리가 대신 잡습니다. |
-| `/integrations/plugin` | Integration Plugin | 고객사 배포에 얹는 조각을 켜고 끕니다. |
-| `/integrations/dns` | Integration DNS / SSL | 고객사 도메인이 우리 배포를 가리키게 하고, 그 도메인의 SSL 인증서를 대신 받아 갱신합니다. |
-| `/statistics/revenue` | Revenue | 우리가 고객사에게 받는 돈의 흐름을 읽습니다. |
-| `/statistics/members` | Members | 고객사 사이트에 가입한 사람의 규모를 읽습니다. |
-| `/billing/due` | Billing Due | 앞으로 받을 청구를 만들고 기한을 지킵니다. |
-| `/billing/overdue` | Billing Overdue | 기한이 지난 청구를 구간별로 봅니다. |
-| `/settings/staff` | Staff | 이 콘솔에 들어오는 우리 직원을 관리합니다. |
-| `/settings/notifications` | Notifications | 통계·결제가 만들어 내는 신호를 어디로 보낼지 정합니다. |
-| `/settings/codes` | Codes | 여러 화면이 함께 쓰는 목록을 한 곳에서 정합니다. |
-| `/result` | Result | 방금 한 일의 결말을 알리고 돌아갈 길을 줍니다. |
+| `/` | Dashboard | 처리가 필요한 항목을 한 화면에 요약하여 제공하는 운영 현황 페이지입니다. |
+| `/tenants` | Tenants | 계약 중인 고객사를 조회하고 계약 상태를 관리하는 고객사 목록 페이지입니다. |
+| `/tenants/pipeline` | Pipeline | 계약 이전 단계를 포함한 도입 진행 현황을 관리하는 파이프라인 페이지입니다. |
+| `/tenants/activities` | Activities | 고객사 응대 이력을 기록하고 조회하는 활동 이력 페이지입니다. |
+| `/tenants/contacts` | Contacts | 고객사 담당자를 역할별로 관리하는 담당자 목록 페이지입니다. |
+| `/tenants/churned` | Churned Tenants | 계약이 종료된 고객사와 종료 사유를 조회하는 이탈 고객사 페이지입니다. |
+| `/tenants/[tenantId]` | Tenant Detail | 개별 고객사의 계약 · 배포 · 청구 정보를 제공하는 고객사 상세 페이지입니다. |
+| `/subscriptions/plans` | Plans | 도메인별 구독 등급과 제공 기능을 관리하는 플랜 관리 페이지입니다. |
+| `/subscriptions/roles` | Roles | 고객사 콘솔의 역할 구성과 담당 범위를 조회하는 권한 목록 페이지입니다. |
+| `/subscriptions/roles/[roleId]` | Role Detail | 역할별 자원 권한을 설정하는 권한 상세 페이지입니다. |
+| `/inquiries` | Inquiries | 고객사가 접수한 문의를 조회하고 답변하는 문의 관리 페이지입니다. |
+| `/integrations/pg` | Integration PG | 고객사의 결제 연동 정보를 설정하는 PG 연동 관리 페이지입니다. |
+| `/integrations/oauth` | Integration OAuth | 고객사의 소셜 로그인 연동 정보를 설정하는 OAuth 연동 관리 페이지입니다. |
+| `/integrations/plugin` | Integration Plugin | 고객사 배포에 적용할 외부 서비스를 설정하는 플러그인 관리 페이지입니다. |
+| `/integrations/dns` | Integration DNS / SSL | 고객사 도메인의 DNS 레코드와 SSL 인증서를 관리하는 도메인 연동 페이지입니다. |
+| `/statistics/revenue` | Revenue | 고객사 대상 매출 현황을 조회하는 매출 통계 페이지입니다. |
+| `/statistics/members` | Members | 고객사 사이트의 회원 규모를 조회하는 회원 통계 페이지입니다. |
+| `/billing/due` | Billing Due | 예정 청구를 등록하고 납부 기한을 관리하는 청구 예정 페이지입니다. |
+| `/billing/overdue` | Billing Overdue | 납부 기한이 경과한 청구를 경과 기간별로 조회하는 연체 관리 페이지입니다. |
+| `/settings/staff` | Staff | 관리자 콘솔 접속 계정을 관리하는 관리자 계정 페이지입니다. |
+| `/settings/notifications` | Notifications | 통계와 결제에서 발생하는 알림의 발송 조건을 설정하는 알림 설정 페이지입니다. |
+| `/settings/codes` | Codes | 여러 화면이 공통으로 사용하는 기준 값을 관리하는 기준 값 관리 페이지입니다. |
+| `/result` | Result | 처리 결과를 안내하고 이동 경로를 제공하는 처리 결과 페이지입니다. |
 
 ## 디렉토리
 
@@ -383,18 +383,18 @@ pnpm pages:shoot     # 앱마다 화면 사진을 한 장씩 찍습니다 (개�
 pnpm readme:build    # 이 파일을 다시 만듭니다
 ```
 
-이 README 는 **생성물**입니다. 화면 목록과 숫자를 손으로 옮겨 적으면 화면이 하나 늘 때
-고칠 곳이 둘이 되고, 실제로는 한쪽만 고칩니다.
+본 README 는 **생성 문서**입니다. 화면 목록과 집계 수치를 직접 작성하면 화면 추가 시 수정
+대상이 두 곳이 되며, 일부만 갱신되는 문제가 발생합니다.
 
-## 떼어 낸 저장소
+## 분리 배포 저장소
 
-IR 한 쌍은 별도 저장소로도 나가 있습니다.
+IR 한 쌍은 별도 저장소로도 배포합니다.
 
-| 저장소 | 담긴 것 |
+| 저장소 | 포함 범위 |
 |---|---|
-| `spaceplanning-ai/spaceplanning-client` | `apps/ir-client-a` + 그 앱이 쓰는 패키지 5 |
-| `spaceplanning-ai/spaceplanning-admin` | `apps/ir-admin` + 그 앱이 쓰는 패키지 7 |
+| `spaceplanning-ai/spaceplanning-client` | `apps/ir-client-a` 와 해당 앱이 사용하는 패키지 5개 |
+| `spaceplanning-ai/spaceplanning-admin` | `apps/ir-admin` 과 해당 앱이 사용하는 패키지 7개 |
 
-공유 패키지가 세 저장소에 같은 사본으로 들어 있습니다. 특히 `@winpilot/store` 는 사이트와
-콘솔이 **같은 값을 읽는다는 전제**로 만든 패키지라, 어느 쪽을 원본으로 볼지 먼저 정해야
-합니다. 양쪽에서 따로 고치면 이 저장소가 처음부터 막으려던 문제가 그대로 생깁니다.
+공유 패키지가 3개 저장소에 동일한 사본으로 포함됩니다. `@winpilot/store` 는 사이트와 콘솔이
+**동일한 데이터를 조회하는 것을 전제**로 설계한 패키지이므로 원본 저장소를 먼저 확정해야
+합니다. 양쪽에서 개별 수정하면 본 저장소가 방지하려는 데이터 불일치가 발생합니다.
