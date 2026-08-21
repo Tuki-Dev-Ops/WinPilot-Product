@@ -101,10 +101,10 @@ export const FLOW_SPECS: ScreenFlow[] = [
   {
     screen: 'menu',
     entries: ['헤더의 메뉴', '첫 화면의 메뉴 보기', '홈 대표 메뉴 칸의 전체 메뉴 보기', '푸터의 메뉴'],
-    steps: ['왼쪽 기둥에서 묶음을 고른다', '묶음 설명 한 줄을 읽는다', '카드 격자를 훑는다', '메뉴 하나를 연다'],
+    steps: ['카테고리 필터에서 카테고리를 선택한다', '카테고리 설명을 확인한다', '메뉴 카드 목록을 확인한다', '메뉴 상세로 이동한다'],
     branches: [],
     exceptions: [
-      { at: 0, label: '비어 있는 묶음은 기둥에 세우지 않는다 — 눌러서 빈 화면을 만나면 없어진 줄 안다' },
+      { at: 0, label: '등록된 메뉴가 없는 카테고리는 필터에 표시하지 않는다' },
       { at: 2, label: '내려 둔 메뉴는 없는 것처럼 둔다. 흐리게 세우면 주문할 수 있는 줄 알고 매장에 가서 안다' },
     ],
     data: ['@winpilot/store · MENU_ITEMS (publicMenuItems)', '@winpilot/store · MENU_CATEGORIES'],
@@ -113,7 +113,7 @@ export const FLOW_SPECS: ScreenFlow[] = [
   {
     screen: 'menu-detail',
     entries: ['메뉴판의 카드에서', '홈의 대표 메뉴 굴림판에서', '공유받은 주소로 바로'],
-    steps: ['이름과 값을 확인한다', '설명과 표를 읽는다', '열량과 알레르기를 확인한다', '같은 묶음의 다른 것을 본다'],
+    steps: ['메뉴명과 가격을 확인한다', '설명과 태그를 확인한다', '열량과 알레르기 유발 재료를 확인한다', '동일 카테고리 추천 메뉴를 확인한다'],
     branches: [
       {
         after: 0,
@@ -124,9 +124,9 @@ export const FLOW_SPECS: ScreenFlow[] = [
       },
       {
         after: 3,
-        question: '같은 묶음에 다른 것이 있나',
+        question: '동일 카테고리에 다른 메뉴가 있는가',
         pass: '있음',
-        block: '같은 묶음 줄을 그리지 않는다',
+        block: '동일 카테고리 추천 영역을 표시하지 않는다',
         blockLabel: '없음',
       },
     ],
@@ -136,7 +136,7 @@ export const FLOW_SPECS: ScreenFlow[] = [
       { at: 2, label: '알레르기가 없으면 비우지 않고 해당 없음이라 적는다' },
     ],
     data: ['@winpilot/store · MENU_ITEMS (findMenuItem)', '@winpilot/store · MENU_CATEGORIES'],
-    exits: ['메뉴판으로', '같은 묶음의 다른 메뉴로'],
+    exits: ['메뉴 목록으로', '동일 카테고리의 다른 메뉴로'],
   },
   {
     screen: 'interior',

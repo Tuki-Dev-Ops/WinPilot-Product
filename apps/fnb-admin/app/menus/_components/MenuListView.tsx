@@ -30,7 +30,7 @@ const CATEGORY_NAME = new Map(MENU_CATEGORIES.map((one) => [one.id, one.name]));
  */
 const COLUMNS: RecordColumn[] = [
   { label: '메뉴', span: 'lg:col-span-2' },
-  { label: '묶음', span: 'lg:col-span-1' },
+  { label: '카테고리', span: 'lg:col-span-1' },
   { label: '값', span: 'lg:col-span-2 lg:text-right' },
   { label: '알레르기', span: 'lg:col-span-2' },
   { label: '표', span: 'lg:col-span-1' },
@@ -40,7 +40,7 @@ const COLUMNS: RecordColumn[] = [
 const FILTERS: ListFilterField[] = [
   {
     id: 'category',
-    label: '묶음',
+    label: '카테고리',
     options: MENU_CATEGORIES.map((one) => ({ value: one.id, label: one.name })),
   },
   {

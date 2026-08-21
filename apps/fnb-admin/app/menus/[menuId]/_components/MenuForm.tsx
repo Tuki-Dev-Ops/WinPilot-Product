@@ -139,10 +139,10 @@ export function MenuForm({ item, mode = 'edit' }: { item: MenuItem; mode?: 'edit
             이름을 값으로 저장하는 방법도 있었다. 그러면 묶음 이름을 바꾸는 날 **메뉴가 전부
             묶음을 잃는다.**
           */}
-          <FnbField label="묶음" htmlFor="menu-category" hint="메뉴판에서 이 묶음 아래에 섭니다.">
+          <FnbField label="카테고리" htmlFor="menu-category" hint="고객 사이트 메뉴 목록에서 이 카테고리에 표시됩니다.">
             <Dropdown
               id="menu-category"
-              label="묶음을 고르세요"
+              label="카테고리를 선택하세요"
               value={categoryId}
               onChange={setCategoryId}
               options={CATEGORY_OPTIONS}

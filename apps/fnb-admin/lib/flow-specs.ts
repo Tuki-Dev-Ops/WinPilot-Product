@@ -103,7 +103,7 @@ export const FLOW_SPECS: ScreenFlow[] = [
     screen: 'menus',
     entries: ['사이드바 등록 · 메뉴', '대시보드 내려 둔 메뉴 카드에서'],
     steps: [
-      '묶음과 상태로 거른다',
+      '카테고리와 노출 상태로 필터링한다',
       '메뉴명이나 설명으로 검색한다',
       '알레르기가 빈 줄이 있는지 훑는다',
       '줄을 눌러 상세로 가거나 등록으로 간다',
@@ -131,7 +131,7 @@ export const FLOW_SPECS: ScreenFlow[] = [
     exits: [
       '상세로 — /menus/[menuId]',
       '등록으로 — /menus/new',
-      '묶음으로 — /menus/categories',
+      '메뉴 카테고리로 — /menus/categories',
     ],
   },
   {
@@ -139,7 +139,7 @@ export const FLOW_SPECS: ScreenFlow[] = [
     entries: ['메뉴 목록에서 줄을 눌러'],
     steps: [
       '이미 넣은 값이 채워진 폼을 본다',
-      '이름 · 묶음 · 값 · 열량 · 설명을 고친다',
+      '메뉴명 · 카테고리 · 가격 · 열량 · 설명을 수정한다',
       '알레르기를 정해진 목록에서 켜고 끈다',
       '표와 매운 정도를 고른다',
       '메뉴판 노출을 정하고 저장을 누른다',
@@ -171,7 +171,7 @@ export const FLOW_SPECS: ScreenFlow[] = [
     entries: ['메뉴 목록 툴바의 메뉴 등록 단추'],
     steps: [
       '빈 폼을 연다',
-      '이름 · 묶음 · 값 · 열량 · 설명을 넣는다',
+      '메뉴명 · 카테고리 · 가격 · 열량 · 설명을 입력한다',
       '알레르기를 고른다',
       '표와 매운 정도를 고른다',
       '등록을 누른다',
@@ -197,8 +197,8 @@ export const FLOW_SPECS: ScreenFlow[] = [
     entries: ['사이드바 등록 · 메뉴에서 옆 화면으로'],
     steps: [
       '먹는 순서대로 늘어선 넷을 읽는다',
-      '묶음마다 몇 가지가 판매중인지 센다',
-      '내려 둔 것이 있는 묶음을 찾는다',
+      '카테고리별 판매중 건수를 확인한다',
+      '비노출 메뉴가 있는 카테고리를 확인한다',
     ],
     branches: [
       {
@@ -211,7 +211,7 @@ export const FLOW_SPECS: ScreenFlow[] = [
     ],
     exceptions: [
       { at: 0, label: '순서를 바꾸는 자리가 없다 — 넷의 차례는 취향이 아니라 먹는 순서다' },
-      { at: 0, label: '묶음을 늘리고 줄이는 일도 여기서 하지 않는다. 넣을 메뉴가 없으면 메뉴판에 빈 제목만 선다' },
+      { at: 0, label: '카테고리 추가와 삭제는 제공하지 않는다. 등록된 메뉴가 없으면 고객 사이트에 제목만 표시된다' },
     ],
     data: ['@winpilot/store · MENU_CATEGORIES · MENU_ITEMS'],
     exits: ['메뉴 목록으로 — 내려 둔 것을 찾아 연다', '같은 화면에 머문다 — 읽기만 하는 자리다'],
@@ -968,7 +968,7 @@ export const JOURNEYS: NamedFlow[] = [
       },
     ],
     exceptions: [
-      { at: 0, label: '묶음을 늘리는 자리가 없다 — 넣을 메뉴가 없으면 메뉴판에 빈 제목만 선다' },
+      { at: 0, label: '카테고리 추가 기능을 제공하지 않는다. 등록된 메뉴가 없으면 고객 사이트에 제목만 표시된다' },
       { at: 3, label: '등록 직후는 내림이라 상세를 한 번 거쳐야 메뉴판에 선다' },
     ],
     data: ['@winpilot/store · MENU_ITEMS · MENU_CATEGORIES'],

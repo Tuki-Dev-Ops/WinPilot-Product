@@ -113,7 +113,7 @@ export default async function MenuDetailPage({ params }: { params: Promise<{ ite
         {siblings.length > 0 && (
           <section className="flex flex-col gap-6">
             <h2 className="text-xs font-bold uppercase tracking-widest text-ink-faint">
-              같은 {category?.name ?? '묶음'}
+              같은 {category?.name ?? '카테고리'}
             </h2>
             <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {siblings.map((one) => (
