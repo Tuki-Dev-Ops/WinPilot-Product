@@ -58,7 +58,7 @@ export type IaGroup = {
 };
 
 /** 홈은 어느 갈래에도 들지 않는다 — 일곱 갈래가 모두 여기서 갈라진다. */
-export const ROOT: IaScreen = { screen: 'home', ko: '홈' };
+export const ROOT: IaScreen = { screen: 'home', ko: '메인 페이지' };
 
 export const IA_GROUPS: IaGroup[] = [
   {

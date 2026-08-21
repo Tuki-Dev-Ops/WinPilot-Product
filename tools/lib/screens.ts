@@ -82,6 +82,14 @@ export type AppSource = {
   pages: readonly PageLike[];
   specs: readonly ScreenSpecLike[];
   ia: readonly IaLike[];
+  /**
+   * 어느 갈래에도 들지 않는 **진입 화면**. 사이트의 메인 페이지가 그렇다 — 갈래가 모두
+   * 거기서 갈라지므로 어느 하나에 넣을 수 없다.
+   *
+   * IA 파일이 이미 `ROOT` 로 갖고 있는 값이라 여기서 다시 적지 않고 받아 온다. 콘솔에는
+   * 진입 화면이 따로 없어(대시보드가 갈래 안에 있다) 없어도 된다.
+   */
+  root?: { screen: string; ko: string };
   /** 갈래 이름을 어디서 읽는가 — 사이트는 직접 적고, 콘솔은 메뉴가 이긴다 */
   groupLabel: (group: IaLike) => string;
   /** 읽기 전용 서비스 안에서 값을 쌓는 화면 — 주소로 가린다 */
@@ -97,9 +105,13 @@ const subjectOf = (id: string, rules: readonly PrefixRule[]): string =>
 /**
  * 화면을 한 줄로 편다.
  *
- * 갈래에 들지 않는 화면이 있다 — 사이트의 홈이 그렇다. 갈래가 모두 거기서 갈라지므로 어느
- * 하나에 넣을 수 없다. 그런 화면은 `공통` 으로 모은다. 빠뜨리면 문서의 화면 수가 등록부와
- * 달라지고, 그 차이는 아무도 눈치채지 못한다.
+ * ## 차례가 곧 읽는 순서다
+ * 문서를 읽는 사람은 사이트에 들어오는 순서대로 화면을 본다. 그러므로 **메인 페이지가 첫
+ * 줄**이어야 한다. 앞선 판은 갈래를 먼저 돌고 남은 화면을 뒤에 붙였는데, 메인 페이지는 어느
+ * 갈래에도 들지 않아 목록 맨 끝에 섰다 — 사이트의 첫 화면이 문서의 마지막 줄이 되었다.
+ *
+ * 진입 화면(`root`)을 먼저 세우고, 그다음 갈래를 돈다. 그러고도 남는 화면이 있으면 `공통`
+ * 으로 모아 뒤에 붙인다. 빠뜨리면 문서의 화면 수가 등록부와 달라지고, 그 차이는 눈에 띄지 않는다.
  */
 export const collectScreens = (sources: readonly AppSource[], rules: readonly PrefixRule[]): Screen[] => {
   const rows: Omit<Screen, 'featureId'>[] = [];
@@ -129,6 +141,8 @@ export const collectScreens = (sources: readonly AppSource[], rules: readonly Pr
         data,
       });
     };
+
+    if (source.root) push(source.root.screen, source.root.ko, '메인', []);
 
     for (const group of source.ia) {
       const label = source.groupLabel(group);

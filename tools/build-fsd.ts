@@ -53,6 +53,13 @@ const part = (no: number, title: string, body: string): string =>
 /* ── 1. 기본 정보 ──────────────────────────────────────────── */
 
 export const buildFsd = (p: DocProject): string => {
+  /*
+    서비스의 영역 구성. 한때 F&B 의 갈래 이름을 문자열로 박아 두어, IR 문서의 1장에 `브랜드 ·
+    메뉴 · 인테리어` 가 그대로 실렸다. 화면이 이미 갖고 있는 값을 세어 쓴다.
+  */
+  const areasOf = (list: readonly Screen[]): string =>
+    esc([...new Set(list.map((one) => one.group))].join(' · '));
+
   /* 값에 따라 화면 처리가 갈리는 칸. 상태값 정의 절이 이 이름들로 항목을 고른다. */
   const STATUS_FIELD = /공개|노출|고정|상태|판매|감추|사용 여부/;
 
@@ -306,8 +313,8 @@ export const buildFsd = (p: DocProject): string => {
   <table>
     <thead><tr><th style="width:110px">구분</th><th style="width:90px">화면 수</th><th>범위</th></tr></thead>
     <tbody>
-      ${cells('고객 사이트', String(p.clientScreens.length), '브랜드 · 메뉴 · 인테리어 · 마케팅 · 매장안내 · 창업안내 · 고객센터 · 법적 고지. 가맹 상담 신청을 제외한 전 화면은 조회 전용입니다.')}
-      ${cells('관리자', String(p.adminScreens.length), '대시보드 · 등록 · 창업 · 고객센터 · 배너 · 설정. 목록 · 상세 · 등록 3개 유형의 화면으로 구성됩니다.')}
+      ${cells(esc(p.clientLabel), String(p.clientScreens.length), `${areasOf(p.clientScreens)}. ${rich(formal(p.intro.roles[0] ?? ''))}`)}
+      ${cells(esc(p.adminLabel), String(p.adminScreens.length), `${areasOf(p.adminScreens)}. ${rich(formal(p.intro.roles[1] ?? ''))}`)}
       ${cells('Back-End', '–', '<strong>2단계 구축 대상.</strong> 필요한 연산 · 권한 · 항목 · 검증은 본 문서 8장에, 데이터 보존 · 파기 정책은 「비기능 명세서」에 정의되어 있습니다.')}
     </tbody>
   </table>

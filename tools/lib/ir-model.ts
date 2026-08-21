@@ -5,7 +5,7 @@ import {
   COMMON_NON_FUNCTIONAL,
 } from '../../apps/ir-client-a/lib/screen-specs';
 import { SCREEN_SPECS as adminSpecs } from '../../apps/ir-admin/lib/screen-specs';
-import { IA_GROUPS as clientIa } from '../../apps/ir-client-a/lib/ia-groups';
+import { IA_GROUPS as clientIa, ROOT as clientRoot } from '../../apps/ir-client-a/lib/ia-groups';
 import { IA_GROUPS as adminIa } from '../../apps/ir-admin/lib/ia-groups';
 import { IR_MENU } from '../../apps/ir-admin/lib/navigation/ir-menu';
 import { collectScreens, makeImpact, type PrefixRule, type Screen } from './screens';
@@ -59,6 +59,7 @@ export const SCREENS: Screen[] = collectScreens(
       pages: clientPages,
       specs: clientSpecs,
       ia: clientIa,
+      root: clientRoot,
       groupLabel: (group) => group.label ?? group.id,
       /* 사이트에서 값을 쌓는 곳은 문의하기 하나다. */
       writes: (route) => route === '/support/contact',

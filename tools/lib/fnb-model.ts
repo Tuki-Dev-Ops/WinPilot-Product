@@ -5,7 +5,7 @@ import {
   COMMON_NON_FUNCTIONAL,
 } from '../../apps/fnb-client-a/lib/screen-specs';
 import { SCREEN_SPECS as adminSpecs } from '../../apps/fnb-admin/lib/screen-specs';
-import { IA_GROUPS as clientIa } from '../../apps/fnb-client-a/lib/ia-groups';
+import { IA_GROUPS as clientIa, ROOT as clientRoot } from '../../apps/fnb-client-a/lib/ia-groups';
 import { IA_GROUPS as adminIa } from '../../apps/fnb-admin/lib/ia-groups';
 import { FNB_MENU } from '../../apps/fnb-admin/lib/navigation/fnb-menu';
 import { collectScreens, makeImpact, type PrefixRule, type Screen } from './screens';
@@ -53,6 +53,7 @@ export const SCREENS: Screen[] = collectScreens(
       pages: clientPages,
       specs: clientSpecs,
       ia: clientIa,
+      root: clientRoot,
       groupLabel: (group) => group.label ?? group.id,
       /* 고객 사이트에서 값을 쌓는 곳은 창업 상담 신청 하나다. */
       writes: (route) => route.endsWith('/apply'),

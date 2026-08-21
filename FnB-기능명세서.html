@@ -165,7 +165,7 @@
   <h1>어쭈구리왕문어 <span class="dim">기능 명세서</span></h1>
   <div class="stamp">
     기능 정의 · 3/4
-    <em>2026년 8월 20일</em>
+    <em>2026년 8월 21일</em>
   </div>
 </div>
 
@@ -174,8 +174,8 @@
   <table>
     <thead><tr><th style="width:110px">구분</th><th style="width:90px">화면 수</th><th>범위</th></tr></thead>
     <tbody>
-      <tr><td>고객 사이트</td><td>14</td><td>브랜드 · 메뉴 · 인테리어 · 마케팅 · 매장안내 · 창업안내 · 고객센터 · 법적 고지. 가맹 상담 신청을 제외한 전 화면은 조회 전용입니다.</td></tr>
-      <tr><td>관리자</td><td>33</td><td>대시보드 · 등록 · 창업 · 고객센터 · 배너 · 설정. 목록 · 상세 · 등록 3개 유형의 화면으로 구성됩니다.</td></tr>
+      <tr><td>고객 서비스</td><td>14</td><td>메인 · 브랜드 · 메뉴 · 인테리어 · 마케팅 · 매장안내 · 창업안내 · 고객센터 · 법적 고지. 브랜드 정보 제공 · 메뉴 탐색 · 매장 검색 · 창업 안내 · 고객 지원. 창업 상담 신청을 제외한 전 화면이 조회 전용입니다.</td></tr>
+      <tr><td>관리자 서비스</td><td>33</td><td>대시보드 · 등록 · 창업 · 고객센터 · 배너 · 설정. 고객 서비스에 노출되는 데이터의 등록 · 수정 · 삭제 · 상태 관리와 창업 문의 처리.</td></tr>
       <tr><td>Back-End</td><td>–</td><td><strong>2단계 구축 대상.</strong> 필요한 연산 · 권한 · 항목 · 검증은 본 문서 8장에, 데이터 보존 · 파기 정책은 「비기능 명세서」에 정의되어 있습니다.</td></tr>
     </tbody>
   </table>
@@ -207,184 +207,184 @@
       </tr>
       <tr><th>디자인</th><th>개발</th><th>어드민</th></tr>
     </thead>
-    <tbody><tr id="BRAND-001"><td class="no">1</td>
+    <tbody><tr id="HOME-001"><td class="no">1</td>
+  <td class="d1">고객 사이트</td>
+  <td>메인</td>
+  <td>메인 페이지</td>
+  <td class="flow"><ol><li>상단 내비게이션</li><li>메인 배너</li><li>주요 지표 영역</li><li>공지 요약 영역</li><li>대표 메뉴 슬라이드</li><li>신규 오픈 매장 슬라이드</li><li>브랜드 소개 영역</li><li>창업 안내 영역</li><li>가맹점 실적 영역</li><li>푸터</li><li>고정 상담 바</li></ol></td>
+  <td><code>/</code></td>
+  <td><code>US-01-01</code></td>
+  <td><strong>메인 페이지</strong><br><code>HOME-001</code></td>
+  <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 표시 11영역 — 상단 내비게이션 · 메인 배너 · 주요 지표 영역 · 공지 요약 영역 · 대표 메뉴 슬라이드 · 신규 오픈 매장 슬라이드 · 브랜드 소개 영역 · 창업 안내 영역 · 가맹점 실적 영역 · 푸터 · 고정 상담 바. 어드민 설정 &gt; 브랜드 정보 · 등록 &gt; 메뉴 · 등록 &gt; 가맹점 · 고객센터 &gt; 공지사항 · 창업 &gt; 비용 · 절차 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 메인 배너 — 브랜드 한 줄 소개와 메뉴 보기 · 매장 찾기 진입 버튼.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 등록된 공지가 없으면 공지 요약 영역을 표시하지 않습니다.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 메뉴 목록 또는 매장 찾기 이동 기능 제공. 공지 요약 영역에서 공지사항 목록 이동 기능 제공. 대표 메뉴 슬라이드에서 메뉴 상세 이동 기능 제공. 신규 오픈 매장 슬라이드 조회 기능 제공. 가맹점 실적 영역에서 창업 안내 이동 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 해당 없음.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 메인 배너에서 메뉴 목록 또는 매장 찾기로 이동. 공지 요약 영역에서 공지사항 목록으로 이동. 대표 메뉴 슬라이드에서 메뉴 상세로 이동. 가맹점 실적 영역에서 창업 안내로 이동.</span></div></td>
+  <td class="yn">Y</td>
+  <td class="yn">Y</td>
+  <td class="yn">Y</td>
+  <td class="memo">비회원</td>
+</tr><tr id="BRAND-001"><td class="no">2</td>
   <td class="d1">고객 사이트</td>
   <td>브랜드</td>
   <td>브랜드 이야기</td>
   <td class="flow"><ol><li>페이지 제목</li><li>브랜드 개요</li><li>운영 원칙 목록</li><li>매장 찾기 연결 영역</li></ol></td>
   <td><code>/brand</code></td>
-  <td><code>US-01-01</code></td>
+  <td><code>US-02-01</code></td>
   <td><strong>브랜드 이야기</strong><br><code>BRAND-001</code></td>
   <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 표시 4영역 — 페이지 제목 · 브랜드 개요 · 운영 원칙 목록 · 매장 찾기 연결 영역. 어드민 설정 &gt; 브랜드 정보 · 등록 &gt; 가맹점 (매장 수) 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 해당 없음.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 브랜드 운영 원칙 조회 기능 제공. 매장 찾기 페이지 이동 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 해당 없음.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 매장 찾기 페이지로 이동.</span></div></td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="memo">비회원</td>
-</tr><tr id="MENU-001"><td class="no">2</td>
+</tr><tr id="MENU-001"><td class="no">3</td>
   <td class="d1">고객 사이트</td>
   <td>메뉴</td>
   <td>메뉴판</td>
   <td class="flow"><ol><li>페이지 제목</li><li>카테고리 필터</li><li>카테고리 설명</li><li>메뉴 카드 목록</li><li>알레르기 유발 재료 안내</li></ol></td>
   <td><code>/menu</code></td>
-  <td><code>US-02-01</code></td>
+  <td><code>US-03-01</code></td>
   <td><strong>메뉴판</strong><br><code>MENU-001</code></td>
   <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 입력 1항목 — 카테고리. 표시 5영역 — 페이지 제목 · 카테고리 필터 · 카테고리 설명 · 메뉴 카드 목록 · 알레르기 유발 재료 안내. 어드민 등록 &gt; 메뉴 (목록 · 등록 · 상세) · 등록 &gt; 메뉴 &gt; 메뉴 카테고리 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 메뉴 카드 목록 — 이미지 · 태그 · 메뉴명 · 설명 · 가격으로 구성한 카드 목록.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 메뉴 카테고리 필터 기능 제공. 메뉴 카드 선택 시 상세 페이지 이동 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 해당 없음.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 메뉴 상세 (/menu/[itemId]).</span></div></td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="memo">비회원</td>
-</tr><tr id="MENU-002"><td class="no">3</td>
+</tr><tr id="MENU-002"><td class="no">4</td>
   <td class="d1">고객 사이트</td>
   <td>메뉴</td>
   <td>메뉴 상세</td>
   <td class="flow"><ol><li>목록으로 돌아가기</li><li>메뉴 이미지</li><li>메뉴명 · 가격</li><li>판매 중지 안내</li><li>태그 · 맵기 정보</li><li>열량 · 알레르기 정보</li><li>동일 카테고리 추천 메뉴</li></ol></td>
   <td><code>/menu/[itemId]</code></td>
-  <td><code>US-02-02</code></td>
+  <td><code>US-03-02</code></td>
   <td><strong>메뉴 상세</strong><br><code>MENU-002</code></td>
   <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 표시 7영역 — 목록으로 돌아가기 · 메뉴 이미지 · 메뉴명 · 가격 · 판매 중지 안내 · 태그 · 맵기 정보 · 열량 · 알레르기 정보 · 동일 카테고리 추천 메뉴. 어드민 등록 &gt; 메뉴 (상세 — 알레르기 · 열량 · 표 · 매운 정도) 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 메뉴 이미지 — 이미지 미등록 시 메뉴명 첫 글자를 대체 표시.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 알레르기 유발 재료 조회 기능 제공. 열량 조회 기능 제공. 동일 카테고리 추천 메뉴 이동 기능 제공. 메뉴 목록 이동 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 해당 없음.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 동일 카테고리 추천 메뉴로 이동. 메뉴 목록으로 이동.</span></div></td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="memo">비회원</td>
-</tr><tr id="INTERIOR-001"><td class="no">4</td>
+</tr><tr id="INTERIOR-001"><td class="no">5</td>
   <td class="d1">고객 사이트</td>
   <td>인테리어</td>
   <td>인테리어</td>
   <td class="flow"><ol><li>페이지 제목</li><li>평형별 인테리어 안</li><li>시공 사례 이미지</li></ol></td>
   <td><code>/interior</code></td>
-  <td><code>US-03-01</code></td>
+  <td><code>US-04-01</code></td>
   <td><strong>인테리어</strong><br><code>INTERIOR-001</code></td>
   <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 표시 3영역 — 페이지 제목 · 평형별 인테리어 안 · 시공 사례 이미지. 어드민 창업 &gt; 비용 · 절차 (평당 단가) 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 평형별 인테리어 안 — 이미지 · 예상 비용 · 좌석 수 · 공사 기간 · 권장 입지로 구성한 슬라이드. 시공 사례 이미지 — 완성 매장 이미지 8개 항목.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 평형별 인테리어 안 조회 기능 제공. 좌석 수 및 공사 기간 조회 기능 제공. 시공 사례 이미지 조회 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 해당 없음.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 해당 없음.</span></div></td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="memo">비회원</td>
-</tr><tr id="MARKETING-001"><td class="no">5</td>
+</tr><tr id="MARKETING-001"><td class="no">6</td>
   <td class="d1">고객 사이트</td>
   <td>마케팅</td>
   <td>마케팅</td>
   <td class="flow"><ol><li>페이지 제목</li><li>채널 필터</li><li>채널 설명</li><li>게시물 카드 목록</li><li>데이터 없음 안내</li></ol></td>
   <td><code>/marketing</code></td>
-  <td><code>US-04-01</code></td>
+  <td><code>US-05-01</code></td>
   <td><strong>마케팅</strong><br><code>MARKETING-001</code></td>
   <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 입력 1항목 — 채널. 표시 5영역 — 페이지 제목 · 채널 필터 · 채널 설명 · 게시물 카드 목록 · 데이터 없음 안내. 어드민 등록 &gt; 마케팅 (채널 · 게시물) 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 게시물 카드 목록 — 이미지 · 제목 · 요약 · 게시일로 구성한 카드 목록.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 마케팅 채널 필터 기능 제공. 채널별 게시물 목록 조회 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 해당 없음.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 해당 없음.</span></div></td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="memo">비회원</td>
-</tr><tr id="STORE-001"><td class="no">6</td>
+</tr><tr id="STORE-001"><td class="no">7</td>
   <td class="d1">고객 사이트</td>
   <td>매장안내</td>
   <td>매장 찾기</td>
   <td class="flow"><ol><li>지도</li><li>검색 영역</li><li>검색 결과 목록</li><li>데이터 없음 안내</li><li>지도 안내 영역</li></ol></td>
   <td><code>/stores</code></td>
-  <td><code>US-05-01</code></td>
+  <td><code>US-06-01</code></td>
   <td><strong>매장 찾기</strong><br><code>STORE-001</code></td>
   <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 입력 2항목 — 검색어 · 지역. 표시 5영역 — 지도 · 검색 영역 · 검색 결과 목록 · 데이터 없음 안내 · 지도 안내 영역. 어드민 등록 &gt; 가맹점 (주소 · 번호 · 시간 · 되는 것 · 상태 · 좌표) 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 해당 없음.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 지도 API 키가 없거나 도메인이 등록되지 않은 경우 빈 영역 대신 안내 영역을 표시합니다.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 매장명 및 주소 검색 기능 제공. 지역 필터 기능 제공. 목록 항목 선택 시 지도 이동 기능 제공. 지도 마커 선택 시 해당 매장 정보 조회 기능 제공. 검색 조건 초기화 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 해당 없음.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 목록 항목 선택 시 지도 이동.</span></div></td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="memo">비회원</td>
-</tr><tr id="FRANCHISE-001"><td class="no">7</td>
+</tr><tr id="FRANCHISE-001"><td class="no">8</td>
   <td class="d1">고객 사이트</td>
   <td>창업안내</td>
   <td>가맹점 개설절차</td>
   <td class="flow"><ol><li>페이지 제목</li><li>탭 내비게이션</li><li>창업 비용표</li><li>개설 절차</li><li>상담 안내 영역</li></ol></td>
   <td><code>/franchise</code></td>
-  <td><code>US-06-01</code></td>
+  <td><code>US-07-01</code></td>
   <td><strong>가맹점 개설절차</strong><br><code>FRANCHISE-001</code></td>
   <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 표시 5영역 — 페이지 제목 · 탭 내비게이션 · 창업 비용표 · 개설 절차 · 상담 안내 영역. 어드민 창업 &gt; 비용 · 절차 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 해당 없음.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 창업 비용표 조회 기능 제공. 개설 절차 5단계 조회 기능 제공. 가맹 상담 신청 페이지 이동 기능 제공. 가맹점 개설문의 탭 이동 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 해당 없음.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 가맹점 상담 신청 (/franchise/apply). 가맹점 개설문의 (/franchise/faq).</span></div></td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="memo">비회원</td>
-</tr><tr id="FRANCHISE-002"><td class="no">8</td>
+</tr><tr id="FRANCHISE-002"><td class="no">9</td>
   <td class="d1">고객 사이트</td>
   <td>창업안내</td>
   <td>가맹점 상담 신청</td>
   <td class="flow"><ol><li>페이지 제목</li><li>탭 내비게이션</li><li>상담 안내 영역</li><li>신청 입력 폼</li><li>개인정보 수집 · 이용 동의</li></ol></td>
   <td><code>/franchise/apply</code></td>
-  <td><code>US-06-02</code></td>
+  <td><code>US-07-02</code></td>
   <td><strong>가맹점 상담 신청</strong><br><code>FRANCHISE-002</code></td>
   <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 입력 6항목 — 성명 · 연락처 · 검토 지역 · 예산 · 문의 내용 · 개인정보 수집 · 이용 동의. 표시 5영역 — 페이지 제목 · 탭 내비게이션 · 상담 안내 영역 · 신청 입력 폼 · 개인정보 수집 · 이용 동의. 어드민 창업 &gt; 문의 내역 (여기로 쌓인다) · 설정 &gt; 브랜드 정보 (창업 상담 번호) 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 해당 없음.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 상담 신청 필수 항목 등록 기능 제공. 문의 내용 등록 기능 제공. 개인정보 수집 · 이용 동의 기능 제공. 상담 신청 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 성명이 미입력이면 성명 입력을 요청하는 메시지를 표시합니다. 연락처는 미입력과 형식 오류를 구분하여 각각의 메시지를 표시합니다. 지역과 예산을 선택하지 않으면 접수하지 않습니다. 개인정보 수집 · 이용에 동의하지 않으면 접수하지 않습니다. 검증 결과는 신청 버튼을 선택한 이후에 표시합니다.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 해당 없음.</span></div></td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="memo">비회원</td>
-</tr><tr id="FRANCHISE-003"><td class="no">9</td>
+</tr><tr id="FRANCHISE-003"><td class="no">10</td>
   <td class="d1">고객 사이트</td>
   <td>창업안내</td>
   <td>가맹점 개설문의</td>
   <td class="flow"><ol><li>페이지 제목 · 탭 내비게이션</li><li>상담 전화 안내 영역</li><li>분류 필터</li><li>질문 목록</li><li>상담 안내 영역</li></ol></td>
   <td><code>/franchise/faq</code></td>
-  <td><code>US-06-03</code></td>
+  <td><code>US-07-03</code></td>
   <td><strong>가맹점 개설문의</strong><br><code>FRANCHISE-003</code></td>
   <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 입력 1항목 — 분류. 표시 5영역 — 페이지 제목 · 탭 내비게이션 · 상담 전화 안내 영역 · 분류 필터 · 질문 목록 · 상담 안내 영역. 어드민 창업 &gt; FAQ · 설정 &gt; 브랜드 정보 (창업 상담 번호) 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 해당 없음.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 상담 전화번호 조회 기능 제공. 질문 분류 필터 기능 제공. 질문 항목 조회 기능 제공. 가맹 상담 신청 페이지 이동 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 해당 없음.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 가맹점 상담 신청 (/franchise/apply).</span></div></td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="memo">비회원</td>
-</tr><tr id="SUPPORT-001"><td class="no">10</td>
+</tr><tr id="SUPPORT-001"><td class="no">11</td>
   <td class="d1">고객 사이트</td>
   <td>고객센터</td>
   <td>공지사항</td>
   <td class="flow"><ol><li>페이지 제목</li><li>고객센터 메뉴</li><li>공지 목록</li><li>데이터 없음 안내</li></ol></td>
   <td><code>/support/notices</code></td>
-  <td><code>US-07-01</code></td>
+  <td><code>US-08-01</code></td>
   <td><strong>공지사항</strong><br><code>SUPPORT-001</code></td>
   <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 표시 4영역 — 페이지 제목 · 고객센터 메뉴 · 공지 목록 · 데이터 없음 안내. 어드민 고객센터 &gt; 공지사항 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 해당 없음.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 등록된 공지가 없으면 데이터 없음 안내를 표시합니다.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 자주 묻는 질문 페이지 이동 기능 제공. 공지 항목 조회 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 해당 없음.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 자주 묻는 질문 페이지로 이동.</span></div></td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="memo">비회원</td>
-</tr><tr id="SUPPORT-002"><td class="no">11</td>
+</tr><tr id="SUPPORT-002"><td class="no">12</td>
   <td class="d1">고객 사이트</td>
   <td>고객센터</td>
   <td>자주 묻는 질문</td>
   <td class="flow"><ol><li>페이지 제목</li><li>고객센터 메뉴</li><li>질문 목록</li><li>데이터 없음 안내</li></ol></td>
   <td><code>/support/faq</code></td>
-  <td><code>US-07-02</code></td>
+  <td><code>US-08-02</code></td>
   <td><strong>자주 묻는 질문</strong><br><code>SUPPORT-002</code></td>
   <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 표시 4영역 — 페이지 제목 · 고객센터 메뉴 · 질문 목록 · 데이터 없음 안내. 어드민 고객센터 &gt; FAQ 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 해당 없음.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 등록된 질문이 없으면 데이터 없음 안내를 표시합니다.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 공지사항 페이지 이동 기능 제공. 질문 항목 조회 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 해당 없음.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 공지사항 페이지로 이동.</span></div></td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="memo">비회원</td>
-</tr><tr id="LEGAL-001"><td class="no">12</td>
+</tr><tr id="LEGAL-001"><td class="no">13</td>
   <td class="d1">고객 사이트</td>
   <td>법적 고지</td>
   <td>서비스 이용약관</td>
   <td class="flow"><ol><li>페이지 제목</li><li>준비 안내 영역</li><li>문의처</li></ol></td>
   <td><code>/terms</code></td>
-  <td><code>US-08-01</code></td>
+  <td><code>US-09-01</code></td>
   <td><strong>서비스 이용약관</strong><br><code>LEGAL-001</code></td>
   <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 표시 3영역 — 페이지 제목 · 준비 안내 영역 · 문의처. 어드민 설정 &gt; 브랜드 정보 (문의처 · 이메일) 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 해당 없음.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 약관 게시 준비 안내 조회 기능 제공. 고객 문의 전화번호 및 이메일 조회 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 해당 없음.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 해당 없음.</span></div></td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="memo">비회원</td>
-</tr><tr id="LEGAL-002"><td class="no">13</td>
+</tr><tr id="LEGAL-002"><td class="no">14</td>
   <td class="d1">고객 사이트</td>
   <td>법적 고지</td>
   <td>개인정보 처리방침</td>
   <td class="flow"><ol><li>페이지 제목</li><li>수집 항목 표</li><li>처리 원칙 영역</li><li>개인정보 보호책임자</li></ol></td>
   <td><code>/privacy</code></td>
-  <td><code>US-08-02</code></td>
+  <td><code>US-09-02</code></td>
   <td><strong>개인정보 처리방침</strong><br><code>LEGAL-002</code></td>
   <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 표시 4영역 — 페이지 제목 · 수집 항목 표 · 처리 원칙 영역 · 개인정보 보호책임자. 어드민 설정 &gt; 브랜드 정보 (개인정보보호책임자 · 메일) 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 해당 없음.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 수집 항목 · 이용 목적 · 보유 기간 조회 기능 제공. 개인정보 보호책임자 및 이메일 조회 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 해당 없음.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 해당 없음.</span></div></td>
-  <td class="yn">Y</td>
-  <td class="yn">Y</td>
-  <td class="yn">Y</td>
-  <td class="memo">비회원</td>
-</tr><tr id="HOME-001"><td class="no">14</td>
-  <td class="d1">고객 사이트</td>
-  <td>공통</td>
-  <td>Home</td>
-  <td class="flow"><ol><li>상단 내비게이션</li><li>메인 배너</li><li>주요 지표 영역</li><li>공지 요약 영역</li><li>대표 메뉴 슬라이드</li><li>신규 오픈 매장 슬라이드</li><li>브랜드 소개 영역</li><li>창업 안내 영역</li><li>가맹점 실적 영역</li><li>푸터</li><li>고정 상담 바</li></ol></td>
-  <td><code>/</code></td>
-  <td><code>US-09-01</code></td>
-  <td><strong>Home</strong><br><code>HOME-001</code></td>
-  <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 표시 11영역 — 상단 내비게이션 · 메인 배너 · 주요 지표 영역 · 공지 요약 영역 · 대표 메뉴 슬라이드 · 신규 오픈 매장 슬라이드 · 브랜드 소개 영역 · 창업 안내 영역 · 가맹점 실적 영역 · 푸터 · 고정 상담 바. 어드민 설정 &gt; 브랜드 정보 · 등록 &gt; 메뉴 · 등록 &gt; 가맹점 · 고객센터 &gt; 공지사항 · 창업 &gt; 비용 · 절차 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 메인 배너 — 브랜드 한 줄 소개와 메뉴 보기 · 매장 찾기 진입 버튼.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 등록된 공지가 없으면 공지 요약 영역을 표시하지 않습니다.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 메뉴 목록 또는 매장 찾기 이동 기능 제공. 공지 요약 영역에서 공지사항 목록 이동 기능 제공. 대표 메뉴 슬라이드에서 메뉴 상세 이동 기능 제공. 신규 오픈 매장 슬라이드 조회 기능 제공. 가맹점 실적 영역에서 창업 안내 이동 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 해당 없음.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 메인 배너에서 메뉴 목록 또는 매장 찾기로 이동. 공지 요약 영역에서 공지사항 목록으로 이동. 대표 메뉴 슬라이드에서 메뉴 상세로 이동. 가맹점 실적 영역에서 창업 안내로 이동.</span></div></td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
@@ -488,7 +488,7 @@
   <td><code>/marketing/new</code></td>
   <td><code>AD-02-07</code></td>
   <td><strong>마케팅 글 등록</strong><br><code>MARKETING-004</code></td>
-  <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 입력 6항목 — 게시물 번호 · 채널 · 게시일 · 제목 · 설명 · 공개. 표시 4영역 — 게시 정보 입력 영역 · 게시물 내용 입력 영역 · 저장 버튼 영역 · 저장 확인 모달. 어드민 마케팅 `/marketing` — 공개를 활성화해야 표시됩니다. 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 해당 없음.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 채널 등록 기능 제공. 게시일 등록 기능 제공. 제목 및 설명 등록 기능 제공. 게시물 등록 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 제목과 설명은 공백만으로 저장할 수 없습니다. 게시일은 `YYYY-MM-DD` 형식이어야 합니다.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 해당 없음.</span></div></td>
+  <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 입력 6항목 — 게시물 번호 · 채널 · 게시일 · 제목 · 설명 · 공개. 표시 4영역 — 게시 정보 입력 영역 · 게시물 내용 입력 영역 · 저장 버튼 영역 · 저장 확인 모달. 어드민 마케팅 `/marketing` — 공개를 활성화해야 표시됩니다. 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 해당 없음.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 채널 등록 기능 제공. 게시일 상태 변경 기능 제공. 제목 및 설명 등록 기능 제공. 게시물 등록 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 제목과 설명은 공백만으로 저장할 수 없습니다. 게시일은 `YYYY-MM-DD` 형식이어야 합니다.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 해당 없음.</span></div></td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
@@ -683,7 +683,7 @@
   <td><code>/support/notices/new</code></td>
   <td><code>AD-04-06</code></td>
   <td><strong>공지사항 등록</strong><br><code>SUPPORT-008</code></td>
-  <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 입력 6항목 — 공지 번호 · 제목 · 본문 · 게시일 · 상단 고정 · 공개. 표시 4영역 — 공지 내용 입력 영역 · 노출 설정 입력 영역 · 저장 버튼 영역 · 저장 확인 모달. 어드민 홈 공지 요약 영역 · 고객센터 공지사항 `/support/notices` — 공개를 활성화해야 표시됩니다. 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 해당 없음.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 제목 및 본문 등록 기능 제공. 게시일 등록 기능 제공. 상단 고정 및 공개 상태 변경 기능 제공. 공지 등록 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 제목과 본문은 공백만으로 저장할 수 없습니다. 게시일은 `YYYY-MM-DD` 형식이어야 합니다.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 해당 없음.</span></div></td>
+  <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 입력 6항목 — 공지 번호 · 제목 · 본문 · 게시일 · 상단 고정 · 공개. 표시 4영역 — 공지 내용 입력 영역 · 노출 설정 입력 영역 · 저장 버튼 영역 · 저장 확인 모달. 어드민 홈 공지 요약 영역 · 고객센터 공지사항 `/support/notices` — 공개를 활성화해야 표시됩니다. 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 해당 없음.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 제목 및 본문 등록 기능 제공. 게시일 상태 변경 기능 제공. 상단 고정 및 공개 상태 변경 기능 제공. 공지 등록 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 제목과 본문은 공백만으로 저장할 수 없습니다. 게시일은 `YYYY-MM-DD` 형식이어야 합니다.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 해당 없음.</span></div></td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
@@ -722,7 +722,7 @@
   <td><code>/banners/main/new</code></td>
   <td><code>AD-05-03</code></td>
   <td><strong>메인 비주얼 등록</strong><br><code>BANNER-003</code></td>
-  <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 입력 7항목 — 배너 번호 · 제목 · 요약 문구 · 연결 URL · 시작일 · 종료일 · 노출. 표시 4영역 — 배너 내용 입력 영역 · 게시 기간 입력 영역 · 저장 버튼 영역 · 저장 확인 모달. 어드민 홈 메인 배너 영역 — 노출을 활성화하고 게시 기간이 당일을 포함해야 표시됩니다. 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 배너 내용 입력 영역 — 배너 번호 · 제목 · 요약 문구 · 연결 URL. 배너 번호 — 저장 시점에 부여. 제목 — 메인 배너의 주요 문구.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 제목 및 요약 문구 등록 기능 제공. 연결 URL 등록 기능 제공. 게시 기간 등록 기능 제공. 배너 등록 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 제목은 공백만으로 저장할 수 없습니다. 시작일은 `YYYY-MM-DD` 형식이어야 합니다. 종료일이 시작일보다 이전이면 안내만 표시합니다.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 해당 없음.</span></div></td>
+  <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 입력 7항목 — 배너 번호 · 제목 · 요약 문구 · 연결 URL · 시작일 · 종료일 · 노출. 표시 4영역 — 배너 내용 입력 영역 · 게시 기간 입력 영역 · 저장 버튼 영역 · 저장 확인 모달. 어드민 홈 메인 배너 영역 — 노출을 활성화하고 게시 기간이 당일을 포함해야 표시됩니다. 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 배너 내용 입력 영역 — 배너 번호 · 제목 · 요약 문구 · 연결 URL. 배너 번호 — 저장 시점에 부여. 제목 — 메인 배너의 주요 문구.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 제목 및 요약 문구 등록 기능 제공. 연결 URL 등록 기능 제공. 게시 기간 상태 변경 기능 제공. 배너 등록 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 제목은 공백만으로 저장할 수 없습니다. 시작일은 `YYYY-MM-DD` 형식이어야 합니다. 종료일이 시작일보다 이전이면 안내만 표시합니다.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 해당 없음.</span></div></td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
@@ -748,7 +748,7 @@
   <td><code>/banners/popups/[popupId]</code></td>
   <td><code>AD-05-05</code></td>
   <td><strong>팝업 상세</strong><br><code>BANNER-005</code></td>
-  <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 입력 7항목 — 팝업 번호 · 제목 · 내용 · 시작일 · 종료일 · 오늘 하루 보지 않기 · 노출. 표시 4영역 — 팝업 내용 입력 영역 · 노출 설정 입력 영역 · 저장 버튼 영역 · 저장 확인 모달. 어드민 홈 팝업 영역 — 적용 시점에 연동합니다. 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 해당 없음.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 제목 및 내용 수정 기능 제공. 게시 기간 수정 기능 제공. 오늘 하루 보지 않기 설정 변경 수정 기능 제공. 노출 상태 변경 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 제목과 내용은 공백만으로 저장할 수 없습니다. 시작일은 `YYYY-MM-DD` 형식이어야 하며 종료일은 미입력 또는 동일 형식이어야 합니다. 종료일이 시작일보다 이전이면 노출되지 않는다는 안내를 함께 표시합니다. 내용이 120자를 초과하면 안내만 표시하고 저장은 허용합니다.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 해당 없음.</span></div></td>
+  <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 입력 7항목 — 팝업 번호 · 제목 · 내용 · 시작일 · 종료일 · 오늘 하루 보지 않기 · 노출. 표시 4영역 — 팝업 내용 입력 영역 · 노출 설정 입력 영역 · 저장 버튼 영역 · 저장 확인 모달. 어드민 홈 팝업 영역 — 적용 시점에 연동합니다. 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 해당 없음.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 제목 및 내용 수정 기능 제공. 게시 기간 수정 기능 제공. 오늘 하루 보지 않기 설정 수정 기능 제공. 노출 상태 변경 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 제목과 내용은 공백만으로 저장할 수 없습니다. 시작일은 `YYYY-MM-DD` 형식이어야 하며 종료일은 미입력 또는 동일 형식이어야 합니다. 종료일이 시작일보다 이전이면 노출되지 않는다는 안내를 함께 표시합니다. 내용이 120자를 초과하면 안내만 표시하고 저장은 허용합니다.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 해당 없음.</span></div></td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
@@ -761,7 +761,7 @@
   <td><code>/banners/popups/new</code></td>
   <td><code>AD-05-06</code></td>
   <td><strong>팝업 등록</strong><br><code>BANNER-006</code></td>
-  <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 입력 7항목 — 팝업 번호 · 제목 · 내용 · 시작일 · 종료일 · 오늘 하루 보지 않기 · 노출. 표시 4영역 — 팝업 내용 입력 영역 · 노출 설정 입력 영역 · 저장 버튼 영역 · 저장 확인 모달. 어드민 홈 팝업 영역 — 노출을 활성화하고 게시 기간이 당일을 포함해야 표시됩니다. 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 해당 없음.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 제목 및 내용 등록 기능 제공. 게시 기간 등록 기능 제공. 오늘 하루 보지 않기 등록 기능 제공. 팝업 등록 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 제목과 내용은 공백만으로 저장할 수 없습니다. 시작일은 `YYYY-MM-DD` 형식이어야 합니다. 종료일이 시작일보다 이전이면 안내만 표시합니다.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 해당 없음.</span></div></td>
+  <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 입력 7항목 — 팝업 번호 · 제목 · 내용 · 시작일 · 종료일 · 오늘 하루 보지 않기 · 노출. 표시 4영역 — 팝업 내용 입력 영역 · 노출 설정 입력 영역 · 저장 버튼 영역 · 저장 확인 모달. 어드민 홈 팝업 영역 — 노출을 활성화하고 게시 기간이 당일을 포함해야 표시됩니다. 등록 데이터 연동.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 해당 없음.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 제목 및 내용 등록 기능 제공. 게시 기간 상태 변경 기능 제공. 오늘 하루 보지 않기 등록 기능 제공. 팝업 등록 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 제목과 내용은 공백만으로 저장할 수 없습니다. 시작일은 `YYYY-MM-DD` 형식이어야 합니다. 종료일이 시작일보다 이전이면 안내만 표시합니다.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 해당 없음.</span></div></td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
@@ -800,7 +800,7 @@
   <td><code>/settings/admins/[adminId]</code></td>
   <td><code>AD-06-03</code></td>
   <td><strong>관리자 상세</strong><br><code>ADMIN-003</code></td>
-  <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 입력 6항목 — 계정 번호 · 최종 접속일 · 이름 · 이메일 · 권한 등급 · 계정 상태. 표시 4영역 — 계정 정보 입력 영역 · 권한 설정 입력 영역 · 저장 버튼 영역 · 저장 확인 모달. 어드민 연동 없음.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 해당 없음.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 이름 및 이메일 수정 기능 제공. 권한 등급 변경 기능 제공. 계정 상태 변경 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 이름은 공백만으로 저장할 수 없습니다. 이메일은 `아이디@도메인` 형식이어야 합니다. 활성 상태의 대표 등급 계정이 1개뿐이면 등급 변경과 비활성화를 차단하고 사유를 안내합니다.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 해당 없음.</span></div></td>
+  <td class="detail"><div class="pt"><b>1. 입력 / 표시 데이터</b><span>- 입력 6항목 — 계정 번호 · 최종 접속일 · 이름 · 이메일 · 권한 등급 · 계정 상태. 표시 4영역 — 계정 정보 입력 영역 · 권한 설정 입력 영역 · 저장 버튼 영역 · 저장 확인 모달. 어드민 연동 없음.</span></div><div class="pt"><b>2. 이미지 처리</b><span>- 해당 없음.</span></div><div class="pt"><b>3. 빈 값 / 미입력 예외처리</b><span>- 해당 없음.</span></div><div class="pt"><b>4. 주요 기능 및 플로우</b><span>- 이름 및 이메일 수정 기능 제공. 권한 등급 수정 기능 제공. 계정 상태 변경 기능 제공.</span></div><div class="pt"><b>5. 유효성 · 에러 메시지</b><span>- 이름은 공백만으로 저장할 수 없습니다. 이메일은 `아이디@도메인` 형식이어야 합니다. 활성 상태의 대표 등급 계정이 1개뿐이면 등급 변경과 비활성화를 차단하고 사유를 안내합니다.</span></div><div class="pt"><b>6. 이동 / 결과</b><span>- 해당 없음.</span></div></td>
   <td class="yn">Y</td>
   <td class="yn">Y</td>
   <td class="yn">N</td>
@@ -840,7 +840,7 @@
   <p class="lead">관리자에서 데이터를 변경할 때 영향을 받는 고객 화면입니다. 각 고객 화면에 정의된 데이터 출처를 기준으로 작성하였습니다.</p>
   <table>
     <thead><tr><th style="width:46px">순번</th><th style="width:190px">변경 대상 (관리자)</th><th style="width:190px">영향 기능 (고객 사이트)</th><th>연결된 값</th></tr></thead>
-    <tbody><tr><td class="no">1</td><td><code>MENU-003</code> 메뉴 목록</td><td><code>MENU-001</code> 메뉴판</td><td>등록 &gt; 메뉴 (목록 · 등록 · 상세)</td></tr><tr><td class="no">2</td><td><code>MENU-003</code> 메뉴 목록</td><td><code>MENU-002</code> 메뉴 상세</td><td>등록 &gt; 메뉴 (상세<br>- 알레르기 · 열량 · 표 · 매운 정도)</td></tr><tr><td class="no">3</td><td><code>MENU-003</code> 메뉴 목록</td><td><code>HOME-001</code> Home</td><td>등록 &gt; 메뉴</td></tr><tr><td class="no">4</td><td><code>MENU-004</code> 메뉴 상세</td><td><code>MENU-001</code> 메뉴판</td><td>등록 &gt; 메뉴 (목록 · 등록 · 상세)</td></tr><tr><td class="no">5</td><td><code>MENU-004</code> 메뉴 상세</td><td><code>MENU-002</code> 메뉴 상세</td><td>등록 &gt; 메뉴 (상세<br>- 알레르기 · 열량 · 표 · 매운 정도)</td></tr><tr><td class="no">6</td><td><code>MENU-004</code> 메뉴 상세</td><td><code>HOME-001</code> Home</td><td>등록 &gt; 메뉴</td></tr><tr><td class="no">7</td><td><code>MENU-005</code> 메뉴 등록</td><td><code>MENU-001</code> 메뉴판</td><td>등록 &gt; 메뉴 (목록 · 등록 · 상세)</td></tr><tr><td class="no">8</td><td><code>MENU-005</code> 메뉴 등록</td><td><code>MENU-002</code> 메뉴 상세</td><td>등록 &gt; 메뉴 (상세<br>- 알레르기 · 열량 · 표 · 매운 정도)</td></tr><tr><td class="no">9</td><td><code>MENU-005</code> 메뉴 등록</td><td><code>HOME-001</code> Home</td><td>등록 &gt; 메뉴</td></tr><tr><td class="no">10</td><td><code>MENU-006</code> 메뉴 카테고리</td><td><code>MENU-001</code> 메뉴판</td><td>등록 &gt; 메뉴 (목록 · 등록 · 상세)</td></tr><tr><td class="no">11</td><td><code>MENU-006</code> 메뉴 카테고리</td><td><code>MENU-002</code> 메뉴 상세</td><td>등록 &gt; 메뉴 (상세<br>- 알레르기 · 열량 · 표 · 매운 정도)</td></tr><tr><td class="no">12</td><td><code>MENU-006</code> 메뉴 카테고리</td><td><code>HOME-001</code> Home</td><td>등록 &gt; 메뉴</td></tr><tr><td class="no">13</td><td><code>MARKETING-002</code> 마케팅 글 목록</td><td><code>MARKETING-001</code> 마케팅</td><td>등록 &gt; 마케팅 (채널 · 게시물)</td></tr><tr><td class="no">14</td><td><code>MARKETING-003</code> 마케팅 글 상세</td><td><code>MARKETING-001</code> 마케팅</td><td>등록 &gt; 마케팅 (채널 · 게시물)</td></tr><tr><td class="no">15</td><td><code>MARKETING-004</code> 마케팅 글 등록</td><td><code>MARKETING-001</code> 마케팅</td><td>등록 &gt; 마케팅 (채널 · 게시물)</td></tr><tr><td class="no">16</td><td><code>STORE-002</code> 가맹점 목록</td><td><code>BRAND-001</code> 브랜드 이야기</td><td>등록 &gt; 가맹점 (매장 수)</td></tr><tr><td class="no">17</td><td><code>STORE-002</code> 가맹점 목록</td><td><code>STORE-001</code> 매장 찾기</td><td>등록 &gt; 가맹점 (주소 · 번호 · 시간 · 되는 것 · 상태 · 좌표)</td></tr><tr><td class="no">18</td><td><code>STORE-002</code> 가맹점 목록</td><td><code>HOME-001</code> Home</td><td>등록 &gt; 가맹점</td></tr><tr><td class="no">19</td><td><code>STORE-003</code> 가맹점 상세</td><td><code>BRAND-001</code> 브랜드 이야기</td><td>등록 &gt; 가맹점 (매장 수)</td></tr><tr><td class="no">20</td><td><code>STORE-003</code> 가맹점 상세</td><td><code>STORE-001</code> 매장 찾기</td><td>등록 &gt; 가맹점 (주소 · 번호 · 시간 · 되는 것 · 상태 · 좌표)</td></tr><tr><td class="no">21</td><td><code>STORE-003</code> 가맹점 상세</td><td><code>HOME-001</code> Home</td><td>등록 &gt; 가맹점</td></tr><tr><td class="no">22</td><td><code>STORE-004</code> 가맹점 등록</td><td><code>BRAND-001</code> 브랜드 이야기</td><td>등록 &gt; 가맹점 (매장 수)</td></tr><tr><td class="no">23</td><td><code>STORE-004</code> 가맹점 등록</td><td><code>STORE-001</code> 매장 찾기</td><td>등록 &gt; 가맹점 (주소 · 번호 · 시간 · 되는 것 · 상태 · 좌표)</td></tr><tr><td class="no">24</td><td><code>STORE-004</code> 가맹점 등록</td><td><code>HOME-001</code> Home</td><td>등록 &gt; 가맹점</td></tr><tr><td class="no">25</td><td><code>FRANCHISE-004</code> 창업 문의 목록</td><td><code>FRANCHISE-002</code> 가맹점 상담 신청</td><td>창업 &gt; 문의 내역 (여기로 쌓입니다)</td></tr><tr><td class="no">26</td><td><code>FRANCHISE-005</code> 창업 문의 상세</td><td><code>FRANCHISE-002</code> 가맹점 상담 신청</td><td>창업 &gt; 문의 내역 (여기로 쌓입니다)</td></tr><tr><td class="no">27</td><td><code>FRANCHISE-006</code> 창업 FAQ 목록</td><td><code>FRANCHISE-003</code> 가맹점 개설문의</td><td>창업 &gt; FAQ</td></tr><tr><td class="no">28</td><td><code>FRANCHISE-007</code> 창업 FAQ 상세</td><td><code>FRANCHISE-003</code> 가맹점 개설문의</td><td>창업 &gt; FAQ</td></tr><tr><td class="no">29</td><td><code>FRANCHISE-008</code> 창업 FAQ 등록</td><td><code>FRANCHISE-003</code> 가맹점 개설문의</td><td>창업 &gt; FAQ</td></tr><tr><td class="no">30</td><td><code>FRANCHISE-009</code> 창업 비용 · 절차</td><td><code>INTERIOR-001</code> 인테리어</td><td>창업 &gt; 비용 · 절차 (평당 단가)</td></tr><tr><td class="no">31</td><td><code>FRANCHISE-009</code> 창업 비용 · 절차</td><td><code>FRANCHISE-001</code> 가맹점 개설절차</td><td>창업 &gt; 비용 · 절차</td></tr><tr><td class="no">32</td><td><code>FRANCHISE-009</code> 창업 비용 · 절차</td><td><code>HOME-001</code> Home</td><td>창업 &gt; 비용 · 절차</td></tr><tr><td class="no">33</td><td><code>SUPPORT-003</code> 고객센터 FAQ 목록</td><td><code>SUPPORT-002</code> 자주 묻는 질문</td><td>고객센터 &gt; FAQ</td></tr><tr><td class="no">34</td><td><code>SUPPORT-004</code> 고객센터 FAQ 상세</td><td><code>SUPPORT-002</code> 자주 묻는 질문</td><td>고객센터 &gt; FAQ</td></tr><tr><td class="no">35</td><td><code>SUPPORT-005</code> 고객센터 FAQ 등록</td><td><code>SUPPORT-002</code> 자주 묻는 질문</td><td>고객센터 &gt; FAQ</td></tr><tr><td class="no">36</td><td><code>SUPPORT-006</code> 공지사항 목록</td><td><code>SUPPORT-001</code> 공지사항</td><td>고객센터 &gt; 공지사항</td></tr><tr><td class="no">37</td><td><code>SUPPORT-006</code> 공지사항 목록</td><td><code>HOME-001</code> Home</td><td>고객센터 &gt; 공지사항</td></tr><tr><td class="no">38</td><td><code>SUPPORT-007</code> 공지사항 상세</td><td><code>SUPPORT-001</code> 공지사항</td><td>고객센터 &gt; 공지사항</td></tr><tr><td class="no">39</td><td><code>SUPPORT-007</code> 공지사항 상세</td><td><code>HOME-001</code> Home</td><td>고객센터 &gt; 공지사항</td></tr><tr><td class="no">40</td><td><code>SUPPORT-008</code> 공지사항 등록</td><td><code>SUPPORT-001</code> 공지사항</td><td>고객센터 &gt; 공지사항</td></tr><tr><td class="no">41</td><td><code>SUPPORT-008</code> 공지사항 등록</td><td><code>HOME-001</code> Home</td><td>고객센터 &gt; 공지사항</td></tr><tr><td class="no">42</td><td><code>SETTING-001</code> 브랜드 정보</td><td><code>BRAND-001</code> 브랜드 이야기</td><td>설정 &gt; 브랜드 정보</td></tr><tr><td class="no">43</td><td><code>SETTING-001</code> 브랜드 정보</td><td><code>FRANCHISE-002</code> 가맹점 상담 신청</td><td>설정 &gt; 브랜드 정보 (창업 상담 번호)</td></tr><tr><td class="no">44</td><td><code>SETTING-001</code> 브랜드 정보</td><td><code>FRANCHISE-003</code> 가맹점 개설문의</td><td>설정 &gt; 브랜드 정보 (창업 상담 번호)</td></tr><tr><td class="no">45</td><td><code>SETTING-001</code> 브랜드 정보</td><td><code>LEGAL-001</code> 서비스 이용약관</td><td>설정 &gt; 브랜드 정보 (문의처 · 이메일)</td></tr><tr><td class="no">46</td><td><code>SETTING-001</code> 브랜드 정보</td><td><code>LEGAL-002</code> 개인정보 처리방침</td><td>설정 &gt; 브랜드 정보 (개인정보보호책임자 · 메일)</td></tr><tr><td class="no">47</td><td><code>SETTING-001</code> 브랜드 정보</td><td><code>HOME-001</code> Home</td><td>설정 &gt; 브랜드 정보</td></tr></tbody>
+    <tbody><tr><td class="no">1</td><td><code>MENU-003</code> 메뉴 목록</td><td><code>HOME-001</code> 메인 페이지</td><td>등록 &gt; 메뉴</td></tr><tr><td class="no">2</td><td><code>MENU-003</code> 메뉴 목록</td><td><code>MENU-001</code> 메뉴판</td><td>등록 &gt; 메뉴 (목록 · 등록 · 상세)</td></tr><tr><td class="no">3</td><td><code>MENU-003</code> 메뉴 목록</td><td><code>MENU-002</code> 메뉴 상세</td><td>등록 &gt; 메뉴 (상세<br>- 알레르기 · 열량 · 표 · 매운 정도)</td></tr><tr><td class="no">4</td><td><code>MENU-004</code> 메뉴 상세</td><td><code>HOME-001</code> 메인 페이지</td><td>등록 &gt; 메뉴</td></tr><tr><td class="no">5</td><td><code>MENU-004</code> 메뉴 상세</td><td><code>MENU-001</code> 메뉴판</td><td>등록 &gt; 메뉴 (목록 · 등록 · 상세)</td></tr><tr><td class="no">6</td><td><code>MENU-004</code> 메뉴 상세</td><td><code>MENU-002</code> 메뉴 상세</td><td>등록 &gt; 메뉴 (상세<br>- 알레르기 · 열량 · 표 · 매운 정도)</td></tr><tr><td class="no">7</td><td><code>MENU-005</code> 메뉴 등록</td><td><code>HOME-001</code> 메인 페이지</td><td>등록 &gt; 메뉴</td></tr><tr><td class="no">8</td><td><code>MENU-005</code> 메뉴 등록</td><td><code>MENU-001</code> 메뉴판</td><td>등록 &gt; 메뉴 (목록 · 등록 · 상세)</td></tr><tr><td class="no">9</td><td><code>MENU-005</code> 메뉴 등록</td><td><code>MENU-002</code> 메뉴 상세</td><td>등록 &gt; 메뉴 (상세<br>- 알레르기 · 열량 · 표 · 매운 정도)</td></tr><tr><td class="no">10</td><td><code>MENU-006</code> 메뉴 카테고리</td><td><code>HOME-001</code> 메인 페이지</td><td>등록 &gt; 메뉴</td></tr><tr><td class="no">11</td><td><code>MENU-006</code> 메뉴 카테고리</td><td><code>MENU-001</code> 메뉴판</td><td>등록 &gt; 메뉴 (목록 · 등록 · 상세)</td></tr><tr><td class="no">12</td><td><code>MENU-006</code> 메뉴 카테고리</td><td><code>MENU-002</code> 메뉴 상세</td><td>등록 &gt; 메뉴 (상세<br>- 알레르기 · 열량 · 표 · 매운 정도)</td></tr><tr><td class="no">13</td><td><code>MARKETING-002</code> 마케팅 글 목록</td><td><code>MARKETING-001</code> 마케팅</td><td>등록 &gt; 마케팅 (채널 · 게시물)</td></tr><tr><td class="no">14</td><td><code>MARKETING-003</code> 마케팅 글 상세</td><td><code>MARKETING-001</code> 마케팅</td><td>등록 &gt; 마케팅 (채널 · 게시물)</td></tr><tr><td class="no">15</td><td><code>MARKETING-004</code> 마케팅 글 등록</td><td><code>MARKETING-001</code> 마케팅</td><td>등록 &gt; 마케팅 (채널 · 게시물)</td></tr><tr><td class="no">16</td><td><code>STORE-002</code> 가맹점 목록</td><td><code>HOME-001</code> 메인 페이지</td><td>등록 &gt; 가맹점</td></tr><tr><td class="no">17</td><td><code>STORE-002</code> 가맹점 목록</td><td><code>BRAND-001</code> 브랜드 이야기</td><td>등록 &gt; 가맹점 (매장 수)</td></tr><tr><td class="no">18</td><td><code>STORE-002</code> 가맹점 목록</td><td><code>STORE-001</code> 매장 찾기</td><td>등록 &gt; 가맹점 (주소 · 번호 · 시간 · 되는 것 · 상태 · 좌표)</td></tr><tr><td class="no">19</td><td><code>STORE-003</code> 가맹점 상세</td><td><code>HOME-001</code> 메인 페이지</td><td>등록 &gt; 가맹점</td></tr><tr><td class="no">20</td><td><code>STORE-003</code> 가맹점 상세</td><td><code>BRAND-001</code> 브랜드 이야기</td><td>등록 &gt; 가맹점 (매장 수)</td></tr><tr><td class="no">21</td><td><code>STORE-003</code> 가맹점 상세</td><td><code>STORE-001</code> 매장 찾기</td><td>등록 &gt; 가맹점 (주소 · 번호 · 시간 · 되는 것 · 상태 · 좌표)</td></tr><tr><td class="no">22</td><td><code>STORE-004</code> 가맹점 등록</td><td><code>HOME-001</code> 메인 페이지</td><td>등록 &gt; 가맹점</td></tr><tr><td class="no">23</td><td><code>STORE-004</code> 가맹점 등록</td><td><code>BRAND-001</code> 브랜드 이야기</td><td>등록 &gt; 가맹점 (매장 수)</td></tr><tr><td class="no">24</td><td><code>STORE-004</code> 가맹점 등록</td><td><code>STORE-001</code> 매장 찾기</td><td>등록 &gt; 가맹점 (주소 · 번호 · 시간 · 되는 것 · 상태 · 좌표)</td></tr><tr><td class="no">25</td><td><code>FRANCHISE-004</code> 창업 문의 목록</td><td><code>FRANCHISE-002</code> 가맹점 상담 신청</td><td>창업 &gt; 문의 내역 (여기로 쌓입니다)</td></tr><tr><td class="no">26</td><td><code>FRANCHISE-005</code> 창업 문의 상세</td><td><code>FRANCHISE-002</code> 가맹점 상담 신청</td><td>창업 &gt; 문의 내역 (여기로 쌓입니다)</td></tr><tr><td class="no">27</td><td><code>FRANCHISE-006</code> 창업 FAQ 목록</td><td><code>FRANCHISE-003</code> 가맹점 개설문의</td><td>창업 &gt; FAQ</td></tr><tr><td class="no">28</td><td><code>FRANCHISE-007</code> 창업 FAQ 상세</td><td><code>FRANCHISE-003</code> 가맹점 개설문의</td><td>창업 &gt; FAQ</td></tr><tr><td class="no">29</td><td><code>FRANCHISE-008</code> 창업 FAQ 등록</td><td><code>FRANCHISE-003</code> 가맹점 개설문의</td><td>창업 &gt; FAQ</td></tr><tr><td class="no">30</td><td><code>FRANCHISE-009</code> 창업 비용 · 절차</td><td><code>HOME-001</code> 메인 페이지</td><td>창업 &gt; 비용 · 절차</td></tr><tr><td class="no">31</td><td><code>FRANCHISE-009</code> 창업 비용 · 절차</td><td><code>INTERIOR-001</code> 인테리어</td><td>창업 &gt; 비용 · 절차 (평당 단가)</td></tr><tr><td class="no">32</td><td><code>FRANCHISE-009</code> 창업 비용 · 절차</td><td><code>FRANCHISE-001</code> 가맹점 개설절차</td><td>창업 &gt; 비용 · 절차</td></tr><tr><td class="no">33</td><td><code>SUPPORT-003</code> 고객센터 FAQ 목록</td><td><code>SUPPORT-002</code> 자주 묻는 질문</td><td>고객센터 &gt; FAQ</td></tr><tr><td class="no">34</td><td><code>SUPPORT-004</code> 고객센터 FAQ 상세</td><td><code>SUPPORT-002</code> 자주 묻는 질문</td><td>고객센터 &gt; FAQ</td></tr><tr><td class="no">35</td><td><code>SUPPORT-005</code> 고객센터 FAQ 등록</td><td><code>SUPPORT-002</code> 자주 묻는 질문</td><td>고객센터 &gt; FAQ</td></tr><tr><td class="no">36</td><td><code>SUPPORT-006</code> 공지사항 목록</td><td><code>HOME-001</code> 메인 페이지</td><td>고객센터 &gt; 공지사항</td></tr><tr><td class="no">37</td><td><code>SUPPORT-006</code> 공지사항 목록</td><td><code>SUPPORT-001</code> 공지사항</td><td>고객센터 &gt; 공지사항</td></tr><tr><td class="no">38</td><td><code>SUPPORT-007</code> 공지사항 상세</td><td><code>HOME-001</code> 메인 페이지</td><td>고객센터 &gt; 공지사항</td></tr><tr><td class="no">39</td><td><code>SUPPORT-007</code> 공지사항 상세</td><td><code>SUPPORT-001</code> 공지사항</td><td>고객센터 &gt; 공지사항</td></tr><tr><td class="no">40</td><td><code>SUPPORT-008</code> 공지사항 등록</td><td><code>HOME-001</code> 메인 페이지</td><td>고객센터 &gt; 공지사항</td></tr><tr><td class="no">41</td><td><code>SUPPORT-008</code> 공지사항 등록</td><td><code>SUPPORT-001</code> 공지사항</td><td>고객센터 &gt; 공지사항</td></tr><tr><td class="no">42</td><td><code>SETTING-001</code> 브랜드 정보</td><td><code>HOME-001</code> 메인 페이지</td><td>설정 &gt; 브랜드 정보</td></tr><tr><td class="no">43</td><td><code>SETTING-001</code> 브랜드 정보</td><td><code>BRAND-001</code> 브랜드 이야기</td><td>설정 &gt; 브랜드 정보</td></tr><tr><td class="no">44</td><td><code>SETTING-001</code> 브랜드 정보</td><td><code>FRANCHISE-002</code> 가맹점 상담 신청</td><td>설정 &gt; 브랜드 정보 (창업 상담 번호)</td></tr><tr><td class="no">45</td><td><code>SETTING-001</code> 브랜드 정보</td><td><code>FRANCHISE-003</code> 가맹점 개설문의</td><td>설정 &gt; 브랜드 정보 (창업 상담 번호)</td></tr><tr><td class="no">46</td><td><code>SETTING-001</code> 브랜드 정보</td><td><code>LEGAL-001</code> 서비스 이용약관</td><td>설정 &gt; 브랜드 정보 (문의처 · 이메일)</td></tr><tr><td class="no">47</td><td><code>SETTING-001</code> 브랜드 정보</td><td><code>LEGAL-002</code> 개인정보 처리방침</td><td>설정 &gt; 브랜드 정보 (개인정보보호책임자 · 메일)</td></tr></tbody>
   </table>
 
   <h2>6. 예외 처리 기준</h2>
@@ -858,7 +858,7 @@
   </p>
   <table>
     <thead><tr><th style="width:46px">순번</th><th style="width:88px">기능 ID</th><th style="width:150px">화면</th><th>화면 경로</th><th style="width:70px">검수 항목</th></tr></thead>
-    <tbody><tr><td class="no">1</td><td><code>BRAND-001</code></td><td>브랜드 이야기</td><td><a href="#BRAND-001">/brand</a></td><td>3</td></tr><tr><td class="no">2</td><td><code>MENU-001</code></td><td>메뉴판</td><td><a href="#MENU-001">/menu</a></td><td>4</td></tr><tr><td class="no">3</td><td><code>MENU-002</code></td><td>메뉴 상세</td><td><a href="#MENU-002">/menu/[itemId]</a></td><td>7</td></tr><tr><td class="no">4</td><td><code>INTERIOR-001</code></td><td>인테리어</td><td><a href="#INTERIOR-001">/interior</a></td><td>4</td></tr><tr><td class="no">5</td><td><code>MARKETING-001</code></td><td>마케팅</td><td><a href="#MARKETING-001">/marketing</a></td><td>4</td></tr><tr><td class="no">6</td><td><code>STORE-001</code></td><td>매장 찾기</td><td><a href="#STORE-001">/stores</a></td><td>8</td></tr><tr><td class="no">7</td><td><code>FRANCHISE-001</code></td><td>가맹점 개설절차</td><td><a href="#FRANCHISE-001">/franchise</a></td><td>6</td></tr><tr><td class="no">8</td><td><code>FRANCHISE-002</code></td><td>가맹점 상담 신청</td><td><a href="#FRANCHISE-002">/franchise/apply</a></td><td>13</td></tr><tr><td class="no">9</td><td><code>FRANCHISE-003</code></td><td>가맹점 개설문의</td><td><a href="#FRANCHISE-003">/franchise/faq</a></td><td>7</td></tr><tr><td class="no">10</td><td><code>SUPPORT-001</code></td><td>공지사항</td><td><a href="#SUPPORT-001">/support/notices</a></td><td>5</td></tr><tr><td class="no">11</td><td><code>SUPPORT-002</code></td><td>자주 묻는 질문</td><td><a href="#SUPPORT-002">/support/faq</a></td><td>5</td></tr><tr><td class="no">12</td><td><code>LEGAL-001</code></td><td>서비스 이용약관</td><td><a href="#LEGAL-001">/terms</a></td><td>3</td></tr><tr><td class="no">13</td><td><code>LEGAL-002</code></td><td>개인정보 처리방침</td><td><a href="#LEGAL-002">/privacy</a></td><td>3</td></tr><tr><td class="no">14</td><td><code>HOME-001</code></td><td>Home</td><td><a href="#HOME-001">/</a></td><td>8</td></tr><tr><td class="no">15</td><td><code>ADMIN-001</code></td><td>대시보드</td><td><a href="#ADMIN-001">/</a></td><td>5</td></tr><tr><td class="no">16</td><td><code>MENU-003</code></td><td>메뉴 목록</td><td><a href="#MENU-003">/menus</a></td><td>8</td></tr><tr><td class="no">17</td><td><code>MENU-004</code></td><td>메뉴 상세</td><td><a href="#MENU-004">/menus/[menuId]</a></td><td>11</td></tr><tr><td class="no">18</td><td><code>MENU-005</code></td><td>메뉴 등록</td><td><a href="#MENU-005">/menus/new</a></td><td>9</td></tr><tr><td class="no">19</td><td><code>MENU-006</code></td><td>메뉴 카테고리</td><td><a href="#MENU-006">/menus/categories</a></td><td>4</td></tr><tr><td class="no">20</td><td><code>MARKETING-002</code></td><td>마케팅 글 목록</td><td><a href="#MARKETING-002">/marketing</a></td><td>7</td></tr><tr><td class="no">21</td><td><code>MARKETING-003</code></td><td>마케팅 글 상세</td><td><a href="#MARKETING-003">/marketing/[postId]</a></td><td>9</td></tr><tr><td class="no">22</td><td><code>MARKETING-004</code></td><td>마케팅 글 등록</td><td><a href="#MARKETING-004">/marketing/new</a></td><td>8</td></tr><tr><td class="no">23</td><td><code>STORE-002</code></td><td>가맹점 목록</td><td><a href="#STORE-002">/stores</a></td><td>7</td></tr><tr><td class="no">24</td><td><code>STORE-003</code></td><td>가맹점 상세</td><td><a href="#STORE-003">/stores/[storeId]</a></td><td>10</td></tr><tr><td class="no">25</td><td><code>STORE-004</code></td><td>가맹점 등록</td><td><a href="#STORE-004">/stores/new</a></td><td>9</td></tr><tr><td class="no">26</td><td><code>FRANCHISE-004</code></td><td>창업 문의 목록</td><td><a href="#FRANCHISE-004">/inquiries</a></td><td>6</td></tr><tr><td class="no">27</td><td><code>FRANCHISE-005</code></td><td>창업 문의 상세</td><td><a href="#FRANCHISE-005">/inquiries/[inquiryId]</a></td><td>5</td></tr><tr><td class="no">28</td><td><code>FRANCHISE-006</code></td><td>창업 FAQ 목록</td><td><a href="#FRANCHISE-006">/franchise/faqs</a></td><td>7</td></tr><tr><td class="no">29</td><td><code>FRANCHISE-007</code></td><td>창업 FAQ 상세</td><td><a href="#FRANCHISE-007">/franchise/faqs/[faqId]</a></td><td>8</td></tr><tr><td class="no">30</td><td><code>FRANCHISE-008</code></td><td>창업 FAQ 등록</td><td><a href="#FRANCHISE-008">/franchise/faqs/new</a></td><td>8</td></tr><tr><td class="no">31</td><td><code>FRANCHISE-009</code></td><td>창업 비용 · 절차</td><td><a href="#FRANCHISE-009">/settings/franchise</a></td><td>4</td></tr><tr><td class="no">32</td><td><code>SUPPORT-003</code></td><td>고객센터 FAQ 목록</td><td><a href="#SUPPORT-003">/support/faqs</a></td><td>7</td></tr><tr><td class="no">33</td><td><code>SUPPORT-004</code></td><td>고객센터 FAQ 상세</td><td><a href="#SUPPORT-004">/support/faqs/[faqId]</a></td><td>8</td></tr><tr><td class="no">34</td><td><code>SUPPORT-005</code></td><td>고객센터 FAQ 등록</td><td><a href="#SUPPORT-005">/support/faqs/new</a></td><td>7</td></tr><tr><td class="no">35</td><td><code>SUPPORT-006</code></td><td>공지사항 목록</td><td><a href="#SUPPORT-006">/support/notices</a></td><td>7</td></tr><tr><td class="no">36</td><td><code>SUPPORT-007</code></td><td>공지사항 상세</td><td><a href="#SUPPORT-007">/support/notices/[noticeId]</a></td><td>10</td></tr><tr><td class="no">37</td><td><code>SUPPORT-008</code></td><td>공지사항 등록</td><td><a href="#SUPPORT-008">/support/notices/new</a></td><td>9</td></tr><tr><td class="no">38</td><td><code>BANNER-001</code></td><td>메인 비주얼 목록</td><td><a href="#BANNER-001">/banners/main</a></td><td>8</td></tr><tr><td class="no">39</td><td><code>BANNER-002</code></td><td>메인 비주얼 상세</td><td><a href="#BANNER-002">/banners/main/[bannerId]</a></td><td>10</td></tr><tr><td class="no">40</td><td><code>BANNER-003</code></td><td>메인 비주얼 등록</td><td><a href="#BANNER-003">/banners/main/new</a></td><td>9</td></tr><tr><td class="no">41</td><td><code>BANNER-004</code></td><td>팝업 목록</td><td><a href="#BANNER-004">/banners/popups</a></td><td>8</td></tr><tr><td class="no">42</td><td><code>BANNER-005</code></td><td>팝업 상세</td><td><a href="#BANNER-005">/banners/popups/[popupId]</a></td><td>11</td></tr><tr><td class="no">43</td><td><code>BANNER-006</code></td><td>팝업 등록</td><td><a href="#BANNER-006">/banners/popups/new</a></td><td>10</td></tr><tr><td class="no">44</td><td><code>SETTING-001</code></td><td>브랜드 정보</td><td><a href="#SETTING-001">/settings/brand</a></td><td>8</td></tr><tr><td class="no">45</td><td><code>ADMIN-002</code></td><td>관리자 목록</td><td><a href="#ADMIN-002">/settings/admins</a></td><td>7</td></tr><tr><td class="no">46</td><td><code>ADMIN-003</code></td><td>관리자 상세</td><td><a href="#ADMIN-003">/settings/admins/[adminId]</a></td><td>9</td></tr><tr><td class="no">47</td><td><code>ADMIN-004</code></td><td>관리자 등록</td><td><a href="#ADMIN-004">/settings/admins/new</a></td><td>8</td></tr></tbody>
+    <tbody><tr><td class="no">1</td><td><code>HOME-001</code></td><td>메인 페이지</td><td><a href="#HOME-001">/</a></td><td>8</td></tr><tr><td class="no">2</td><td><code>BRAND-001</code></td><td>브랜드 이야기</td><td><a href="#BRAND-001">/brand</a></td><td>3</td></tr><tr><td class="no">3</td><td><code>MENU-001</code></td><td>메뉴판</td><td><a href="#MENU-001">/menu</a></td><td>4</td></tr><tr><td class="no">4</td><td><code>MENU-002</code></td><td>메뉴 상세</td><td><a href="#MENU-002">/menu/[itemId]</a></td><td>7</td></tr><tr><td class="no">5</td><td><code>INTERIOR-001</code></td><td>인테리어</td><td><a href="#INTERIOR-001">/interior</a></td><td>4</td></tr><tr><td class="no">6</td><td><code>MARKETING-001</code></td><td>마케팅</td><td><a href="#MARKETING-001">/marketing</a></td><td>4</td></tr><tr><td class="no">7</td><td><code>STORE-001</code></td><td>매장 찾기</td><td><a href="#STORE-001">/stores</a></td><td>8</td></tr><tr><td class="no">8</td><td><code>FRANCHISE-001</code></td><td>가맹점 개설절차</td><td><a href="#FRANCHISE-001">/franchise</a></td><td>6</td></tr><tr><td class="no">9</td><td><code>FRANCHISE-002</code></td><td>가맹점 상담 신청</td><td><a href="#FRANCHISE-002">/franchise/apply</a></td><td>13</td></tr><tr><td class="no">10</td><td><code>FRANCHISE-003</code></td><td>가맹점 개설문의</td><td><a href="#FRANCHISE-003">/franchise/faq</a></td><td>7</td></tr><tr><td class="no">11</td><td><code>SUPPORT-001</code></td><td>공지사항</td><td><a href="#SUPPORT-001">/support/notices</a></td><td>5</td></tr><tr><td class="no">12</td><td><code>SUPPORT-002</code></td><td>자주 묻는 질문</td><td><a href="#SUPPORT-002">/support/faq</a></td><td>5</td></tr><tr><td class="no">13</td><td><code>LEGAL-001</code></td><td>서비스 이용약관</td><td><a href="#LEGAL-001">/terms</a></td><td>3</td></tr><tr><td class="no">14</td><td><code>LEGAL-002</code></td><td>개인정보 처리방침</td><td><a href="#LEGAL-002">/privacy</a></td><td>3</td></tr><tr><td class="no">15</td><td><code>ADMIN-001</code></td><td>대시보드</td><td><a href="#ADMIN-001">/</a></td><td>5</td></tr><tr><td class="no">16</td><td><code>MENU-003</code></td><td>메뉴 목록</td><td><a href="#MENU-003">/menus</a></td><td>8</td></tr><tr><td class="no">17</td><td><code>MENU-004</code></td><td>메뉴 상세</td><td><a href="#MENU-004">/menus/[menuId]</a></td><td>11</td></tr><tr><td class="no">18</td><td><code>MENU-005</code></td><td>메뉴 등록</td><td><a href="#MENU-005">/menus/new</a></td><td>9</td></tr><tr><td class="no">19</td><td><code>MENU-006</code></td><td>메뉴 카테고리</td><td><a href="#MENU-006">/menus/categories</a></td><td>4</td></tr><tr><td class="no">20</td><td><code>MARKETING-002</code></td><td>마케팅 글 목록</td><td><a href="#MARKETING-002">/marketing</a></td><td>7</td></tr><tr><td class="no">21</td><td><code>MARKETING-003</code></td><td>마케팅 글 상세</td><td><a href="#MARKETING-003">/marketing/[postId]</a></td><td>9</td></tr><tr><td class="no">22</td><td><code>MARKETING-004</code></td><td>마케팅 글 등록</td><td><a href="#MARKETING-004">/marketing/new</a></td><td>8</td></tr><tr><td class="no">23</td><td><code>STORE-002</code></td><td>가맹점 목록</td><td><a href="#STORE-002">/stores</a></td><td>7</td></tr><tr><td class="no">24</td><td><code>STORE-003</code></td><td>가맹점 상세</td><td><a href="#STORE-003">/stores/[storeId]</a></td><td>10</td></tr><tr><td class="no">25</td><td><code>STORE-004</code></td><td>가맹점 등록</td><td><a href="#STORE-004">/stores/new</a></td><td>9</td></tr><tr><td class="no">26</td><td><code>FRANCHISE-004</code></td><td>창업 문의 목록</td><td><a href="#FRANCHISE-004">/inquiries</a></td><td>6</td></tr><tr><td class="no">27</td><td><code>FRANCHISE-005</code></td><td>창업 문의 상세</td><td><a href="#FRANCHISE-005">/inquiries/[inquiryId]</a></td><td>5</td></tr><tr><td class="no">28</td><td><code>FRANCHISE-006</code></td><td>창업 FAQ 목록</td><td><a href="#FRANCHISE-006">/franchise/faqs</a></td><td>7</td></tr><tr><td class="no">29</td><td><code>FRANCHISE-007</code></td><td>창업 FAQ 상세</td><td><a href="#FRANCHISE-007">/franchise/faqs/[faqId]</a></td><td>8</td></tr><tr><td class="no">30</td><td><code>FRANCHISE-008</code></td><td>창업 FAQ 등록</td><td><a href="#FRANCHISE-008">/franchise/faqs/new</a></td><td>8</td></tr><tr><td class="no">31</td><td><code>FRANCHISE-009</code></td><td>창업 비용 · 절차</td><td><a href="#FRANCHISE-009">/settings/franchise</a></td><td>4</td></tr><tr><td class="no">32</td><td><code>SUPPORT-003</code></td><td>고객센터 FAQ 목록</td><td><a href="#SUPPORT-003">/support/faqs</a></td><td>7</td></tr><tr><td class="no">33</td><td><code>SUPPORT-004</code></td><td>고객센터 FAQ 상세</td><td><a href="#SUPPORT-004">/support/faqs/[faqId]</a></td><td>8</td></tr><tr><td class="no">34</td><td><code>SUPPORT-005</code></td><td>고객센터 FAQ 등록</td><td><a href="#SUPPORT-005">/support/faqs/new</a></td><td>7</td></tr><tr><td class="no">35</td><td><code>SUPPORT-006</code></td><td>공지사항 목록</td><td><a href="#SUPPORT-006">/support/notices</a></td><td>7</td></tr><tr><td class="no">36</td><td><code>SUPPORT-007</code></td><td>공지사항 상세</td><td><a href="#SUPPORT-007">/support/notices/[noticeId]</a></td><td>10</td></tr><tr><td class="no">37</td><td><code>SUPPORT-008</code></td><td>공지사항 등록</td><td><a href="#SUPPORT-008">/support/notices/new</a></td><td>9</td></tr><tr><td class="no">38</td><td><code>BANNER-001</code></td><td>메인 비주얼 목록</td><td><a href="#BANNER-001">/banners/main</a></td><td>8</td></tr><tr><td class="no">39</td><td><code>BANNER-002</code></td><td>메인 비주얼 상세</td><td><a href="#BANNER-002">/banners/main/[bannerId]</a></td><td>10</td></tr><tr><td class="no">40</td><td><code>BANNER-003</code></td><td>메인 비주얼 등록</td><td><a href="#BANNER-003">/banners/main/new</a></td><td>9</td></tr><tr><td class="no">41</td><td><code>BANNER-004</code></td><td>팝업 목록</td><td><a href="#BANNER-004">/banners/popups</a></td><td>8</td></tr><tr><td class="no">42</td><td><code>BANNER-005</code></td><td>팝업 상세</td><td><a href="#BANNER-005">/banners/popups/[popupId]</a></td><td>11</td></tr><tr><td class="no">43</td><td><code>BANNER-006</code></td><td>팝업 등록</td><td><a href="#BANNER-006">/banners/popups/new</a></td><td>10</td></tr><tr><td class="no">44</td><td><code>SETTING-001</code></td><td>브랜드 정보</td><td><a href="#SETTING-001">/settings/brand</a></td><td>8</td></tr><tr><td class="no">45</td><td><code>ADMIN-002</code></td><td>관리자 목록</td><td><a href="#ADMIN-002">/settings/admins</a></td><td>7</td></tr><tr><td class="no">46</td><td><code>ADMIN-003</code></td><td>관리자 상세</td><td><a href="#ADMIN-003">/settings/admins/[adminId]</a></td><td>9</td></tr><tr><td class="no">47</td><td><code>ADMIN-004</code></td><td>관리자 등록</td><td><a href="#ADMIN-004">/settings/admins/new</a></td><td>8</td></tr></tbody>
   </table>
 
   <h2>8. Back-End 요구사항 정의</h2>

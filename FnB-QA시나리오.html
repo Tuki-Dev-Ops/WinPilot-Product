@@ -216,7 +216,7 @@
   <h1>어쭈구리왕문어 <span class="dim">QA 시나리오</span></h1>
   <div class="stamp">
     검수 · 판정
-    <em>2026년 8월 20일</em>
+    <em>2026년 8월 21일</em>
   </div>
 </div>
 
@@ -237,7 +237,84 @@
   검수하면 각자 인쇄해 합친다. 주소 앞부분은 위에서 바꿀 수 있다 — 개발 · 스테이징 · 운영이 다르다.
 </p>
 
-<h3 class="screen"><span class="fid">BRAND-001</span> 브랜드 이야기 <a data-app="client" data-path="/brand" target="_blank" rel="noreferrer">/brand</a>
+<h3 class="screen"><span class="fid">HOME-001</span> 메인 페이지 <a data-app="client" data-path="/" target="_blank" rel="noreferrer">/</a>
+  <button class="add" data-for="HOME-001">+ 항목 추가</button></h3>
+<table class="qa" data-for="HOME-001">
+  <thead><tr>
+    <th style="width:86px">TC ID</th>
+    <th style="width:50px">구분</th>
+    <th style="width:210px">전제 조건</th>
+    <th style="width:210px">수행 절차</th>
+    <th>기대 결과</th>
+    <th style="width:126px">판정</th>
+    <th style="width:150px">비고 · 결함</th>
+  </tr></thead>
+  <tbody><tr data-tc="HOME-001-01">
+  <td class="tc">HOME-001-01</td>
+  <td class="kind">정상</td>
+  <td>메인 페이지 화면을 엽니다.</td>
+  <td>메인 배너에서 메뉴 목록 또는 매장 찾기로 이동합니다</td>
+  <td>대상 화면이 표시됩니다</td>
+  <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
+  <td><div class="memo-in" contenteditable></div></td>
+</tr><tr data-tc="HOME-001-02">
+  <td class="tc">HOME-001-02</td>
+  <td class="kind">정상</td>
+  <td>메인 페이지 화면을 엽니다.</td>
+  <td>공지 요약 영역에서 공지사항 목록으로 이동합니다</td>
+  <td>대상 화면이 표시됩니다</td>
+  <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
+  <td><div class="memo-in" contenteditable></div></td>
+</tr><tr data-tc="HOME-001-03">
+  <td class="tc">HOME-001-03</td>
+  <td class="kind">정상</td>
+  <td>메인 페이지 화면을 엽니다.</td>
+  <td>대표 메뉴 슬라이드에서 메뉴 상세로 이동합니다</td>
+  <td>대상 화면이 표시됩니다</td>
+  <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
+  <td><div class="memo-in" contenteditable></div></td>
+</tr><tr data-tc="HOME-001-04">
+  <td class="tc">HOME-001-04</td>
+  <td class="kind">정상</td>
+  <td>메인 페이지 화면을 엽니다.</td>
+  <td>신규 오픈 매장 슬라이드 조회합니다</td>
+  <td>해당 값이 화면에 표시됩니다</td>
+  <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
+  <td><div class="memo-in" contenteditable></div></td>
+</tr><tr data-tc="HOME-001-05">
+  <td class="tc">HOME-001-05</td>
+  <td class="kind">정상</td>
+  <td>메인 페이지 화면을 엽니다.</td>
+  <td>가맹점 실적 영역에서 창업 안내로 이동합니다</td>
+  <td>대상 화면이 표시됩니다</td>
+  <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
+  <td><div class="memo-in" contenteditable></div></td>
+</tr><tr data-tc="HOME-001-06">
+  <td class="tc">HOME-001-06</td>
+  <td class="kind">예외</td>
+  <td>등록된 공지가 없으면</td>
+  <td>해당 조건에서 화면을 확인합니다.</td>
+  <td>공지 요약 영역을 표시하지 않습니다.</td>
+  <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
+  <td><div class="memo-in" contenteditable></div></td>
+</tr><tr data-tc="HOME-001-07">
+  <td class="tc">HOME-001-07</td>
+  <td class="kind">예외</td>
+  <td>메인 페이지 화면을 엽니다.</td>
+  <td>화면을 확인합니다.</td>
+  <td>비노출로 설정한 메뉴는 대표 메뉴 슬라이드에 표시하지 않습니다.</td>
+  <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
+  <td><div class="memo-in" contenteditable></div></td>
+</tr><tr data-tc="HOME-001-08">
+  <td class="tc">HOME-001-08</td>
+  <td class="kind">예외</td>
+  <td>메인 페이지 화면을 엽니다.</td>
+  <td>화면을 확인합니다.</td>
+  <td>휴점 상태의 매장은 신규 오픈 매장 슬라이드에 표시하지 않습니다.</td>
+  <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
+  <td><div class="memo-in" contenteditable></div></td>
+</tr></tbody>
+</table><h3 class="screen"><span class="fid">BRAND-001</span> 브랜드 이야기 <a data-app="client" data-path="/brand" target="_blank" rel="noreferrer">/brand</a>
   <button class="add" data-for="BRAND-001">+ 항목 추가</button></h3>
 <table class="qa" data-for="BRAND-001">
   <thead><tr>
@@ -982,83 +1059,6 @@
   <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
   <td><div class="memo-in" contenteditable></div></td>
 </tr></tbody>
-</table><h3 class="screen"><span class="fid">HOME-001</span> Home <a data-app="client" data-path="/" target="_blank" rel="noreferrer">/</a>
-  <button class="add" data-for="HOME-001">+ 항목 추가</button></h3>
-<table class="qa" data-for="HOME-001">
-  <thead><tr>
-    <th style="width:86px">TC ID</th>
-    <th style="width:50px">구분</th>
-    <th style="width:210px">전제 조건</th>
-    <th style="width:210px">수행 절차</th>
-    <th>기대 결과</th>
-    <th style="width:126px">판정</th>
-    <th style="width:150px">비고 · 결함</th>
-  </tr></thead>
-  <tbody><tr data-tc="HOME-001-01">
-  <td class="tc">HOME-001-01</td>
-  <td class="kind">정상</td>
-  <td>Home 화면을 엽니다.</td>
-  <td>메인 배너에서 메뉴 목록 또는 매장 찾기로 이동합니다</td>
-  <td>대상 화면이 표시됩니다</td>
-  <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
-  <td><div class="memo-in" contenteditable></div></td>
-</tr><tr data-tc="HOME-001-02">
-  <td class="tc">HOME-001-02</td>
-  <td class="kind">정상</td>
-  <td>Home 화면을 엽니다.</td>
-  <td>공지 요약 영역에서 공지사항 목록으로 이동합니다</td>
-  <td>대상 화면이 표시됩니다</td>
-  <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
-  <td><div class="memo-in" contenteditable></div></td>
-</tr><tr data-tc="HOME-001-03">
-  <td class="tc">HOME-001-03</td>
-  <td class="kind">정상</td>
-  <td>Home 화면을 엽니다.</td>
-  <td>대표 메뉴 슬라이드에서 메뉴 상세로 이동합니다</td>
-  <td>대상 화면이 표시됩니다</td>
-  <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
-  <td><div class="memo-in" contenteditable></div></td>
-</tr><tr data-tc="HOME-001-04">
-  <td class="tc">HOME-001-04</td>
-  <td class="kind">정상</td>
-  <td>Home 화면을 엽니다.</td>
-  <td>신규 오픈 매장 슬라이드 조회합니다</td>
-  <td>해당 값이 화면에 표시됩니다</td>
-  <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
-  <td><div class="memo-in" contenteditable></div></td>
-</tr><tr data-tc="HOME-001-05">
-  <td class="tc">HOME-001-05</td>
-  <td class="kind">정상</td>
-  <td>Home 화면을 엽니다.</td>
-  <td>가맹점 실적 영역에서 창업 안내로 이동합니다</td>
-  <td>대상 화면이 표시됩니다</td>
-  <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
-  <td><div class="memo-in" contenteditable></div></td>
-</tr><tr data-tc="HOME-001-06">
-  <td class="tc">HOME-001-06</td>
-  <td class="kind">예외</td>
-  <td>등록된 공지가 없으면</td>
-  <td>해당 조건에서 화면을 확인합니다.</td>
-  <td>공지 요약 영역을 표시하지 않습니다.</td>
-  <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
-  <td><div class="memo-in" contenteditable></div></td>
-</tr><tr data-tc="HOME-001-07">
-  <td class="tc">HOME-001-07</td>
-  <td class="kind">예외</td>
-  <td>Home 화면을 엽니다.</td>
-  <td>화면을 확인합니다.</td>
-  <td>비노출로 설정한 메뉴는 대표 메뉴 슬라이드에 표시하지 않습니다.</td>
-  <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
-  <td><div class="memo-in" contenteditable></div></td>
-</tr><tr data-tc="HOME-001-08">
-  <td class="tc">HOME-001-08</td>
-  <td class="kind">예외</td>
-  <td>Home 화면을 엽니다.</td>
-  <td>화면을 확인합니다.</td>
-  <td>휴점 상태의 매장은 신규 오픈 매장 슬라이드에 표시하지 않습니다.</td>
-  <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
-  <td><div class="memo-in" contenteditable></div></td>
-</tr></tbody>
 </table><h3 class="screen"><span class="fid">ADMIN-001</span> 대시보드 <a data-app="admin" data-path="/" target="_blank" rel="noreferrer">/</a>
   <button class="add" data-for="ADMIN-001">+ 항목 추가</button></h3>
 <table class="qa" data-for="ADMIN-001">
@@ -1461,7 +1461,7 @@
   <td class="kind">정상</td>
   <td>마케팅 글 목록 화면을 엽니다.</td>
   <td>게시물 등록합니다</td>
-  <td>저장 결과를 알리고 목록으로 돌아갑니다</td>
+  <td>바뀐 상태가 목록과 고객 화면에 함께 반영됩니다</td>
   <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
   <td><div class="memo-in" contenteditable></div></td>
 </tr><tr data-tc="MARKETING-002-05">
@@ -1469,7 +1469,7 @@
   <td class="kind">정상</td>
   <td>마케팅 글 목록 화면을 엽니다.</td>
   <td>게시물 삭제합니다</td>
-  <td>목록에서 사라지고 처리 결과를 알립니다</td>
+  <td>바뀐 상태가 목록과 고객 화면에 함께 반영됩니다</td>
   <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
   <td><div class="memo-in" contenteditable></div></td>
 </tr><tr data-tc="MARKETING-002-06">
@@ -1514,7 +1514,7 @@
   <td class="kind">정상</td>
   <td>마케팅 글 상세 화면을 엽니다.</td>
   <td>게시일 수정합니다</td>
-  <td>저장 결과를 알립니다</td>
+  <td>바뀐 상태가 목록과 고객 화면에 함께 반영됩니다</td>
   <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
   <td><div class="memo-in" contenteditable></div></td>
 </tr><tr data-tc="MARKETING-003-03">
@@ -1599,7 +1599,7 @@
   <td class="kind">정상</td>
   <td>마케팅 글 등록 화면을 엽니다.</td>
   <td>게시일 입력합니다</td>
-  <td>저장 결과를 알리고 목록으로 돌아갑니다</td>
+  <td>바뀐 상태가 목록과 고객 화면에 함께 반영됩니다</td>
   <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
   <td><div class="memo-in" contenteditable></div></td>
 </tr><tr data-tc="MARKETING-004-03">
@@ -2589,7 +2589,7 @@
   <td class="kind">정상</td>
   <td>공지사항 상세 화면을 엽니다.</td>
   <td>게시일 수정합니다</td>
-  <td>저장 결과를 알립니다</td>
+  <td>바뀐 상태가 목록과 고객 화면에 함께 반영됩니다</td>
   <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
   <td><div class="memo-in" contenteditable></div></td>
 </tr><tr data-tc="SUPPORT-007-03">
@@ -2682,7 +2682,7 @@
   <td class="kind">정상</td>
   <td>공지사항 등록 화면을 엽니다.</td>
   <td>게시일 입력합니다</td>
-  <td>저장 결과를 알리고 목록으로 돌아갑니다</td>
+  <td>바뀐 상태가 목록과 고객 화면에 함께 반영됩니다</td>
   <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
   <td><div class="memo-in" contenteditable></div></td>
 </tr><tr data-tc="SUPPORT-008-03">
@@ -2852,7 +2852,7 @@
   <td class="kind">정상</td>
   <td>메인 비주얼 상세 화면을 엽니다.</td>
   <td>게시 기간 수정합니다</td>
-  <td>저장 결과를 알립니다</td>
+  <td>바뀐 상태가 목록과 고객 화면에 함께 반영됩니다</td>
   <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
   <td><div class="memo-in" contenteditable></div></td>
 </tr><tr data-tc="BANNER-002-04">
@@ -2945,7 +2945,7 @@
   <td class="kind">정상</td>
   <td>메인 비주얼 등록 화면을 엽니다.</td>
   <td>게시 기간 설정</td>
-  <td>저장 결과를 알리고 목록으로 돌아갑니다</td>
+  <td>바뀐 상태가 목록과 고객 화면에 함께 반영됩니다</td>
   <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
   <td><div class="memo-in" contenteditable></div></td>
 </tr><tr data-tc="BANNER-003-04">
@@ -3099,7 +3099,7 @@
   <td class="kind">정상</td>
   <td>팝업 상세 화면을 엽니다.</td>
   <td>게시 기간 수정합니다</td>
-  <td>저장 결과를 알립니다</td>
+  <td>바뀐 상태가 목록과 고객 화면에 함께 반영됩니다</td>
   <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
   <td><div class="memo-in" contenteditable></div></td>
 </tr><tr data-tc="BANNER-005-03">
@@ -3200,7 +3200,7 @@
   <td class="kind">정상</td>
   <td>팝업 등록 화면을 엽니다.</td>
   <td>게시 기간 설정</td>
-  <td>저장 결과를 알리고 목록으로 돌아갑니다</td>
+  <td>바뀐 상태가 목록과 고객 화면에 함께 반영됩니다</td>
   <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
   <td><div class="memo-in" contenteditable></div></td>
 </tr><tr data-tc="BANNER-006-03">
@@ -3439,7 +3439,7 @@
   <td class="kind">정상</td>
   <td>관리자 상세 화면을 엽니다.</td>
   <td>권한 등급 변경합니다</td>
-  <td>정의 필요</td>
+  <td>저장 결과를 알립니다</td>
   <td class="judge"><button class="j" data-v="PASS" aria-pressed="false">PASS</button><button class="j" data-v="FAIL" aria-pressed="false">FAIL</button><button class="j" data-v="N/A" aria-pressed="false">N/A</button></td>
   <td><div class="memo-in" contenteditable></div></td>
 </tr><tr data-tc="ADMIN-003-03">
