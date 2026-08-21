@@ -80,9 +80,53 @@ export const conjugate = (stem: string): string => {
 /** `-하다` 를 붙여 쓰는 한자어. 여기 없는 명사에는 아무것도 붙이지 않는다 — `묶음합니다` 가 되어서는 안 된다. */
 const VERBAL_NOUN = new Set([
   '이동', '검색', '삭제', '등록', '저장', '공개', '확인', '노출', '수정', '추가', '취소',
-  '복사', '정렬', '선택', '입력', '발행', '게시', '신청', '조회', '변경', '해제', '첨부',
-  '제출', '반려', '승인', '보관', '고정', '해지', '연동', '적용', '반영', '초기화',
+  '복사', '정렬', '선택', '입력', '발행', '게시', '신청', '접수', '조회', '변경', '해제',
+  '첨부', '제출', '반려', '승인', '보관', '고정', '해지', '연동', '적용', '반영', '설정',
+  '초기화', '필터링', '업로드', '다운로드', '동의', '표시', '재생', '정지',
 ]);
+
+/**
+ * 말끝의 `-하다` 명사. **긴 것부터 본다.**
+ *
+ * 앞선 판은 뒤 두 글자만 잘라 맞췄다. 그래서 세 글자인 `초기화` 는 `기화` 로 잘려 목록에
+ * 걸리지 않았고, `조회 조건 초기화` 는 종결이 붙지 않은 채로 문서에 실렸다. 길이를 하나로
+ * 못 박으면 그 길이가 아닌 낱말이 조용히 빠진다.
+ */
+const verbalNoun = (word: string): string | undefined =>
+  [4, 3, 2].map((n) => word.slice(-n)).find((one) => VERBAL_NOUN.has(one));
+
+/**
+ * `-하다` 명사 앞에 목적격 조사를 채운다.
+ *
+ * `특허 · 인증 상세 정보 조회` 에 종결만 붙이면 `… 정보 조회합니다` 가 되어 말이 끊긴다.
+ * 앞말과 명사 사이에 `을 · 를` 이 서야 문장이 된다.
+ *
+ * 이미 조사가 붙어 있으면(`주소로 검색` · `조건에 반영`) 건드리지 않는다 — 그 자리에 다시
+ * 채우면 조사가 둘이 된다.
+ *
+ * 이음말(`및` · `·`)로 끝나는 자리에도 채우지 않는다 — `정지 및을 재생합니다` 가 된다.
+ *
+ * `의` 는 조사 목록에서 뺐다. `문의` 처럼 그 글자로 끝나는 명사가 흔해서, 조사로 보면
+ * `문의 접수합니다` 가 되어 말이 끊긴다. 소유격 `의` 로 끝나고 목적어가 따라오는 기능 이름은
+ * 실제로 없다.
+ */
+const PARTICLE_END = /(을|를|으로|로|에|에서|와|과|및|·)$/;
+
+const withObject = (head: string, noun: string): string => {
+  const body = head.trimEnd();
+  const tail = noun;
+  if (body === '' || PARTICLE_END.test(body)) return `${body}${body === '' ? '' : ' '}${tail}`;
+  /* 목적어가 아니라 대상을 받는 말. `동의를 한다` 가 아니라 `동의한다` 이므로 `에` 가 붙는다. */
+  if (DATIVE.has(tail)) return `${body}에 ${tail}`;
+
+  const last = body.slice(-1);
+  const code = last.charCodeAt(0);
+  /* 한글이 아니면 조사를 고를 수 없다 — 그대로 둔다. */
+  if (code < BASE || code > 0xd7a3) return `${body} ${tail}`;
+  return `${body}${jongOf(last) === NONE ? '를' : '을'} ${tail}`;
+};
+
+const DATIVE = new Set(['동의']);
 
 /**
  * 문장 하나를 합쇼체로. 이미 합쇼체(`…니다`)면 손대지 않는다.
@@ -151,7 +195,11 @@ const oneSentence = (text: string, navigates: boolean): string => {
       `코드 · 이름 · 묶음 · 값 · 열량 · 설명 · 노출` 처럼 명사를 늘어놓고 끝나는데,
       거기에 붙이면 마지막 낱말만 `노출합니다` 가 되어 나열이 깨진다.
     */
-    if (navigates && VERBAL_NOUN.has(word.slice(-2))) return `${word}합니다`;
+    /* `필터` 는 `-하다` 가 붙지 않는다. 실무에서 쓰는 꼴로 바꿔 종결한다. */
+    if (navigates && word.endsWith('필터')) return `${withObject(word.slice(0, -2), '필터링')}합니다`;
+
+    const noun = navigates ? verbalNoun(word) : undefined;
+    if (noun) return `${withObject(word.slice(0, -noun.length), noun)}합니다`;
 
     /*
       `…공지사항으로` 처럼 자리만 가리키고 끝나는 기능 줄이 있다. 기능 목록에서는 이것이

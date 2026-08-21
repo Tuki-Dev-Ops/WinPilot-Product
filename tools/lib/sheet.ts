@@ -1,8 +1,8 @@
 import type { Screen } from './screens';
-import { kindIn } from './action-kind';
+import { handlingOf, kindIn } from './action-kind';
 import { featureName } from './feature-name';
 import { esc } from './html';
-import { formal } from './polite';
+import { formal, formalAction } from './polite';
 
 /**
  * 기능 명세를 **엑셀 한 장**으로 편다 — 한 줄이 화면 하나, 「세부 사항」 한 칸이 그 화면의 전부.
@@ -73,8 +73,40 @@ const images = (screen: Screen): string => {
 const empties = (screen: Screen): string =>
   join(screen.spec.guards.filter((one) => EMPTY.test(one)));
 
+/**
+ * 기능 하나를 **사용자 동작 → 시스템 처리 → 결과** 세 마디로 편다.
+ *
+ * ## 왜 이름만으로는 모자란가
+ * 앞선 판은 기능 명칭만 실었다. `브랜드 운영 원칙 조회 기능 제공` 은 무엇을 만들지는 알려
+ * 주지만 **누르면 무엇이 일어나는지**를 말하지 않아, 구현하는 사람과 검수하는 사람이 각자
+ * 다르게 채운다. 화면마다 절을 세우던 앞선 판에는 이 세 마디가 표로 있었는데, 한 줄로 접으면서
+ * 함께 사라졌다.
+ *
+ * 단추가 명세에 적혀 있으면 그것이 이긴다 — 눌렀을 때와 성공했을 때가 이미 정해진 값이다.
+ */
+const step = (screen: Screen, action: string): string => {
+  const kind = kindIn(action, screen.route, screen.readOnly);
+  /*
+    단추 이름이 기능 이름 **끝에** 있을 때만 짝으로 본다. 앞선 판은 `포함` 으로 찾아,
+    `문의 접수 정보 및 운영 시간 조회` 가 `문의 접수` 단추와 짝지어져 조회 기능에 접수 단추의
+    처리와 결과가 붙었다.
+  */
+  const buttons = screen.spec.buttons ?? [];
+  const button = buttons.find((one) => action === one.label) ?? buttons.find((one) => action.endsWith(one.label));
+  const fallback = handlingOf(kind);
+
+  const handle = button?.onClick ?? fallback.handle;
+  const result =
+    [button?.onSuccess, button?.onFail].filter((one) => one !== undefined).map(dot).join(' ') ||
+    dot(fallback.result);
+
+  return `<div class="fn"><b>${esc(featureName(action, kind))}</b><span>${esc(
+    `${dot(formalAction(action))} ${dot(handle)} ${result}`,
+  )}</span></div>`;
+};
+
 const flow = (screen: Screen): string =>
-  join(screen.spec.actions.map((one) => featureName(one, kindIn(one, screen.route, screen.readOnly))));
+  screen.spec.actions.length === 0 ? NONE : screen.spec.actions.map((one) => step(screen, one)).join('');
 
 const checks = (screen: Screen): string => join(screen.spec.validations ?? []);
 
@@ -85,13 +117,26 @@ const moves = (screen: Screen): string =>
       : screen.spec.actions.filter((one) => kindIn(one, screen.route, screen.readOnly) === '이동'),
   );
 
-/** 「세부 사항」 한 칸. 갈래마다 번호를 세우고 그 아래 한 줄로 적는다. */
+/**
+ * 「세부 사항」 한 칸. 갈래마다 번호를 세우고 그 아래에 내용을 적는다.
+ *
+ * 「주요 기능 및 플로우」만 이미 짜인 조각을 넘긴다 — 기능마다 세 마디가 서야 해서 한 줄로는
+ * 담기지 않는다. 나머지 다섯은 글자이므로 그대로 막는다.
+ */
 export const detailCell = (screen: Screen): string => {
-  const bodies = [inputs(screen), images(screen), empties(screen), flow(screen), checks(screen), moves(screen)];
-  return PARTS.map(
-    (title, index) =>
-      `<div class="pt"><b>${index + 1}. ${esc(title)}</b><span>- ${esc(bodies[index] ?? NONE)}</span></div>`,
-  ).join('');
+  const bodies: [string, boolean][] = [
+    [inputs(screen), false],
+    [images(screen), false],
+    [empties(screen), false],
+    [flow(screen), true],
+    [checks(screen), false],
+    [moves(screen), false],
+  ];
+  return PARTS.map((title, index) => {
+    const [body, raw] = bodies[index] ?? [NONE, false];
+    const shown = raw && body !== NONE ? body : `- ${esc(body)}`;
+    return `<div class="pt"><b>${index + 1}. ${esc(title)}</b><span>${shown}</span></div>`;
+  }).join('');
 };
 
 /**

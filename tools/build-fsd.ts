@@ -208,6 +208,12 @@ export const buildFsd = (p: DocProject): string => {
     .pt b { display: block; color: var(--accent); font-weight: 600; }
     .pt span { display: block; padding-left: 8px; color: var(--muted); }
 
+    /* 기능 하나 — 이름 한 줄, 그 아래에 사용자 동작 · 시스템 처리 · 결과. */
+    .fn { margin-bottom: 3px; }
+    .fn:last-child { margin-bottom: 0; }
+    .fn b { display: block; color: var(--ink); font-weight: 600; }
+    .fn span { display: block; padding-left: 8px; color: var(--muted); }
+
     .kw {
       font-family: "Consolas", "D2Coding", ui-monospace, monospace;
       font-size: 8pt;

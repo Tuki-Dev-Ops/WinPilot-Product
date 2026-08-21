@@ -56,15 +56,6 @@ const STEP = {
 };
 
 /**
- * 조회 기능의 기대 결과.
- *
- * 유형에서 끌어낸 결과는 `사용자가 값을 확인한다` 인데, 이것은 **판정할 수 없는 문장**이다 —
- * 확인은 검수자가 하는 일이지 화면이 하는 일이 아니라, PASS 와 FAIL 을 가르는 기준이 서지
- * 않는다. 검수 문서에서만 화면이 하는 일로 바꿔 적는다. 기능 명세서 쪽은 건드리지 않는다.
- */
-const SHOW_RESULT = '해당 값이 화면에 표시된다';
-
-/**
  * 기대 결과에서 **판정 기준**과 **그렇게 정한 까닭**을 가른다.
  *
  * 화면 명세의 제약은 규칙을 먼저 적고 까닭을 뒤에 붙인다 — `준비중 매장은 번호 자리에 여는
@@ -91,13 +82,14 @@ const casesOf = (screen: Screen): Case[] => {
 
   const normal = screen.spec.actions.map((action) => {
     const kind = kindIn(action, screen.route, screen.readOnly);
-    const button = buttons.find((one) => action.includes(one.label));
+    /* 단추 이름이 기능 이름 끝에 있을 때만 짝으로 본다 — `포함` 으로 찾으면 엉뚱한 단추가 붙는다. */
+    const button = buttons.find((one) => action === one.label) ?? buttons.find((one) => action.endsWith(one.label));
     const result = handlingOf(kind);
     return {
       kind: '정상',
       given: STEP.open(screen.name),
       when: formalAction(action),
-      then: formal(button?.onSuccess ?? (kind === '표시' ? SHOW_RESULT : result.result)),
+      then: formal(button?.onSuccess ?? result.result),
       why: '',
     };
   });
